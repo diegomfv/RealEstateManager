@@ -10,17 +10,22 @@ package com.diegomfv.android.realestatemanager.data;
  * exportSchema -> writes the database info to a folder
  * */
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import com.diegomfv.android.realestatemanager.data.dao.ImageDao;
-import com.diegomfv.android.realestatemanager.data.dao.RealStateDao;
+import com.diegomfv.android.realestatemanager.data.dao.PlaceDao;
+import com.diegomfv.android.realestatemanager.data.dao.RealEstateDao;
 import com.diegomfv.android.realestatemanager.data.entities.Image;
-import com.diegomfv.android.realestatemanager.data.entities.RealState;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.data.typeconverters.ImageTypeConverter;
 import com.diegomfv.android.realestatemanager.data.typeconverters.PlaceTypeConverter;
 
@@ -29,42 +34,82 @@ import com.diegomfv.android.realestatemanager.data.typeconverters.PlaceTypeConve
  * Android Development Course, UDACITY)
  * */
 
-@Database(entities = {RealState.class, Image.class}, version = 1, exportSchema = false)
+@Database(entities = {RealEstate.class, Image.class}, version = 1, exportSchema = false)
 @TypeConverters({ImageTypeConverter.class, PlaceTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String TAG = AppDatabase.class.getSimpleName();
-    private static final Object LOCK = new Object();
-    private static final String DATABASE_NAME = "realstatemanager";
+
+    /////////////////////////////////////
+
     private static AppDatabase sInstance;
+
+    @VisibleForTesting
+    public static final String DATABASE_NAME = "real-state-manager";
+
+    private final MutableLiveData<Boolean> mIsDatabaseCreated = new MutableLiveData<>();
+
+    /////////////////////////////////////
+
+    /**
+     * Abstract methods that return the DAOs
+     */
+    public abstract RealEstateDao realStateDao();
+
+    public abstract ImageDao imageDao();
+
+    public abstract PlaceDao placeDao();
+
+    /////////////////////////////////////
 
     /**
      * We use the Singleton pattern.
      * Returns the instantiation of the class to
      * only one object.
      */
-    public static AppDatabase getInstance(Context context) {
-
+    public static AppDatabase getInstance(final Context context, final AppExecutors executors) {
         if (sInstance == null) {
-
-            synchronized (LOCK) {
-
-                Log.d(TAG, "getInstance: Creating new Database Instance");
-                sInstance = Room.databaseBuilder(context.getApplicationContext(),
-                        AppDatabase.class, AppDatabase.DATABASE_NAME)
-                        //.allowMainThreadQueries() //allows queries in the main thread, test purposes
-                        .build();
+            synchronized (AppDatabase.class) {
+                if (sInstance == null) {
+                    sInstance = buildDatabase(context.getApplicationContext(), executors);
+                    sInstance.updateDatabaseCreated(context.getApplicationContext());
+                }
             }
         }
-
-        Log.d(TAG, "getInstance: Getting the Database Instance");
         return sInstance;
     }
 
-    /** Abstract methods that return the DAOs
-     * */
-    public abstract RealStateDao realStateDao();
+    private static AppDatabase buildDatabase(final Context appContext,
+                                             final AppExecutors executors) {
+        return Room.databaseBuilder(appContext, AppDatabase.class, DATABASE_NAME)
+                //.allowMainThreadQueries()
+                .addCallback(new Callback() {
+                    @Override
+                    public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                        super.onCreate(db);
+                        executors.diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                //Just in case a we want to do sth in the callback
 
-    public abstract ImageDao imageDao();
+                            }
+                        });
+                    }
+                }).build();
+    }
+
+    private void updateDatabaseCreated(final Context context) {
+        if (context.getDatabasePath(DATABASE_NAME).exists()) {
+            setDatabaseCreated();
+        }
+    }
+
+    private void setDatabaseCreated() {
+        mIsDatabaseCreated.postValue(true);
+    }
+
+    public LiveData<Boolean> getDatabaseCreated() {
+        return mIsDatabaseCreated;
+    }
 
 }

@@ -44,9 +44,9 @@
                 android:text="Flat"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/area_of_building_id"
+                app:layout_constraintBottom_toTopOf="@+id/surface_area_of_building_id"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/area_of_building_id"
+                app:layout_constraintStart_toStartOf="@+id/surface_area_of_building_id"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -74,7 +74,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/area_of_building_id" />
+                app:layout_constraintTop_toBottomOf="@+id/surface_area_of_building_id" />
 
 
         </android.support.constraint.ConstraintLayout>

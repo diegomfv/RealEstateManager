@@ -21,7 +21,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
-import com.diegomfv.android.realestatemanager.data.entities.RealState;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 
 import java.util.List;
 
@@ -42,13 +42,13 @@ import java.util.List;
  * then you have to come up with a custom way to do it.*/
 
 @Dao
-public interface RealStateDao {
+public interface RealEstateDao {
 
     // -------------------
     // READ
 
-    @Query("SELECT * FROM realstate ORDER BY type")
-    LiveData<List<RealState>> getAllListingsByType();
+    @Query("SELECT * FROM RealEstate ORDER BY type")
+    LiveData<List<RealEstate>> getAllListingsOrderedByType();
 
 
     // -------------------

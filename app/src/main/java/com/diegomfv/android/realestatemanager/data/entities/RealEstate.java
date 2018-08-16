@@ -5,7 +5,6 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,7 +12,7 @@ import java.util.List;
  */
 
 @Entity (tableName = "realstate")
-public class RealState {
+public class RealEstate {
 
     @PrimaryKey (autoGenerate = true)
     private int id;
@@ -53,9 +52,9 @@ public class RealState {
 
     /** Used for when reading from the table
      * */
-    public RealState(int id, String type, float surfaceArea, int numberOfRooms, String description,
-                     List<Image> listOfImages, String address, boolean status, String datePut,
-                     String dateSale, String agent) {
+    public RealEstate(int id, String type, float surfaceArea, int numberOfRooms, String description,
+                      List<Image> listOfImages, String address, boolean status, String datePut,
+                      String dateSale, String agent) {
         this.id = id;
         this.type = type;
         this.surfaceArea = surfaceArea;
@@ -73,7 +72,7 @@ public class RealState {
      * */
     // Use the Ignore annotation so Room knows that it has to use the other constructor instead
     @Ignore
-    private RealState (final Builder builder) {
+    private RealEstate(final Builder builder) {
         this.type = builder.type;
         this.surfaceArea = builder.surfaceArea;
         this.numberOfRooms = builder.numberOfRooms;
@@ -253,15 +252,15 @@ public class RealState {
             return this;
         }
 
-        public RealState build() {
-            return new RealState(this);
+        public RealEstate build() {
+            return new RealEstate(this);
         }
 
     }
 
     @Override
     public String toString() {
-        return "RealState{" +
+        return "RealEstate{" +
                 "id=" + id +
                 ", type='" + type + '\'' +
                 ", surfaceArea=" + surfaceArea +

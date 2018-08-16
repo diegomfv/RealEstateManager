@@ -1,18 +1,13 @@
 package com.diegomfv.android.realestatemanager.data;
 
 import android.annotation.SuppressLint;
-import android.arch.persistence.room.ColumnInfo;
 import android.util.Log;
 
-import com.diegomfv.android.realestatemanager.data.entities.Image;
-import com.diegomfv.android.realestatemanager.data.entities.Place;
-import com.diegomfv.android.realestatemanager.data.entities.RealState;
-import com.diegomfv.android.realestatemanager.utils.ToastHelper;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
@@ -61,10 +56,10 @@ public class FakeDataGenerator {
 
     /////////////////////////////////////////////////////
 
-    public RealState generateFakeData () {
+    public RealEstate generateFakeData () {
         Log.d(TAG, "generateFakeData: called!");
 
-        RealState.Builder builder = new RealState.Builder();
+        RealEstate.Builder builder = new RealEstate.Builder();
         builder.setType(fake_types[randBetween(0,2)]);
         builder.setSurfaceArea(fake_surface_area[randBetween(0,5)]);
         builder.setNumberOfRooms(fake_number_rooms[randBetween(0,7)]);
