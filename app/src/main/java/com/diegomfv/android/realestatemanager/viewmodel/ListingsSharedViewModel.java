@@ -12,7 +12,6 @@ import android.util.Log;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.data.DataRepository;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
-import com.google.gson.annotations.Expose;
 
 import java.util.List;
 
@@ -57,8 +56,6 @@ public class ListingsSharedViewModel extends AndroidViewModel {
     }
 
     ////////////////////////////////////
-
-
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
 

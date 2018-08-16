@@ -1,7 +1,6 @@
 package com.diegomfv.android.realestatemanager.ui.rest;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,15 +15,13 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
+import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterListings;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
-import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -72,6 +69,10 @@ public class FragmentListListings extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_list_listings, container, false);
         unbinder = ButterKnife.bind(this, view);
+
+        if (getActivity() != null) {
+            app = (RealEstateManagerApp) getActivity().getApplication();
+        }
 
         /* Glide configuration*/
         if (getActivity() != null) {

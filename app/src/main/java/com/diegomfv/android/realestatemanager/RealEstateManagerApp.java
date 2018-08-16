@@ -6,10 +6,9 @@ import android.util.Log;
 import com.diegomfv.android.realestatemanager.data.AppDatabase;
 import com.diegomfv.android.realestatemanager.data.AppExecutors;
 import com.diegomfv.android.realestatemanager.data.DataRepository;
-import com.diegomfv.android.realestatemanager.data.FakeDataGenerator;
 
 /**
- * Created by Diego Fajardo on 05/08/2018.
+ * Created by Diego Fajardo on 16/08/2018.
  */
 public class RealEstateManagerApp extends Application {
 
@@ -24,18 +23,6 @@ public class RealEstateManagerApp extends Application {
 
         mAppExecutors = AppExecutors.getInstance();
 
-        FakeDataGenerator fakeDataGenerator = new FakeDataGenerator();
-
-        for (int i = 0; i < 5; i++) {
-
-
-
-
-        }
-
-
-
-
     }
 
     public AppDatabase getDatabase() {
@@ -45,5 +32,4 @@ public class RealEstateManagerApp extends Application {
     public DataRepository getRepository() {
         return DataRepository.getInstance(getDatabase());
     }
-
 }

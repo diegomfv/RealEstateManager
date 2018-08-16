@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
         loadFragmentOrFragments();
 
 
-
     }
 
     /** Method that loads the fragments depending on the device

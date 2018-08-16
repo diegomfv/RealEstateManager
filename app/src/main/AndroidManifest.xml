@@ -5,12 +5,11 @@
     <application
         android:name=".RealEstateManagerApp"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/real_estate_logo"
         android:label="@string/app_name"
         android:roundIcon="@drawable/real_estate_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"/>
         <activity android:name=".ui.activities.DetailActivity" />
         <activity android:name=".ui.activities.AuthLoginActivity">
             <intent-filter>

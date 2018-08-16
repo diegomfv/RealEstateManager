@@ -25,7 +25,6 @@ public class DataRepository {
 
     private DataRepository(final AppDatabase database) {
         mDatabase = database;
-
         listOfListings = getAllListings();
 
     }
