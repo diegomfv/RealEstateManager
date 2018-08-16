@@ -156,8 +156,9 @@ public class FragmentListListings extends Fragment {
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
 
-                        /** This does not modify the item but supposedly triggers the listener
-                         * for the other fragment, which is listening
+                        /** This does not modify the item but triggers the listener
+                         * for the other fragment, which is listening (because we set
+                         * a MutableLiveData with the value of the real estate)
                          * */
                         if (adapter.getRealEstate(position) != null) {
                             listingsViewModel.selectItem(adapter.getRealEstate(position));
