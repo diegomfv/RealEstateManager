@@ -50,7 +50,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/area_of_building_id"
+                android:id="@+id/surface_area_of_building_id"
                 android:layout_width="0dp"
                 android:layout_height="32dp"
                 android:layout_marginEnd="8dp"

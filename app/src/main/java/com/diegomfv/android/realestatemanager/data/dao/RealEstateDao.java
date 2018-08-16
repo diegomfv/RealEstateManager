@@ -47,7 +47,7 @@ public interface RealEstateDao {
     // -------------------
     // READ
 
-    @Query("SELECT * FROM RealEstate ORDER BY type")
+    @Query("SELECT * FROM realestate ORDER BY type")
     LiveData<List<RealEstate>> getAllListingsOrderedByType();
 
 

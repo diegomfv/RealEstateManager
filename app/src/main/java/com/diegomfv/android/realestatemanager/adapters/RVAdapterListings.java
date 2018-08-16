@@ -67,7 +67,7 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called!");
 
-        holder.updateItem();
+        holder.updateItem(position);
 
     }
 
@@ -119,8 +119,10 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
             Log.d(TAG, "MyViewHolder: called!");
         }
 
-        private void updateItem () {
+        private void updateItem (int position) {
             Log.d(TAG, "updateItem: called!");
+
+            textViewBuilding.setText(realEstates.get(position).getType());
 
 
 
@@ -128,7 +130,21 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
         }
 
+        private String getType (int position) {
+            Log.d(TAG, "getType: called!");
+            return realEstates.get(position).getType()
 
+        }
+
+        private String getSurfaceArea (int position) {
+            Log.d(TAG, "getSurfaceArea: called!");
+            return String.valueOf(realEstates.get(position).getSurfaceArea());
+        }
+
+        private String getPriceOfBuilding (int position) {
+            Log.d(TAG, "getPriceOfBuilding: called!");
+            return String.valueOf(realEstates.get(position).g)
+        }
 
 
 

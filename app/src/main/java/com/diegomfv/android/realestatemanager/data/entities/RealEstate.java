@@ -11,7 +11,7 @@ import java.util.List;
  * Created by Diego Fajardo on 05/08/2018.
  */
 
-@Entity (tableName = "realstate")
+@Entity (tableName = "realestate")
 public class RealEstate {
 
     @PrimaryKey (autoGenerate = true)
@@ -21,6 +21,8 @@ public class RealEstate {
 
     @ColumnInfo(name = "surface_area")
     private float surfaceArea;
+
+    private int price;
 
     @ColumnInfo(name = "number_or_rooms")
     private int numberOfRooms;
@@ -52,12 +54,13 @@ public class RealEstate {
 
     /** Used for when reading from the table
      * */
-    public RealEstate(int id, String type, float surfaceArea, int numberOfRooms, String description,
+    public RealEstate(int id, String type, float surfaceArea, int price, int numberOfRooms, String description,
                       List<Image> listOfImages, String address, boolean status, String datePut,
                       String dateSale, String agent) {
         this.id = id;
         this.type = type;
         this.surfaceArea = surfaceArea;
+        this.price = price;
         this.numberOfRooms = numberOfRooms;
         this.description = description;
         this.listOfImages = listOfImages;
@@ -75,6 +78,7 @@ public class RealEstate {
     private RealEstate(final Builder builder) {
         this.type = builder.type;
         this.surfaceArea = builder.surfaceArea;
+        this.price = builder.price;
         this.numberOfRooms = builder.numberOfRooms;
         this.description = builder.description;
         this.listOfImages = builder.listOfImages;
@@ -110,6 +114,10 @@ public class RealEstate {
     public void setSurfaceArea(float surfaceArea) {
         this.surfaceArea = surfaceArea;
     }
+
+    public int getPrice () { return price; }
+
+    public void setPrice (int price) { this.price = price; }
 
     public int getNumberOfRooms() {
         return numberOfRooms;
@@ -187,6 +195,7 @@ public class RealEstate {
 
         private String type;
         private float surfaceArea;
+        private int price;
         private int numberOfRooms;
         private String description;
         private List<Image> listOfImages;
@@ -204,6 +213,11 @@ public class RealEstate {
 
         public Builder setSurfaceArea (float surfaceArea) {
             this.surfaceArea = surfaceArea;
+            return this;
+        }
+
+        public Builder setPrice (int price) {
+            this.price = price;
             return this;
         }
 
@@ -264,6 +278,7 @@ public class RealEstate {
                 "id=" + id +
                 ", type='" + type + '\'' +
                 ", surfaceArea=" + surfaceArea +
+                ", price=" + price +
                 ", numberOfRooms=" + numberOfRooms +
                 ", description='" + description + '\'' +
                 ", listOfImages=" + listOfImages +
