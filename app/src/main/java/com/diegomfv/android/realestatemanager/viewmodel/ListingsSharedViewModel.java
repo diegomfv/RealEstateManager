@@ -38,14 +38,19 @@ public class ListingsSharedViewModel extends AndroidViewModel {
 
     }
 
+    /** This method fills the MutableLiveData with the information from
+     * the item clicked in FragmentItemDescription. When this gets modified,
+     * it automatically triggers the observer via getItemSelected()*/
     public void selectItem (RealEstate realEstate) {
         Log.d(TAG, "selectItem: called!");
         itemSelected.setValue(realEstate);
 
     }
 
-    public LiveData<RealEstate> getSelected () {
-        Log.d(TAG, "getSelected: called!");
+    /** Returns the MutableLiveDataObject which will be used to display
+     * data in the FragmentItemDescription*/
+    public LiveData<RealEstate> getItemSelected() {
+        Log.d(TAG, "getItemSelected: called!");
         return itemSelected;
     }
 
@@ -57,6 +62,8 @@ public class ListingsSharedViewModel extends AndroidViewModel {
 
     ////////////////////////////////////
 
+    /** Factory to create the ViewModel with the repository available
+     * */
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
 
         @NonNull

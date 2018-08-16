@@ -20,7 +20,7 @@ public class RealEstate {
     private String type;
 
     @ColumnInfo(name = "surface_area")
-    private float surfaceArea;
+    private int surfaceArea;
 
     private int price;
 
@@ -54,7 +54,7 @@ public class RealEstate {
 
     /** Used for when reading from the table
      * */
-    public RealEstate(int id, String type, float surfaceArea, int price, int numberOfRooms, String description,
+    public RealEstate(int id, String type, int surfaceArea, int price, int numberOfRooms, String description,
                       List<Image> listOfImages, String address, boolean status, String datePut,
                       String dateSale, String agent) {
         this.id = id;
@@ -107,11 +107,11 @@ public class RealEstate {
         this.type = type;
     }
 
-    public float getSurfaceArea() {
+    public int getSurfaceArea() {
         return surfaceArea;
     }
 
-    public void setSurfaceArea(float surfaceArea) {
+    public void setSurfaceArea(int surfaceArea) {
         this.surfaceArea = surfaceArea;
     }
 
@@ -194,7 +194,7 @@ public class RealEstate {
     public static class Builder {
 
         private String type;
-        private float surfaceArea;
+        private int surfaceArea;
         private int price;
         private int numberOfRooms;
         private String description;
@@ -206,12 +206,12 @@ public class RealEstate {
         private String dateSale;
         private String agent;
 
-        public Builder setType (String string) {
+        public Builder setType (String type) {
             this.type = type;
             return this;
         }
 
-        public Builder setSurfaceArea (float surfaceArea) {
+        public Builder setSurfaceArea (int surfaceArea) {
             this.surfaceArea = surfaceArea;
             return this;
         }

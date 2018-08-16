@@ -18,10 +18,6 @@ public class FakeDataGenerator {
 
     private String[] fake_types = {"flat", "apartment", "house"};
 
-    private float[] fake_surface_area = {100f, 200f, 300f, 400f, 500f, 600f};
-
-    private int[] fake_number_rooms = {1,2,3,4,5,6,7,8};
-
     private String[] fake_description = {
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
                     "Integer et nulla pharetra ligula fringilla viverra. Maecenas erat massa, " +
@@ -61,11 +57,11 @@ public class FakeDataGenerator {
 
         RealEstate.Builder builder = new RealEstate.Builder();
         builder.setType(fake_types[randBetween(0,2)]);
-        builder.setSurfaceArea(fake_surface_area[randBetween(0,5)]);
+        builder.setSurfaceArea(randBetween(50,600));
         builder.setPrice(randBetween(100000, 10000000));
-        builder.setNumberOfRooms(fake_number_rooms[randBetween(0,7)]);
+        builder.setNumberOfRooms(randBetween(1,9));
         builder.setDescription(fake_description[randBetween(0,2)]);
-        builder.setAddress(fake_address[randBetween(0,4)]);
+        builder.setAddress(fake_address[randBetween(0,3)]);
         builder.setAgent(fake_agent[randBetween(0,2)]);
         builder.setDatePut(getRandomFakeDate());
 

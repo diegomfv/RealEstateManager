@@ -19,6 +19,7 @@ package com.diegomfv.android.realestatemanager.data.dao;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
@@ -50,10 +51,10 @@ public interface RealEstateDao {
     @Query("SELECT * FROM realestate ORDER BY type")
     LiveData<List<RealEstate>> getAllListingsOrderedByType();
 
-
     // -------------------
     // INSERT
-
+    @Insert
+    long insertRealEstate (RealEstate realEstate);
 
     // -------------------
     // UPDATE

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.amitshekhar.DebugDB;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 
@@ -75,6 +76,9 @@ public class AuthLoginActivity extends AppCompatActivity {
             case R.id.button_facebook_id: {
 
                 ToastHelper.toastButtonClicked(context, view);
+
+                // TODO: 16/08/2018 Delete!
+                DebugDB.getAddressLog();
 
             } break;
 

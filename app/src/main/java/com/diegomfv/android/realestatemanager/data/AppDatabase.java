@@ -79,10 +79,12 @@ public abstract class AppDatabase extends RoomDatabase {
         return sInstance;
     }
 
+
+    // TODO: 16/08/2018 Remove .allowMainThreadQueries()
     private static AppDatabase buildDatabase(final Context appContext,
                                              final AppExecutors executors) {
         return Room.databaseBuilder(appContext, AppDatabase.class, DATABASE_NAME)
-                //.allowMainThreadQueries()
+                .allowMainThreadQueries()
                 .addCallback(new Callback() {
                     @Override
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {

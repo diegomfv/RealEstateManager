@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.utils.Utils;
 
 import java.util.List;
 
@@ -131,17 +132,17 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
         private String getType (int position) {
             Log.d(TAG, "getType: called!");
-            return realEstates.get(position).getType();
+            return Utils.capitalize(realEstates.get(position).getType());
         }
 
         private String getSurfaceArea (int position) {
             Log.d(TAG, "getSurfaceArea: called!");
-            return String.valueOf(realEstates.get(position).getSurfaceArea());
+            return String.valueOf(realEstates.get(position).getSurfaceArea()) + " sq2";
         }
 
         private String getPriceOfBuilding (int position) {
             Log.d(TAG, "getPriceOfBuilding: called!");
-            return String.valueOf(realEstates.get(position).getPrice());
+            return "$ " + String.valueOf(realEstates.get(position).getPrice());
         }
 
     }

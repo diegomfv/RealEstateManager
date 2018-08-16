@@ -89,4 +89,11 @@ public class Utils {
         });
 
     }
+
+    /** Method that
+     * capitalizes a string
+     * */
+    public static String capitalize (String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
 }
