@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_add_button"
+        android:icon="@drawable/ic_add_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/main_add"/>
+
+    <item
+        android:id="@+id/menu_change_currency_button"
+        android:icon="@drawable/ic_change_currency_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/main_change_currency"/>
+
+    <item
+        android:id="@+id/menu_edit_listing_button"
+        android:icon="@drawable/ic_edit_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/main_edit"/>
+
+    <item
+        android:id="@+id/menu_loan_simulator_button"
+        android:icon="@drawable/ic_loan_calculator_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/main_loan_simulator"/>
+
+    <item
+        android:id="@+id/menu_search_button"
+        android:icon="@drawable/ic_search_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/main_search"/>
+
+</menu>
