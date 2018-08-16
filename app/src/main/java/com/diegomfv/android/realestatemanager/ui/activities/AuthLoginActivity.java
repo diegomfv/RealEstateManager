@@ -11,6 +11,7 @@ import android.widget.Button;
 import com.amitshekhar.DebugDB;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
+import com.diegomfv.android.realestatemanager.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,10 +49,7 @@ public class AuthLoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_auth_choose_login);
         unbinder = ButterKnife.bind(this);
 
-
-
     }
-
 
     @OnClick ({R.id.button_password_id, R.id.button_google_id, R.id.button_facebook_id})
     public void buttonClicked (View view) {
@@ -63,7 +61,7 @@ public class AuthLoginActivity extends AppCompatActivity {
 
                 ToastHelper.toastButtonClicked(context, view);
 
-                launchActivity(MainActivity.class);
+                Utils.launchActivity(this, MainActivity.class);
 
             } break;
 
@@ -83,14 +81,6 @@ public class AuthLoginActivity extends AppCompatActivity {
             } break;
 
         }
-    }
-
-    private void launchActivity(Class <? extends AppCompatActivity> activity) {
-        Log.d(TAG, "launchActivity: called!");
-
-        Intent intent = new Intent(this, activity);
-        startActivity (intent);
-
     }
 
 

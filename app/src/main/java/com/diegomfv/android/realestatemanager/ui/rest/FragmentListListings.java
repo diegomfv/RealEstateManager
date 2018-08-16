@@ -2,6 +2,7 @@ package com.diegomfv.android.realestatemanager.ui.rest;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,7 +19,9 @@ import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterListings;
+import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.activities.DetailActivity;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
@@ -45,6 +48,7 @@ public class FragmentListListings extends Fragment {
     @BindView(R.id.recyclerView_listings_id)
     RecyclerView recyclerView;
 
+    //RecyclerView Adapter
     private RVAdapterListings adapter;
 
     //Glide
@@ -68,10 +72,10 @@ public class FragmentListListings extends Fragment {
         Log.d(TAG, "onCreateView: called!");
 
         View view = inflater.inflate(R.layout.fragment_list_listings, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        this.unbinder = ButterKnife.bind(this, view);
 
         if (getActivity() != null) {
-            app = (RealEstateManagerApp) getActivity().getApplication();
+            this.app = (RealEstateManagerApp) getActivity().getApplication();
         }
 
         /* Glide configuration*/
@@ -79,9 +83,11 @@ public class FragmentListListings extends Fragment {
             this.glide = Glide.with(getActivity());
         }
 
-        configureRecyclerView();
-        listingsViewModel = createModel();
-        subscribeToModel(listingsViewModel);
+        this.configureRecyclerView();
+
+        this.listingsViewModel = this.createModel();
+
+        this.subscribeToModel(listingsViewModel);
 
         return view;
     }
@@ -90,7 +96,7 @@ public class FragmentListListings extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         Log.d(TAG, "onDestroyView: called!");
-        unbinder.unbind();
+        this.unbinder.unbind();
     }
 
     /////////////////////////////////////////////////
@@ -100,7 +106,7 @@ public class FragmentListListings extends Fragment {
 
         if (getActivity() != null) {
             ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(app);
-            listingsViewModel = ViewModelProviders
+            this.listingsViewModel = ViewModelProviders
                     .of(getActivity(), factory)
                     .get(ListingsSharedViewModel.class);
 
@@ -115,7 +121,7 @@ public class FragmentListListings extends Fragment {
 
         if (listingsViewModel != null) {
 
-            listingsViewModel.getObservableListOfListings().observe(this, new Observer<List<RealEstate>>() {
+            this.listingsViewModel.getObservableListOfListings().observe(this, new Observer<List<RealEstate>>() {
                 @Override
                 public void onChanged(@Nullable List<RealEstate> realEstates) {
                     Log.d(TAG, "onChanged: called!");
@@ -157,16 +163,35 @@ public class FragmentListListings extends Fragment {
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
 
-                        /** This does not modify the item but triggers the listener
-                         * for the other fragment, which is listening (because we set
-                         * a MutableLiveData with the value of the real estate)
-                         * */
-                        if (adapter.getRealEstate(position) != null) {
-                            listingsViewModel.selectItem(adapter.getRealEstate(position));
+                        /* This code runs when we are using a tablet
+                        * */
+                        if (getActivity()!= null && getActivity().findViewById(R.id.fragment2_container_id) != null) {
+
+                            /** This does not modify the item but triggers the listener
+                             * for the other fragment, which is listening (because we set
+                             * a MutableLiveData with the value of the real estate)
+                             * */
+                            if (adapter.getRealEstate(position) != null) {
+                                listingsViewModel.selectItem(adapter.getRealEstate(position));
+                            }
                         }
 
+                        /* This code runs when we are using a handset
+                        * */
+                        if (getActivity() != null) {
+                            launchDetailActivity(adapter.getRealEstate(position));
+                        }
                     }
                 });
+    }
+
+    /** Launches detail activity
+     * with a Parcelable (item clicked) carried by the intent
+     * */
+    private void launchDetailActivity (RealEstate realEstate) {
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
+        intent.putExtra(Constants.SEND_PARCELABLE, realEstate);
+        startActivity(intent);
     }
 
 }

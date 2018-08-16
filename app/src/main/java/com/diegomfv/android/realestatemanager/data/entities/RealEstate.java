@@ -4,7 +4,10 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +15,7 @@ import java.util.List;
  */
 
 @Entity (tableName = "realestate")
-public class RealEstate {
+public class RealEstate implements Parcelable {
 
     @PrimaryKey (autoGenerate = true)
     private int id;
@@ -290,4 +293,56 @@ public class RealEstate {
                 ", agent='" + agent + '\'' +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.type);
+        dest.writeInt(this.surfaceArea);
+        dest.writeInt(this.price);
+        dest.writeInt(this.numberOfRooms);
+        dest.writeString(this.description);
+        dest.writeList(this.listOfImages);
+        dest.writeString(this.address);
+        dest.writeList(this.listOfNearbyPointsOfInterest);
+        dest.writeByte(this.status ? (byte) 1 : (byte) 0);
+        dest.writeString(this.datePut);
+        dest.writeString(this.dateSale);
+        dest.writeString(this.agent);
+    }
+
+    protected RealEstate(Parcel in) {
+        this.id = in.readInt();
+        this.type = in.readString();
+        this.surfaceArea = in.readInt();
+        this.price = in.readInt();
+        this.numberOfRooms = in.readInt();
+        this.description = in.readString();
+        this.listOfImages = new ArrayList<Image>();
+        in.readList(this.listOfImages, Image.class.getClassLoader());
+        this.address = in.readString();
+        this.listOfNearbyPointsOfInterest = new ArrayList<Place>();
+        in.readList(this.listOfNearbyPointsOfInterest, Place.class.getClassLoader());
+        this.status = in.readByte() != 0;
+        this.datePut = in.readString();
+        this.dateSale = in.readString();
+        this.agent = in.readString();
+    }
+
+    public static final Creator<RealEstate> CREATOR = new Creator<RealEstate>() {
+        @Override
+        public RealEstate createFromParcel(Parcel source) {
+            return new RealEstate(source);
+        }
+
+        @Override
+        public RealEstate[] newArray(int size) {
+            return new RealEstate[size];
+        }
+    };
 }

@@ -14,8 +14,6 @@ import com.diegomfv.android.realestatemanager.ui.rest.FragmentListListings;
  * 2. Add String.valueOf() to convert int to String
  * */
 
-// TODO: 16/08/2018 Here we have to show one or to fragments, depending on
-// the device
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -32,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /** Method that loads the fragments depending on the device
+    /** Method that loads one or two fragments depending on the device
      * */
     private void loadFragmentOrFragments() {
         Log.d(TAG, "loadFragmentOrFragments: called!");

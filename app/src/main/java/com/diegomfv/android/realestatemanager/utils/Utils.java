@@ -1,5 +1,8 @@
 package com.diegomfv.android.realestatemanager.utils;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.diegomfv.android.realestatemanager.data.AppExecutors;
@@ -29,6 +32,8 @@ public class Utils {
 
     private static final String TAG = Utils.class.getSimpleName();
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     /** Price Conversion (Dollars to Euros):
      */
     public static float convertDollarToEuro(float dollars){
@@ -48,6 +53,8 @@ public class Utils {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         return dateFormat.format(new Date());
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Internet Connectivity
      */
@@ -90,10 +97,25 @@ public class Utils {
 
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     /** Method that
      * capitalizes a string
      * */
     public static String capitalize (String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** Method that launches an activity
+     * */
+    public static void launchActivity(Context context, Class <? extends AppCompatActivity> activity) {
+        Log.d(TAG, "launchActivity: called!");
+
+        Intent intent = new Intent(context, activity);
+        context.startActivity(intent);
+
+    }
+
 }
