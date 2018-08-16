@@ -16,8 +16,8 @@ import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 
 import java.util.List;
 
-import butterknife.BindDimen;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
@@ -114,26 +114,24 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
         @BindView(R.id.price_of_building_id)
         TextView textViewPrice;
 
+        //////////////////////////
+
         public MyViewHolder(View itemView) {
             super(itemView);
             Log.d(TAG, "MyViewHolder: called!");
+            ButterKnife.bind(this, itemView);
         }
 
         private void updateItem (int position) {
             Log.d(TAG, "updateItem: called!");
-
-            textViewBuilding.setText(realEstates.get(position).getType());
-
-
-
-
-
+            textViewBuilding.setText(getType(position));
+            textViewSurfaceArea.setText(getSurfaceArea(position));
+            textViewPrice.setText(getPriceOfBuilding(position));
         }
 
         private String getType (int position) {
             Log.d(TAG, "getType: called!");
-            return realEstates.get(position).getType()
-
+            return realEstates.get(position).getType();
         }
 
         private String getSurfaceArea (int position) {
@@ -143,10 +141,8 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
         private String getPriceOfBuilding (int position) {
             Log.d(TAG, "getPriceOfBuilding: called!");
-            return String.valueOf(realEstates.get(position).g)
+            return String.valueOf(realEstates.get(position).getPrice());
         }
-
-
 
     }
 }
