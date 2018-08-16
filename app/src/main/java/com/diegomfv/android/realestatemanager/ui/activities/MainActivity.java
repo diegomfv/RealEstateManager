@@ -2,9 +2,12 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.ui.rest.FragmentItemDescription;
+import com.diegomfv.android.realestatemanager.ui.rest.FragmentListListings;
 
 /** How crashes were solved:
  * 1. Modified the id of the view from activity_second_activity_text_view_main
@@ -12,20 +15,43 @@ import com.diegomfv.android.realestatemanager.R;
  * 2. Add String.valueOf() to convert int to String
  * */
 
-// TODO: 16/08/2018 Here we havce to show one or to fragments, depending on
+// TODO: 16/08/2018 Here we have to show one or to fragments, depending on
 // the device
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private TextView textViewMain;
-    private TextView textViewQuantity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: called!");
         setContentView(R.layout.activity_main);
 
+        loadFragment();
+
+
+
+    }
+
+    private void loadFragment() {
+        Log.d(TAG, "loadFragment: called!");
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment1_container_id, FragmentListListings.newInstance())
+                .commit();
+
+        /* Only load the fragment if we are in a tablet
+        * */
+        if (findViewById(R.id.fragment2_container_id) != null) {
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment2_container_id, FragmentItemDescription.newInstance())
+                    .commit();
+
+        }
 
     }
 }

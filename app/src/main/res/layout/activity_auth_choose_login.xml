@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.AuthLoginActivity"
     tools:layout_editor_absoluteY="81dp"
-    android:background="#eeffff">
+    android:background="@color/colorPrimaryLighter">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/logo_image_id"

@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    tools:context="com.openclassrooms.realestatemanager.ui.activities.MainActivity">
+    android:background="@color/colorPrimaryLighter">
 
     <FrameLayout
-        android:id="@+id/fragment1_id"
+        android:id="@+id/fragment1_container_id"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
-        android:id="@+id/fragment2_id"
+        android:id="@+id/fragment2_container_id"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
