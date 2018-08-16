@@ -178,7 +178,7 @@ public class FragmentListListings extends Fragment {
 
                         /* This code runs when we are using a handset
                         * */
-                        if (getActivity() != null) {
+                        if (getActivity() != null && getActivity().findViewById(R.id.fragment2_container_id) == null) {
                             launchDetailActivity(adapter.getRealEstate(position));
                         }
                     }

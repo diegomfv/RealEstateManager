@@ -29,7 +29,7 @@ public class RealEstateManagerApp extends Application {
 
         FakeDataGenerator fakeDataGenerator = new FakeDataGenerator();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
 
             getDatabase()
                     .realStateDao()

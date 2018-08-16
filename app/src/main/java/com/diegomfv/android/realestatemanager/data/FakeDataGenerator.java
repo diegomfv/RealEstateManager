@@ -19,31 +19,21 @@ public class FakeDataGenerator {
     private String[] fake_types = {"flat", "apartment", "house"};
 
     private String[] fake_description = {
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-                    "Integer et nulla pharetra ligula fringilla viverra. Maecenas erat massa, " +
-                    "vulputate vel iaculis quis, molestie sed orci. Integer nibh nulla, efficitur vitae ipsum in, " +
-                    "cursus tempus risus. Mauris pellentesque congue facilisis. Sed eget elit ut neque facilisis lobortis. " +
-                    "Morbi condimentum ligula ut neque posuere, eu vestibulum ligula ultricies. Suspendisse placerat ex hendrerit " +
-                    "laoreet pharetra. Suspendisse potenti. Cras non dui nec ligula pretium sodales. " +
-                    "Nulla ac leo et sem sollicitudin consequat eu non mi.",
+            "This spacious -96 sqm/1033 sqft - modern and minimal apartment is the perfect choice for " +
+                    "friends or family with up to four persons who want both, to be in the heart of " +
+                    "the city and at the same time have privacy.",
 
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ex ex, " +
-                    "hendrerit sit amet enim eu, mollis varius turpis. " +
-                    "Class aptent taciti sociosqu ad litora torquent per conubia nostra, " +
-                    "per inceptos himenaeos. Sed rhoncus justo ac ante pharetra, " +
-                    "et scelerisque nulla mattis. Etiam mollis maximus ex sit amet faucibus. " +
-                    "Integer tempor arcu purus. Suspendisse dictum auctor accumsan. " +
-                    "Fusce hendrerit, magna",
+            "The flat is just over 100 square metres (about 1,100 sq. ft.) and is comprised of a spacious lounge, " +
+                    "a separate dining room, with open kitchen, and a central hall off which are three bedrooms and two bathrooms. " +
+                    "There is also a private roof terrace which is also just over 100 square metres.\t",
 
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi fermentum faucibus tempus. " +
-                    "Aliquam consectetur facilisis augue, vitae porttitor mauris elementum ac. " +
-                    "Vivamus in varius dolor. Suspendisse id egestas dui. Vivamus mattis suscipit velit, " +
-                    "ut accumsan augue blandit id. Maecenas semper elit ante, id porta lacus commodo ac. " +
-                    "Praesent lorem nisi, accumsan nec enim et, pretium tincidunt arcu. Vivamus hendrerit " +
-                    "tortor libero, a vestibulum nisl faucibus vitae. Pellentesque volutpat suscipit ligula, " +
-                    "a gravida lectus rhoncus ac. Vivamus placerat, quam vitae ultrices vulputate, odio lorem " +
-                    "lacinia sem, imperdiet hendrerit est dolor in sem."
-
+            "The lounge is large, and features French doors looking out at the campanile (bell-tower) " +
+                    "of the San Francisco church and the surrounding rooftops. These bells, by the way, " +
+                    "only ring once a day, at noon, except on Sundays when they ring two or three times, " +
+                    "but not early. The lounge has a ceiling fan, as well as a heat pump (for heat or air conditioning) " +
+                    "and is illuminated by beautiful modern gallery-style lighting. It is furnished with 3 sofas, " +
+                    "a coffee table and bookcases. A sound system with CD, cassette and radio is provided, " +
+                    "and for 2006 we will provide a television and DVD player."
     };
 
     private String[] fake_address = {"B1A AAB", "C2A XFB", "KA1 254", "LF5 2J1"};

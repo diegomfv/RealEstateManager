@@ -137,7 +137,7 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
         private String getSurfaceArea (int position) {
             Log.d(TAG, "getSurfaceArea: called!");
-            return String.valueOf(realEstates.get(position).getSurfaceArea()) + " sq2";
+            return String.valueOf(realEstates.get(position).getSurfaceArea()) + " sqm";
         }
 
         private String getPriceOfBuilding (int position) {

@@ -7,4 +7,5 @@ public interface Constants {
 
     String SEND_PARCELABLE = "send_parcelable";
 
+    String PARCELABLE_OBJECT = "parcelable_object";
 }
