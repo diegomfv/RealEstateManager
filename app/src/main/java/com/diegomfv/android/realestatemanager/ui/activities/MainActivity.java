@@ -3,7 +3,6 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.ui.rest.FragmentItemDescription;
@@ -28,14 +27,16 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: called!");
         setContentView(R.layout.activity_main);
 
-        loadFragment();
+        loadFragmentOrFragments();
 
 
 
     }
 
-    private void loadFragment() {
-        Log.d(TAG, "loadFragment: called!");
+    /** Method that loads the fragments depending on the device
+     * */
+    private void loadFragmentOrFragments() {
+        Log.d(TAG, "loadFragmentOrFragments: called!");
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -52,6 +53,5 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
 
         }
-
     }
 }

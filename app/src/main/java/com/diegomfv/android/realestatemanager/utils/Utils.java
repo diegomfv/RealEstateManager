@@ -25,9 +25,9 @@ import io.reactivex.schedulers.Schedulers;
  * when the project was started
  * */
 
-public class UtilsBeginning {
+public class Utils {
 
-    private static final String TAG = UtilsBeginning.class.getSimpleName();
+    private static final String TAG = Utils.class.getSimpleName();
 
     /** Price Conversion (Dollars to Euros):
      */
@@ -80,7 +80,7 @@ public class UtilsBeginning {
             public void run() {
                 Log.d(TAG, "run: checking internet connection...");
 
-                Observable.just(UtilsBeginning.isInternetAvailable())
+                Observable.just(Utils.isInternetAvailable())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(disposableObserver);

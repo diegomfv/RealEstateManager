@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.diegomfv.android.realestatemanager.rx.ObservableObject;
-import com.diegomfv.android.realestatemanager.utils.UtilsBeginning;
+import com.diegomfv.android.realestatemanager.utils.Utils;
 
 import io.reactivex.observers.DisposableObserver;
 
@@ -24,7 +24,7 @@ public class InternetConnectionReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         Log.d(TAG, "onReceive: called!");
 
-        UtilsBeginning.checkInternetInBackgroundThread(new DisposableObserver<Boolean>() {
+        Utils.checkInternetInBackgroundThread(new DisposableObserver<Boolean>() {
             @Override
             public void onNext(Boolean aBoolean) {
                 Log.d(TAG, "onNext: called!");

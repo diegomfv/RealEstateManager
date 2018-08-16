@@ -14,6 +14,21 @@ public class ToastHelper {
 
     private static final String TAG = ToastHelper.class.getSimpleName();
 
+    ////////////////////////////////////
+
+    public static void toastShort (Context context, String string) {
+        Log.d(TAG, "toastShort: called!");
+        Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
+
+    }
+
+    public static void toastLong (Context context, String string){
+        Log.d(TAG, "toastLong: called!");
+        Toast.makeText(context, string, Toast.LENGTH_LONG).show();
+    }
+
+    ////////////////////////////////////
+
     public static void toastButtonClicked (Context context, View view) {
         Log.d(TAG, "toastButtonClicked: " + ((Button)view).getText().toString() + " clicked!");
         Toast.makeText(context, "Button - " + ((Button)view).getText().toString() + " - clicked", Toast.LENGTH_SHORT).show();
