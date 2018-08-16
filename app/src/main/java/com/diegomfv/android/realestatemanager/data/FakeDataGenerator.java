@@ -62,6 +62,7 @@ public class FakeDataGenerator {
         RealEstate.Builder builder = new RealEstate.Builder();
         builder.setType(fake_types[randBetween(0,2)]);
         builder.setSurfaceArea(fake_surface_area[randBetween(0,5)]);
+        builder.setPrice(randBetween(100000, 10000000));
         builder.setNumberOfRooms(fake_number_rooms[randBetween(0,7)]);
         builder.setDescription(fake_description[randBetween(0,2)]);
         builder.setAddress(fake_address[randBetween(0,4)]);
