@@ -29,7 +29,7 @@ public class DetailActivity extends AppCompatActivity {
             bundle.putParcelable(Constants.GET_PARCELABLE, intent.getExtras().getParcelable(Constants.SEND_PARCELABLE));
         }
 
-        ///////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_detail);
 
         loadFragment(bundle);

@@ -69,14 +69,12 @@ public class CreateNewListingActivity extends AppCompatActivity {
 
     private Intent intent;
 
-    private Bundle bundle;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
 
-        //////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_create_new_listing);
         setTitle("Create a new Listing");
         unbinder = ButterKnife.bind(this);

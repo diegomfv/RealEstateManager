@@ -63,6 +63,9 @@ dependencies {
     //Database (access to see it)
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
 
+    //Android-storage library
+    implementation 'com.snatik:storage:2.1.0'
+
     //Firebase
     implementation 'com.google.firebase:firebase-core:16.0.1'
 
@@ -71,6 +74,10 @@ dependencies {
 
     //Firebase Storage
     implementation 'com.google.firebase:firebase-storage:16.0.1'
+
+    //RxJava, RxAndroid
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
 
 }
 

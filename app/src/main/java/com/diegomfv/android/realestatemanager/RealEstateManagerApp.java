@@ -10,6 +10,7 @@ import com.diegomfv.android.realestatemanager.data.FakeDataGenerator;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.utils.FirebasePushIdGenerator;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
+import com.snatik.storage.Storage;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
@@ -19,6 +20,8 @@ public class RealEstateManagerApp extends Application {
     private static final String TAG = RealEstateManagerApp.class.getSimpleName();
 
     private AppExecutors mAppExecutors;
+
+    private Storage internalStorage;
 
     @Override
     public void onCreate() {
@@ -48,5 +51,13 @@ public class RealEstateManagerApp extends Application {
     public DataRepository getRepository() {
         Log.d(TAG, "getRepository: called!");
         return DataRepository.getInstance(getDatabase());
+    }
+
+    public Storage getInternalStorage() {
+        Log.d(TAG, "getInternalStorage: called!");
+        if (internalStorage == null) {
+            return new Storage(getApplicationContext());
+        }
+        else return internalStorage;
     }
 }

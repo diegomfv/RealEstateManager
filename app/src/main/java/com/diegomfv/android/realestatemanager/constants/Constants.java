@@ -9,4 +9,5 @@ public interface Constants {
     String GET_PARCELABLE = "parcelable_object";
 
     String DESCRIPTIONS_SERIALIZABLE = "descriptions_bundle";
+    String TEMPORARY_DIRECTORY = "temporary_directory";
 }
