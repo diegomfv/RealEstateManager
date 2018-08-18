@@ -16,21 +16,23 @@ import java.util.List;
  */
 public class ImageTypeConverter {
 
+    private static final String TAG = ImageTypeConverter.class.getSimpleName();
+
     private static Gson gson = new Gson();
 
     @TypeConverter
-    public static List<ImageRealEstate> stringToImageList(String data) {
+    public static List<String> stringToImageIdsList(String data) {
         if (data == null) {
             return Collections.emptyList();
         }
 
-        Type listType = new TypeToken<List<ImageRealEstate>>() {}.getType();
+        Type listType = new TypeToken<List<String>>() {}.getType();
 
         return gson.fromJson(data, listType);
     }
 
     @TypeConverter
-    public static String ImageListToString(List<ImageRealEstate> someObjects) {
+    public static String ImageIdsListToString(List<String> someObjects) {
         return gson.toJson(someObjects);
     }
 

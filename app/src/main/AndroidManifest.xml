@@ -28,6 +28,7 @@
         <activity android:name=".ui.activities.SecondActivity" />
         <activity android:name=".ui.activities.MainActivity" />
         <activity android:name=".ui.activities.CreateNewListingActivity" />
+        <activity android:name=".ui.activities.AddPhotoActivity" />
     </application>
 
 </manifest>

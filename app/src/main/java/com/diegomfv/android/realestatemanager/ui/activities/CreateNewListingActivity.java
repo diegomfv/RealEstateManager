@@ -1,12 +1,7 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -16,13 +11,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.utils.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by Diego Fajardo on 18/08/2018.
@@ -36,22 +35,22 @@ public class CreateNewListingActivity extends AppCompatActivity {
     /////////////////////////////////
 
     @BindView(R.id.text_input_ac_text_view_type_of_bulding_id)
-    TextView tvTypeOfBuilding;
+    TextInputAutoCompleteTextView tvTypeOfBuilding;
 
     @BindView(R.id.text_input_ac_text_view_price_id)
-    TextView tvPrice;
+    TextInputAutoCompleteTextView tvPrice;
 
     @BindView(R.id.text_input_ac_text_view_surface_area_id)
-    TextView tvSurfaceArea;
+    TextInputAutoCompleteTextView tvSurfaceArea;
 
     @BindView(R.id.text_input_ac_text_view_number_of_rooms_id)
-    TextView tvNumberOfRooms;
+    TextInputAutoCompleteTextView tvNumberOfRooms;
 
     @BindView(R.id.text_input_ac_text_view_description_id)
-    TextView tvDescription;
+    TextInputAutoCompleteTextView tvDescription;
 
-    @BindView(R.id.text_input_layout_address_id)
-    TextView tvAddress;
+    @BindView(R.id.text_input_ac_text_view_address_id)
+    TextInputAutoCompleteTextView tvAddress;
 
     @BindView(R.id.recyclerView_media_id)
     RecyclerView recyclerView;
@@ -64,6 +63,14 @@ public class CreateNewListingActivity extends AppCompatActivity {
 
     /////////////////////////////////
 
+    private Unbinder unbinder;
+
+    private HashMap<String,String> mapOfDescriptions;
+
+    private Intent intent;
+
+    private Bundle bundle;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +79,19 @@ public class CreateNewListingActivity extends AppCompatActivity {
         //////////////////////////////////////////////////////////
         setContentView(R.layout.activity_create_new_listing);
         setTitle("Create a new Listing");
+        unbinder = ButterKnife.bind(this);
 
+        mapOfDescriptions = new HashMap<>();
 
+        getDescriptionsMap();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: called!");
+        unbinder.unbind();
     }
 
     @OnClick ({R.id.button_add_photo_id, R.id.button_insert_listing_id})
@@ -84,7 +102,7 @@ public class CreateNewListingActivity extends AppCompatActivity {
 
             case R.id.button_add_photo_id: {
 
-                ToastHelper.toastShort(this, "Adding photo");
+                launchActivityWithIntentFilledWithMap();
 
 
             } break;
@@ -128,4 +146,36 @@ public class CreateNewListingActivity extends AppCompatActivity {
 
 
     }
+
+
+    /** Android - How to pass HashMap<String,String> between activities?
+     * Use putExtra(String key, Serializable obj) to insert the HashMap and
+     * on the other Activity use getIntent().getSerializableExtra(String key).
+     * You will need to Cast the return value as a HashMap though.*/
+
+    private void getDescriptionsMap() {
+        Log.d(TAG, "getDescriptionsMap: called!");
+
+        intent = getIntent();
+
+        if (intent != null && intent.getSerializableExtra(Constants.DESCRIPTIONS_SERIALIZABLE) != null) {
+            mapOfDescriptions = (HashMap<String, String>) intent.getSerializableExtra(Constants.DESCRIPTIONS_SERIALIZABLE);
+
+            ToastHelper.toastShort(this, mapOfDescriptions.toString());
+
+        }
+
+
+    }
+
+    private void launchActivityWithIntentFilledWithMap () {
+        Log.d(TAG, "launchActivityWithIntentFilledWithMap: called!");
+
+        Intent intent = new Intent(this, AddPhotoActivity.class);
+        intent.putExtra(Constants.DESCRIPTIONS_SERIALIZABLE, mapOfDescriptions);
+        startActivity (intent);
+
+    }
+
+
 }

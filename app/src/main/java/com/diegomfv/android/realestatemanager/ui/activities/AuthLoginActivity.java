@@ -24,11 +24,9 @@ public class AuthLoginActivity extends AppCompatActivity {
 
     //////////////////////////////////////////////////////
 
-    private Context context;
-
     //////////////////////////////////////////////////////
 
-    @BindView(R.id.button_password_id)
+    @BindView(R.id.button_sign_in_password_id)
     Button buttonPassword;
 
     @BindView(R.id.button_google_id)
@@ -43,23 +41,27 @@ public class AuthLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = AuthLoginActivity.this;
-
         //////////////////////////////////////////////////////
         setContentView(R.layout.activity_auth_choose_login);
         unbinder = ButterKnife.bind(this);
 
     }
 
-    @OnClick ({R.id.button_password_id, R.id.button_google_id, R.id.button_facebook_id})
+    @OnClick ({R.id.button_sign_up_password_id, R.id.button_sign_in_password_id, R.id.button_google_id, R.id.button_facebook_id})
     public void buttonClicked (View view) {
         Log.d(TAG, "buttonClicked: " + ((Button)view).getText().toString() + " clicked!");
 
         switch (view.getId()) {
 
-            case R.id.button_password_id: {
+            case R.id.button_sign_up_password_id: {
 
-                ToastHelper.toastButtonClicked(context, view);
+                ToastHelper.toastButtonClicked(this, view);
+
+            } break;
+
+            case R.id.button_sign_in_password_id: {
+
+                ToastHelper.toastButtonClicked(this, view);
 
                 Utils.launchActivity(this, MainActivity.class);
 
@@ -67,14 +69,14 @@ public class AuthLoginActivity extends AppCompatActivity {
 
             case R.id.button_google_id: {
 
-                ToastHelper.toastButtonClicked(context, view);
+                ToastHelper.toastButtonClicked(this, view);
                 Utils.launchActivity(this, CreateNewListingActivity.class);
 
             } break;
 
             case R.id.button_facebook_id: {
 
-                ToastHelper.toastButtonClicked(context, view);
+                ToastHelper.toastButtonClicked(this, view);
 
                 // TODO: 16/08/2018 Delete!
                 DebugDB.getAddressLog();
@@ -84,5 +86,11 @@ public class AuthLoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: called!");
 
+        unbinder.unbind();
+    }
 }

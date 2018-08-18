@@ -20,18 +20,18 @@ public class PlaceTypeConverter {
     private static Gson gson = new Gson();
 
     @TypeConverter
-    public static List<PlaceRealEstate> stringToPlaceList(String data) {
+    public static List<String> stringToPlaceIdsList(String data) {
         if (data == null) {
             return Collections.emptyList();
         }
 
-        Type listType = new TypeToken<List<PlaceRealEstate>>() {}.getType();
+        Type listType = new TypeToken<List<String>>() {}.getType();
 
         return gson.fromJson(data, listType);
     }
 
     @TypeConverter
-    public static String placeListToString(List<PlaceRealEstate> someObjects) {
+    public static String placeIdsListToString(List<String> someObjects) {
         return gson.toJson(someObjects);
     }
 

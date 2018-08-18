@@ -3,6 +3,7 @@ package com.diegomfv.android.realestatemanager.data.entities;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 /**
  * Created by Diego Fajardo on 05/08/2018.
@@ -12,6 +13,7 @@ import android.arch.persistence.room.PrimaryKey;
 public class PlaceRealEstate {
 
     @PrimaryKey
+    @NonNull
     private String id;
 
     @ColumnInfo (name = "place_id")

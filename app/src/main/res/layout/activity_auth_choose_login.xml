@@ -15,26 +15,26 @@
         android:src="@drawable/real_estate_logo"
         app:civ_border_color="@color/colorPrimaryDark"
         app:civ_border_width="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_sign_up"
+        app:layout_constraintBottom_toTopOf="@+id/button_sign_up_password_id"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button_sign_up"
+        android:id="@+id/button_sign_up_password_id"
         style="@style/buttonGeneralStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/password_sign_up"
-        app:layout_constraintBottom_toTopOf="@+id/button_password_id"
+        app:layout_constraintBottom_toTopOf="@+id/button_sign_in_password_id"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo_image_id" />
 
     <Button
-        android:id="@+id/button_password_id"
+        android:id="@+id/button_sign_in_password_id"
         style="@style/buttonGeneralStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_sign_up" />
+        app:layout_constraintTop_toBottomOf="@+id/button_sign_up_password_id" />
 
     <Button
         android:id="@+id/button_google_id"
@@ -55,7 +55,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_password_id" />
+        app:layout_constraintTop_toBottomOf="@+id/button_sign_in_password_id" />
 
     <Button
         android:id="@+id/button_facebook_id"

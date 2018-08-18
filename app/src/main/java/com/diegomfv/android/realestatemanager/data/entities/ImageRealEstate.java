@@ -7,11 +7,13 @@ package com.diegomfv.android.realestatemanager.data.entities;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 @Entity(tableName = "image")
 public class ImageRealEstate {
 
     @PrimaryKey
+    @NonNull
     private String id;
 
     @ColumnInfo(name = "firebase_storage_directory")

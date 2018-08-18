@@ -6,6 +6,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class RealEstate implements Parcelable {
 
     @PrimaryKey
+    @NonNull
     private String id;
 
     private String type;
@@ -155,11 +157,11 @@ public class RealEstate implements Parcelable {
         this.address = address;
     }
 
-    public List<String> getListOfNearbyPointsOfInterest() {
+    public List<String> getListOfNearbyPointsOfInterestIds() {
         return listOfNearbyPointsOfInterestIds;
     }
 
-    public void setListOfNearbyPointsOfInterest(List<String> listOfNearbyPointsOfInterest) {
+    public void setListOfNearbyPointsOfInterestIds(List<String> listOfNearbyPointsOfInterest) {
         this.listOfNearbyPointsOfInterestIds = listOfNearbyPointsOfInterest;
     }
 
