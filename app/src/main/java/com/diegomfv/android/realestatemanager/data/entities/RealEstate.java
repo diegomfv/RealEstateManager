@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.media.Image;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -33,12 +34,12 @@ public class RealEstate implements Parcelable {
     private String description;
 
     @ColumnInfo(name = "images")
-    private List<Image> listOfImages;
+    private List<ImageRealEstate> listOfImages;
 
     private String address;
 
     @ColumnInfo(name = "nearby_points_of_interest")
-    private List<Place> listOfNearbyPointsOfInterest;
+    private List<PlaceRealEstate> listOfNearbyPointsOfInterest;
 
     //true: available; false: sold
     private boolean status;
@@ -58,7 +59,7 @@ public class RealEstate implements Parcelable {
     /** Used for when reading from the table
      * */
     public RealEstate(int id, String type, int surfaceArea, int price, int numberOfRooms, String description,
-                      List<Image> listOfImages, String address, boolean status, String datePut,
+                      List<ImageRealEstate> listOfImages, String address, boolean status, String datePut,
                       String dateSale, String agent) {
         this.id = id;
         this.type = type;
@@ -138,11 +139,11 @@ public class RealEstate implements Parcelable {
         this.description = description;
     }
 
-    public List<Image> getListOfImages() {
+    public List<ImageRealEstate> getListOfImages() {
         return listOfImages;
     }
 
-    public void setListOfImages(List<Image> listOfImages) {
+    public void setListOfImages(List<ImageRealEstate> listOfImages) {
         this.listOfImages = listOfImages;
     }
 
@@ -154,11 +155,11 @@ public class RealEstate implements Parcelable {
         this.address = address;
     }
 
-    public List<Place> getListOfNearbyPointsOfInterest() {
+    public List<PlaceRealEstate> getListOfNearbyPointsOfInterest() {
         return listOfNearbyPointsOfInterest;
     }
 
-    public void setListOfNearbyPointsOfInterest(List<Place> listOfNearbyPointsOfInterest) {
+    public void setListOfNearbyPointsOfInterest(List<PlaceRealEstate> listOfNearbyPointsOfInterest) {
         this.listOfNearbyPointsOfInterest = listOfNearbyPointsOfInterest;
     }
 
@@ -201,9 +202,9 @@ public class RealEstate implements Parcelable {
         private int price;
         private int numberOfRooms;
         private String description;
-        private List<Image> listOfImages;
+        private List<ImageRealEstate> listOfImages;
         private String address;
-        private List<Place> listOfNearbyPointsOfInterest;
+        private List<PlaceRealEstate> listOfNearbyPointsOfInterest;
         private boolean status;
         private String datePut;
         private String dateSale;
@@ -234,7 +235,7 @@ public class RealEstate implements Parcelable {
             return this;
         }
 
-        public Builder setImages (List<Image> listOfImages) {
+        public Builder setImages (List<ImageRealEstate> listOfImages) {
             this.listOfImages = listOfImages;
             return this;
         }
@@ -244,7 +245,7 @@ public class RealEstate implements Parcelable {
             return this;
         }
 
-        public Builder setNearbyPointsOfInterest (List<Place> listOfNearbyPointsOfInterest){
+        public Builder setNearbyPointsOfInterest (List<PlaceRealEstate> listOfNearbyPointsOfInterest){
             this.listOfNearbyPointsOfInterest = listOfNearbyPointsOfInterest;
             return this;
         }
@@ -323,11 +324,11 @@ public class RealEstate implements Parcelable {
         this.price = in.readInt();
         this.numberOfRooms = in.readInt();
         this.description = in.readString();
-        this.listOfImages = new ArrayList<Image>();
-        in.readList(this.listOfImages, Image.class.getClassLoader());
+        this.listOfImages = new ArrayList<ImageRealEstate>();
+        in.readList(this.listOfImages, ImageRealEstate.class.getClassLoader());
         this.address = in.readString();
-        this.listOfNearbyPointsOfInterest = new ArrayList<Place>();
-        in.readList(this.listOfNearbyPointsOfInterest, Place.class.getClassLoader());
+        this.listOfNearbyPointsOfInterest = new ArrayList<PlaceRealEstate>();
+        in.readList(this.listOfNearbyPointsOfInterest, PlaceRealEstate.class.getClassLoader());
         this.status = in.readByte() != 0;
         this.datePut = in.readString();
         this.dateSale = in.readString();

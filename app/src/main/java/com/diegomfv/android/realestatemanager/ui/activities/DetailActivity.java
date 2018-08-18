@@ -9,7 +9,6 @@ import android.util.Log;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.ui.rest.FragmentItemDescription;
-import com.diegomfv.android.realestatemanager.ui.rest.FragmentListListings;
 
 /**
  * Created by Diego Fajardo on 15/08/2018.
@@ -27,7 +26,7 @@ public class DetailActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
 
         if (intent.getExtras() != null) {
-            bundle.putParcelable(Constants.PARCELABLE_OBJECT, intent.getExtras().getParcelable(Constants.SEND_PARCELABLE));
+            bundle.putParcelable(Constants.GET_PARCELABLE, intent.getExtras().getParcelable(Constants.SEND_PARCELABLE));
         }
 
         ///////////////

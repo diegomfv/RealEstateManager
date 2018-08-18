@@ -18,13 +18,14 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.diegomfv.android.realestatemanager.data.dao.ImageDao;
 import com.diegomfv.android.realestatemanager.data.dao.PlaceDao;
 import com.diegomfv.android.realestatemanager.data.dao.RealEstateDao;
-import com.diegomfv.android.realestatemanager.data.entities.Image;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.data.typeconverters.ImageTypeConverter;
 import com.diegomfv.android.realestatemanager.data.typeconverters.PlaceTypeConverter;
@@ -34,7 +35,7 @@ import com.diegomfv.android.realestatemanager.data.typeconverters.PlaceTypeConve
  * Android Development Course, UDACITY)
  * */
 
-@Database(entities = {RealEstate.class, Image.class}, version = 1, exportSchema = false)
+@Database(entities = {RealEstate.class, ImageRealEstate.class}, version = 1, exportSchema = false)
 @TypeConverters({ImageTypeConverter.class, PlaceTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -56,9 +57,9 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public abstract RealEstateDao realStateDao();
 
-    public abstract ImageDao imageDao();
+    public abstract ImageDao imageRealEstateDao();
 
-    public abstract PlaceDao placeDao();
+    public abstract PlaceDao placeRealEstateDao();
 
     /////////////////////////////////////
 

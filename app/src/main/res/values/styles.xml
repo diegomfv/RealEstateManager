@@ -18,5 +18,25 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="buttonSecondaryStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:background">@drawable/button_secondary_background</item>
+        <item name="android:textColor">@color/colorAccentText</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="textInputLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="textInputEditTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:maxLines">1</item>
+
+    </style>
 
 </resources>

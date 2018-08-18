@@ -68,6 +68,7 @@ public class AuthLoginActivity extends AppCompatActivity {
             case R.id.button_google_id: {
 
                 ToastHelper.toastButtonClicked(context, view);
+                Utils.launchActivity(this, CreateNewListingActivity.class);
 
             } break;
 

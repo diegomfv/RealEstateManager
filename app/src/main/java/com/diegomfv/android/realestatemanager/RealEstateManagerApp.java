@@ -40,10 +40,12 @@ public class RealEstateManagerApp extends Application {
     }
 
     public AppDatabase getDatabase() {
+        Log.d(TAG, "getDatabase: called!");
         return AppDatabase.getInstance(this, mAppExecutors);
     }
 
     public DataRepository getRepository() {
+        Log.d(TAG, "getRepository: called!");
         return DataRepository.getInstance(getDatabase());
     }
 }

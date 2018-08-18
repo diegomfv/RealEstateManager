@@ -2,7 +2,7 @@ package com.diegomfv.android.realestatemanager.data.typeconverters;
 
 import android.arch.persistence.room.TypeConverter;
 
-import com.diegomfv.android.realestatemanager.data.entities.Place;
+import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -20,18 +20,18 @@ public class PlaceTypeConverter {
     private static Gson gson = new Gson();
 
     @TypeConverter
-    public static List<Place> stringToPlaceList(String data) {
+    public static List<PlaceRealEstate> stringToPlaceList(String data) {
         if (data == null) {
             return Collections.emptyList();
         }
 
-        Type listType = new TypeToken<List<Place>>() {}.getType();
+        Type listType = new TypeToken<List<PlaceRealEstate>>() {}.getType();
 
         return gson.fromJson(data, listType);
     }
 
     @TypeConverter
-    public static String placeListToString(List<Place> someObjects) {
+    public static String placeListToString(List<PlaceRealEstate> someObjects) {
         return gson.toJson(someObjects);
     }
 

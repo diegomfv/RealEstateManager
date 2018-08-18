@@ -21,8 +21,6 @@ import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -89,7 +87,7 @@ public class FragmentItemDescription extends Fragment {
 
             Bundle bundle = getArguments();
             if (bundle != null) {
-                realEstate = bundle.getParcelable(Constants.PARCELABLE_OBJECT);
+                realEstate = bundle.getParcelable(Constants.GET_PARCELABLE);
             }
 
             if (realEstate != null) {

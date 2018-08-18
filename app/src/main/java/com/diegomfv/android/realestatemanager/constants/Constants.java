@@ -6,6 +6,6 @@ package com.diegomfv.android.realestatemanager.constants;
 public interface Constants {
 
     String SEND_PARCELABLE = "send_parcelable";
+    String GET_PARCELABLE = "parcelable_object";
 
-    String PARCELABLE_OBJECT = "parcelable_object";
 }

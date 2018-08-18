@@ -57,12 +57,6 @@ public class SecondActivity extends AppCompatActivity {
 
             } break;
 
-            case R.id.menu_loan_simulator_button: {
-
-                ToastHelper.toastMenuItemClicked(context, item);
-
-            } break;
-
             case R.id.menu_search_button: {
 
                 ToastHelper.toastMenuItemClicked(context, item);

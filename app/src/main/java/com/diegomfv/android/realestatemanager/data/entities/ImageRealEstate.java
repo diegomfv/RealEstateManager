@@ -1,17 +1,17 @@
 package com.diegomfv.android.realestatemanager.data.entities;
 
+/**
+ * Created by Diego Fajardo on 18/08/2018.
+ */
+
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-/**
- * Created by Diego Fajardo on 05/08/2018.
- */
+@Entity(tableName = "image")
+public class ImageRealEstate {
 
-@Entity (tableName = "image")
-public class Image {
-
-    @PrimaryKey (autoGenerate = true)
+    @PrimaryKey(autoGenerate = true)
     private int id;
 
     @ColumnInfo(name = "firebase_storage_directory")
@@ -22,7 +22,7 @@ public class Image {
 
     private String description;
 
-    public Image(int id, String firebaseStorageDirectory, String internalStorageDirectory, String description) {
+    public ImageRealEstate(int id, String firebaseStorageDirectory, String internalStorageDirectory, String description) {
         this.id = id;
         this.firebaseStorageDirectory = firebaseStorageDirectory;
         this.internalStorageDirectory = internalStorageDirectory;

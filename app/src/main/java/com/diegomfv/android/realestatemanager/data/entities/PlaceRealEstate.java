@@ -9,7 +9,7 @@ import android.arch.persistence.room.PrimaryKey;
  */
 
 @Entity (tableName = "place")
-public class Place {
+public class PlaceRealEstate {
 
     @PrimaryKey (autoGenerate = true)
     private int id;
@@ -25,7 +25,7 @@ public class Place {
 
     private double longitude;
 
-    public Place(int id, String placeId, String name, String address, double latitude, double longitude) {
+    public PlaceRealEstate(int id, String placeId, String name, String address, double latitude, double longitude) {
         this.id = id;
         this.placeId = placeId;
         this.name = name;
@@ -84,7 +84,7 @@ public class Place {
 
     @Override
     public String toString() {
-        return "Place{" +
+        return "PlaceRealEstate{" +
                 "id=" + id +
                 ", placeId='" + placeId + '\'' +
                 ", name='" + name + '\'' +
