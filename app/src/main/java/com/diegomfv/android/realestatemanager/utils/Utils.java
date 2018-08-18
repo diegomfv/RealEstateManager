@@ -2,6 +2,8 @@ package com.diegomfv.android.realestatemanager.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -116,6 +118,20 @@ public class Utils {
         Intent intent = new Intent(context, activity);
         context.startActivity(intent);
 
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** Add photo to temporary internal storage
+     * */
+    public static void addPictureToTemporaryInternalStorage (Bitmap bitmap) {
+        Log.d(TAG, "addPictureToInternalStorage: called!");
+    }
+
+    /** Remove all pictures from temporary internal storage
+     * */
+    public static void removeAllPicturesFromTemporaryInternalStorage () {
+        Log.d(TAG, "removeAllPicturesFromTemporaryInternalStorage: called!");
     }
 
 }
