@@ -11,8 +11,8 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity(tableName = "image")
 public class ImageRealEstate {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    @PrimaryKey
+    private String id;
 
     @ColumnInfo(name = "firebase_storage_directory")
     private String firebaseStorageDirectory;
@@ -22,18 +22,18 @@ public class ImageRealEstate {
 
     private String description;
 
-    public ImageRealEstate(int id, String firebaseStorageDirectory, String internalStorageDirectory, String description) {
+    public ImageRealEstate(String id, String firebaseStorageDirectory, String internalStorageDirectory, String description) {
         this.id = id;
         this.firebaseStorageDirectory = firebaseStorageDirectory;
         this.internalStorageDirectory = internalStorageDirectory;
         this.description = description;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

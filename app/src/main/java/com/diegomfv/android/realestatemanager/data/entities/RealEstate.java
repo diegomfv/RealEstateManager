@@ -4,11 +4,9 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.media.Image;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,8 +16,8 @@ import java.util.List;
 @Entity (tableName = "realestate")
 public class RealEstate implements Parcelable {
 
-    @PrimaryKey (autoGenerate = true)
-    private int id;
+    @PrimaryKey
+    private String id;
 
     private String type;
 
@@ -34,12 +32,12 @@ public class RealEstate implements Parcelable {
     private String description;
 
     @ColumnInfo(name = "images")
-    private List<ImageRealEstate> listOfImages;
+    private List<String> listOfImagesIds;
 
     private String address;
 
     @ColumnInfo(name = "nearby_points_of_interest")
-    private List<PlaceRealEstate> listOfNearbyPointsOfInterest;
+    private List<String> listOfNearbyPointsOfInterestIds;
 
     //true: available; false: sold
     private boolean status;
@@ -58,18 +56,19 @@ public class RealEstate implements Parcelable {
 
     /** Used for when reading from the table
      * */
-    public RealEstate(int id, String type, int surfaceArea, int price, int numberOfRooms, String description,
-                      List<ImageRealEstate> listOfImages, String address, boolean status, String datePut,
-                      String dateSale, String agent) {
+    public RealEstate(String id, String type, int surfaceArea, int price, int numberOfRooms, String description,
+                      List<String> listOfImagesIds, String address, boolean status, List<String> listOfNearbyPointsOfInterestIds,
+                      String datePut, String dateSale, String agent) {
         this.id = id;
         this.type = type;
         this.surfaceArea = surfaceArea;
         this.price = price;
         this.numberOfRooms = numberOfRooms;
         this.description = description;
-        this.listOfImages = listOfImages;
+        this.listOfImagesIds = listOfImagesIds;
         this.address = address;
         this.status = status;
+        this.listOfNearbyPointsOfInterestIds = listOfNearbyPointsOfInterestIds;
         this.datePut = datePut;
         this.dateSale = dateSale;
         this.agent = agent;
@@ -80,14 +79,15 @@ public class RealEstate implements Parcelable {
     // Use the Ignore annotation so Room knows that it has to use the other constructor instead
     @Ignore
     private RealEstate(final Builder builder) {
+        this.id = builder.id;
         this.type = builder.type;
         this.surfaceArea = builder.surfaceArea;
         this.price = builder.price;
         this.numberOfRooms = builder.numberOfRooms;
         this.description = builder.description;
-        this.listOfImages = builder.listOfImages;
+        this.listOfImagesIds = builder.listOfImages;
         this.address = builder.address;
-        //this.listOfNearbyPointsOfInterest = builder.listOfNearbyPointsOfInterest;
+        this.listOfNearbyPointsOfInterestIds = builder.listOfNearbyPointsOfInterestIds;
         this.status = builder.status;
         this.datePut = builder.datePut;
         this.dateSale = builder.dateSale;
@@ -95,11 +95,11 @@ public class RealEstate implements Parcelable {
 
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -139,12 +139,12 @@ public class RealEstate implements Parcelable {
         this.description = description;
     }
 
-    public List<ImageRealEstate> getListOfImages() {
-        return listOfImages;
+    public List<String> getListOfImagesIds() {
+        return listOfImagesIds;
     }
 
-    public void setListOfImages(List<ImageRealEstate> listOfImages) {
-        this.listOfImages = listOfImages;
+    public void setListOfImagesIds(List<String> listOfImagesIds) {
+        this.listOfImagesIds = listOfImagesIds;
     }
 
     public String getAddress() {
@@ -155,12 +155,12 @@ public class RealEstate implements Parcelable {
         this.address = address;
     }
 
-    public List<PlaceRealEstate> getListOfNearbyPointsOfInterest() {
-        return listOfNearbyPointsOfInterest;
+    public List<String> getListOfNearbyPointsOfInterest() {
+        return listOfNearbyPointsOfInterestIds;
     }
 
-    public void setListOfNearbyPointsOfInterest(List<PlaceRealEstate> listOfNearbyPointsOfInterest) {
-        this.listOfNearbyPointsOfInterest = listOfNearbyPointsOfInterest;
+    public void setListOfNearbyPointsOfInterest(List<String> listOfNearbyPointsOfInterest) {
+        this.listOfNearbyPointsOfInterestIds = listOfNearbyPointsOfInterest;
     }
 
     public boolean isStatus() {
@@ -197,18 +197,24 @@ public class RealEstate implements Parcelable {
 
     public static class Builder {
 
+        private String id;
         private String type;
         private int surfaceArea;
         private int price;
         private int numberOfRooms;
         private String description;
-        private List<ImageRealEstate> listOfImages;
+        private List<String> listOfImages;
         private String address;
-        private List<PlaceRealEstate> listOfNearbyPointsOfInterest;
+        private List<String> listOfNearbyPointsOfInterestIds;
         private boolean status;
         private String datePut;
         private String dateSale;
         private String agent;
+
+        public Builder setId (String id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder setType (String type) {
             this.type = type;
@@ -235,7 +241,7 @@ public class RealEstate implements Parcelable {
             return this;
         }
 
-        public Builder setImages (List<ImageRealEstate> listOfImages) {
+        public Builder setImages (List<String> listOfImages) {
             this.listOfImages = listOfImages;
             return this;
         }
@@ -245,8 +251,8 @@ public class RealEstate implements Parcelable {
             return this;
         }
 
-        public Builder setNearbyPointsOfInterest (List<PlaceRealEstate> listOfNearbyPointsOfInterest){
-            this.listOfNearbyPointsOfInterest = listOfNearbyPointsOfInterest;
+        public Builder setNearbyPointsOfInterestIds (List<String> listOfNearbyPointsOfInterestIds){
+            this.listOfNearbyPointsOfInterestIds = listOfNearbyPointsOfInterestIds;
             return this;
         }
 
@@ -278,21 +284,7 @@ public class RealEstate implements Parcelable {
 
     @Override
     public String toString() {
-        return "RealEstate{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", surfaceArea=" + surfaceArea +
-                ", price=" + price +
-                ", numberOfRooms=" + numberOfRooms +
-                ", description='" + description + '\'' +
-                ", listOfImages=" + listOfImages +
-                ", address='" + address + '\'' +
-                ", listOfNearbyPointsOfInterest=" + listOfNearbyPointsOfInterest +
-                ", status=" + status +
-                ", datePut='" + datePut + '\'' +
-                ", dateSale='" + dateSale + '\'' +
-                ", agent='" + agent + '\'' +
-                '}';
+        return super.toString();
     }
 
     @Override
@@ -302,15 +294,15 @@ public class RealEstate implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
+        dest.writeString(this.id);
         dest.writeString(this.type);
         dest.writeInt(this.surfaceArea);
         dest.writeInt(this.price);
         dest.writeInt(this.numberOfRooms);
         dest.writeString(this.description);
-        dest.writeList(this.listOfImages);
+        dest.writeStringList(this.listOfImagesIds);
         dest.writeString(this.address);
-        dest.writeList(this.listOfNearbyPointsOfInterest);
+        dest.writeStringList(this.listOfNearbyPointsOfInterestIds);
         dest.writeByte(this.status ? (byte) 1 : (byte) 0);
         dest.writeString(this.datePut);
         dest.writeString(this.dateSale);
@@ -318,17 +310,15 @@ public class RealEstate implements Parcelable {
     }
 
     protected RealEstate(Parcel in) {
-        this.id = in.readInt();
+        this.id = in.readString();
         this.type = in.readString();
         this.surfaceArea = in.readInt();
         this.price = in.readInt();
         this.numberOfRooms = in.readInt();
         this.description = in.readString();
-        this.listOfImages = new ArrayList<ImageRealEstate>();
-        in.readList(this.listOfImages, ImageRealEstate.class.getClassLoader());
+        this.listOfImagesIds = in.createStringArrayList();
         this.address = in.readString();
-        this.listOfNearbyPointsOfInterest = new ArrayList<PlaceRealEstate>();
-        in.readList(this.listOfNearbyPointsOfInterest, PlaceRealEstate.class.getClassLoader());
+        this.listOfNearbyPointsOfInterestIds = in.createStringArrayList();
         this.status = in.readByte() != 0;
         this.datePut = in.readString();
         this.dateSale = in.readString();

@@ -11,8 +11,8 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity (tableName = "place")
 public class PlaceRealEstate {
 
-    @PrimaryKey (autoGenerate = true)
-    private int id;
+    @PrimaryKey
+    private String id;
 
     @ColumnInfo (name = "place_id")
     private String placeId;
@@ -25,7 +25,7 @@ public class PlaceRealEstate {
 
     private double longitude;
 
-    public PlaceRealEstate(int id, String placeId, String name, String address, double latitude, double longitude) {
+    public PlaceRealEstate(String id, String placeId, String name, String address, double latitude, double longitude) {
         this.id = id;
         this.placeId = placeId;
         this.name = name;
@@ -34,11 +34,11 @@ public class PlaceRealEstate {
         this.longitude = longitude;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
