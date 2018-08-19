@@ -20,7 +20,7 @@ public interface GoogleService {
     );
 
     @GET("json")
-    Observable<PlaceDetails> fetchDataPlaceId(
+    Observable<PlaceDetails> fetchPlaceId(
             @Query("placeid") String placeId,
             @Query("key") String key
     );
