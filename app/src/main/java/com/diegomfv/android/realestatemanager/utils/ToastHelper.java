@@ -54,4 +54,9 @@ public class ToastHelper {
         Log.d(TAG, "toastInternalStorageAccessNotGranted: called!");
         Toast.makeText(context, context.getResources().getString(R.string.there_was_an_error), Toast.LENGTH_SHORT).show();
     }
+
+    public static void toastSomeAccessNotGranted(Context context) {
+        Log.d(TAG, "toastSomeAccessNotGranted: called!");
+        Toast.makeText(context, context.getResources().getString(R.string.some_access_not_granted), Toast.LENGTH_SHORT).show();
+    }
 }

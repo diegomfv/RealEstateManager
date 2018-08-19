@@ -1,12 +1,17 @@
 package com.diegomfv.android.realestatemanager.utils;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppExecutors;
 
 import java.io.IOException;
@@ -85,6 +90,7 @@ public class Utils {
         Log.d(TAG, "checkInternetInBackgroundThread: called! ");
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @SuppressLint("CheckResult")
             @Override
             public void run() {
                 Log.d(TAG, "run: checking internet connection...");
@@ -98,6 +104,45 @@ public class Utils {
         });
 
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static void checkAllPermissions(AppCompatActivity app) {
+        Log.d(TAG, "checkPermissions: called!");
+
+        if (Utils.checkPermission(app, Manifest.permission.INTERNET)
+                && Utils.checkPermission(app, Manifest.permission.ACCESS_NETWORK_STATE)
+                && Utils.checkPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION)
+                && Utils.checkPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
+                && Utils.checkPermission(app, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                && Utils.checkPermission(app, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            //do nothing
+
+        } else {
+            requestPermission(app, Constants.ALL_PERMISSIONS, Constants.REQUEST_CODE_ALL_PERMISSIONS);
+
+        }
+    }
+
+    public static boolean checkPermission (Context context, String permission) {
+        Log.d(TAG, "checkPermissions: called!");
+
+        if (ContextCompat.checkSelfPermission (context.getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static void requestPermission (AppCompatActivity app, String[] permissions, int requestCode) {
+        Log.d(TAG, "requestPermission: called!");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            app.requestPermissions(permissions, requestCode);
+        }
+
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 

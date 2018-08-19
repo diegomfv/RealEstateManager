@@ -23,6 +23,8 @@ public class SecondActivity extends AppCompatActivity {
 
         context = SecondActivity.this;
 
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
         setContentView(R.layout.fragment_item_description);
     }
 

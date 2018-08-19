@@ -56,7 +56,8 @@ public class RealEstateManagerApp extends Application {
     public Storage getInternalStorage() {
         Log.d(TAG, "getInternalStorage: called!");
         if (internalStorage == null) {
-            return new Storage(getApplicationContext());
+            internalStorage = new Storage(getApplicationContext());
+            return internalStorage;
         }
         else return internalStorage;
     }

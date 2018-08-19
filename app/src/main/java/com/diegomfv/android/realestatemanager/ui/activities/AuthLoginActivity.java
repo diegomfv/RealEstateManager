@@ -1,8 +1,10 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.Button;
 
 import com.amitshekhar.DebugDB;
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 
@@ -44,6 +47,10 @@ public class AuthLoginActivity extends AppCompatActivity {
         //////////////////////////////////////////////////////
         setContentView(R.layout.activity_auth_choose_login);
         unbinder = ButterKnife.bind(this);
+
+        /* We check if we have permissions
+        * */
+        Utils.checkAllPermissions(this);
 
     }
 
@@ -93,4 +100,29 @@ public class AuthLoginActivity extends AppCompatActivity {
 
         unbinder.unbind();
     }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+
+            case Constants.REQUEST_CODE_ALL_PERMISSIONS: {
+                /* Do nothing, */
+
+                if (grantResults.length > 0) {
+
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] == -1) {
+                            //-1 means access NOT GRANTED
+                            ToastHelper.toastSomeAccessNotGranted(this);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

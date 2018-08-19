@@ -96,7 +96,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"/>
 
-
             <Button
                 android:id="@+id/button_add_photo_id"
                 style="@style/buttonSecondaryStyle"
