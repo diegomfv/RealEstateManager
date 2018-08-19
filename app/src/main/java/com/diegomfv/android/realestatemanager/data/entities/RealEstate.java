@@ -38,6 +38,10 @@ public class RealEstate implements Parcelable {
 
     private String address;
 
+    private double latitude;
+
+    private double longitude;
+
     @ColumnInfo(name = "nearby_points_of_interest")
     private List<String> listOfNearbyPointsOfInterestIds;
 
@@ -58,8 +62,9 @@ public class RealEstate implements Parcelable {
 
     /** Used for when reading from the table
      * */
-    public RealEstate(String id, String type, int surfaceArea, int price, int numberOfRooms, String description,
-                      List<String> listOfImagesIds, String address, boolean status, List<String> listOfNearbyPointsOfInterestIds,
+    public RealEstate(@NonNull String id, String type, int surfaceArea, int price, int numberOfRooms, String description,
+                      List<String> listOfImagesIds, String address, double latitude, double longitude,
+                      boolean status, List<String> listOfNearbyPointsOfInterestIds,
                       String datePut, String dateSale, String agent) {
         this.id = id;
         this.type = type;
@@ -69,6 +74,8 @@ public class RealEstate implements Parcelable {
         this.description = description;
         this.listOfImagesIds = listOfImagesIds;
         this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.status = status;
         this.listOfNearbyPointsOfInterestIds = listOfNearbyPointsOfInterestIds;
         this.datePut = datePut;
@@ -157,6 +164,22 @@ public class RealEstate implements Parcelable {
         this.address = address;
     }
 
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
     public List<String> getListOfNearbyPointsOfInterestIds() {
         return listOfNearbyPointsOfInterestIds;
     }
@@ -207,6 +230,8 @@ public class RealEstate implements Parcelable {
         private String description;
         private List<String> listOfImages;
         private String address;
+        private double latitude;
+        private double longitude;
         private List<String> listOfNearbyPointsOfInterestIds;
         private boolean status;
         private String datePut;
@@ -253,6 +278,16 @@ public class RealEstate implements Parcelable {
             return this;
         }
 
+        public Builder setLatitude (double latitude) {
+            this.latitude = latitude;
+            return this;
+        }
+
+        public Builder longitude (double longitude) {
+            this.longitude = longitude;
+            return this;
+        }
+
         public Builder setNearbyPointsOfInterestIds (List<String> listOfNearbyPointsOfInterestIds){
             this.listOfNearbyPointsOfInterestIds = listOfNearbyPointsOfInterestIds;
             return this;
@@ -286,8 +321,25 @@ public class RealEstate implements Parcelable {
 
     @Override
     public String toString() {
-        return super.toString();
+        return "RealEstate{" +
+                "id='" + id + '\'' +
+                ", type='" + type + '\'' +
+                ", surfaceArea=" + surfaceArea +
+                ", price=" + price +
+                ", numberOfRooms=" + numberOfRooms +
+                ", description='" + description + '\'' +
+                ", listOfImagesIds=" + listOfImagesIds +
+                ", address='" + address + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", listOfNearbyPointsOfInterestIds=" + listOfNearbyPointsOfInterestIds +
+                ", status=" + status +
+                ", datePut='" + datePut + '\'' +
+                ", dateSale='" + dateSale + '\'' +
+                ", agent='" + agent + '\'' +
+                '}';
     }
+
 
     @Override
     public int describeContents() {
@@ -304,6 +356,8 @@ public class RealEstate implements Parcelable {
         dest.writeString(this.description);
         dest.writeStringList(this.listOfImagesIds);
         dest.writeString(this.address);
+        dest.writeDouble(this.latitude);
+        dest.writeDouble(this.longitude);
         dest.writeStringList(this.listOfNearbyPointsOfInterestIds);
         dest.writeByte(this.status ? (byte) 1 : (byte) 0);
         dest.writeString(this.datePut);
@@ -320,6 +374,8 @@ public class RealEstate implements Parcelable {
         this.description = in.readString();
         this.listOfImagesIds = in.createStringArrayList();
         this.address = in.readString();
+        this.latitude = in.readDouble();
+        this.longitude = in.readDouble();
         this.listOfNearbyPointsOfInterestIds = in.createStringArrayList();
         this.status = in.readByte() != 0;
         this.datePut = in.readString();

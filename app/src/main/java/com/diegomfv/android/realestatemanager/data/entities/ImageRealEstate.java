@@ -24,7 +24,7 @@ public class ImageRealEstate {
 
     private String description;
 
-    public ImageRealEstate(String id, String firebaseStorageDirectory, String internalStorageDirectory, String description) {
+    public ImageRealEstate(@NonNull String id, String firebaseStorageDirectory, String internalStorageDirectory, String description) {
         this.id = id;
         this.firebaseStorageDirectory = firebaseStorageDirectory;
         this.internalStorageDirectory = internalStorageDirectory;

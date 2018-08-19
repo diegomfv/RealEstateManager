@@ -136,6 +136,9 @@ public class CreateNewListingActivity extends AppCompatActivity {
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed: called!");
         // TODO: 19/08/2018 Might need to change this
+
+        // TODO: 19/08/2018 Add a fragment saying, would you like to delete the media?
+        // TODO: 19/08/2018 If yes, clean the list and the HashMap 
         //do nothing
     }
 
@@ -160,6 +163,7 @@ public class CreateNewListingActivity extends AppCompatActivity {
             case R.id.button_insert_listing_id: {
                 ToastHelper.toastShort(this, "Inserting Listing");
                 // TODO: 18/08/2018 Do all the checks
+                // TODO: 19/08/2018 REMEMBER NOTIFICATION!
 
             } break;
         }

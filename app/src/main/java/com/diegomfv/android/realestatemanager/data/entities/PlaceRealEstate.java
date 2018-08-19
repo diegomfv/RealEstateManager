@@ -27,7 +27,7 @@ public class PlaceRealEstate {
 
     private double longitude;
 
-    public PlaceRealEstate(String id, String placeId, String name, String address, double latitude, double longitude) {
+    public PlaceRealEstate(@NonNull String id, String placeId, String name, String address, double latitude, double longitude) {
         this.id = id;
         this.placeId = placeId;
         this.name = name;
