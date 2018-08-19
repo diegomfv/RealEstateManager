@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:text="INSERT ADDRESS"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:textColor="@color/colorPrimaryDark"/>
+
+    <TextView
+        style="@style/dialogTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Street"/>
+
+    <EditText
+        style="@style/dialogEditTextStyle"
+        android:id="@+id/edit_text_street_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Street"/>
+
+    <TextView
+        style="@style/dialogTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="City"/>
+
+    <EditText
+        style="@style/dialogEditTextStyle"
+        android:id="@+id/edit_text_city_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="City"/>
+
+    <TextView
+        style="@style/dialogTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PostCode"/>
+
+    <EditText
+        style="@style/dialogEditTextStyle"
+        android:id="@+id/edit_text_postcode_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="PostCode"/>
+
+</LinearLayout>

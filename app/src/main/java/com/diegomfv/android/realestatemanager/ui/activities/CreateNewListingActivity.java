@@ -2,16 +2,20 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
@@ -21,6 +25,7 @@ import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.dialogfragments.InsertAddressDialogFragment;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.utils.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
@@ -46,7 +51,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 // TODO: 18/08/2018 Add a notification insertion completes!
-public class CreateNewListingActivity extends AppCompatActivity {
+public class CreateNewListingActivity extends AppCompatActivity implements InsertAddressDialogFragment.InsertAddressDialogListener {
 
     private static final String TAG = CreateNewListingActivity.class.getSimpleName();
 
@@ -71,6 +76,9 @@ public class CreateNewListingActivity extends AppCompatActivity {
 
     @BindView(R.id.text_input_ac_text_view_address_id)
     TextInputAutoCompleteTextView tvAddress;
+
+    @BindView(R.id.button_add_address_id)
+    Button buttonAddAdress;
 
     @BindView(R.id.recyclerView_media_id)
     RecyclerView recyclerView;
@@ -142,11 +150,17 @@ public class CreateNewListingActivity extends AppCompatActivity {
         //do nothing
     }
 
-    @OnClick ({R.id.button_add_photo_id, R.id.button_go_back_id, R.id.button_insert_listing_id})
+    @OnClick ({R.id.button_add_address_id, R.id.button_add_photo_id, R.id.button_go_back_id, R.id.button_insert_listing_id})
     public void buttonClicked (View view) {
         Log.d(TAG, "buttonClicked: " + ((Button)view).getText().toString() + " clicked!");
 
         switch (view.getId()) {
+
+            case R.id.button_add_address_id: {
+
+                launchInsertAddressDialog();
+
+            } break;
 
             case R.id.button_add_photo_id: {
 
@@ -185,6 +199,13 @@ public class CreateNewListingActivity extends AppCompatActivity {
             }
             break;
         }
+    }
+
+    private void launchInsertAddressDialog() {
+        Log.d(TAG, "launchInsertAddressDialog: called!");
+
+        DialogFragment dialog = new InsertAddressDialogFragment();
+        dialog.show(getSupportFragmentManager(), "InsertAddressDialogFragment");
 
     }
 
@@ -198,11 +219,6 @@ public class CreateNewListingActivity extends AppCompatActivity {
             Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
         }
     }
-
-    /** Android - How to pass HashMap<String,String> between activities?
-     * Use putExtra(String key, Serializable obj) to insert the HashMap and
-     * on the other Activity use getIntent().getSerializableExtra(String key).
-     * You will need to Cast the return value as a HashMap though.*/
 
     private void getBitmapsListAndDescriptionsMap() {
         Log.d(TAG, "getBitmapsListAndDescriptionsMap: called!");
@@ -300,6 +316,20 @@ public class CreateNewListingActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddPhotoActivity.class);
         intent.putExtra(Constants.DESCRIPTIONS_SERIALIZABLE, mapOfDescriptions);
         startActivity (intent);
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialogFragment) {
+        Log.d(TAG, "onDialogPositiveClick: called!");
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialogFragment) {
+        Log.d(TAG, "onDialogNegativeClick: called!");
 
     }
 

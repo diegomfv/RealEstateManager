@@ -87,9 +87,21 @@
                     android:id="@+id/text_input_ac_text_view_address_id"
                     style="@style/textInputEditTextStyle"
                     android:hint="Address"
-                    android:inputType="text" />
+                    android:text="Insert an address"
+                    android:inputType="text"
+                    android:focusable="false"/>
 
             </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/button_add_address_id"
+                style="@style/buttonSecondaryStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Address"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView_media_id"
@@ -103,9 +115,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add Photo"
+                android:layout_marginTop="10dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_marginEnd="20dp"/>
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
