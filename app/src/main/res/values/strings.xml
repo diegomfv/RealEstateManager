@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Real Estate Manager App</string>
+    <string name="a_k_p">AIzaSyDDaW_rQKqJtwEdqnib_-WQLCeSodUnb5g</string>
     <string name="password_sign_up">Sign up with Password</string>
     <string name="password_sign_in">Sign in with Password</string>
     <string name="google_sign_in">Sign In with Google</string>
