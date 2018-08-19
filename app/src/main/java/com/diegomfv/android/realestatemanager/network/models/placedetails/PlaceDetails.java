@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by Diego Fajardo on 19/08/2018.
  */
-public class Place {
+public class PlaceDetails {
 
     @SerializedName("html_attributions")
     @Expose
