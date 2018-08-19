@@ -128,6 +128,10 @@ public class AddPhotoActivity extends AppCompatActivity {
 
             case R.id.button_add_photo_id: {
 
+                if (editTextDescription.getText().toString().trim().length() < 10) {
+                    ToastHelper.toastShort(this, "The description is too short");
+                }
+
                 addPhoto();
 
             } break;
@@ -220,7 +224,7 @@ public class AddPhotoActivity extends AppCompatActivity {
         String pushKey = FirebasePushIdGenerator.generate();
 
         /* Insert the description into the map liked to the push key */
-        mapOfDescriptions.put(pushKey, editTextDescription.getText().toString());
+        mapOfDescriptions.put(pushKey, editTextDescription.getText().toString().trim());
 
         /* Insert the image in the temporary folder linked to the key.
          * At the end of this process, launch CreateNewListingActivity

@@ -132,16 +132,30 @@ public class CreateNewListingActivity extends AppCompatActivity {
         unbinder.unbind();
     }
 
-    @OnClick ({R.id.button_add_photo_id, R.id.button_insert_listing_id})
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: called!");
+        // TODO: 19/08/2018 Might need to change this
+        //do nothing
+    }
+
+    @OnClick ({R.id.button_add_photo_id, R.id.button_go_back_id, R.id.button_insert_listing_id})
     public void buttonClicked (View view) {
         Log.d(TAG, "buttonClicked: " + ((Button)view).getText().toString() + " clicked!");
 
         switch (view.getId()) {
 
             case R.id.button_add_photo_id: {
+
                 launchActivityWithIntentFilledWithMap();
 
             } break;
+
+            case R.id.button_go_back_id: {
+
+                Utils.launchActivity(this, MainActivity.class);
+
+            }
 
             case R.id.button_insert_listing_id: {
                 ToastHelper.toastShort(this, "Inserting Listing");
@@ -149,31 +163,6 @@ public class CreateNewListingActivity extends AppCompatActivity {
 
             } break;
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: called!");
-
-//        if (resultCode == RESULT_CODE) {
-//
-//            /* We get the image data and update inputStreamSelectedImage variable which will be
-//             * used later if the user decides to save this image in his/her profile
-//             * */
-//            final Uri imageUri = data.getData();
-//            InputStream inputStreamSelectedImage = null;
-//            try {
-//                inputStreamSelectedImage = getContentResolver().openInputStream(imageUri);
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            }
-//
-//            final Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStreamSelectedImage);
-//
-//
-//        }
-
     }
 
     @Override
@@ -230,8 +219,6 @@ public class CreateNewListingActivity extends AppCompatActivity {
     @SuppressLint("CheckResult")
     private void getBitmapImagesFromTemporaryFiles() {
         Log.d(TAG, "getBitmapImagesFromTemporaryFiles: called!");
-
-        // TODO: 19/08/2018 Get the images!
 
         if (accessInternalStorageGranted) {
 
@@ -291,12 +278,14 @@ public class CreateNewListingActivity extends AppCompatActivity {
     private void configureOnClickRecyclerView () {
         Log.d(TAG, "configureOnClickRecyclerView: called!");
 
+        final List<String> listOfDescriptions = new ArrayList<>(mapOfDescriptions.values());
+
         ItemClickSupport.addTo(recyclerView)
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
-
+                        ToastHelper.toastShort(CreateNewListingActivity.this, listOfDescriptions.get(position));
                     }
                 });
     }
