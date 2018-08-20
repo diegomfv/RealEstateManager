@@ -15,7 +15,7 @@ public interface GoogleService {
     @GET("json")
     Observable<PlaceFromText> fetchPlaceFromText(
             @Query("input") String input,
-            @Query("inputtype") String inputtype,
+            @Query("inputtype") String inputType,
             @Query("key") String key
     );
 

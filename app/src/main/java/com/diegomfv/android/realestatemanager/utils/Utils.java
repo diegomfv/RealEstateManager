@@ -2,17 +2,26 @@ package com.diegomfv.android.realestatemanager.utils;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
+import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppExecutors;
+import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
+import com.diegomfv.android.realestatemanager.rx.ObservableObject;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -21,6 +30,7 @@ import java.net.SocketAddress;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Observer;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -105,6 +115,89 @@ public class Utils {
 
     }
 
+    public static boolean setInternetAvailability(Object isInternetAvailable) {
+        Log.d(TAG, "setInternetAvailability: called!");
+        return (int) isInternetAvailable == 1;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** Method used to connect
+     * the broadcast receiver with
+     * the activity
+     * */
+    public static void connectReceiver (Context context, BroadcastReceiver receiver, IntentFilter intentFilter, Observer observer){
+        Log.d(TAG, "connectReceiver: called!");
+
+        context.registerReceiver(receiver, intentFilter);
+        ObservableObject.getInstance().addObserver(observer);
+
+    }
+
+    /** Method used to disconnect
+     * the broadcast receiver from the activity
+     * */
+    public static void disconnectReceiver (Context context, BroadcastReceiver receiver, Observer observer) {
+        Log.d(TAG, "disconnectReceiver: called!");
+
+        context.unregisterReceiver(receiver);
+        ObservableObject.getInstance().deleteObserver(observer);
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** Method to create a Snackbar
+     * displaying that there is no internet
+     * */
+    public static Snackbar createSnackbar (Context context, View mainLayout, String message) {
+
+        final Snackbar snackbar = Snackbar.make(
+                mainLayout,
+                message,
+                Snackbar.LENGTH_INDEFINITE);
+
+        snackbar.setAction(
+                context.getResources().getString(R.string.snackbarNoInternetButton),
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, "onClick: snackbar clicked!");
+                        snackbar.dismiss();
+                    }
+                });
+
+        View snackbarView = snackbar.getView();
+        //snackbarView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+        TextView snackbarTextView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        snackbarTextView.setTextColor(context.getResources().getColor(android.R.color.white));
+        Button snackbarButton = (Button) snackbarView.findViewById(android.support.design.R.id.snackbar_action);
+        snackbarButton.setTextColor(context.getResources().getColor(android.R.color.white));
+        snackbar.show();
+
+        return snackbar;
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static boolean checkPlaceFromTextIsNotNull (PlaceFromText placeFromText) {
+        Log.d(TAG, "checkPlaceFromText: called!");
+
+        if (placeFromText.getStatus().equals(Constants.REQUEST_STATUS_PLACE_FROM_TEXT_IS_OK)) {
+            if (placeFromText.getCandidates() != null) {
+                if (placeFromText.getCandidates().size() > 0) {
+                    if (placeFromText.getCandidates().get(0) != null) {
+                        if (placeFromText.getCandidates().get(0).getPlaceId() != null) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static void checkAllPermissions(AppCompatActivity app) {
@@ -143,7 +236,6 @@ public class Utils {
 
     }
 
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Method that
@@ -178,5 +270,6 @@ public class Utils {
     public static void removeAllPicturesFromTemporaryInternalStorage () {
         Log.d(TAG, "removeAllPicturesFromTemporaryInternalStorage: called!");
     }
+
 
 }

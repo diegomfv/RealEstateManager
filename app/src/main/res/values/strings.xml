@@ -14,4 +14,6 @@
     <string name="there_was_an_error">There was an ERROR</string>
     <string name="no_image_was_picked">No image was picked</string>
     <string name="some_access_not_granted">Some access not granted</string>
+    <string name="noInternet">Internet NOT available</string>
+    <string name="snackbarNoInternetButton">HIDE</string>
 </resources>
