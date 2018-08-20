@@ -29,12 +29,15 @@ import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.dialogfragments.InsertAddressDialogFragment;
 import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
 import com.diegomfv.android.realestatemanager.network.remote.AllGoogleServices;
 import com.diegomfv.android.realestatemanager.network.remote.GoogleService;
 import com.diegomfv.android.realestatemanager.network.remote.GoogleServiceStreams;
 import com.diegomfv.android.realestatemanager.receivers.InternetConnectionReceiver;
+import com.diegomfv.android.realestatemanager.utils.FirebasePushIdGenerator;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.utils.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
@@ -120,9 +123,9 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
     private List<Bitmap> listOfBitmaps;
 
-    private HashMap<String,String> mapOfDescriptions;
+    private RealEstate realEstateCache;
 
-    private Intent intent;
+    private List<ImageRealEstate> listOfImagesRealEstateCache;
 
     //InternetConnectionReceiver variables
     private InternetConnectionReceiver receiver;
@@ -135,21 +138,25 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
 
-        app = (RealEstateManagerApp) getApplication();
+        this.app = (RealEstateManagerApp) getApplication();
 
-        this.mapOfDescriptions = new HashMap<>();
         this.listOfBitmaps = new ArrayList<>();
 
-        accessInternalStorageGranted = false;
+        this.accessInternalStorageGranted = false;
+        this.isInternetAvailable = false;
 
-        counter = 0;
+        this.counter = 0;
+
+        this.getCacheInfo();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_create_new_listing);
         setTitle("Create a New Listing");
         this.unbinder = ButterKnife.bind(this);
 
-        glide = Glide.with(CreateNewListingActivity.this);
+        this.glide = Glide.with(CreateNewListingActivity.this);
+
+        this.updateViews();
 
         this.checkInternalStoragePermissionGranted();
 
@@ -200,25 +207,24 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         switch (view.getId()) {
 
             case R.id.button_add_address_id: {
-
                 launchInsertAddressDialog();
 
             } break;
 
             case R.id.button_add_photo_id: {
-
-                launchActivityWithIntentFilledWithMap();
+                launchAddPhotoActivity();
 
             } break;
 
             case R.id.button_go_back_id: {
-
                 Utils.launchActivity(this, MainActivity.class);
 
             }
 
             case R.id.button_insert_listing_id: {
                 ToastHelper.toastShort(this, "Inserting Listing");
+
+                insertListing();
 
                 // TODO: 18/08/2018 Do all the checks
                 // TODO: 19/08/2018 REMEMBER NOTIFICATION!
@@ -238,12 +244,97 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
                 if (grantResults.length > 0 && grantResults[0] != -1) {
                     accessInternalStorageGranted = true;
-                    getBitmapsListAndDescriptionsMap();
+                    getBitmapImagesFromTemporaryFiles();
                 }
             }
             break;
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void insertListing() {
+        Log.d(TAG, "insertListing: called!");
+
+//        RealEstate.Builder builder = new RealEstate.Builder();
+//
+//        FirebasePushIdGenerator.generate()
+//
+//        builder.setId(FirebasePushIdGenerator.generate());
+
+        Utils.launchActivity(this, MainActivity.class);
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void launchAddPhotoActivity() {
+        Log.d(TAG, "launchAddPhotoActivity: called!");
+
+        if (!accessInternalStorageGranted) {
+            ToastHelper.toastInternalStorageAccessNotGranted(this);
+
+        } else {
+            updateCache();
+            Utils.launchActivity(this, AddPhotoActivity.class);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //CACHE
+
+    private void updateViews() {
+        Log.d(TAG, "updateViews: called!");
+
+        this.tvTypeOfBuilding.setText(realEstateCache.getType());
+        this.tvPrice.setText(String.valueOf(realEstateCache.getPrice()));
+        this.tvSurfaceArea.setText(String.valueOf(realEstateCache.getSurfaceArea()));
+        this.tvNumberOfRooms.setText(String.valueOf(realEstateCache.getNumberOfRooms()));
+        this.tvDescription.setText(realEstateCache.getDescription());
+        this.tvAddress.setText(realEstateCache.getAddress());
+
+    }
+
+    private void updateCache() {
+        Log.d(TAG, "updateCache: called!");
+
+        this.updateStringValues();
+        this.updateIntegerValues();
+    }
+
+    private void updateIntegerValues() {
+        Log.d(TAG, "updateIntegerValues: called!");
+
+        if (Utils.isInteger(tvPrice.getText().toString().trim())) {
+            this.app.getRepository().getRealEstateCache().setPrice(Integer.valueOf(tvPrice.getText().toString().trim()));
+        }
+
+        if (Utils.isInteger(tvSurfaceArea.getText().toString().trim())) {
+            this.app.getRepository().getRealEstateCache().setSurfaceArea(Integer.valueOf(tvSurfaceArea.getText().toString().trim()));
+        }
+
+        if (Utils.isInteger(tvNumberOfRooms.getText().toString().trim())) {
+            this.app.getRepository().getRealEstateCache().setNumberOfRooms(Integer.valueOf(tvNumberOfRooms.getText().toString().trim()));
+        }
+    }
+
+    private void updateStringValues() {
+        Log.d(TAG, "updateStringValues: called!");
+
+        this.app.getRepository().getRealEstateCache().setType(tvTypeOfBuilding.getText().toString().trim());
+        this.app.getRepository().getRealEstateCache().setDescription(tvDescription.getText().toString().trim());
+        this.app.getRepository().getRealEstateCache().setAddress(tvAddress.getText().toString().trim());
+    }
+
+    private void getCacheInfo() {
+        Log.d(TAG, "getCacheInfo: called!");
+
+        this.realEstateCache = app.getRepository().getRealEstateCache();
+        this.listOfImagesRealEstateCache = app.getRepository().getListOfImagesRealEstateCache();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void launchInsertAddressDialog() {
         Log.d(TAG, "launchInsertAddressDialog: called!");
@@ -258,25 +349,10 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
         if (Utils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             accessInternalStorageGranted = true;
-            getBitmapsListAndDescriptionsMap();
-        } else {
-            Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
-        }
-    }
-
-    private void getBitmapsListAndDescriptionsMap() {
-        Log.d(TAG, "getBitmapsListAndDescriptionsMap: called!");
-
-        intent = getIntent();
-
-        if (intent != null && intent.getSerializableExtra(Constants.DESCRIPTIONS_SERIALIZABLE) != null) {
-            mapOfDescriptions = (HashMap<String, String>) intent.getSerializableExtra(Constants.DESCRIPTIONS_SERIALIZABLE);
-
-            // TODO: 19/08/2018 Delete!
-            ToastHelper.toastShort(this, mapOfDescriptions.toString());
-
             getBitmapImagesFromTemporaryFiles();
 
+        } else {
+            Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
         }
     }
 
@@ -289,12 +365,11 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             String mainPath = app.getInternalStorage().getInternalFilesDirectory() + File.separator;
             String temporaryDir = mainPath + File.separator + Constants.TEMPORARY_DIRECTORY + File.separator;
 
-            for (Map.Entry<String,String> entry:
-                    mapOfDescriptions.entrySet()) {
+            counter = listOfImagesRealEstateCache.size() - 1;
 
-                counter = mapOfDescriptions.size();
+            for (int i = 0; i < listOfImagesRealEstateCache.size(); i++) {
 
-                Single.just(app.getInternalStorage().readFile(temporaryDir + entry.getKey()))
+                Single.just(app.getInternalStorage().readFile(temporaryDir + listOfImagesRealEstateCache.get(i).getId()))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<byte[]>() {
@@ -303,12 +378,11 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                                 Log.i(TAG, "onSuccess: called!");
 
                                 listOfBitmaps.add(BitmapFactory.decodeByteArray(data, 0 , data.length));
-                                counter--;
 
-                                if (counter == 0 && listOfBitmaps != null) {
+                                counter--;
+                                if (counter == 0) {
                                     configureRecyclerView();
                                 }
-
                             }
 
                             @Override
@@ -341,25 +415,14 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
     private void configureOnClickRecyclerView () {
         Log.d(TAG, "configureOnClickRecyclerView: called!");
 
-        final List<String> listOfDescriptions = new ArrayList<>(mapOfDescriptions.values());
-
         ItemClickSupport.addTo(recyclerView)
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
-                        ToastHelper.toastShort(CreateNewListingActivity.this, listOfDescriptions.get(position));
+                        ToastHelper.toastShort(CreateNewListingActivity.this, listOfImagesRealEstateCache.get(position).getDescription());
                     }
                 });
-    }
-
-    private void launchActivityWithIntentFilledWithMap () {
-        Log.d(TAG, "launchActivityWithIntentFilledWithMap: called!");
-
-        Intent intent = new Intent(this, AddPhotoActivity.class);
-        intent.putExtra(Constants.DESCRIPTIONS_SERIALIZABLE, mapOfDescriptions);
-        startActivity (intent);
-
     }
 
     @SuppressLint("CheckResult")
@@ -377,8 +440,11 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                             Log.d(TAG, "onNext: called!");
 
                             if (Utils.checkPlaceFromTextIsNotNull(placeFromText)) {
-                                placeFromText.getCandidates().get(0).getPlaceId();
+                                ToastHelper.toastShort(CreateNewListingActivity.this, "The address is valid");
 
+                                // TODO: 20/08/2018 Use PlaceId
+                                Log.i(TAG, "onNext: " + placeFromText.getCandidates().get(0).getPlaceId());
+                                setAddress(street,city,postcode);
                             }
                         }
 
@@ -392,6 +458,9 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                             Log.d(TAG, "onComplete: called!");
                         }
                     });
+
+        } else {
+            ToastHelper.toastShort(this, "Internet is not available, Address cannot be saved");
 
         }
     }
@@ -471,5 +540,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
         ToastHelper.toastShort(this, "The address was not added");
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
 }

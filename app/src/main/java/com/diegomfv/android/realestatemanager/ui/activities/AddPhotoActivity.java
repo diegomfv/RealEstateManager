@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +19,7 @@ import android.widget.ImageView;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
-import com.diegomfv.android.realestatemanager.dialogfragments.InsertAddressDialogFragment;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.utils.FirebasePushIdGenerator;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
@@ -28,7 +27,6 @@ import com.diegomfv.android.realestatemanager.utils.Utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,7 +44,7 @@ public class AddPhotoActivity extends AppCompatActivity {
 
     private static final String TAG = AddPhotoActivity.class.getSimpleName();
 
-    /////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @BindView(R.id.image_view_id)
     ImageView imageView;
@@ -60,7 +58,7 @@ public class AddPhotoActivity extends AppCompatActivity {
     @BindView(R.id.button_add_photo_id)
     Button buttonAddPhoto;
 
-    /////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private RealEstateManagerApp app;
 
@@ -68,9 +66,7 @@ public class AddPhotoActivity extends AppCompatActivity {
 
     private Unbinder unbinder;
 
-    private HashMap<String,String> mapOfDescriptions;
-
-    private Intent intent;
+    private ImageRealEstate imageRealEstateCache;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,10 +76,6 @@ public class AddPhotoActivity extends AppCompatActivity {
         this.app = (RealEstateManagerApp) getApplication();
 
         this.accessInternalStorageGranted = false;
-
-        this.mapOfDescriptions = new HashMap<>();
-
-        this.getDescriptionsMap();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_add_photo);
@@ -123,13 +115,11 @@ public class AddPhotoActivity extends AppCompatActivity {
         switch (view.getId()) {
 
             case R.id.button_go_back_id: {
-
-                launchActivityWithIntentFilledWithMap();
+                Utils.launchActivity(this, CreateNewListingActivity.class);
 
             } break;
 
             case R.id.button_add_photo_id: {
-
                 if (editTextDescription.getText().toString().trim().length() < 10) {
                     ToastHelper.toastShort(this, "The description is too short");
 
@@ -200,17 +190,6 @@ public class AddPhotoActivity extends AppCompatActivity {
         }
     };
 
-    private void getDescriptionsMap() {
-        Log.d(TAG, "getDescriptionsMap: called!");
-
-        intent = getIntent();
-
-        if (intent != null && intent.getSerializableExtra(Constants.DESCRIPTIONS_SERIALIZABLE) != null) {
-            mapOfDescriptions = (HashMap<String, String>) intent.getSerializableExtra(Constants.DESCRIPTIONS_SERIALIZABLE);
-            ToastHelper.toastShort(this, mapOfDescriptions.toString());
-        }
-    }
-
     private void launchGallery () {
         Log.d(TAG, "launchGallery: called!");
 
@@ -223,20 +202,20 @@ public class AddPhotoActivity extends AppCompatActivity {
     private void addPhoto () {
         Log.d(TAG, "addPhoto: called!");
 
-        /* Generate push key */
-        String pushKey = FirebasePushIdGenerator.generate();
-
-        /* Insert the description into the map liked to the push key */
-        mapOfDescriptions.put(pushKey, editTextDescription.getText().toString().trim());
+        /* Generate push key and add to the image
+        * */
+        imageRealEstateCache = new ImageRealEstate(
+                FirebasePushIdGenerator.generate(),
+                editTextDescription.getText().toString().trim());
 
         /* Insert the image in the temporary folder linked to the key.
          * At the end of this process, launch CreateNewListingActivity
          * */
-        configureInternalStorage(pushKey);
+        configureInternalStorage();
 
     }
 
-    private void configureInternalStorage (String pushKey) {
+    private void configureInternalStorage () {
         Log.d(TAG, "configureInternalStorage: called!");
 
         if (accessInternalStorageGranted) {
@@ -245,11 +224,11 @@ public class AddPhotoActivity extends AppCompatActivity {
             String temporaryDir = mainPath + File.separator + Constants.TEMPORARY_DIRECTORY + File.separator;
 
             if (app.getInternalStorage().isDirectoryExists(temporaryDir)) {
-                saveImageInInternalStorage(temporaryDir, pushKey);
+                saveImageInInternalStorage(temporaryDir, imageRealEstateCache.getId());
 
             } else {
                 app.getInternalStorage().createDirectory(temporaryDir);
-                saveImageInInternalStorage(temporaryDir, pushKey);
+                saveImageInInternalStorage(temporaryDir, imageRealEstateCache.getId());
             }
 
         } else {
@@ -262,12 +241,12 @@ public class AddPhotoActivity extends AppCompatActivity {
     /** This method saves the fetched image in the internal storage asynchronously
      * */
     @SuppressLint("CheckResult")
-    private void saveImageInInternalStorage (String temporaryDir, String pushKey) {
+    private void saveImageInInternalStorage (String temporaryDir, String imageId) {
         Log.d(TAG, "saveImageInInternalStorage: called!");
 
         if (app.getInternalStorage().isDirectoryExists(temporaryDir)) {
 
-            final String filePath = temporaryDir + pushKey;
+            final String filePath = temporaryDir + imageId;
 
             imageView.setDrawingCacheEnabled(true);
             imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
@@ -284,7 +263,8 @@ public class AddPhotoActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Boolean fileIsCreated) {
                                 Log.i(TAG, "onSuccess: called!");
-                                launchActivityWithIntentFilledWithMap();
+                                addImageToListOfImagesInCache();
+                                Utils.launchActivity(AddPhotoActivity.this, CreateNewListingActivity.class);
                             }
                             @Override
                             public void onError(Throwable e) {
@@ -295,21 +275,20 @@ public class AddPhotoActivity extends AppCompatActivity {
 
             } else {
                 ToastHelper.toastShort(this, "Bitmap was not got properly");
-                launchActivityWithIntentFilledWithMap();
+                Utils.launchActivity(this, CreateNewListingActivity.class);
 
             }
 
         } else {
             Log.i(TAG, "saveImageInInternalStorage: accessInternalStorageGrantes = false");
             ToastHelper.toastShort(this, "Directory does not exist");
-            launchActivityWithIntentFilledWithMap();
+            Utils.launchActivity(this, CreateNewListingActivity.class);
         }
     }
 
-    private void launchActivityWithIntentFilledWithMap () {
-        Log.d(TAG, "launchActivityWithIntentFilledWithMap: called!");
-        Intent intent = new Intent(this, CreateNewListingActivity.class);
-        intent.putExtra(Constants.DESCRIPTIONS_SERIALIZABLE, mapOfDescriptions);
-        startActivity (intent);
+    private void addImageToListOfImagesInCache() {
+        Log.d(TAG, "addImageToListOfImagesInCache: called!");
+        app.getRepository().getListOfImagesRealEstateCache().add(imageRealEstateCache);
     }
+
 }

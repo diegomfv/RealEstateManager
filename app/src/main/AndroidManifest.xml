@@ -29,6 +29,9 @@
         <activity android:name=".ui.activities.MainActivity" />
         <activity android:name=".ui.activities.CreateNewListingActivity" />
         <activity android:name=".ui.activities.AddPhotoActivity" />
+
+        <receiver android:name=".receivers.InternetConnectionReceiver"/>
+
     </application>
 
 </manifest>

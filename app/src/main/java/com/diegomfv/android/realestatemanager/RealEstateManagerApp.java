@@ -12,6 +12,10 @@ import com.diegomfv.android.realestatemanager.utils.FirebasePushIdGenerator;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.snatik.storage.Storage;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Diego Fajardo on 16/08/2018.
  */
@@ -29,6 +33,15 @@ public class RealEstateManagerApp extends Application {
         Log.d(TAG, "onCreate: called!");
 
         mAppExecutors = AppExecutors.getInstance();
+
+        Log.i(TAG, "onCreate: " + getInternalStorage().getInternalFilesDirectory());
+        List<File> listOfFiles = getInternalStorage().getFiles("/data/user/0/com.diegomfv.android.realestatemanager/files/temporary_directory");
+
+        for (File item: listOfFiles) {
+            Log.i(TAG, "onCreate: " + item);
+        }
+        
+
 
 //        getDatabase().clearAllTables();
 //
