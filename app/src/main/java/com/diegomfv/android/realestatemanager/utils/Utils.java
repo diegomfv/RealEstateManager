@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppExecutors;
+import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceDetails;
 import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
 import com.diegomfv.android.realestatemanager.rx.ObservableObject;
 
@@ -181,15 +182,36 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static boolean checkPlaceFromTextIsNotNull (PlaceFromText placeFromText) {
+    public static boolean checksPlaceFromText (PlaceFromText placeFromText) {
         Log.d(TAG, "checkPlaceFromText: called!");
 
-        if (placeFromText.getStatus().equals(Constants.REQUEST_STATUS_PLACE_FROM_TEXT_IS_OK)) {
-            if (placeFromText.getCandidates() != null) {
-                if (placeFromText.getCandidates().size() > 0) {
-                    if (placeFromText.getCandidates().get(0) != null) {
-                        if (placeFromText.getCandidates().get(0).getPlaceId() != null) {
-                            return true;
+        if (placeFromText != null) {
+            if (placeFromText.getStatus().equals(Constants.REQUEST_STATUS_PLACE_FROM_TEXT_IS_OK)) {
+                if (placeFromText.getCandidates() != null) {
+                    if (placeFromText.getCandidates().size() > 0) {
+                        if (placeFromText.getCandidates().get(0) != null) {
+                            if (placeFromText.getCandidates().get(0).getPlaceId() != null) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean checksPlaceDetails (PlaceDetails placeDetails) {
+        Log.d(TAG, "checksPlaceDetails: called!");
+
+        if (placeDetails != null) {
+            if (placeDetails.getResult() != null) {
+                if (placeDetails.getResult().getGeometry() != null) {
+                    if (placeDetails.getResult().getGeometry().getLocation() != null) {
+                        if (placeDetails.getResult().getGeometry().getLocation().getLat() != null) {
+                            if (placeDetails.getResult().getGeometry().getLocation().getLng() != null) {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -269,6 +291,20 @@ public class Utils {
             }
         }
         return true;
+    }
+
+    public static String getTextviewString(TextView textView) {
+        Log.d(TAG, "getViewsText: called!");
+        return textView.getText().toString().trim();
+    }
+
+    public static int getTextviewInteger (TextView textView) {
+        Log.d(TAG, "getTextviewInteger: called!");
+
+        if (isInteger(textView.getText().toString().trim())) {
+            return Integer.parseInt(textView.getText().toString().trim());
+        }
+        return 0;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

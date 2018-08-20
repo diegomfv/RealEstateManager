@@ -2,9 +2,6 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,12 +10,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
@@ -29,15 +24,14 @@ import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.AppExecutors;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.dialogfragments.InsertAddressDialogFragment;
+import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceDetails;
 import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
-import com.diegomfv.android.realestatemanager.network.remote.AllGoogleServices;
-import com.diegomfv.android.realestatemanager.network.remote.GoogleService;
 import com.diegomfv.android.realestatemanager.network.remote.GoogleServiceStreams;
 import com.diegomfv.android.realestatemanager.receivers.InternetConnectionReceiver;
-import com.diegomfv.android.realestatemanager.utils.FirebasePushIdGenerator;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.utils.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
@@ -45,9 +39,7 @@ import com.diegomfv.android.realestatemanager.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -60,7 +52,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.http.Url;
 
 /**
  * Created by Diego Fajardo on 18/08/2018.
@@ -217,7 +208,8 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             } break;
 
             case R.id.button_go_back_id: {
-                Utils.launchActivity(this, MainActivity.class);
+                Utils.launchActivity(this, AuthLoginActivity.class);
+                Log.i(TAG, "buttonClicked: " + app.getRepository().getRealEstateCache());
 
             }
 
@@ -256,13 +248,78 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
     private void insertListing() {
         Log.d(TAG, "insertListing: called!");
 
-//        RealEstate.Builder builder = new RealEstate.Builder();
-//
-//        FirebasePushIdGenerator.generate()
-//
-//        builder.setId(FirebasePushIdGenerator.generate());
+        insertRealEstateObject();
+        insertListImageRealEstate();
 
         Utils.launchActivity(this, MainActivity.class);
+
+    }
+
+    @SuppressLint("CheckResult")
+    private void insertRealEstateObject() {
+        Log.d(TAG, "insertRealEstateObject: called!");
+
+        updateRealEstateCache();
+        updateImagesIdRealEstateCache();
+        updateDatePutRealEstateCacheCache();
+
+        Single.just(app.getDatabase().realStateDao().insertRealEstate(app.getRepository().getRealEstateCache()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribeWith(new DisposableSingleObserver<Long>() {
+                    @Override
+                    public void onSuccess(Long aLong) {
+                        Log.d(TAG, "onSuccess: called!");
+                        insertListImageRealEstate();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+                    }
+                });
+    }
+
+    @SuppressLint("CheckResult")
+    private void insertListImageRealEstate() {
+        Log.d(TAG, "insertListImageRealEstate: called!");
+
+        Single.just(app.getDatabase().imageRealEstateDao().insertListOfImagesRealEstate(app.getRepository().getListOfImagesRealEstateCache()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<long[]>() {
+                    @Override
+                    public void onSuccess(long[] longs) {
+                        Log.d(TAG, "onSuccess: called!");
+
+                        ToastHelper.toastShort(CreateNewListingActivity.this, "Images Inserted");
+                        Utils.launchActivity(CreateNewListingActivity.this, AuthLoginActivity.class);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "onError: called!");
+                    }
+                });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void updateImagesIdRealEstateCache() {
+        Log.d(TAG, "updateImagesIdRealEstateCache: called!");
+
+        List<String> listOfImagesIds = new ArrayList<>();
+
+        for (int i = 0; i < listOfImagesRealEstateCache.size(); i++) {
+            listOfImagesIds.add(listOfImagesRealEstateCache.get(i).getId());
+        }
+        app.getRepository().getRealEstateCache().setListOfImagesIds(listOfImagesIds);
+
+    }
+
+    private void updateDatePutRealEstateCacheCache() {
+        Log.d(TAG, "updateDatePutRealEstateCacheCache: called!");
+        app.getRepository().getRealEstateCache().setDatePut(Utils.getTodayDate());
 
     }
 
@@ -275,7 +332,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             ToastHelper.toastInternalStorageAccessNotGranted(this);
 
         } else {
-            updateCache();
+            updateRealEstateCache();
             Utils.launchActivity(this, AddPhotoActivity.class);
         }
     }
@@ -296,8 +353,8 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
     }
 
-    private void updateCache() {
-        Log.d(TAG, "updateCache: called!");
+    private void updateRealEstateCache() {
+        Log.d(TAG, "updateRealEstateCache: called!");
 
         this.updateStringValues();
         this.updateIntegerValues();
@@ -306,17 +363,10 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
     private void updateIntegerValues() {
         Log.d(TAG, "updateIntegerValues: called!");
 
-        if (Utils.isInteger(tvPrice.getText().toString().trim())) {
-            this.app.getRepository().getRealEstateCache().setPrice(Integer.valueOf(tvPrice.getText().toString().trim()));
-        }
+        this.app.getRepository().getRealEstateCache().setPrice(Utils.getTextviewInteger(tvPrice));
+        this.app.getRepository().getRealEstateCache().setSurfaceArea(Utils.getTextviewInteger(tvSurfaceArea));
+        this.app.getRepository().getRealEstateCache().setNumberOfRooms(Utils.getTextviewInteger(tvNumberOfRooms));
 
-        if (Utils.isInteger(tvSurfaceArea.getText().toString().trim())) {
-            this.app.getRepository().getRealEstateCache().setSurfaceArea(Integer.valueOf(tvSurfaceArea.getText().toString().trim()));
-        }
-
-        if (Utils.isInteger(tvNumberOfRooms.getText().toString().trim())) {
-            this.app.getRepository().getRealEstateCache().setNumberOfRooms(Integer.valueOf(tvNumberOfRooms.getText().toString().trim()));
-        }
     }
 
     private void updateStringValues() {
@@ -344,6 +394,8 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private void checkInternalStoragePermissionGranted() {
         Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
 
@@ -365,7 +417,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             String mainPath = app.getInternalStorage().getInternalFilesDirectory() + File.separator;
             String temporaryDir = mainPath + File.separator + Constants.TEMPORARY_DIRECTORY + File.separator;
 
-            counter = listOfImagesRealEstateCache.size() - 1;
+            counter = listOfImagesRealEstateCache.size();
 
             for (int i = 0; i < listOfImagesRealEstateCache.size(); i++) {
 
@@ -395,6 +447,8 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
@@ -408,7 +462,6 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         this.recyclerView.setAdapter(this.adapter);
 
         this.configureOnClickRecyclerView();
-
 
     }
 
@@ -425,39 +478,13 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                 });
     }
 
-    @SuppressLint("CheckResult")
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private void checkAddressIsValid(final String street, final String city, final String postcode) {
         Log.d(TAG, "checkIfAddressIsValid: called!");
 
         if (isInternetAvailable) {
-
-            GoogleServiceStreams.streamFetchPlaceFromText(street + "," + city + "," + postcode,
-                    "textquery",
-                    getResources().getString(R.string.a_k_p))
-                    .subscribeWith(new DisposableObserver<PlaceFromText>() {
-                        @Override
-                        public void onNext(PlaceFromText placeFromText) {
-                            Log.d(TAG, "onNext: called!");
-
-                            if (Utils.checkPlaceFromTextIsNotNull(placeFromText)) {
-                                ToastHelper.toastShort(CreateNewListingActivity.this, "The address is valid");
-
-                                // TODO: 20/08/2018 Use PlaceId
-                                Log.i(TAG, "onNext: " + placeFromText.getCandidates().get(0).getPlaceId());
-                                setAddress(street,city,postcode);
-                            }
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.d(TAG, "onError: called!");
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            Log.d(TAG, "onComplete: called!");
-                        }
-                    });
+            getPlaceFromText(street, city, postcode);
 
         } else {
             ToastHelper.toastShort(this, "Internet is not available, Address cannot be saved");
@@ -465,11 +492,81 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         }
     }
 
-    private void setAddress (String street, String city, String postcode) {
-        Log.d(TAG, "setAddress: called!");
+    @SuppressLint("CheckResult")
+    private void getPlaceFromText(final String street, final String city, final String postcode) {
+        Log.d(TAG, "getPlaceFromText: called!");
 
-        tvAddress.setText(street + ", " + city + ", " + postcode);
-        buttonAddAdress.setText("Edit Address");
+        GoogleServiceStreams.streamFetchPlaceFromText(street + "," + city + "," + postcode,
+                "textquery",
+                getResources().getString(R.string.a_k_p))
+                .subscribeWith(new DisposableObserver<PlaceFromText>() {
+                    @Override
+                    public void onNext(PlaceFromText placeFromText) {
+                        Log.d(TAG, "onNext: called!");
+
+                        if (Utils.checksPlaceFromText(placeFromText)) {
+
+                            ToastHelper.toastShort(CreateNewListingActivity.this,
+                                    "The address is valid");
+
+                            /* Set the address in the textview
+                            * */
+                            setAddress(street,city,postcode);
+
+                            /* Get place details
+                            * */
+                            getPlaceDetails(placeFromText.getCandidates().get(0).getPlaceId());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+                    }
+                });
+
+
+    }
+
+    @SuppressLint("CheckResult")
+    private void getPlaceDetails(String placeId) {
+        Log.d(TAG, "getPlaceDetails: called!");
+
+        GoogleServiceStreams.streamFetchPlaceDetails(
+                placeId,
+                getResources().getString(R.string.a_k_p))
+                .subscribeWith(new DisposableObserver<PlaceDetails>() {
+                    @Override
+                    public void onNext(PlaceDetails placeDetails) {
+                        Log.d(TAG, "onNext: called!");
+
+                        if (Utils.checksPlaceDetails(placeDetails)) {
+                            app.getRepository().getRealEstateCache().setLatitude(placeDetails.getResult().getGeometry().getLocation().getLat());
+                            app.getRepository().getRealEstateCache().setLongitude(placeDetails.getResult().getGeometry().getLocation().getLng());
+
+                        } else {
+                            ToastHelper.toastShort(CreateNewListingActivity.this,
+                                    "There is a problem with the latitude and longitude");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+
+                    }
+                });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -542,5 +639,12 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void setAddress (String street, String city, String postcode) {
+        Log.d(TAG, "setAddress: called!");
+
+        tvAddress.setText(street + ", " + city + ", " + postcode);
+        buttonAddAdress.setText("Edit Address");
+    }
 
 }

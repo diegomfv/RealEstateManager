@@ -37,11 +37,12 @@ public class RealEstateManagerApp extends Application {
         Log.i(TAG, "onCreate: " + getInternalStorage().getInternalFilesDirectory());
         List<File> listOfFiles = getInternalStorage().getFiles("/data/user/0/com.diegomfv.android.realestatemanager/files/temporary_directory");
 
-        for (File item: listOfFiles) {
-            Log.i(TAG, "onCreate: " + item);
-        }
-        
+        if (listOfFiles != null && listOfFiles.size() > 0) {
 
+            for (File item: listOfFiles) {
+                Log.i(TAG, "onCreate: " + item);
+            }
+        }
 
 //        getDatabase().clearAllTables();
 //

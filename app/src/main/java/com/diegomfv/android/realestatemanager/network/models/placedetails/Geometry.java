@@ -1,7 +1,5 @@
 package com.diegomfv.android.realestatemanager.network.models.placedetails;
 
-import android.location.Location;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
