@@ -4,8 +4,10 @@ import com.diegomfv.android.realestatemanager.utils.Utils;
 
 import junit.framework.Assert;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -33,4 +35,7 @@ public class UnitTest {
         Assert.assertFalse(Utils.isInteger("1237  y4726384"));
 
     }
+
+
+
 }

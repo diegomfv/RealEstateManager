@@ -37,9 +37,7 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
     public RVAdapterListings (Context context, RequestManager glide) {
         Log.d(TAG, "RVAdapterListings: called!");
-
         this.context = context;
-        this.realEstates = realEstates;
         this.glide = glide;
 
     }

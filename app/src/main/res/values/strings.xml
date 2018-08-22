@@ -16,4 +16,5 @@
     <string name="some_access_not_granted">Some access not granted</string>
     <string name="noInternet">Internet NOT available</string>
     <string name="snackbarNoInternetButton">HIDE</string>
+    <string name="notif_notification_channel_name">notification_channel</string>
 </resources>

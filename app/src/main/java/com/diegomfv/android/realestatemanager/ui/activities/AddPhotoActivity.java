@@ -19,14 +19,21 @@ import android.widget.ImageView;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.AppDatabase;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.utils.FirebasePushIdGenerator;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.snatik.storage.Storage;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,8 +67,6 @@ public class AddPhotoActivity extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private RealEstateManagerApp app;
-
     private boolean accessInternalStorageGranted;
 
     private Unbinder unbinder;
@@ -73,8 +78,6 @@ public class AddPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
 
-        this.app = (RealEstateManagerApp) getApplication();
-
         this.accessInternalStorageGranted = false;
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,18 +88,6 @@ public class AddPhotoActivity extends AppCompatActivity {
 
         this.checkInternalStoragePermissionGranted();
 
-    }
-
-    private void checkInternalStoragePermissionGranted() {
-        Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
-
-        if (Utils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            accessInternalStorageGranted = true;
-            launchGallery();
-
-        } else {
-            Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
-        }
     }
 
     @Override
@@ -175,6 +166,51 @@ public class AddPhotoActivity extends AppCompatActivity {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //SINGLETON GETTERS
+
+    private RealEstateManagerApp getApp () {
+        Log.d(TAG, "getApp: called");
+        return (RealEstateManagerApp) getApplication();
+    }
+
+    private AppDatabase getAppDatabase () {
+        Log.d(TAG, "getAppDatabase: called!");
+        return getApp().getDatabase();
+    }
+
+    private Storage getInternalStorage() {
+        Log.d(TAG, "getInternalStorage: called!");
+        return getApp().getInternalStorage();
+    }
+
+    private RealEstate getRealEstateCache () {
+        Log.d(TAG, "getRealEstateCache: called!");
+        return getApp().getRepository().getRealEstateCache();
+    }
+
+    private List<ImageRealEstate> getListOfImagesRealEstateCache () {
+        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
+        return getApp().getRepository().getListOfImagesRealEstateCache();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void checkInternalStoragePermissionGranted() {
+        Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
+
+        if (Utils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            accessInternalStorageGranted = true;
+            launchGallery();
+
+        } else {
+            Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private void configureImageViewOnClickListener () {
         Log.d(TAG, "configureImageViewOnClickListener: called!");
         imageView.setOnClickListener(imageViewOnClickListener);
@@ -220,14 +256,14 @@ public class AddPhotoActivity extends AppCompatActivity {
 
         if (accessInternalStorageGranted) {
 
-            String mainPath = app.getInternalStorage().getInternalFilesDirectory() + File.separator;
+            String mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
             String temporaryDir = mainPath + File.separator + Constants.TEMPORARY_DIRECTORY + File.separator;
 
-            if (app.getInternalStorage().isDirectoryExists(temporaryDir)) {
+            if (getInternalStorage().isDirectoryExists(temporaryDir)) {
                 saveImageInInternalStorage(temporaryDir, imageRealEstateCache.getId());
 
             } else {
-                app.getInternalStorage().createDirectory(temporaryDir);
+                getInternalStorage().createDirectory(temporaryDir);
                 saveImageInInternalStorage(temporaryDir, imageRealEstateCache.getId());
             }
 
@@ -244,7 +280,7 @@ public class AddPhotoActivity extends AppCompatActivity {
     private void saveImageInInternalStorage (String temporaryDir, String imageId) {
         Log.d(TAG, "saveImageInInternalStorage: called!");
 
-        if (app.getInternalStorage().isDirectoryExists(temporaryDir)) {
+        if (getInternalStorage().isDirectoryExists(temporaryDir)) {
 
             final String filePath = temporaryDir + imageId;
 
@@ -255,8 +291,7 @@ public class AddPhotoActivity extends AppCompatActivity {
             final Bitmap bitmap = Bitmap.createBitmap(imageView.getDrawingCache());
 
             if (bitmap != null) {
-
-                Single.just(app.getInternalStorage().createFile(filePath, bitmap))
+                Single.just(getInternalStorage().createFile(filePath, bitmap))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<Boolean>() {
@@ -288,7 +323,7 @@ public class AddPhotoActivity extends AppCompatActivity {
 
     private void addImageToListOfImagesInCache() {
         Log.d(TAG, "addImageToListOfImagesInCache: called!");
-        app.getRepository().getListOfImagesRealEstateCache().add(imageRealEstateCache);
+        getListOfImagesRealEstateCache().add(imageRealEstateCache);
     }
 
 }

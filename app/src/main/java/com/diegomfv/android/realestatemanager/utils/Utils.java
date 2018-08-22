@@ -2,14 +2,20 @@ package com.diegomfv.android.realestatemanager.utils;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,24 +24,32 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppExecutors;
 import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceDetails;
 import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
 import com.diegomfv.android.realestatemanager.rx.ObservableObject;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Observer;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -321,6 +335,26 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public static void copyFileFromDir1ToDir2 (String dir1, String dir2) {
+        Log.d(TAG, "copyFileFromSourceToDestination: called!");
+
+        File source = new File(dir1);
+        File dest = new File(dir2);
+
+        try {
+            FileUtils.copyFileToDirectory(source, dest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public static void deleteFilesFromDir (String dir) {
+        Log.d(TAG, "deleteFilesFromDir: called!");
+    }
+
+
     /** Add photo to temporary internal storage
      * */
     public static void addPictureToTemporaryInternalStorage (Bitmap bitmap) {
@@ -332,6 +366,5 @@ public class Utils {
     public static void removeAllPicturesFromTemporaryInternalStorage () {
         Log.d(TAG, "removeAllPicturesFromTemporaryInternalStorage: called!");
     }
-
 
 }

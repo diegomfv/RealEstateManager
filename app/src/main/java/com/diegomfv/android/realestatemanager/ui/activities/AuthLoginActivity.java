@@ -1,8 +1,5 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -12,15 +9,23 @@ import android.widget.Button;
 
 import com.amitshekhar.DebugDB;
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.AppDatabase;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.snatik.storage.Storage;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+// TODO: 21/08/2018 Clean caches!
 public class AuthLoginActivity extends AppCompatActivity {
 
     private static final String TAG = AuthLoginActivity.class.getSimpleName();
@@ -63,6 +68,10 @@ public class AuthLoginActivity extends AppCompatActivity {
             case R.id.button_sign_up_password_id: {
 
                 ToastHelper.toastButtonClicked(this, view);
+
+                // TODO: 22/08/2018 Delete!
+                getApp().getInternalStorageTemporaryFiles();
+                getApp().getInternalStorageImageFiles();
 
             } break;
 
@@ -124,5 +133,37 @@ public class AuthLoginActivity extends AppCompatActivity {
             }
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //SINGLETON GETTERS
+
+    private RealEstateManagerApp getApp () {
+        Log.d(TAG, "getApp: called");
+        return (RealEstateManagerApp) getApplication();
+    }
+
+    private AppDatabase getAppDatabase () {
+        Log.d(TAG, "getAppDatabase: called!");
+        return getApp().getDatabase();
+    }
+
+    private Storage getInternalStorage() {
+        Log.d(TAG, "getInternalStorage: called!");
+        return getApp().getInternalStorage();
+    }
+
+    private RealEstate getRealEstateCache () {
+        Log.d(TAG, "getRealEstateCache: called!");
+        return getApp().getRepository().getRealEstateCache();
+    }
+
+    private List<ImageRealEstate> getListOfImagesRealEstateCache () {
+        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
+        return getApp().getRepository().getListOfImagesRealEstateCache();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 }

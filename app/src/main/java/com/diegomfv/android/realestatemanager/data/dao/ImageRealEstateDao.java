@@ -2,6 +2,7 @@ package com.diegomfv.android.realestatemanager.data.dao;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 
@@ -23,7 +24,7 @@ public interface ImageRealEstateDao {
     @Insert
     long insertImageRealEstate (ImageRealEstate imageRealEstate);
 
-    @Insert
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
     long[] insertListOfImagesRealEstate (List<ImageRealEstate> listOfImagesRealEstate);
 
     // -------------------

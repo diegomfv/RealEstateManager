@@ -11,6 +11,7 @@ public interface Constants {
     String GET_PARCELABLE = "parcelable_object";
 
     String DESCRIPTIONS_SERIALIZABLE = "descriptions_bundle";
+    String IMAGES_DIRECTORY = "images_directory";
     String TEMPORARY_DIRECTORY = "temporary_directory";
 
     String REQUEST_STATUS_PLACE_FROM_TEXT_IS_OK = "OK";
@@ -28,4 +29,6 @@ public interface Constants {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
     };
+
+    String NOTIFICATION_CHANNEL_ID = "notification_channel";
 }
