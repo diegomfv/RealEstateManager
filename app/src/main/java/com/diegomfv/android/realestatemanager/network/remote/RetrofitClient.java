@@ -26,9 +26,11 @@ public class RetrofitClient {
 
     private static final String GOOGLE_API_PLACE_DETAILS = "https://maps.googleapis.com/maps/api/place/details/";
     private static final String GOOGLE_API_FIND_PLACE_FROM_TEXT = "https://maps.googleapis.com/maps/api/place/findplacefromtext/";
+    private static final String GOOGLE_API_NEARBY_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/";
 
     private static Retrofit retrofitDetails = null;
     private static Retrofit retrofitPlaceFromText = null;
+    private static Retrofit retrofitNearby = null;
 
     public static Retrofit getPlaceDetails () {
         Log.d(TAG, "getPlaceDetails: called!");
@@ -55,4 +57,19 @@ public class RetrofitClient {
         }
         return retrofitPlaceFromText;
     }
+
+    public static Retrofit getNearbyPlaces () {
+        Log.d(TAG, "getNearbyPlaces: called!");
+
+        if (retrofitNearby == null) {
+
+            retrofitNearby = new Retrofit.Builder()
+                    .baseUrl(GOOGLE_API_NEARBY_SEARCH_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
+        }
+        return retrofitNearby;
+    }
+
 }

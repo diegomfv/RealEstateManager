@@ -17,4 +17,9 @@ public class AllGoogleServices {
         Log.d(TAG, "getPlaceFromText: called!");
         return RetrofitClient.getPlaceFromText().create(GoogleService.class);
     }
+
+    public static GoogleService getGoogleNearbyService() {
+        Log.d(TAG, "getGoogleNearbyService: called!");
+        return RetrofitClient.getNearbyPlaces().create(GoogleService.class);
+    }
 }

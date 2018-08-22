@@ -4,7 +4,9 @@ import android.arch.lifecycle.LiveData;
 import android.util.Log;
 
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.network.models.placebynearby.PlacesByNearby;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,8 @@ public class DataRepository {
     private RealEstate realEstateCache;
 
     private List<ImageRealEstate> listOfImagesRealEstateCache;
+
+    private List<PlaceRealEstate> listOfPlacesNearbyCache;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -68,6 +72,22 @@ public class DataRepository {
             return listOfImagesRealEstateCache = new ArrayList<>();
         }
         return listOfImagesRealEstateCache;
+    }
+
+    public List<PlaceRealEstate> getListOfPlacesNearbyCache() {
+        if (listOfPlacesNearbyCache == null) {
+            return listOfPlacesNearbyCache = new ArrayList<>();
+        }
+        return listOfPlacesNearbyCache;
+    }
+
+    public void deleteCache () {
+        Log.d(TAG, "nullifyCache: called!");
+        realEstateCache = null;
+        listOfImagesRealEstateCache.clear();
+        listOfImagesRealEstateCache = null;
+        listOfPlacesNearbyCache.clear();
+        listOfPlacesNearbyCache = null;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

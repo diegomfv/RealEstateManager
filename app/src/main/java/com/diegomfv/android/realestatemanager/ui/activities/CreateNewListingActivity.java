@@ -22,6 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.bumptech.glide.Glide;
@@ -32,8 +33,11 @@ import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppDatabase;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.dialogfragments.InsertAddressDialogFragment;
+import com.diegomfv.android.realestatemanager.network.models.placebynearby.LatLngForRetrofit;
+import com.diegomfv.android.realestatemanager.network.models.placebynearby.PlacesByNearby;
 import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceDetails;
 import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
 import com.diegomfv.android.realestatemanager.network.remote.GoogleServiceStreams;
@@ -65,13 +69,16 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Diego Fajardo on 18/08/2018.
  */
 
-// TODO: 18/08/2018 Add a notification insertion completes!
-// TODO: 21/08/2018 Clean caches!
+// TODO: 22/08/2018 Get nearby places!
+// TODO: 22/08/2018 Insert Nearby Places when process ends!
 public class CreateNewListingActivity extends AppCompatActivity implements Observer, InsertAddressDialogFragment.InsertAddressDialogListener {
 
     private static final String TAG = CreateNewListingActivity.class.getSimpleName();
 
     /////////////////////////////////
+
+    @BindView(R.id.progress_bar_content_id)
+    LinearLayout progressBarContent;
 
     @BindView(R.id.main_layout_id)
     ScrollView mainLayout;
@@ -139,12 +146,14 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
         this.counter = 0;
 
+        this.glide = Glide.with(CreateNewListingActivity.this);
+
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_create_new_listing);
         setTitle("Create a New Listing");
         this.unbinder = ButterKnife.bind(this);
 
-        this.glide = Glide.with(CreateNewListingActivity.this);
+        Utils.showMainContent(progressBarContent, mainLayout);
 
         this.updateViews();
 
@@ -216,10 +225,9 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             } break;
 
             case R.id.button_insert_listing_id: {
-//                ToastHelper.toastShort(this, "Inserting Listing");
-//                insertListing();
 
-                copyAllBitmapsFromTemporaryDirectoryToImageDirectory();
+                ToastHelper.toastShort(this, "Inserting Listing");
+                insertListing();
 
             } break;
         }
@@ -241,6 +249,32 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             }
             break;
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //DIALOG FRAGMENT
+
+    private void launchInsertAddressDialog() {
+        Log.d(TAG, "launchInsertAddressDialog: called!");
+
+        DialogFragment dialog = new InsertAddressDialogFragment();
+        dialog.show(getSupportFragmentManager(), "InsertAddressDialogFragment");
+
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialogFragment, String street, String city, String postcode) {
+        Log.d(TAG, "onDialogPositiveClick: called!");
+
+        checkAddressIsValid(street,city,postcode);
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialogFragment) {
+        Log.d(TAG, "onDialogNegativeClick: called!");
+
+        ToastHelper.toastShort(this, "The address was not added");
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -272,10 +306,17 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         return getApp().getRepository().getListOfImagesRealEstateCache();
     }
 
+    private List<PlaceRealEstate> getListOfPlacesByNearbyCache () {
+        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
+        return getApp().getRepository().getListOfPlacesNearbyCache();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void insertListing() {
         Log.d(TAG, "insertListing: called!");
+
+        Utils.hideMainContent(progressBarContent, mainLayout);
 
         /* Start insertion process
         * */
@@ -320,19 +361,11 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                     @Override
                     public void onSuccess(long[] longs) {
                         Log.d(TAG, "onSuccess: called!");
-                        ToastHelper.toastShort(CreateNewListingActivity.this, "Insert process finished. REMEMBER IMPLEMENTING COPY FILES PROCESS!");
 
+                        ToastHelper.toastShort(CreateNewListingActivity.this,
+                                "Insert process finished. REMEMBER IMPLEMENTING COPY FILES PROCESS!");
 
-
-                        // TODO: 21/08/2018 Move Temporary files from internal storage and then launchActivity
-                        //Utils.launchActivity(CreateNewListingActivity.this, AuthLoginActivity.class);
-
-                        /* Move files from temporaryDir to imagesDir
-                         * */
-
-                        // TODO: 21/08/2018 Cache is cleaned in the next activity
-
-
+                        copyAllBitmapsFromTemporaryDirectoryToImageDirectory();
 
                     }
 
@@ -519,9 +552,75 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                             getRealEstateCache().setLatitude(placeDetails.getResult().getGeometry().getLocation().getLat());
                             getRealEstateCache().setLongitude(placeDetails.getResult().getGeometry().getLocation().getLng());
 
+                            /* We use the latitude and longitude to fetch nearby places
+                            * */
+                            getNearbyPlaces(
+                                    placeDetails.getResult().getGeometry().getLocation().getLat(),
+                                    placeDetails.getResult().getGeometry().getLocation().getLng());
+
+
+
                         } else {
                             ToastHelper.toastShort(CreateNewListingActivity.this,
                                     "There is a problem with the latitude and longitude");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+
+                    }
+                });
+    }
+
+    @SuppressLint("CheckResult")
+    private void getNearbyPlaces (double latitude, double longitude) {
+        Log.d(TAG, "getNearbyPlaces: called!");
+
+        /* Clean the cache
+        * */
+        getListOfPlacesByNearbyCache().clear();
+
+        // TODO: 22/08/2018 Constrain the search with types!
+
+        GoogleServiceStreams.streamFetchPlacesNearby(
+                new LatLngForRetrofit(latitude,longitude),
+                Constants.FETCH_NEARBY_RANKBY,
+                getResources().getString(R.string.a_k_p))
+                .subscribeWith(new DisposableObserver<PlacesByNearby>() {
+                    @Override
+                    public void onNext(PlacesByNearby placesByNearby) {
+                        Log.d(TAG, "onNext: called!");
+
+                        if (Utils.checkPlacesByNearbyResults(placesByNearby)) {
+
+                            PlaceRealEstate placeRealEstate;
+
+                            for (int i = 0; i < placesByNearby.getResults().size(); i++) {
+
+                                if (Utils.checkResultPlacesByNearby(placesByNearby.getResults().get(i))) {
+
+                                    placeRealEstate = new PlaceRealEstate(
+                                            FirebasePushIdGenerator.generate(),
+                                            placesByNearby.getResults().get(i).getPlaceId(),
+                                            placesByNearby.getResults().get(i).getName(),
+                                            null,
+                                            placesByNearby.getResults().get(i).getGeometry().getLocation().getLat(),
+                                            placesByNearby.getResults().get(i).getGeometry().getLocation().getLng());
+
+                                    /* If the result passes all checks, add the place to the cache
+                                    * */
+                                    getListOfPlacesByNearbyCache().add(placeRealEstate);
+
+                                }
+                            }
                         }
                     }
 
@@ -552,7 +651,6 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         receiver = new InternetConnectionReceiver();
         intentFilter = new IntentFilter(Constants.CONNECTIVITY_CHANGE_STATUS);
         Utils.connectReceiver(this, receiver, intentFilter, this);
-
     }
 
     /** Method that disconnects the broadcastReceiver from the activity.
@@ -569,7 +667,6 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         receiver = null;
         intentFilter = null;
         snackbar = null;
-
     }
 
     private void snackbarConfiguration () {
@@ -591,32 +688,6 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                 snackbar.show();
             }
         }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //DIALOG FRAGMENT
-
-    private void launchInsertAddressDialog() {
-        Log.d(TAG, "launchInsertAddressDialog: called!");
-
-        DialogFragment dialog = new InsertAddressDialogFragment();
-        dialog.show(getSupportFragmentManager(), "InsertAddressDialogFragment");
-
-    }
-
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialogFragment, String street, String city, String postcode) {
-        Log.d(TAG, "onDialogPositiveClick: called!");
-
-        checkAddressIsValid(street,city,postcode);
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialogFragment) {
-        Log.d(TAG, "onDialogNegativeClick: called!");
-
-        ToastHelper.toastShort(this, "The address was not added");
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -648,8 +719,8 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.real_estate_logo)
-                        .setContentTitle("Listing created")
-                        .setContentText("Address: " + getRealEstateCache().getAddress())
+                        .setContentTitle(getResources().getString(R.string.notification_title))
+                        .setContentText(getResources().getString(R.string.notification_text, getRealEstateCache().getAddress()))
                         .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                         .setAutoCancel(true);
         //SetAutoCancel(true) makes the notification dismissible when the user swipes it away
@@ -678,7 +749,6 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         }
     }
 
-    // TODO: 22/08/2018 Delete
     @SuppressLint("CheckResult")
     private void getBitmapImagesFromImagesFiles() {
         Log.d(TAG, "getBitmapImagesFromImagesFiles: called!");
@@ -744,6 +814,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             }
 
             Utils.launchActivity(this, AuthLoginActivity.class);
+            createNotification();
 
         } else {
                 // TODO: 18/08/2018 Create a dialog asking for permissions! It should load configure internal storage again!

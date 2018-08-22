@@ -27,11 +27,8 @@ import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 import com.snatik.storage.Storage;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 

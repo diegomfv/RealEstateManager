@@ -1,5 +1,7 @@
 package com.diegomfv.android.realestatemanager.network.remote;
 
+import com.diegomfv.android.realestatemanager.network.models.placebynearby.LatLngForRetrofit;
+import com.diegomfv.android.realestatemanager.network.models.placebynearby.PlacesByNearby;
 import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceDetails;
 import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
 
@@ -24,6 +26,14 @@ public interface GoogleService {
             @Query("placeid") String placeId,
             @Query("key") String key
     );
+
+    @GET("json")
+    Observable<PlacesByNearby> fetchNearbyPlaces(
+            @Query("location") LatLngForRetrofit latLngForRetrofit,
+            @Query("rankby") String rankby,
+            @Query("key") String key
+    );
+
 
 
 }

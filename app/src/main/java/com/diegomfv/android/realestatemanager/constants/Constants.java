@@ -31,4 +31,6 @@ public interface Constants {
     };
 
     String NOTIFICATION_CHANNEL_ID = "notification_channel";
+
+    String FETCH_NEARBY_RANKBY = "distance";
 }

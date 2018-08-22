@@ -2,6 +2,8 @@ package com.diegomfv.android.realestatemanager.network.remote;
 
 import android.util.Log;
 
+import com.diegomfv.android.realestatemanager.network.models.placebynearby.LatLngForRetrofit;
+import com.diegomfv.android.realestatemanager.network.models.placebynearby.PlacesByNearby;
 import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceDetails;
 import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
 
@@ -36,5 +38,18 @@ public class GoogleServiceStreams {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .timeout(10, TimeUnit.SECONDS);
+    }
+
+    public static Observable<PlacesByNearby> streamFetchPlacesNearby(
+            LatLngForRetrofit latLngForRetrofit,
+            String rankBy,
+            String key) {
+
+        GoogleService googleService = AllGoogleServices.getGoogleNearbyService();
+        return googleService.fetchNearbyPlaces(latLngForRetrofit, rankBy, key)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .timeout(10, TimeUnit.SECONDS);
+
     }
 }

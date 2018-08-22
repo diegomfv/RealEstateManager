@@ -17,4 +17,7 @@
     <string name="noInternet">Internet NOT available</string>
     <string name="snackbarNoInternetButton">HIDE</string>
     <string name="notif_notification_channel_name">notification_channel</string>
+    <string name="loading_please_wait">Loading... please wait...</string>
+    <string name="notification_title">Listing created</string>
+    <string name="notification_text">Address: %1$s</string>
 </resources>

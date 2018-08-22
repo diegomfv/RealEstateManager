@@ -11,6 +11,7 @@ import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppDatabase;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.rest.FragmentItemDescription;
 import com.diegomfv.android.realestatemanager.ui.rest.FragmentListListings;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: called!");
 
         this.accessInternalStorageGranted = false;
+
+        getApp().getRepository().deleteCache();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_main);
@@ -92,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
     private List<ImageRealEstate> getListOfImagesRealEstateCache () {
         Log.d(TAG, "getListOfImagesRealEstateCache: called!");
         return getApp().getRepository().getListOfImagesRealEstateCache();
+    }
+
+    private List<PlaceRealEstate> getListOfPlacesByNearbyCache () {
+        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
+        return getApp().getRepository().getListOfPlacesNearbyCache();
     }
 
     /** Method that loads one or two fragments depending on the device
