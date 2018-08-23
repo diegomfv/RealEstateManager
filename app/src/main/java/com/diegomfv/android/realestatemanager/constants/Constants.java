@@ -33,4 +33,8 @@ public interface Constants {
     String NOTIFICATION_CHANNEL_ID = "notification_channel";
 
     String FETCH_NEARBY_RANKBY = "distance";
+
+    int SUCCESS = 1;
+    int ERROR = -1;
+    int LOADING = 0;
 }

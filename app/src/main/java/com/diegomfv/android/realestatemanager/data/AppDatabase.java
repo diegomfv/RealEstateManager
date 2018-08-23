@@ -22,9 +22,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.diegomfv.android.realestatemanager.data.dao.ImageRealEstateDao;
-import com.diegomfv.android.realestatemanager.data.dao.PlaceDao;
+import com.diegomfv.android.realestatemanager.data.dao.PlaceRealEstateDao;
 import com.diegomfv.android.realestatemanager.data.dao.RealEstateDao;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.data.typeconverters.StringListConverter;
 
@@ -33,7 +34,7 @@ import com.diegomfv.android.realestatemanager.data.typeconverters.StringListConv
  * Android Development Course, UDACITY)
  * */
 
-@Database(entities = {RealEstate.class, ImageRealEstate.class}, version = 1, exportSchema = false)
+@Database(entities = {RealEstate.class, ImageRealEstate.class, PlaceRealEstate.class}, version = 1, exportSchema = false)
 @TypeConverters({StringListConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -57,7 +58,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract ImageRealEstateDao imageRealEstateDao();
 
-    public abstract PlaceDao placeRealEstateDao();
+    public abstract PlaceRealEstateDao placeRealEstateDao();
 
     /////////////////////////////////////
 

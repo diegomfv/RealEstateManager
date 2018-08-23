@@ -6,10 +6,16 @@ import android.util.Log;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
-import com.diegomfv.android.realestatemanager.network.models.placebynearby.PlacesByNearby;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.observers.DisposableObserver;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
@@ -74,7 +80,7 @@ public class DataRepository {
         return listOfImagesRealEstateCache;
     }
 
-    public List<PlaceRealEstate> getListOfPlacesNearbyCache() {
+    public List<PlaceRealEstate> getListOfPlacesRealEstateCache() {
         if (listOfPlacesNearbyCache == null) {
             return listOfPlacesNearbyCache = new ArrayList<>();
         }
@@ -101,6 +107,10 @@ public class DataRepository {
     public LiveData<List<RealEstate>> getAllListings() {
         return mDatabase.realStateDao().getAllListingsOrderedByType();
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // TODO: 22/08/2018 Fetch network data from the repository!
 
 
 }

@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<PlaceRealEstate> getListOfPlacesByNearbyCache () {
         Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfPlacesNearbyCache();
+        return getApp().getRepository().getListOfPlacesRealEstateCache();
     }
 
     /** Method that loads one or two fragments depending on the device

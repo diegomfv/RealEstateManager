@@ -61,6 +61,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.internal.schedulers.IoScheduler;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -68,9 +69,8 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Diego Fajardo on 18/08/2018.
  */
-
-// TODO: 22/08/2018 Get nearby places!
-// TODO: 22/08/2018 Insert Nearby Places when process ends!
+// TODO: 23/08/2018 Transform nearby places. Get places OF INTEREST!
+// TODO: 23/08/2018 If back button clicked when seaching for an image, the app crashes
 public class CreateNewListingActivity extends AppCompatActivity implements Observer, InsertAddressDialogFragment.InsertAddressDialogListener {
 
     private static final String TAG = CreateNewListingActivity.class.getSimpleName();
@@ -133,6 +133,8 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
     private IntentFilter intentFilter;
     private Snackbar snackbar;
     private boolean isInternetAvailable;
+
+    /////////////////////////////////
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -217,10 +219,10 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
             case R.id.button_go_back_id: {
 
-                getApp().getAllFiles();
-
-                getApp().getInternalStorageTemporaryFiles();
-                getApp().getInternalStorageImageFiles();
+                // TODO: 23/08/2018 Change this!
+                Log.i(TAG, "buttonClicked: " + getApp().getRepository().getRealEstateCache());
+                Log.i(TAG, "buttonClicked: " + getApp().getRepository().getListOfImagesRealEstateCache());
+                Log.i(TAG, "buttonClicked: " + getApp().getRepository().getListOfPlacesRealEstateCache());
 
             } break;
 
@@ -306,9 +308,9 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         return getApp().getRepository().getListOfImagesRealEstateCache();
     }
 
-    private List<PlaceRealEstate> getListOfPlacesByNearbyCache () {
+    private List<PlaceRealEstate> getListOfPlacesRealEstateCache() {
         Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfPlacesNearbyCache();
+        return getApp().getRepository().getListOfPlacesRealEstateCache();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -356,15 +358,13 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
         Single.just(getAppDatabase().imageRealEstateDao().insertListOfImagesRealEstate(getListOfImagesRealEstateCache()))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribeWith(new DisposableSingleObserver<long[]>() {
                     @Override
                     public void onSuccess(long[] longs) {
                         Log.d(TAG, "onSuccess: called!");
 
-                        ToastHelper.toastShort(CreateNewListingActivity.this,
-                                "Insert process finished. REMEMBER IMPLEMENTING COPY FILES PROCESS!");
-
+                        insertListPlacesRealEstate();
                         copyAllBitmapsFromTemporaryDirectoryToImageDirectory();
 
                     }
@@ -373,6 +373,27 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError: " + e.getMessage());
 
+                    }
+                });
+    }
+
+    @SuppressLint("CheckResult")
+    public void insertListPlacesRealEstate () {
+        Log.d(TAG, "insertListPlacesRealEstate: called");
+
+        // TODO: 23/08/2018 Could be done just with App Executors
+        Single.just(getAppDatabase().placeRealEstateDao().insertListOfPlaceRealEstate(getListOfPlacesRealEstateCache()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableSingleObserver<long[]>() {
+                    @Override
+                    public void onSuccess(long[] longs) {
+                        Log.d(TAG, "onSuccess: called!");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
                     }
                 });
     }
@@ -584,11 +605,11 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
     private void getNearbyPlaces (double latitude, double longitude) {
         Log.d(TAG, "getNearbyPlaces: called!");
 
-        /* Clean the cache
+        /* Clear the cache
         * */
-        getListOfPlacesByNearbyCache().clear();
+        getListOfPlacesRealEstateCache().clear();
 
-        // TODO: 22/08/2018 Constrain the search with types!
+        // TODO: 22/08/2018 Constraint the search with types!
 
         GoogleServiceStreams.streamFetchPlacesNearby(
                 new LatLngForRetrofit(latitude,longitude),
@@ -602,6 +623,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                         if (Utils.checkPlacesByNearbyResults(placesByNearby)) {
 
                             PlaceRealEstate placeRealEstate;
+                            List<String> listPlaceRealEstateIds = new ArrayList<>();
 
                             for (int i = 0; i < placesByNearby.getResults().size(); i++) {
 
@@ -617,10 +639,12 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
                                     /* If the result passes all checks, add the place to the cache
                                     * */
-                                    getListOfPlacesByNearbyCache().add(placeRealEstate);
+                                    getListOfPlacesRealEstateCache().add(placeRealEstate);
+                                    listPlaceRealEstateIds.add(placeRealEstate.getId());
 
                                 }
                             }
+                            getRealEstateCache().setListOfNearbyPointsOfInterestIds(listPlaceRealEstateIds);
                         }
                     }
 

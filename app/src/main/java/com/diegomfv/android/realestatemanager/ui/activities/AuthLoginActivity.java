@@ -69,9 +69,6 @@ public class AuthLoginActivity extends AppCompatActivity {
 
                 ToastHelper.toastButtonClicked(this, view);
 
-                // TODO: 22/08/2018 Delete!
-                getApp().getInternalStorageTemporaryFiles();
-                getApp().getInternalStorageImageFiles();
 
             } break;
 

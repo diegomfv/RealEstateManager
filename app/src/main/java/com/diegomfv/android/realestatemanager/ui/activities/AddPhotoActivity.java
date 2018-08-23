@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
@@ -70,12 +72,16 @@ public class AddPhotoActivity extends AppCompatActivity {
 
     private ImageRealEstate imageRealEstateCache;
 
+    private RequestManager glide;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
 
         this.accessInternalStorageGranted = false;
+
+        this.glide = Glide.with(this);
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_add_photo);
@@ -279,36 +285,43 @@ public class AddPhotoActivity extends AppCompatActivity {
 
         if (getInternalStorage().isDirectoryExists(temporaryDir)) {
 
-            final String filePath = temporaryDir + imageId;
+            try {
 
-            imageView.setDrawingCacheEnabled(true);
-            imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-            imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
-            imageView.buildDrawingCache();
-            final Bitmap bitmap = Bitmap.createBitmap(imageView.getDrawingCache());
+                final String filePath = temporaryDir + imageId;
 
-            if (bitmap != null) {
-                Single.just(getInternalStorage().createFile(filePath, bitmap))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<Boolean>() {
-                            @Override
-                            public void onSuccess(Boolean fileIsCreated) {
-                                Log.i(TAG, "onSuccess: called!");
-                                addImageToListOfImagesInCache();
-                                Utils.launchActivity(AddPhotoActivity.this, CreateNewListingActivity.class);
-                            }
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.i(TAG, "onError: called!");
-                                ToastHelper.toastThereWasAnError(AddPhotoActivity.this);
-                            }
-                        });
+                imageView.setDrawingCacheEnabled(true);
+                imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+                imageView.buildDrawingCache();
+                final Bitmap bitmap = Bitmap.createBitmap(imageView.getDrawingCache());
 
-            } else {
-                ToastHelper.toastShort(this, "Bitmap was not got properly");
-                Utils.launchActivity(this, CreateNewListingActivity.class);
+                if (bitmap != null) {
+                    Single.just(getInternalStorage().createFile(filePath, bitmap))
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean fileIsCreated) {
+                                    Log.i(TAG, "onSuccess: called!");
+                                    addImageToListOfImagesInCache();
+                                    Utils.launchActivity(AddPhotoActivity.this, CreateNewListingActivity.class);
+                                }
+                                @Override
+                                public void onError(Throwable e) {
+                                    Log.i(TAG, "onError: called!");
+                                    ToastHelper.toastThereWasAnError(AddPhotoActivity.this);
+                                }
+                            });
 
+                } else {
+                    ToastHelper.toastShort(this, "Bitmap was not got properly");
+                    Utils.launchActivity(this, CreateNewListingActivity.class);
+
+                }
+
+            } catch (NullPointerException e) {
+                ToastHelper.toastShort(this, "Sorry, that image cannot be added");
+                glide.load(R.drawable.flat_example).into(imageView);
             }
 
         } else {
