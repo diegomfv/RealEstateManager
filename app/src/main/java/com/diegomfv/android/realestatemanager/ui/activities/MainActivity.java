@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
@@ -15,10 +17,10 @@ import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.rest.FragmentItemDescription;
 import com.diegomfv.android.realestatemanager.ui.rest.FragmentListListings;
+import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 import com.snatik.storage.Storage;
 
-import java.io.File;
 import java.util.List;
 
 /** How crashes were solved:
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean accessInternalStorageGranted;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +50,67 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.loadFragmentOrFragments();
+
         this.checkInternalStoragePermissionGranted();
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu: called!");
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: called!");
+
+        switch (item.getItemId()) {
+
+            case R.id.menu_add_listing_button: {
+
+                if (accessInternalStorageGranted) {
+                    Utils.launchActivity(this, CreateNewListingActivity.class);
+
+                } else {
+                    ToastHelper.toastSomeAccessNotGranted(this);
+                }
+
+
+            } break;
+
+            case R.id.menu_position_button: {
+                Utils.launchActivity(this, PositionActivity.class);
+
+            } break;
+
+            case R.id.menu_change_currency_button: {
+
+                // TODO: 23/08/2018 Code
+
+            } break;
+
+            case R.id.menu_edit_listing_button: {
+
+                if (accessInternalStorageGranted) {
+                    Utils.launchActivity(this, EditListingActivity.class);
+
+                } else {
+                    ToastHelper.toastSomeAccessNotGranted(this);
+                }
+
+            } break;
+
+            case R.id.menu_search_button: {
+
+
+
+            } break;
+
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -61,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if (grantResults.length > 0 && grantResults[0] != -1) {
                     accessInternalStorageGranted = true;
-                    deleteFilesFromTemporaryStorage();
                     createDirectories();
                 }
             }
@@ -69,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     //SINGLETON GETTERS
 
@@ -102,6 +166,8 @@ public class MainActivity extends AppCompatActivity {
         return getApp().getRepository().getListOfPlacesRealEstateCache();
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     /** Method that loads one or two fragments depending on the device
      * */
     private void loadFragmentOrFragments() {
@@ -124,12 +190,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private void checkInternalStoragePermissionGranted() {
         Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
 
         if (Utils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             accessInternalStorageGranted = true;
-            deleteFilesFromTemporaryStorage();
+            createDirectories();
+
         } else {
             Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
         }
@@ -138,26 +207,14 @@ public class MainActivity extends AppCompatActivity {
     private void createDirectories () {
         Log.d(TAG, "createDirectories: called");
 
-        if (!getInternalStorage().isDirectoryExists(getApp().getImagesDir())) {
-            getInternalStorage().createDirectory(getApp().getImagesDir());
-        }
-
-        if (!getInternalStorage().isDirectoryExists(getApp().getTemporaryDir())) {
-            getInternalStorage().createDirectory(getApp().getTemporaryDir());
-        }
-
-    }
-
-    private void deleteFilesFromTemporaryStorage () {
-        Log.d(TAG, "deleteTemporaryStorage: called!");
-
         if (accessInternalStorageGranted) {
+            if (!getInternalStorage().isDirectoryExists(getApp().getImagesDir())) {
+                getInternalStorage().createDirectory(getApp().getImagesDir());
+            }
 
-            String mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
-            String temporaryDir = mainPath + File.separator + Constants.IMAGES_DIRECTORY + File.separator;
-
-            getInternalStorage().deleteDirectory(temporaryDir);
-
+            if (!getInternalStorage().isDirectoryExists(getApp().getTemporaryDir())) {
+                getInternalStorage().createDirectory(getApp().getTemporaryDir());
+            }
         }
     }
 }

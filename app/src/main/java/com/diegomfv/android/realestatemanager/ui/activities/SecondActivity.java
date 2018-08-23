@@ -41,7 +41,7 @@ public class SecondActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
 
-            case R.id.menu_add_button: {
+            case R.id.menu_add_listing_button: {
 
                 ToastHelper.toastMenuItemClicked(context, item);
 

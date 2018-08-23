@@ -35,6 +35,7 @@ import butterknife.Unbinder;
  * which is a parameter to setButton(), setPositiveButton(), and setNegativeButton().
  * The other is View.OnClickListener, which will be set to automatically dismiss your AlertDialog
  * when any of its button is pressed — and is set by AlertDialog itself.
+ * That is why we override the View.OnClickListener();
  * */
 
 public class InsertAddressDialogFragment extends DialogFragment {
@@ -165,5 +166,4 @@ public class InsertAddressDialogFragment extends DialogFragment {
             dialog.dismiss();
         }
     }
-
 }

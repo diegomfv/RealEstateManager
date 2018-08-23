@@ -34,6 +34,7 @@ import butterknife.Unbinder;
 /**
  * Created by Diego Fajardo on 16/08/2018.
  */
+// TODO: 23/08/2018 Retain the fragment!
 public class FragmentListListings extends Fragment {
 
     private static final String TAG = FragmentListListings.class.getSimpleName();

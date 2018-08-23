@@ -3,10 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_add_button"
+        android:id="@+id/menu_add_listing_button"
         android:icon="@drawable/ic_add_white_24dp"
         app:showAsAction="ifRoom"
         android:title="@string/main_add"/>
+
+    <item
+        android:id="@+id/menu_position_button"
+        android:icon="@drawable/ic_my_location_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/main_current_location"/>
 
     <item
         android:id="@+id/menu_change_currency_button"

@@ -17,6 +17,15 @@
         android:roundIcon="@drawable/real_estate_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDuv5PtP5uwugkDW189v9_ycrp8A0nlwkU"/>
+
         <activity android:name=".ui.activities.DetailActivity" />
         <activity android:name=".ui.activities.AuthLoginActivity">
             <intent-filter>
@@ -29,6 +38,8 @@
         <activity android:name=".ui.activities.MainActivity" />
         <activity android:name=".ui.activities.CreateNewListingActivity" />
         <activity android:name=".ui.activities.AddPhotoActivity" />
+        <activity android:name=".ui.activities.EditListingActivity" />
+        <activity android:name=".ui.activities.PositionActivity" />
 
         <receiver android:name=".receivers.InternetConnectionReceiver"/>
 

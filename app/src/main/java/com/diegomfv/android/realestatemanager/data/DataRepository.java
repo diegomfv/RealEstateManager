@@ -89,10 +89,19 @@ public class DataRepository {
 
     public void deleteCache () {
         Log.d(TAG, "nullifyCache: called!");
+
         realEstateCache = null;
-        listOfImagesRealEstateCache.clear();
+
+        if (listOfImagesRealEstateCache != null) {
+            listOfImagesRealEstateCache.clear();
+        }
+
         listOfImagesRealEstateCache = null;
-        listOfPlacesNearbyCache.clear();
+
+        if (listOfPlacesNearbyCache != null) {
+            listOfPlacesNearbyCache.clear();
+        }
+
         listOfPlacesNearbyCache = null;
     }
 
