@@ -86,7 +86,7 @@ public class FragmentListListings extends Fragment {
 
         this.configureRecyclerView();
 
-        this.listingsViewModel = this.createModel();
+        this.createModel();
 
         this.subscribeToModel(listingsViewModel);
 
@@ -102,7 +102,7 @@ public class FragmentListListings extends Fragment {
 
     /////////////////////////////////////////////////
 
-    private ListingsSharedViewModel createModel () {
+    private void createModel () {
         Log.d(TAG, "createModel: called!");
 
         if (getActivity() != null) {
@@ -111,10 +111,7 @@ public class FragmentListListings extends Fragment {
                     .of(getActivity(), factory)
                     .get(ListingsSharedViewModel.class);
 
-            return listingsViewModel;
         }
-
-        return null;
     }
 
     private void subscribeToModel (ListingsSharedViewModel listingsViewModel) {

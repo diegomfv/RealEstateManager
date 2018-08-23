@@ -16,11 +16,15 @@ import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import java.util.List;
 
 /**
- * Created by Diego Fajardo on 16/08/2018.
+ * Created by Diego Fajardo on 23/08/2018.
  */
-public class ListingsSharedViewModel extends AndroidViewModel {
 
-    private static final String TAG = ListingsSharedViewModel.class.getSimpleName();
+/** This ViewModel is basically similar to ListingsSharedViewModel
+ * Therefore, todo: Code could be simplified
+ * */
+public class PositionViewModel extends AndroidViewModel {
+
+    private static final String TAG = PositionViewModel.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,7 +34,7 @@ public class ListingsSharedViewModel extends AndroidViewModel {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public ListingsSharedViewModel(@NonNull Application application, DataRepository dataRepository) {
+    public PositionViewModel(@NonNull Application application, DataRepository dataRepository) {
         super(application);
         Log.d(TAG, "ListingsSharedViewModel: called!");
 
@@ -39,26 +43,28 @@ public class ListingsSharedViewModel extends AndroidViewModel {
 
     /** This method fills the MutableLiveData with the information from
      * the item clicked in FragmentItemDescription. When this gets modified,
-     * it automatically triggers the observer via getItemSelected()*/
+     * it automatically triggers the observer via getItemSelected()
+     * */
     public void selectItem (RealEstate realEstate) {
         Log.d(TAG, "selectItem: called!");
         itemSelected.setValue(realEstate);
     }
 
     /** Returns the MutableLiveDataObject which will be used to display
-     * data in the FragmentItemDescription*/
+     * data in the FragmentItemDescription
+     * */
     public LiveData<RealEstate> getItemSelected() {
         Log.d(TAG, "getItemSelected: called!");
         return itemSelected;
     }
 
-    /**
-     * Expose the LiveData so the UI can observe it. */
+    /** Expose the LiveData so the UI can observe it
+     * */
     public LiveData<List<RealEstate>> getObservableListOfListings() {
         return observableListOfListings;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////
 
     /** Factory to create the ViewModel with the repository available
      * */

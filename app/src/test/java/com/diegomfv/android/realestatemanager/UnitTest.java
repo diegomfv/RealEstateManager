@@ -1,16 +1,16 @@
 package com.diegomfv.android.realestatemanager;
 
+import com.diegomfv.android.realestatemanager.network.models.placedetails.Location;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 
 import junit.framework.Assert;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import java.io.File;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.Random;
-
-import static org.junit.Assert.*;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -33,6 +33,33 @@ public class UnitTest {
         Assert.assertFalse(Utils.isInteger("aasjhhfwe"));
         Assert.assertFalse(Utils.isInteger("aasdbfyur   f"));
         Assert.assertFalse(Utils.isInteger("1237  y4726384"));
+
+    }
+
+    @Test
+    public void decimalFormat () {
+
+        Random random = new Random();
+
+        DecimalFormatSymbols unusualSymbols =
+                new DecimalFormatSymbols(Locale.US);
+        unusualSymbols.setDecimalSeparator(',');
+        unusualSymbols.setGroupingSeparator('.');
+
+        String strange = ",###.00";
+        DecimalFormat weirdFormatter =
+                new DecimalFormat(strange, unusualSymbols);
+        weirdFormatter.setGroupingSize(3);
+
+        String bizarre = weirdFormatter.format(random.nextInt() + random.nextFloat());
+        System.out.println(bizarre + " $");
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
     }
 

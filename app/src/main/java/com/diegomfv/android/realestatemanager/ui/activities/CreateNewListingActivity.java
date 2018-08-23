@@ -16,10 +16,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -61,7 +63,6 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.internal.schedulers.IoScheduler;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -115,6 +116,8 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
     /////////////////////////////////
 
+    private ActionBar actionBar;
+
     //RecyclerView Adapter
     private RVAdapterMediaHorizontal adapter;
 
@@ -154,6 +157,8 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         setContentView(R.layout.activity_create_new_listing);
         setTitle("Create a New Listing");
         this.unbinder = ButterKnife.bind(this);
+
+        this.configureActionBar();
 
         Utils.showMainContent(progressBarContent, mainLayout);
 
@@ -244,6 +249,35 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                 }
             }
             break;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: called!");
+
+        switch (item.getItemId()) {
+
+            case android.R.id.home: {
+                Utils.launchActivity(this, MainActivity.class);
+
+            } break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void configureActionBar() {
+        Log.d(TAG, "configureActionBar: called!");
+
+        actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
         }
     }
 

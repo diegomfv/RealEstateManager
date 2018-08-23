@@ -104,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menu_search_button: {
 
-
-
             } break;
 
 

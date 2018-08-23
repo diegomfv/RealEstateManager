@@ -32,8 +32,12 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Observer;
 
 import io.reactivex.Observable;
@@ -384,4 +388,60 @@ public class Utils {
 
     }
 
+    public static String formatToDecimals(int number, int currency) {
+        Log.d(TAG, "formatToDecimalsWithComma: called!");
+
+        //currency
+        //0: dollars
+        //1: euros
+
+        String formatType = ",###.00";
+
+        switch (currency) {
+
+            case 0: {
+
+                DecimalFormatSymbols symbolsDollars =
+                        new DecimalFormatSymbols(Locale.US);
+                symbolsDollars.setDecimalSeparator('.');
+                symbolsDollars.setGroupingSeparator(',');
+
+                DecimalFormat dollarsFormatter =
+                        new DecimalFormat(formatType, symbolsDollars);
+                dollarsFormatter.setGroupingSize(3);
+
+                return dollarsFormatter.format(number);
+            }
+
+            case 1: {
+
+                DecimalFormatSymbols symbolsEuros =
+                        new DecimalFormatSymbols(Locale.GERMAN);
+                symbolsEuros.setDecimalSeparator(',');
+                symbolsEuros.setGroupingSeparator('.');
+
+                DecimalFormat eurosFormatter =
+                        new DecimalFormat(formatType, symbolsEuros);
+                eurosFormatter.setGroupingSize(3);
+
+                return eurosFormatter.format(number);
+            }
+
+            default: {
+
+                DecimalFormatSymbols symbolsDollars =
+                        new DecimalFormatSymbols(Locale.US);
+                symbolsDollars.setDecimalSeparator('.');
+                symbolsDollars.setGroupingSeparator(',');
+
+                DecimalFormat dollarsFormatter =
+                        new DecimalFormat(formatType, symbolsDollars);
+                dollarsFormatter.setGroupingSize(3);
+
+                return dollarsFormatter.format(number);
+            }
+
+        }
+
+    }
 }
