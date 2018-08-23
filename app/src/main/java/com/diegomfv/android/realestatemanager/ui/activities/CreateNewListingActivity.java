@@ -218,17 +218,11 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             } break;
 
             case R.id.button_go_back_id: {
-
-                // TODO: 23/08/2018 Change this!
-                Log.i(TAG, "buttonClicked: " + getApp().getRepository().getRealEstateCache());
-                Log.i(TAG, "buttonClicked: " + getApp().getRepository().getListOfImagesRealEstateCache());
-                Log.i(TAG, "buttonClicked: " + getApp().getRepository().getListOfPlacesRealEstateCache());
+                Utils.launchActivity(this, MainActivity.class);
 
             } break;
 
             case R.id.button_insert_listing_id: {
-
-                ToastHelper.toastShort(this, "Inserting Listing");
                 insertListing();
 
             } break;
