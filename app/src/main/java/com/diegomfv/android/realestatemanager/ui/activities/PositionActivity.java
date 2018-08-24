@@ -255,7 +255,6 @@ public class PositionActivity extends AppCompatActivity {
         } else {
             item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_dollar_symbol_white_24dp));
         }
-
     }
 
     private void changeCurrency() {
@@ -265,17 +264,6 @@ public class PositionActivity extends AppCompatActivity {
             this.currency = 1;
         } else {
             this.currency = 0;
-        }
-
-    }
-
-    private String getCurrencySymbol (int currency) {
-        Log.d(TAG, "getCurrencySymbol: called!");
-
-        switch (currency) {
-            case 0: { return " $"; }
-            case 1: { return " €"; }
-            default: { return " $"; }
         }
     }
 
@@ -505,7 +493,7 @@ public class PositionActivity extends AppCompatActivity {
                 .title(realEstate.getType()
                         + " - "
                         + getPriceInProperCurrency(realEstate.getPrice(), currency)
-                        + getCurrencySymbol(currency))
+                        + Utils.getCurrencySymbol(currency))
                 .snippet(realEstate.getAddress())
                 .icon(getIconAccordingToAlreadySold(alreadySold));
 

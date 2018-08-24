@@ -26,9 +26,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
 import com.bumptech.glide.Glide;
@@ -41,7 +41,7 @@ import com.diegomfv.android.realestatemanager.data.AppDatabase;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
-import com.diegomfv.android.realestatemanager.dialogfragments.InsertAddressDialogFragment;
+import com.diegomfv.android.realestatemanager.ui.dialogfragments.InsertAddressDialogFragment;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.LatLngForRetrofit;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.PlacesByNearby;
 import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceDetails;
@@ -170,7 +170,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         this.glide = Glide.with(CreateNewListingActivity.this);
 
         ////////////////////////////////////////////////////////////////////////////////////////////
-        setContentView(R.layout.activity_create_new_listing);
+        setContentView(R.layout.insert_information_layout);
         setTitle("Create a New Listing");
         this.unbinder = ButterKnife.bind(this);
 
@@ -180,7 +180,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
         Utils.showMainContent(progressBarContent, mainLayout);
 
-        this.updateViews();
+       this.updateViews();
 
         this.checkInternalStoragePermissionGranted();
 
@@ -241,6 +241,11 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             } break;
 
             case R.id.button_insert_listing_id: {
+
+                // TODO: 24/08/2018 Check that we have all the necessary information!
+                // TODO: 24/08/2018 If there was no internet, we might not have it!
+                // TODO: 24/08/2018 Use the broadcastreceiver to check the repository caches
+                // TODO: 24/08/2018 If they are empty, cache information with request
                 insertListing();
 
             } break;

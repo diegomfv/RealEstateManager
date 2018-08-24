@@ -79,6 +79,16 @@ public class Utils {
         return dateFormat.format(new Date());
     }
 
+    public static String getCurrencySymbol (int currency) {
+        Log.d(TAG, "getCurrencySymbol: called!");
+
+        switch (currency) {
+            case 0: { return " $"; }
+            case 1: { return " €"; }
+            default: { return " $"; }
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Internet Connectivity

@@ -25,7 +25,8 @@ public class EditListingActivity extends AppCompatActivity {
         this.accessInternalStorageGranted = false;
 
         ////////////////////////////////////////////////////////////////////////////////////////////
-        setContentView(R.layout.activity_edit_listing);
+        setContentView(R.layout.insert_information_layout);
+        setTitle("Edit a Listing");
 
 
 

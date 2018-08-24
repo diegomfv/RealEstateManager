@@ -138,7 +138,9 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
         private String getPriceOfBuilding (int position) {
             Log.d(TAG, "getPriceOfBuilding: called!");
-            return "$ " + String.valueOf(realEstates.get(position).getPrice());
+
+            // TODO: 24/08/2018 Change the currency value to something modificable
+            return "$ " + Utils.formatToDecimals(realEstates.get(position).getPrice(), 0);
         }
 
     }

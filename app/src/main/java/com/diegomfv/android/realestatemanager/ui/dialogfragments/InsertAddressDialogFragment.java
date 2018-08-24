@@ -1,4 +1,4 @@
-package com.diegomfv.android.realestatemanager.dialogfragments;
+package com.diegomfv.android.realestatemanager.ui.dialogfragments;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;

@@ -49,6 +49,9 @@ public class AuthLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // TODO: 24/08/2018 Might be nice to une a coordinator layout
+        // TODO: 24/08/2018 Put a photo of a nice flat
+
         //////////////////////////////////////////////////////
         setContentView(R.layout.activity_auth_choose_login);
         unbinder = ButterKnife.bind(this);
