@@ -242,7 +242,7 @@ public class Utils {
 
         if (placesByNearby != null) {
             if (placesByNearby.getResults() != null) {
-                if(placesByNearby.getResults().size() > 0) {
+                if (placesByNearby.getResults().size() > 0) {
                     return true;
                 }
             }
@@ -256,22 +256,26 @@ public class Utils {
         if (result != null) {
             if (result.getPlaceId() != null) {
                 if (result.getName() != null) {
-                    if (result.getGeometry() != null) {
-                        if (result.getGeometry().getLocation() != null) {
-                            if (result.getGeometry().getLocation().getLat() != null) {
-                                if (result.getGeometry().getLocation().getLng() != null){
-                                    return true;
+                    if (result.getVicinity() != null) {
+                        if (result.getTypes() != null) {
+                            if (result.getTypes().size() > 0) {
+                                if (result.getGeometry() != null) {
+                                    if (result.getGeometry().getLocation() != null) {
+                                        if (result.getGeometry().getLocation().getLat() != null) {
+                                            if (result.getGeometry().getLocation().getLng() != null){
+                                                return true;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-
                 }
             }
         }
         return false;
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
