@@ -3,19 +3,13 @@ package com.diegomfv.android.realestatemanager.data;
 import android.arch.lifecycle.LiveData;
 import android.util.Log;
 
+import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.Completable;
-import io.reactivex.CompletableObserver;
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableCompletableObserver;
-import io.reactivex.observers.DisposableObserver;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
@@ -32,7 +26,13 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private LiveData<List<RealEstate>> listOfListings;
+    private LiveData<List<RealEstate>> listOfListingsLiveData;
+
+    private LiveData<List<PlaceRealEstate>> listOfPlacesRealEstateLiveData;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //CACHE
 
     private RealEstate realEstateCache;
 
@@ -44,8 +44,8 @@ public class DataRepository {
 
     private DataRepository(final AppDatabase database) {
         mDatabase = database;
-        listOfListings = getAllListings();
-
+        listOfListingsLiveData = getAllListingsLiveData();
+        listOfPlacesRealEstateLiveData = getAllPlacesRealEstateLiveData();
     }
 
     public static DataRepository getInstance(final AppDatabase database) {
@@ -60,6 +60,7 @@ public class DataRepository {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
     //CACHE
 
     /** Cache for Real Estate
@@ -67,7 +68,7 @@ public class DataRepository {
     public RealEstate getRealEstateCache() {
         Log.d(TAG, "getRealEstateCache: called!");
         if (realEstateCache == null) {
-            return realEstateCache = new RealEstate.Builder().build();
+            return realEstateCache = new RealEstate.Builder().setAddress(new AddressRealEstate()).build();
         }
         return realEstateCache;
     }
@@ -107,19 +108,29 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Get the list of real estate from the database and get notified when the data changes.
+    /** Get lists from the database
+     * and get notified when the data changes.
      */
     public LiveData<List<RealEstate>> getObservableAllListings() {
-        return listOfListings;
+        return listOfListingsLiveData;
     }
 
-    public LiveData<List<RealEstate>> getAllListings() {
-        return mDatabase.realStateDao().getAllListingsOrderedByType();
+    public LiveData<List<PlaceRealEstate>> getObservableAllPlacesRealEstate() {
+        return listOfPlacesRealEstateLiveData;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private LiveData<List<RealEstate>> getAllListingsLiveData() {
+        return mDatabase.realStateDao().getAllListingsOrderedByTypeLiveData();
+    }
+
+    private LiveData<List<PlaceRealEstate>> getAllPlacesRealEstateLiveData() {
+        return mDatabase.placeRealEstateDao().getAllPlacesRealEstateLiveData();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     // TODO: 22/08/2018 Fetch network data from the repository!
-
 
 }

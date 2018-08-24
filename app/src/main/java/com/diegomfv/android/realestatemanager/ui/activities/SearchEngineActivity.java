@@ -1,6 +1,10 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.annotation.SuppressLint;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -10,21 +14,46 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
+import com.diegomfv.android.realestatemanager.data.AppDatabase;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.diegomfv.android.realestatemanager.viewmodel.SearchEngineViewModel;
+import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.jakewharton.rxbinding2.widget.TextViewTextChangeEvent;
+import com.snatik.storage.Storage;
 
 import org.florescu.android.rangeseekbar.RangeSeekBar;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
 
+// TODO: 24/08/2018 Insert Checkboxes programmatically according to the different types we have in the database
 public class SearchEngineActivity extends AppCompatActivity {
 
     private static final String TAG = SearchEngineActivity.class.getSimpleName();
@@ -52,6 +81,13 @@ public class SearchEngineActivity extends AppCompatActivity {
     @BindView(R.id.button_search_id)
     Button buttonSearch;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @BindView(R.id.linear_layout_checkboxes_id)
+    LinearLayout checkBoxesLinearLayout;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private AutoCompleteTextView actvType;
 
     private TextView tvPrice;
@@ -72,9 +108,23 @@ public class SearchEngineActivity extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private List<RealEstate> listOfListings;
+
+    private List<PlaceRealEstate> listOfPlaceRealEstate;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private Set<String> setOfTypes;
+
+    private Set<String> setOfCities;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private int currency;
 
     private ActionBar actionBar;
+
+    private SearchEngineViewModel searchEngineViewModel;
 
     private Unbinder unbinder;
 
@@ -93,6 +143,13 @@ public class SearchEngineActivity extends AppCompatActivity {
         this.configureActionBar();
 
         this.configureLayout();
+
+        this.createModel();
+
+        this.subscribeToModel(searchEngineViewModel);
+
+        // TODO: 24/08/2018 Delete!
+        this.addView();
 
     }
 
@@ -147,6 +204,123 @@ public class SearchEngineActivity extends AppCompatActivity {
             } break;
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // TODO: 24/08/2018 Check this!
+    private void addView () {
+        Log.d(TAG, "addView: called!");
+
+        CheckBox checkBox = new CheckBox(this);
+        checkBoxesLinearLayout.addView(checkBox);
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        layoutParams.setMarginStart(8);
+        layoutParams.setMargins(0,8,0,0);
+
+        checkBox.setLayoutParams(layoutParams);
+        checkBox.setText("New Checkbox");
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //SINGLETON GETTERS
+
+    private RealEstateManagerApp getApp () {
+        Log.d(TAG, "getApp: called");
+        return (RealEstateManagerApp) getApplication();
+    }
+
+    private AppDatabase getAppDatabase () {
+        Log.d(TAG, "getAppDatabase: called!");
+        return getApp().getDatabase();
+    }
+
+    private Storage getInternalStorage() {
+        Log.d(TAG, "getInternalStorage: called!");
+        return getApp().getInternalStorage();
+    }
+
+    private RealEstate getRealEstateCache () {
+        Log.d(TAG, "getRealEstateCache: called!");
+        return getApp().getRepository().getRealEstateCache();
+    }
+
+    private List<ImageRealEstate> getListOfImagesRealEstateCache () {
+        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
+        return getApp().getRepository().getListOfImagesRealEstateCache();
+    }
+
+    private List<PlaceRealEstate> getListOfPlacesByNearbyCache () {
+        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
+        return getApp().getRepository().getListOfPlacesRealEstateCache();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private List<RealEstate> getListOfListings () {
+        Log.d(TAG, "getListOfListings: called!");
+
+        if (listOfListings == null) {
+            return listOfListings = new ArrayList<>();
+        }
+        return listOfListings;
+    }
+
+    private List<PlaceRealEstate> getListOfPlaceRealEstate () {
+        Log.d(TAG, "getListOfPlaceRealEstate: called!");
+
+        if (listOfPlaceRealEstate == null) {
+            return listOfPlaceRealEstate = new ArrayList<>();
+        }
+        return listOfPlaceRealEstate;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+//    private void createSets (List<RealEstate> listOfListings) {
+//        Log.d(TAG, "createSets: called!");
+//
+//        for (int i = 0; i < listOfListings.size() ; i++) {
+//            getSetOfTypes().add(listOfListings.get(i).getType());
+//            getSetOfCities().add(listOfListings.get(i).getAddress());
+//        }
+//    }
+
+
+    public Set<String> getSetOfTypes () {
+        Log.d(TAG, "getSetOfTypes: called!");
+        if (setOfTypes == null) {
+            setOfTypes = new HashSet<>();
+            //refreshSetOfTypes();
+            return setOfTypes = new HashSet<>();
+        }
+        return setOfTypes;
+    }
+
+    public Set<String> getSetOfCities () {
+        Log.d(TAG, "getSetOfCities: called!");
+        if (setOfCities == null) {
+            return setOfCities = new HashSet<>();
+        }
+        return setOfCities;
+    }
+
+    public void refreshSets () {
+        Log.d(TAG, "refreshSets: called!");
+
+    }
+
+//    private Set<String> refreshSetOfTypes () {
+//        Log.d(TAG, "refreshSetOfTypes: called!");
+//
+//        for (int i = 0; i < listOfListings.; i++) {
+//
+//        }
+//    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -236,6 +410,41 @@ public class SearchEngineActivity extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private void createModel () {
+        Log.d(TAG, "createModel: called!");
+
+        SearchEngineViewModel.Factory factory = new SearchEngineViewModel.Factory(getApp());
+        this.searchEngineViewModel = ViewModelProviders
+                .of(this, factory)
+                .get(SearchEngineViewModel.class);
+
+
+    }
+
+    private void subscribeToModel (SearchEngineViewModel searchEngineViewModel) {
+        Log.d(TAG, "subscribeToModel: called!");
+
+        if (searchEngineViewModel != null) {
+
+            this.searchEngineViewModel.getObservableListOfListings().observe(this, new Observer<List<RealEstate>>() {
+                @Override
+                public void onChanged(@Nullable List<RealEstate> realEstates) {
+                    Log.d(TAG, "onChanged: called!");
+                    listOfListings = realEstates;
+                    //createSets(listOfListings);
+                }
+            });
+
+            this.searchEngineViewModel.getObservableAllPlacesRealEstate().observe(this, new Observer<List<PlaceRealEstate>>() {
+                @Override
+                public void onChanged(@Nullable List<PlaceRealEstate> placeRealEstates) {
+                    Log.d(TAG, "onChanged: called!");
+                    listOfPlaceRealEstate = placeRealEstates;
+                }
+            });
+        }
+    }
+
     private void changeCurrencyIcon (MenuItem item) {
         Log.d(TAG, "changeCurrencyIcon: called!");
 
@@ -264,17 +473,26 @@ public class SearchEngineActivity extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     private void configureAllAutocompleteTextViews () {
         Log.d(TAG, "configureAutocompleteTextViews: called!");
 
+        this.configureAutocompleteTextView(actvType, setOfTypes.toArray(new String[setOfTypes.size()]));
+        this.configureAutocompleteTextView(actvCity, setOfCities.toArray(new String[setOfCities.size()]));
 
     }
 
-    private void configureAutocompleteTextView () {
+    @SuppressLint("CheckResult")
+    private void configureAutocompleteTextView (AutoCompleteTextView autoCompleteTextView,
+                                                String[] arrayOfStrings) {
         Log.d(TAG, "configureAutcompleteTextView: called!");
 
+        ArrayAdapter<String> autocompleteAdapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1, //This layout has to be a textview
+                arrayOfStrings
+        );
+
+        autoCompleteTextView.setAdapter(autocompleteAdapter);
 
     }
 
@@ -283,10 +501,36 @@ public class SearchEngineActivity extends AppCompatActivity {
     private void initSearch () {
         Log.d(TAG, "initSearch: called!");
 
+        List<RealEstate> listOfFilteredRealEstate = new ArrayList<>();
+
+        int maxPrice = getMaxValueFromSeekBar(seekBarPrice);
+        int minPrice = getMinValueFromSeekBar(seekBarPrice);
+
+        if (currency == 1) {
+            maxPrice = (int) Utils.convertEuroToDollar(maxPrice);
+            minPrice = (int) Utils.convertEuroToDollar(minPrice);
+        }
+
+        for (int i = 0; i < listOfListings.size(); i++) {
+
+            if (filterNotPassed(listOfListings.get(i))) {
+                continue;
+            }
+
+            //insertListing(listOfListings.get(i));
+
+        }
+
+
+
         // TODO: 24/08/2018 Take care in case price in euros.
         // TODO: 24/08/2018 Convert to to dollars!
 
         // TODO: 24/08/2018 DELETE ALL OF THIS
+
+
+
+
 
         printLog(getTextFromView(actvType));
         printLog(getTextFromView(actvCity));
@@ -348,5 +592,53 @@ public class SearchEngineActivity extends AppCompatActivity {
     private void printLog (String text) {
         Log.i(TAG, "printLog: " + text);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //FILTERS
+
+    private boolean filterNotPassed (RealEstate realEstate) {
+        Log.d(TAG, "filterNotPassed: called!");
+
+        if (typeFilterNotPassed(realEstate)) {
+            return true;
+        }
+        return false;
+
+//        if (priceFilterNotPassed(realEstate)) {
+//            return true;
+//        }
+//
+//        if (surfaceAreaFilterNotPassed(realEstate)) {
+//            return true;
+//        }
+//
+//        if (numberOfRoomsFilterNotPassed(realEstate)) {
+//            return true;
+//        }
+//
+//        if (cityFilterNotPassed(realEstate)) {
+//            return true;
+//        }
+//
+//        if (amountOfPhotosFilterNotPassed(realEstate)) {
+//            return true;
+//        }
+//
+//        if (checkboxesFilterNotPassed(realEstate)) {
+//            return true;
+//        }
+//        return false;
+    }
+
+    private boolean typeFilterNotPassed (RealEstate realEstate) {
+        Log.d(TAG, "typeFilterNotPassed: called!");
+
+//        if (realEstate.getType().contains())
+
+        return true;
+    }
+
+//      if (listOfListings.get(i).getPrice() > minPrice && listOfListings.get(i).getPrice() < maxPrice) {
 
 }

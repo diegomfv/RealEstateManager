@@ -100,7 +100,7 @@ public class FragmentListListings extends Fragment {
         this.unbinder.unbind();
     }
 
-    /////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void createModel () {
         Log.d(TAG, "createModel: called!");
@@ -131,6 +131,8 @@ public class FragmentListListings extends Fragment {
 
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void configureRecyclerView () {
         Log.d(TAG, "configureRecyclerView: called!");

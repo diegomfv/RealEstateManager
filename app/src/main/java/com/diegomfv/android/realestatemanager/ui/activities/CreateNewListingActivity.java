@@ -28,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
 import com.bumptech.glide.Glide;
@@ -38,6 +37,7 @@ import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppDatabase;
+import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
@@ -74,8 +74,8 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Diego Fajardo on 18/08/2018.
  */
-// TODO: 23/08/2018 Transform nearby places. Get places OF INTEREST!
-// TODO: 23/08/2018 If back button clicked when seaching for an image, the app crashes
+// TODO: 24/08/2018 Allow writing the information in EUROS
+// TODO: 23/08/2018 If back button clicked when searching for an image, the app crashes
 public class CreateNewListingActivity extends AppCompatActivity implements Observer, InsertAddressDialogFragment.InsertAddressDialogListener {
 
     private static final String TAG = CreateNewListingActivity.class.getSimpleName();
@@ -180,7 +180,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
         Utils.showMainContent(progressBarContent, mainLayout);
 
-       this.updateViews();
+        this.updateViews();
 
         this.checkInternalStoragePermissionGranted();
 
@@ -243,10 +243,15 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             case R.id.button_insert_listing_id: {
 
                 // TODO: 24/08/2018 Check that we have all the necessary information!
-                // TODO: 24/08/2018 If there was no internet, we might not have it!
+                // TODO: 24/08/2018 If there was no internet, we might not have all!
                 // TODO: 24/08/2018 Use the broadcastreceiver to check the repository caches
                 // TODO: 24/08/2018 If they are empty, cache information with request
-                insertListing();
+                // TODO: 24/08/2018 Check also that types are correct
+                // TODO: 24/08/2018 NOTIFY the user in ALLCHECKSARECORRECT()
+                if (allChecksCorrect()) {
+                    insertListing();
+                }
+
 
             } break;
         }
@@ -329,8 +334,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         setHint(cardViewSurfaceArea, "Surface Area (sqm)");
         setHint(cardViewNumberOfRooms, "Number of Rooms");
         setHint(cardViewDescription, "Description");
-        setHint(cardViewAddress, "Address");
-
+        setHint(cardViewAddress, "AddressRealEstate");
     }
 
     private void setHint (CardView cardView, String hint) {
@@ -353,10 +357,10 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialogFragment, String street, String city, String postcode) {
+    public void onDialogPositiveClick(DialogFragment dialogFragment, AddressRealEstate addressRealEstate) {
         Log.d(TAG, "onDialogPositiveClick: called!");
 
-        checkAddressIsValid(street,city,postcode);
+        checkAddressIsValid(addressRealEstate);
     }
 
     @Override
@@ -402,6 +406,14 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private boolean allChecksCorrect () {
+        Log.d(TAG, "allChecksCorrect: called!");
+
+        // TODO: 24/08/2018 DO THIS!
+
+        return true;
+    }
+
     private void insertListing() {
         Log.d(TAG, "insertListing: called!");
 
@@ -410,7 +422,6 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         /* Start insertion process
         * */
         insertRealEstateObject();
-
     }
 
     @SuppressLint("CheckResult")
@@ -487,20 +498,6 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void launchAddPhotoActivity() {
-        Log.d(TAG, "launchAddPhotoActivity: called!");
-
-        if (!accessInternalStorageGranted) {
-            ToastHelper.toastInternalStorageAccessNotGranted(this);
-
-        } else {
-            updateRealEstateCache();
-            Utils.launchActivity(this, AddPhotoActivity.class);
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     //CACHE
 
     private void updateViews() {
@@ -511,7 +508,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         this.tvSurfaceArea.setText(String.valueOf(getRealEstateCache().getSurfaceArea()));
         this.tvNumberOfRooms.setText(String.valueOf(getRealEstateCache().getNumberOfRooms()));
         this.tvDescription.setText(getRealEstateCache().getDescription());
-        this.tvAddress.setText(getRealEstateCache().getAddress());
+        this.tvAddress.setText(Utils.setTextOfTextViewUsingAddressFromRealEstate(getRealEstateCache()));
     }
 
     private void updateRealEstateCache() {
@@ -524,9 +521,9 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
     private void updateIntegerValues() {
         Log.d(TAG, "updateIntegerValues: called!");
 
-        this.getRealEstateCache().setPrice(Utils.getTextviewInteger(tvPrice));
-        this.getRealEstateCache().setSurfaceArea(Utils.getTextviewInteger(tvSurfaceArea));
-        this.getRealEstateCache().setNumberOfRooms(Utils.getTextviewInteger(tvNumberOfRooms));
+        this.getRealEstateCache().setPrice(Utils.getTextViewInteger(tvPrice));
+        this.getRealEstateCache().setSurfaceArea(Utils.getTextViewInteger(tvSurfaceArea));
+        this.getRealEstateCache().setNumberOfRooms(Utils.getTextViewInteger(tvNumberOfRooms));
     }
 
     private void updateStringValues() {
@@ -534,7 +531,6 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
         this.getRealEstateCache().setType(tvTypeOfBuilding.getText().toString().trim());
         this.getRealEstateCache().setDescription(tvDescription.getText().toString().trim());
-        this.getRealEstateCache().setAddress(tvAddress.getText().toString().trim());
     }
 
     private void updateRealEstateCacheId() {
@@ -560,56 +556,37 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureRecyclerView() {
-        Log.d(TAG, "configureRecyclerView: called!");
-
-        this.recyclerView.setHasFixedSize(true);
-        this.recyclerView.setLayoutManager(new LinearLayoutManager(
-                this, LinearLayoutManager.HORIZONTAL, false));
-        this.adapter = new RVAdapterMediaHorizontal(
-                this,
-                listOfBitmaps,
-                glide);
-        this.recyclerView.setAdapter(this.adapter);
-
-        this.configureOnClickRecyclerView();
-
-    }
-
-    private void configureOnClickRecyclerView () {
-        Log.d(TAG, "configureOnClickRecyclerView: called!");
-
-        ItemClickSupport.addTo(recyclerView)
-                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
-                        ToastHelper.toastShort(CreateNewListingActivity.this, getListOfImagesRealEstateCache().get(position).getDescription());
-                    }
-                });
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     //NETWORK
 
-    private void checkAddressIsValid(final String street, final String city, final String postcode) {
+    private void checkAddressIsValid(AddressRealEstate addressRealEstate) {
         Log.d(TAG, "checkIfAddressIsValid: called!");
 
         if (isInternetAvailable) {
-            getPlaceFromText(street, city, postcode);
+            getPlaceFromText(addressRealEstate);
 
         } else {
-            ToastHelper.toastShort(this, "Internet is not available, Address cannot be saved");
+            ToastHelper.toastShort(this, "Internet is not available, AddressRealEstate cannot be saved");
 
         }
     }
 
+    private void updateRealEstateCacheWithAddress(AddressRealEstate addressRealEstate) {
+        Log.d(TAG, "updateRealEstateCacheWithAddress: called!");
+        getRealEstateCache().getAddress().setStreet(addressRealEstate.getStreet());
+        getRealEstateCache().getAddress().setLocality(addressRealEstate.getLocality());
+        getRealEstateCache().getAddress().setCity(addressRealEstate.getCity());
+        getRealEstateCache().getAddress().setPostcode(addressRealEstate.getPostcode());
+    }
+
     @SuppressLint("CheckResult")
-    private void getPlaceFromText(final String street, final String city, final String postcode) {
+    private void getPlaceFromText(final AddressRealEstate addressRealEstate) {
         Log.d(TAG, "getPlaceFromText: called!");
 
-        GoogleServiceStreams.streamFetchPlaceFromText(street + "," + city + "," + postcode,
+        GoogleServiceStreams.streamFetchPlaceFromText(
+                addressRealEstate.getStreet() + ","
+                        + addressRealEstate.getLocality() + ","
+                        + addressRealEstate.getCity()+ ","
+                        + addressRealEstate.getPostcode(),
                 "textquery",
                 getResources().getString(R.string.a_k_p))
                 .subscribeWith(new DisposableObserver<PlaceFromText>() {
@@ -622,9 +599,13 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                             ToastHelper.toastShort(CreateNewListingActivity.this,
                                     "The address is valid");
 
-                            /* Set the address in the textview
+                            /* Fill the address of the cache
                             * */
-                            setAddress(street,city,postcode);
+                            updateRealEstateCacheWithAddress(addressRealEstate);
+
+                            /* Set the address in the textView
+                            * */
+                            tvAddress.setText(Utils.setTextOfTextViewUsingAddressFromRealEstate(getRealEstateCache()));
 
                             /* Get place details
                             * */
@@ -804,50 +785,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void setAddress (String street, String city, String postcode) {
-        Log.d(TAG, "setAddress: called!");
-
-        tvAddress.setText(street + ", " + city + ", " + postcode);
-        buttonAddAddress.setText("Edit Address");
-    }
-
-    private void createNotification () {
-        Log.d(TAG, "createNotification: called!");
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel mChannel = new NotificationChannel(
-                    Constants.NOTIFICATION_CHANNEL_ID,
-                    getString(R.string.notif_notification_channel_name),
-                    NotificationManager.IMPORTANCE_HIGH);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(mChannel);
-            }
-        }
-
-        //The request code must be the same as the same we pass to .notify later
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
-                        .setSmallIcon(R.drawable.real_estate_logo)
-                        .setContentTitle(getResources().getString(R.string.notification_title))
-                        .setContentText(getResources().getString(R.string.notification_text, getRealEstateCache().getAddress()))
-                        .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
-                        .setAutoCancel(true);
-        //SetAutoCancel(true) makes the notification dismissible when the user swipes it away
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
-        }
-
-        if (notificationManager != null) {
-            notificationManager.notify(100, notificationBuilder.build());
-        }
-    }
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //INTERNAL STORAGE
 
     private void checkInternalStoragePermissionGranted() {
         Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
@@ -957,4 +895,83 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                 });
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void configureRecyclerView() {
+        Log.d(TAG, "configureRecyclerView: called!");
+
+        this.recyclerView.setHasFixedSize(true);
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(
+                this, LinearLayoutManager.HORIZONTAL, false));
+        this.adapter = new RVAdapterMediaHorizontal(
+                this,
+                listOfBitmaps,
+                glide);
+        this.recyclerView.setAdapter(this.adapter);
+
+        this.configureOnClickRecyclerView();
+
+    }
+
+    private void configureOnClickRecyclerView () {
+        Log.d(TAG, "configureOnClickRecyclerView: called!");
+
+        ItemClickSupport.addTo(recyclerView)
+                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
+                        ToastHelper.toastShort(CreateNewListingActivity.this, getListOfImagesRealEstateCache().get(position).getDescription());
+                    }
+                });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void launchAddPhotoActivity() {
+        Log.d(TAG, "launchAddPhotoActivity: called!");
+
+        if (!accessInternalStorageGranted) {
+            ToastHelper.toastInternalStorageAccessNotGranted(this);
+
+        } else {
+            updateRealEstateCache();
+            Utils.launchActivity(this, AddPhotoActivity.class);
+        }
+    }
+
+    private void createNotification () {
+        Log.d(TAG, "createNotification: called!");
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(
+                    Constants.NOTIFICATION_CHANNEL_ID,
+                    getString(R.string.notif_notification_channel_name),
+                    NotificationManager.IMPORTANCE_HIGH);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(mChannel);
+            }
+        }
+
+        //The request code must be the same as the same we pass to .notify later
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.real_estate_logo)
+                        .setContentTitle(getResources().getString(R.string.notification_title))
+                        .setContentText(getResources().getString(R.string.notification_text, getRealEstateCache().getAddress()))
+                        .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+                        .setAutoCancel(true);
+        //SetAutoCancel(true) makes the notification dismissible when the user swipes it away
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        }
+
+        if (notificationManager != null) {
+            notificationManager.notify(100, notificationBuilder.build());
+        }
+    }
 }

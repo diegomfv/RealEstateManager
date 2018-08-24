@@ -36,7 +36,6 @@ public class FakeDataGenerator {
                     "and for 2006 we will provide a television and DVD player."
     };
 
-    private String[] fake_address = {"B1A AAB", "C2A XFB", "KA1 254", "LF5 2J1"};
 
     private String[] fake_agent = {"agent1@gmail.com", "agent2@gmail.com", "agent3@gmail.com"};
 
@@ -51,7 +50,6 @@ public class FakeDataGenerator {
         builder.setPrice(randBetween(100000, 10000000));
         builder.setNumberOfRooms(randBetween(1,9));
         builder.setDescription(fake_description[randBetween(0,2)]);
-        builder.setAddress(fake_address[randBetween(0,3)]);
         builder.setAgent(fake_agent[randBetween(0,2)]);
         builder.setDatePut(getRandomFakeDate());
 

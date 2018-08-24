@@ -27,6 +27,7 @@ import com.diegomfv.android.realestatemanager.data.dao.RealEstateDao;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.data.typeconverters.AddressTypeConverter;
 import com.diegomfv.android.realestatemanager.data.typeconverters.StringListConverter;
 
 /** Room cannot automatically map complex extractors like DATE. In this cases,
@@ -35,7 +36,7 @@ import com.diegomfv.android.realestatemanager.data.typeconverters.StringListConv
  * */
 
 @Database(entities = {RealEstate.class, ImageRealEstate.class, PlaceRealEstate.class}, version = 1, exportSchema = false)
-@TypeConverters({StringListConverter.class})
+@TypeConverters({StringListConverter.class, AddressTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String TAG = AppDatabase.class.getSimpleName();

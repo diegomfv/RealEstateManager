@@ -56,10 +56,18 @@ public class UnitTest {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
+    }
 
+    @Test
+    public void getRidOfLastComma () {
 
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Some Text");
+        stringBuilder.append(", ");
 
+        stringBuilder.setLength(stringBuilder.length() - 2);
 
+        System.out.println(stringBuilder);
 
     }
 

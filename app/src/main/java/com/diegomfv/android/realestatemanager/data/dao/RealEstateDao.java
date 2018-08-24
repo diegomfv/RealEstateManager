@@ -49,7 +49,7 @@ public interface RealEstateDao {
     // READ
 
     @Query("SELECT * FROM realestate ORDER BY type")
-    LiveData<List<RealEstate>> getAllListingsOrderedByType();
+    LiveData<List<RealEstate>> getAllListingsOrderedByTypeLiveData();
 
     // -------------------
     // INSERT
@@ -65,3 +65,15 @@ public interface RealEstateDao {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+

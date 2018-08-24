@@ -8,6 +8,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
+
 import java.util.List;
 
 /**
@@ -36,7 +38,7 @@ public class RealEstate implements Parcelable {
     @ColumnInfo(name = "images")
     private List<String> listOfImagesIds;
 
-    private String address;
+    private AddressRealEstate address;
 
     private double latitude;
 
@@ -63,7 +65,7 @@ public class RealEstate implements Parcelable {
     /** Used for when reading from the table
      * */
     public RealEstate(@NonNull String id, String type, int surfaceArea, int price, int numberOfRooms, String description,
-                      List<String> listOfImagesIds, String address, double latitude, double longitude,
+                      List<String> listOfImagesIds, AddressRealEstate address, double latitude, double longitude,
                       boolean status, List<String> listOfNearbyPointsOfInterestIds,
                       String datePut, String dateSale, String agent) {
         this.id = id;
@@ -156,11 +158,11 @@ public class RealEstate implements Parcelable {
         this.listOfImagesIds = listOfImagesIds;
     }
 
-    public String getAddress() {
+    public AddressRealEstate getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(AddressRealEstate address) {
         this.address = address;
     }
 
@@ -229,7 +231,7 @@ public class RealEstate implements Parcelable {
         private int numberOfRooms;
         private String description;
         private List<String> listOfImages;
-        private String address;
+        private AddressRealEstate address;
         private double latitude;
         private double longitude;
         private List<String> listOfNearbyPointsOfInterestIds;
@@ -273,7 +275,7 @@ public class RealEstate implements Parcelable {
             return this;
         }
 
-        public Builder setAddress (String address) {
+        public Builder setAddress (AddressRealEstate address) {
             this.address = address;
             return this;
         }
@@ -329,7 +331,7 @@ public class RealEstate implements Parcelable {
                 ", numberOfRooms=" + numberOfRooms +
                 ", description='" + description + '\'' +
                 ", listOfImagesIds=" + listOfImagesIds +
-                ", address='" + address + '\'' +
+                ", address=" + address +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", listOfNearbyPointsOfInterestIds=" + listOfNearbyPointsOfInterestIds +
@@ -339,7 +341,6 @@ public class RealEstate implements Parcelable {
                 ", agent='" + agent + '\'' +
                 '}';
     }
-
 
     @Override
     public int describeContents() {
@@ -355,7 +356,7 @@ public class RealEstate implements Parcelable {
         dest.writeInt(this.numberOfRooms);
         dest.writeString(this.description);
         dest.writeStringList(this.listOfImagesIds);
-        dest.writeString(this.address);
+        dest.writeParcelable(this.address, flags);
         dest.writeDouble(this.latitude);
         dest.writeDouble(this.longitude);
         dest.writeStringList(this.listOfNearbyPointsOfInterestIds);
@@ -373,7 +374,7 @@ public class RealEstate implements Parcelable {
         this.numberOfRooms = in.readInt();
         this.description = in.readString();
         this.listOfImagesIds = in.createStringArrayList();
-        this.address = in.readString();
+        this.address = in.readParcelable(AddressRealEstate.class.getClassLoader());
         this.latitude = in.readDouble();
         this.longitude = in.readDouble();
         this.listOfNearbyPointsOfInterestIds = in.createStringArrayList();

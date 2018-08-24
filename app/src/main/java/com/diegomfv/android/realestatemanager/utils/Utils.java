@@ -14,13 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppExecutors;
-import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.PlacesByNearby;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.Result;
 import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceDetails;
@@ -34,7 +33,6 @@ import java.net.SocketAddress;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -353,19 +351,57 @@ public class Utils {
         return true;
     }
 
-    public static String getTextviewString(TextView textView) {
+    public static String getTextViewString(TextView textView) {
         Log.d(TAG, "getViewsText: called!");
         return textView.getText().toString().trim();
     }
 
-    public static int getTextviewInteger (TextView textView) {
-        Log.d(TAG, "getTextviewInteger: called!");
+    public static int getTextViewInteger(TextView textView) {
+        Log.d(TAG, "getTextViewInteger: called!");
 
         if (isInteger(textView.getText().toString().trim())) {
             return Integer.parseInt(textView.getText().toString().trim());
         }
         return 0;
     }
+
+    public static String setTextOfTextViewUsingAddressFromRealEstate(RealEstate realEstate) {
+        Log.d(TAG, "setAddressFromRealEstateCache: called!");
+        if (realEstate.getAddress() != null) {
+            StringBuilder str = new StringBuilder();
+            appendIfNotNullOrEmpty(str, realEstate.getAddress().getStreet());
+            appendIfNotNullOrEmpty(str, realEstate.getAddress().getLocality());
+            appendIfNotNullOrEmpty(str, realEstate.getAddress().getCity());
+            appendIfNotNullOrEmpty(str, realEstate.getAddress().getPostcode());
+            getRidOfLastComma(str);
+            return str.toString();
+        }
+        return "";
+    }
+
+    private static void appendIfNotNullOrEmpty (StringBuilder stringBuilder, String addressField) {
+        Log.d(TAG, "appendIfNotNullOrEmpty: called!");
+        if (checkStringIsNotEmptyOrNull(addressField)) {
+            stringBuilder.append(addressField).append(", ");
+        }
+    }
+
+    private static boolean checkStringIsNotEmptyOrNull (String string) {
+        Log.d(TAG, "checkStringIsNotEmptyOrNull: called!");
+
+        if (string == null || string.equals("")) {
+            return false;
+        }
+        return true;
+    }
+
+    private static void getRidOfLastComma (StringBuilder stringBuilder) {
+        Log.d(TAG, "getRidOfLastComma: called!");
+        if (stringBuilder.length() > 2) {
+            stringBuilder.setLength(stringBuilder.length() - 2);
+        }
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 

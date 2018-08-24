@@ -16,7 +16,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
+import com.diegomfv.android.realestatemanager.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,6 +51,9 @@ public class InsertAddressDialogFragment extends DialogFragment {
     @BindView(R.id.card_view_street_id)
     CardView cardViewStreet;
 
+    @BindView(R.id.card_view_locality_id)
+    CardView cardViewLocality;
+
     @BindView(R.id.card_view_city_id)
     CardView cardViewCity;
 
@@ -56,6 +61,8 @@ public class InsertAddressDialogFragment extends DialogFragment {
     CardView cardViewPostcode;
 
     private AutoCompleteTextView tvStreet;
+
+    private AutoCompleteTextView tvLocality;
 
     private AutoCompleteTextView tvCity;
 
@@ -68,7 +75,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public interface InsertAddressDialogListener {
-        void onDialogPositiveClick (DialogFragment dialogFragment, String street, String city, String postcode);
+        void onDialogPositiveClick (DialogFragment dialogFragment, AddressRealEstate addressRealEstate);
         void onDialogNegativeClick (DialogFragment dialogFragment);
     }
 
@@ -167,6 +174,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
         Log.d(TAG, "getAutocompleteTextViews: called!");
 
         this.tvStreet = cardViewStreet.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvLocality = cardViewLocality.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvCity = cardViewCity.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvPostcode = cardViewPostcode.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
 
@@ -178,6 +186,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
         // TODO: 23/08/2018 Use Resources instead of hardcode text
 
         setHint(cardViewStreet, "Street");
+        setHint(cardViewLocality, "Locality");
         setHint(cardViewCity, "City");
         setHint(cardViewPostcode, "Postcode");
 
@@ -195,21 +204,27 @@ public class InsertAddressDialogFragment extends DialogFragment {
     private void checkTextViewsText(AlertDialog dialog) {
         Log.d(TAG, "checkTextViewsText: called!");
 
-        if (tvStreet.getText().toString().trim().length() == 0) {
+        if (Utils.getTextViewString(tvStreet).length() == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a street");
 
-        } else if (tvCity.getText().toString().trim().length() == 0) {
+        } else if (Utils.getTextViewString(tvLocality).length() == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a city");
 
-        } else if (tvPostcode.getText().toString().trim().length() == 0) {
+        } else if (Utils.getTextViewString(tvCity).length() == 0) {
+            ToastHelper.toastShort(getActivity(), "Please, introduce a locality");
+
+        } else if (Utils.getTextViewString(tvPostcode).length() == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a postcode");
 
         } else {
             onButtonClickedListener.onDialogPositiveClick(
                     InsertAddressDialogFragment.this,
-                    tvStreet.getText().toString().trim(),
-                    tvCity.getText().toString().trim(),
-                    tvPostcode.getText().toString().trim());
+                    new AddressRealEstate(
+                            Utils.getTextViewString(tvStreet),
+                            Utils.getTextViewString(tvLocality),
+                            Utils.getTextViewString(tvCity),
+                            Utils.getTextViewString(tvPostcode)
+                    ));
 
             dialog.dismiss();
         }
