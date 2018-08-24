@@ -720,7 +720,8 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                                             FirebasePushIdGenerator.generate(),
                                             placesByNearby.getResults().get(i).getPlaceId(),
                                             placesByNearby.getResults().get(i).getName(),
-                                            null,
+                                            placesByNearby.getResults().get(i).getVicinity(),
+                                            placesByNearby.getResults().get(i).getTypes(),
                                             placesByNearby.getResults().get(i).getGeometry().getLocation().getLat(),
                                             placesByNearby.getResults().get(i).getGeometry().getLocation().getLng());
 
