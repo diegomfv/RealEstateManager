@@ -12,10 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 
 import org.florescu.android.rangeseekbar.RangeSeekBar;
@@ -44,7 +44,7 @@ public class SearchEngineActivity extends AppCompatActivity {
     CardView cardViewNumberOfRooms;
 
     @BindView(R.id.card_view_address_id)
-    CardView cardViewAddress;
+    CardView cardViewCity;
 
     @BindView(R.id.card_view_amount_photos_id)
     CardView cardViewAmountPhotos;
@@ -63,7 +63,7 @@ public class SearchEngineActivity extends AppCompatActivity {
     private TextView tvNumberOfRooms;
     private RangeSeekBar seekBarNumberOfRooms;
 
-    private AutoCompleteTextView actvAddress;
+    private AutoCompleteTextView actvCity;
 
     private TextView tvAmountOfPhotos;
     private RangeSeekBar seekBarAmountOfPhotos;
@@ -142,10 +142,7 @@ public class SearchEngineActivity extends AppCompatActivity {
 
             case R.id.button_search_id: {
 
-                int maxSelected = (int) seekBarNumberOfRooms.getSelectedMaxValue();
-                int minSelected = (int) seekBarNumberOfRooms.getSelectedMinValue();
-
-                ToastHelper.toastLong(this, "maxSelected = " + maxSelected + "; minSelected = " + minSelected);
+                initSearch();
 
             } break;
         }
@@ -183,7 +180,7 @@ public class SearchEngineActivity extends AppCompatActivity {
         Log.d(TAG, "getTextViews: called!");
 
         this.actvType = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.actvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.actvCity = cardViewCity.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
 
         this.tvPrice = cardViewPrice.findViewById(R.id.textView_title_id);
         this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.textView_title_id);
@@ -207,7 +204,7 @@ public class SearchEngineActivity extends AppCompatActivity {
         // TODO: 23/08/2018 Use Resources instead of hardcoded text
 
         setHint(cardViewType, "Type");
-        setHint(cardViewAddress, "Address");
+        setHint(cardViewCity, "City");
 
     }
 
@@ -281,17 +278,75 @@ public class SearchEngineActivity extends AppCompatActivity {
 
     }
 
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initSearch () {
         Log.d(TAG, "initSearch: called!");
 
         // TODO: 24/08/2018 Take care in case price in euros.
-        // TODO: 24/08/2018 Converto to dollars!
+        // TODO: 24/08/2018 Convert to to dollars!
 
+        // TODO: 24/08/2018 DELETE ALL OF THIS
 
+        printLog(getTextFromView(actvType));
+        printLog(getTextFromView(actvCity));
+
+        printLog(getMinValueFromSeekBar(seekBarPrice) + getMaxValueFromSeekBar(seekBarPrice) + "");
+        printLog(getMinValueFromSeekBar(seekBarSurfaceArea) + getMaxValueFromSeekBar(seekBarSurfaceArea) + "");
+        printLog(getMinValueFromSeekBar(seekBarNumberOfRooms) + getMaxValueFromSeekBar(seekBarNumberOfRooms) + "");
+        printLog(getMinValueFromSeekBar(seekBarAmountOfPhotos) + getMaxValueFromSeekBar(seekBarAmountOfPhotos) + "");
+
+        CheckBox checkBox = findViewById(R.id.checkbox1_id);
+        printLog(getPointOfInterestIfChecked(checkBox));
+        checkBox = findViewById(R.id.checkbox2_id);
+        printLog(getPointOfInterestIfChecked(checkBox));
+        checkBox = findViewById(R.id.checkbox3_id);
+        printLog(getPointOfInterestIfChecked(checkBox));
+        checkBox = findViewById(R.id.checkbox4_id);
+        printLog(getPointOfInterestIfChecked(checkBox));
     }
 
+    private String getTextFromView (TextView textView) {
+        Log.d(TAG, "getTextFromView: called!");
+        return Utils.capitalize(textView.getText().toString().trim());
+    }
 
+    private boolean seekBarUsed (RangeSeekBar rangeSeekBar) {
+        Log.d(TAG, "seekBarNotUsed: called!");
+        if (rangeSeekBar.getSelectedMinValue().equals(rangeSeekBar.getAbsoluteMinValue())
+                && rangeSeekBar.getSelectedMaxValue().equals(rangeSeekBar.getAbsoluteMaxValue())) {
+            return false;
+        }
+        return true;
+    }
+
+    private int getMaxValueFromSeekBar (RangeSeekBar rangeSeekBar) {
+        Log.d(TAG, "getMaxValueFromSeekBar: called!");
+        if (seekBarUsed(rangeSeekBar)) {
+            return (int) rangeSeekBar.getSelectedMaxValue();
+        }
+        return -1;
+    }
+
+    private int getMinValueFromSeekBar (RangeSeekBar rangeSeekBar) {
+        Log.d(TAG, "getMinValueFromSeekBar: called!");
+        if (seekBarUsed(rangeSeekBar)) {
+            return (int) rangeSeekBar.getSelectedMinValue();
+        }
+        return -1;
+    }
+
+    private String getPointOfInterestIfChecked (CheckBox checkBox) {
+        Log.d(TAG, "getPointOfInterestIfChecked: called!");
+        if (checkBox.isChecked()) {
+            return getTextFromView(checkBox);
+        }
+        return "";
+    }
+
+    // TODO: 24/08/2018 Delete!
+    private void printLog (String text) {
+        Log.i(TAG, "printLog: " + text);
+    }
 
 }

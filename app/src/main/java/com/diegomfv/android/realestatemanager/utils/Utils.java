@@ -317,6 +317,9 @@ public class Utils {
      * capitalizes a string
      * */
     public static String capitalize (String str) {
+        if (str.equals("")) {
+            return "";
+        }
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
