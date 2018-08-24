@@ -100,6 +100,9 @@ dependencies {
     //Firebase Storage
     implementation 'com.google.firebase:firebase-storage:16.0.1'
 
+    //Range Seek Bar
+    implementation 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -8,49 +8,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         android:layout_gravity="center"
         android:text="INSERT ADDRESS"
         android:textStyle="bold"
         android:textSize="30sp"
         android:textColor="@color/colorPrimaryDark"/>
 
-    <TextView
-        style="@style/dialogTextViewStyle"
-        android:layout_width="wrap_content"
+    <include layout="@layout/card_view_autocomplete"
+        android:id="@+id/card_view_street_id"
         android:layout_height="wrap_content"
-        android:text="Street"/>
+        android:layout_width="match_parent"/>
 
-    <EditText
-        style="@style/dialogEditTextStyle"
-        android:id="@+id/edit_text_street_id"
-        android:layout_width="wrap_content"
+    <include layout="@layout/card_view_autocomplete"
+        android:id="@+id/card_view_city_id"
         android:layout_height="wrap_content"
-        android:hint="Street"/>
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"/>
 
-    <TextView
-        style="@style/dialogTextViewStyle"
-        android:layout_width="wrap_content"
+    <include layout="@layout/card_view_autocomplete"
+        android:id="@+id/card_view_postcode_id"
         android:layout_height="wrap_content"
-        android:text="City"/>
-
-    <EditText
-        style="@style/dialogEditTextStyle"
-        android:id="@+id/edit_text_city_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="City"/>
-
-    <TextView
-        style="@style/dialogTextViewStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="PostCode"/>
-
-    <EditText
-        style="@style/dialogEditTextStyle"
-        android:id="@+id/edit_text_postcode_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="PostCode"/>
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"/>
 
 </LinearLayout>

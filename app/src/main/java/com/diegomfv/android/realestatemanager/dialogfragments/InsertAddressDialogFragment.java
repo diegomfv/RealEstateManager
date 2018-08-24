@@ -7,11 +7,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
@@ -44,14 +46,20 @@ public class InsertAddressDialogFragment extends DialogFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @BindView(R.id.edit_text_street_id)
-    EditText editTextStreet;
+    @BindView(R.id.card_view_street_id)
+    CardView cardViewStreet;
 
-    @BindView(R.id.edit_text_city_id)
-    EditText editTextCity;
+    @BindView(R.id.card_view_city_id)
+    CardView cardViewCity;
 
-    @BindView(R.id.edit_text_postcode_id)
-    EditText editTextPostcode;
+    @BindView(R.id.card_view_postcode_id)
+    CardView cardViewPostcode;
+
+    private AutoCompleteTextView tvStreet;
+
+    private AutoCompleteTextView tvCity;
+
+    private AutoCompleteTextView tvPostcode;
 
     private Button buttonOk;
 
@@ -79,6 +87,8 @@ public class InsertAddressDialogFragment extends DialogFragment {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             View view = View.inflate(getActivity(), R.layout.dialog_insert_address, null);
             unbinder = ButterKnife.bind(this, view);
+
+            this.configureLayout();
 
             builder.setView(view)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -144,24 +154,62 @@ public class InsertAddressDialogFragment extends DialogFragment {
 
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void configureLayout() {
+        Log.d(TAG, "configureLayout: called!");
+
+        this.getAutocompleteTextViews();
+        this.setAllHints();
+    }
+
+    private void getAutocompleteTextViews () {
+        Log.d(TAG, "getAutocompleteTextViews: called!");
+
+        this.tvStreet = cardViewStreet.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvCity = cardViewCity.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvPostcode = cardViewPostcode.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+
+    }
+
+    private void setAllHints() {
+        Log.d(TAG, "setAllHints: called!");
+
+        // TODO: 23/08/2018 Use Resources instead of hardcode text
+
+        setHint(cardViewStreet, "Street");
+        setHint(cardViewCity, "City");
+        setHint(cardViewPostcode, "Postcode");
+
+    }
+
+    private void setHint (CardView cardView, String hint) {
+        Log.d(TAG, "setHint: called!");
+
+        TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
+        textInputLayout.setHint(hint);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private void checkTextViewsText(AlertDialog dialog) {
         Log.d(TAG, "checkTextViewsText: called!");
 
-        if (editTextStreet.getText().toString().trim().length() == 0) {
+        if (tvStreet.getText().toString().trim().length() == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a street");
 
-        } else if (editTextCity.getText().toString().trim().length() == 0) {
+        } else if (tvCity.getText().toString().trim().length() == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a city");
 
-        } else if (editTextPostcode.getText().toString().trim().length() == 0) {
+        } else if (tvPostcode.getText().toString().trim().length() == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a postcode");
 
         } else {
             onButtonClickedListener.onDialogPositiveClick(
                     InsertAddressDialogFragment.this,
-                    editTextStreet.getText().toString().trim(),
-                    editTextCity.getText().toString().trim(),
-                    editTextPostcode.getText().toString().trim());
+                    tvStreet.getText().toString().trim(),
+                    tvCity.getText().toString().trim(),
+                    tvPostcode.getText().toString().trim());
 
             dialog.dismiss();
         }

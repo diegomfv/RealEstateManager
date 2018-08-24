@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
             } break;
 
             case R.id.menu_search_button: {
+                Utils.launchActivity(this, SearchEngineActivity.class);
 
             } break;
 

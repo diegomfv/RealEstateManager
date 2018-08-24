@@ -14,15 +14,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -84,23 +88,35 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
     @BindView(R.id.main_layout_id)
     ScrollView mainLayout;
 
-    @BindView(R.id.text_input_ac_text_view_type_of_bulding_id)
-    TextInputAutoCompleteTextView tvTypeOfBuilding;
+    @BindView(R.id.card_view_type_id)
+    CardView cardViewType;
 
-    @BindView(R.id.text_input_ac_text_view_price_id)
-    TextInputAutoCompleteTextView tvPrice;
+    @BindView(R.id.card_view_price_id)
+    CardView cardViewPrice;
 
-    @BindView(R.id.text_input_ac_text_view_surface_area_id)
-    TextInputAutoCompleteTextView tvSurfaceArea;
+    @BindView(R.id.card_view_surface_area_id)
+    CardView cardViewSurfaceArea;
 
-    @BindView(R.id.text_input_ac_text_view_number_of_rooms_id)
-    TextInputAutoCompleteTextView tvNumberOfRooms;
+    @BindView(R.id.card_view_number_rooms_id)
+    CardView cardViewNumberOfRooms;
 
-    @BindView(R.id.text_input_ac_text_view_description_id)
-    TextInputAutoCompleteTextView tvDescription;
+    @BindView(R.id.card_view_description_id)
+    CardView cardViewDescription;
 
-    @BindView(R.id.text_input_ac_text_view_address_id)
-    TextInputAutoCompleteTextView tvAddress;
+    @BindView(R.id.card_view_address_id)
+    CardView cardViewAddress;
+
+    private TextInputAutoCompleteTextView tvTypeOfBuilding;
+
+    private TextInputAutoCompleteTextView tvPrice;
+
+    private TextInputAutoCompleteTextView tvSurfaceArea;
+
+    private TextInputAutoCompleteTextView tvNumberOfRooms;
+
+    private TextInputAutoCompleteTextView tvDescription;
+
+    private TextInputEditText tvAddress;
 
     @BindView(R.id.button_add_address_id)
     Button buttonAddAddress;
@@ -160,6 +176,8 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
         this.configureActionBar();
 
+        this.configureLayout();
+
         Utils.showMainContent(progressBarContent, mainLayout);
 
         this.updateViews();
@@ -206,7 +224,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         snackbarConfiguration();
     }
 
-    @OnClick ({R.id.button_add_address_id, R.id.button_add_photo_id, R.id.button_go_back_id, R.id.button_insert_listing_id})
+    @OnClick ({R.id.button_add_address_id, R.id.button_add_photo_id, R.id.button_insert_listing_id})
     public void buttonClicked (View view) {
         Log.d(TAG, "buttonClicked: " + ((Button)view).getText().toString() + " clicked!");
 
@@ -219,11 +237,6 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
             case R.id.button_add_photo_id: {
                 launchAddPhotoActivity();
-
-            } break;
-
-            case R.id.button_go_back_id: {
-                Utils.launchActivity(this, MainActivity.class);
 
             } break;
 
@@ -279,6 +292,47 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void configureLayout() {
+        Log.d(TAG, "configureLayout: called!");
+
+        this.getAutocompleteTextViews();
+        this.setAllHints();
+    }
+
+    private void getAutocompleteTextViews () {
+        Log.d(TAG, "getAutocompleteTextViews: called!");
+
+        this.tvTypeOfBuilding = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvNumberOfRooms = cardViewNumberOfRooms.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
+    }
+
+    private void setAllHints() {
+        Log.d(TAG, "setAllHints: called!");
+
+        // TODO: 23/08/2018 Use Resources instead of hardcoded
+
+        setHint(cardViewType, "Type");
+        setHint(cardViewPrice, "Price ($)");
+        setHint(cardViewSurfaceArea, "Surface Area (sqm)");
+        setHint(cardViewNumberOfRooms, "Number of Rooms");
+        setHint(cardViewDescription, "Description");
+        setHint(cardViewAddress, "Address");
+
+    }
+
+    private void setHint (CardView cardView, String hint) {
+        Log.d(TAG, "setHint: called!");
+
+        TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
+        textInputLayout.setHint(hint);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
