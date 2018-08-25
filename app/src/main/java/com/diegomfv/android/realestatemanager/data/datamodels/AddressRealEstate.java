@@ -78,7 +78,6 @@ public class AddressRealEstate implements Parcelable {
                 '}';
     }
 
-
     @Override
     public int describeContents() {
         return 0;

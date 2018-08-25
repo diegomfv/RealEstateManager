@@ -494,7 +494,7 @@ public class PositionActivity extends AppCompatActivity {
                         + " - "
                         + getPriceInProperCurrency(realEstate.getPrice(), currency)
                         + Utils.getCurrencySymbol(currency))
-                .snippet(Utils.setTextOfTextViewUsingAddressFromRealEstate(realEstate))
+                .snippet(Utils.getAddressAsString(realEstate))
                 .icon(getIconAccordingToAlreadySold(alreadySold));
 
 

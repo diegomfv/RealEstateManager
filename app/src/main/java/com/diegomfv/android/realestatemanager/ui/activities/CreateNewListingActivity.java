@@ -103,7 +103,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
     @BindView(R.id.card_view_description_id)
     CardView cardViewDescription;
 
-    @BindView(R.id.card_view_address_id)
+    @BindView(R.id.card_view_city_id)
     CardView cardViewAddress;
 
     private TextInputAutoCompleteTextView tvTypeOfBuilding;
@@ -508,7 +508,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         this.tvSurfaceArea.setText(String.valueOf(getRealEstateCache().getSurfaceArea()));
         this.tvNumberOfRooms.setText(String.valueOf(getRealEstateCache().getNumberOfRooms()));
         this.tvDescription.setText(getRealEstateCache().getDescription());
-        this.tvAddress.setText(Utils.setTextOfTextViewUsingAddressFromRealEstate(getRealEstateCache()));
+        this.tvAddress.setText(Utils.getAddressAsString(getRealEstateCache()));
     }
 
     private void updateRealEstateCache() {
@@ -605,12 +605,14 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
                             /* Set the address in the textView
                             * */
-                            tvAddress.setText(Utils.setTextOfTextViewUsingAddressFromRealEstate(getRealEstateCache()));
+                            tvAddress.setText(Utils.getAddressAsString(getRealEstateCache()));
 
                             /* Get place details
                             * */
                             getPlaceDetails(placeFromText.getCandidates().get(0).getPlaceId());
                         }
+
+                        ToastHelper.toastLong(CreateNewListingActivity.this, "Address not valid");
                     }
 
                     @Override
@@ -961,7 +963,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                 new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.real_estate_logo)
                         .setContentTitle(getResources().getString(R.string.notification_title))
-                        .setContentText(getResources().getString(R.string.notification_text, getRealEstateCache().getAddress()))
+                        .setContentText(getResources().getString(R.string.notification_text, Utils.getAddressAsString(getRealEstateCache())))
                         .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                         .setAutoCancel(true);
         //SetAutoCancel(true) makes the notification dismissible when the user swipes it away

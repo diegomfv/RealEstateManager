@@ -9,7 +9,17 @@ import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
@@ -39,6 +49,16 @@ public class DataRepository {
     private List<ImageRealEstate> listOfImagesRealEstateCache;
 
     private List<PlaceRealEstate> listOfPlacesNearbyCache;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private Set<String> setOfBuildingTypes;
+
+    private Set<String> setOfLocalities;
+
+    private Set<String> setOfCities;
+
+    private Set<String> setOfTypesOfPointsOfInterest;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -112,24 +132,115 @@ public class DataRepository {
      * and get notified when the data changes.
      */
     public LiveData<List<RealEstate>> getObservableAllListings() {
+        Log.d(TAG, "getObservableAllListings: called!");
         return listOfListingsLiveData;
     }
 
     public LiveData<List<PlaceRealEstate>> getObservableAllPlacesRealEstate() {
+        Log.d(TAG, "getObservableAllPlacesRealEstate: called!");
         return listOfPlacesRealEstateLiveData;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private LiveData<List<RealEstate>> getAllListingsLiveData() {
+        Log.d(TAG, "getAllListingsLiveData: called!");
         return mDatabase.realStateDao().getAllListingsOrderedByTypeLiveData();
     }
 
     private LiveData<List<PlaceRealEstate>> getAllPlacesRealEstateLiveData() {
+        Log.d(TAG, "getAllPlacesRealEstateLiveData: called!");
         return mDatabase.placeRealEstateDao().getAllPlacesRealEstateLiveData();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private List<RealEstate> getAllListings() {
+        Log.d(TAG, "getAllListingsLiveData: called!");
+        return mDatabase.realStateDao().getAllListingsOrderedByType();
+    }
+
+    private List<PlaceRealEstate> getAllPlacesRealEstate () {
+        Log.d(TAG, "getAllPlacesRealEstate: called!");
+        return mDatabase.placeRealEstateDao().getAllPlacesRealEstate();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public Set<String> getSetOfBuildingTypes () {
+        Log.d(TAG, "getSetOfBuildingTypes: called!");
+        if (setOfBuildingTypes == null) {
+            setOfBuildingTypes = new HashSet<>();
+            List<RealEstate> temporaryList = getAllListings();
+            for (int i = 0; i < temporaryList.size(); i++) {
+                setOfBuildingTypes.add(temporaryList.get(i).getType());
+            }
+            return setOfBuildingTypes;
+        }
+        return setOfBuildingTypes;
+    }
+
+    public Set<String> getSetOfLocalities () {
+        Log.d(TAG, "getSetOfLocalities: called");
+        if (setOfLocalities == null) {
+            setOfLocalities = new HashSet<>();
+            List<RealEstate> temporaryList = getAllListings();
+            for (int i = 0; i < temporaryList.size(); i++) {
+                setOfLocalities.add(temporaryList.get(i).getAddress().getLocality());
+            }
+            return setOfLocalities;
+        }
+        return setOfLocalities;
+    }
+
+    public Set<String> getSetOfCities () {
+        Log.d(TAG, "getSetOfCities: called!");
+        if (setOfCities == null) {
+            setOfCities = new HashSet<>();
+            List<RealEstate> temporaryList = getAllListings();
+            if (temporaryList != null) {
+                for (int i = 0; i < getAllListings().size(); i++) {
+                    setOfCities.add(temporaryList.get(i).getAddress().getCity());
+                }
+            }
+            return setOfCities;
+        }
+        return setOfCities;
+    }
+
+    public Set<String> getSetOfTypesOfPointsOfInterest () {
+        Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
+        if (setOfTypesOfPointsOfInterest == null) {
+            setOfTypesOfPointsOfInterest = new HashSet<>();
+            List<PlaceRealEstate> temporaryList = getAllPlacesRealEstate();
+            if (temporaryList != null) {
+                for (int i = 0; i < temporaryList.size() ; i++) {
+                    setOfTypesOfPointsOfInterest.addAll(temporaryList.get(i).getTypesList());
+                }
+            }
+            return setOfTypesOfPointsOfInterest;
+        }
+        return setOfTypesOfPointsOfInterest;
+    }
+
+    public void refreshSets () {
+        Log.d(TAG, "refreshSets: called!");
+        setOfBuildingTypes = null;
+        setOfLocalities = null;
+        setOfCities = null;
+        setOfTypesOfPointsOfInterest = null;
+        getSetOfBuildingTypes();
+        getSetOfLocalities();
+        getSetOfCities();
+        getSetOfTypesOfPointsOfInterest();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
     // TODO: 22/08/2018 Fetch network data from the repository!
 

@@ -325,6 +325,10 @@ public class Utils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
+    public static String replaceUnderscore(String str) {
+        return str.replace("_", " ");
+    }
+
     /** Method that checks if a string
      * can be parsed to Integer
      * */
@@ -365,7 +369,7 @@ public class Utils {
         return 0;
     }
 
-    public static String setTextOfTextViewUsingAddressFromRealEstate(RealEstate realEstate) {
+    public static String getAddressAsString(RealEstate realEstate) {
         Log.d(TAG, "setAddressFromRealEstateCache: called!");
         if (realEstate.getAddress() != null) {
             StringBuilder str = new StringBuilder();
@@ -497,4 +501,6 @@ public class Utils {
         }
 
     }
+
+
 }

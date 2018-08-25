@@ -26,6 +26,8 @@ import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 
 import java.util.List;
 
+import io.reactivex.Observable;
+
 /** A method, annotated with @Insert can return a long.
  * This is the newly generated ID for the inserted row.
  * A method, annotated with @Update can return an int.
@@ -50,6 +52,9 @@ public interface RealEstateDao {
 
     @Query("SELECT * FROM realestate ORDER BY type")
     LiveData<List<RealEstate>> getAllListingsOrderedByTypeLiveData();
+
+    @Query("SELECT * FROM realestate ORDER BY type")
+    List<RealEstate> getAllListingsOrderedByType();
 
     // -------------------
     // INSERT

@@ -24,10 +24,15 @@ public interface PlaceRealEstateDao {
     @Query("SELECT * FROM place ORDER BY id")
     LiveData<List<PlaceRealEstate>> getAllPlacesRealEstateLiveData();
 
+    @Query("SELECT * FROM place ORDER BY id")
+    List<PlaceRealEstate> getAllPlacesRealEstate();
+
     // -------------------
     // INSERT
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long[] insertListOfPlaceRealEstate (List<PlaceRealEstate> listOfImagesRealEstate);
+
+    ;
 
     // -------------------
     // UPDATE

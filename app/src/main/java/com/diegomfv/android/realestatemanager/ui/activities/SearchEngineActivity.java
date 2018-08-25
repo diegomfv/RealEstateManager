@@ -14,14 +14,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
@@ -32,26 +29,19 @@ import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.SearchEngineViewModel;
-import com.jakewharton.rxbinding2.widget.RxTextView;
-import com.jakewharton.rxbinding2.widget.TextViewTextChangeEvent;
 import com.snatik.storage.Storage;
 
 import org.florescu.android.rangeseekbar.RangeSeekBar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
-import io.reactivex.observers.DisposableObserver;
 
 // TODO: 24/08/2018 Insert Checkboxes programmatically according to the different types we have in the database
 public class SearchEngineActivity extends AppCompatActivity {
@@ -72,7 +62,10 @@ public class SearchEngineActivity extends AppCompatActivity {
     @BindView(R.id.card_view_number_rooms_id)
     CardView cardViewNumberOfRooms;
 
-    @BindView(R.id.card_view_address_id)
+    @BindView(R.id.card_view_locality_id)
+    CardView cardViewLocality;
+
+    @BindView(R.id.card_view_city_id)
     CardView cardViewCity;
 
     @BindView(R.id.card_view_amount_photos_id)
@@ -99,6 +92,7 @@ public class SearchEngineActivity extends AppCompatActivity {
     private TextView tvNumberOfRooms;
     private RangeSeekBar seekBarNumberOfRooms;
 
+    private AutoCompleteTextView actvLocality;
     private AutoCompleteTextView actvCity;
 
     private TextView tvAmountOfPhotos;
@@ -111,12 +105,6 @@ public class SearchEngineActivity extends AppCompatActivity {
     private List<RealEstate> listOfListings;
 
     private List<PlaceRealEstate> listOfPlaceRealEstate;
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private Set<String> setOfTypes;
-
-    private Set<String> setOfCities;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -140,6 +128,11 @@ public class SearchEngineActivity extends AppCompatActivity {
         setTitle("Search");
         unbinder = ButterKnife.bind(this);
 
+        /* We refresh the information in the database
+        * We need the sets for displaying information in the UI
+        * */
+        this.getApp().getRepository().refreshSets();
+
         this.configureActionBar();
 
         this.configureLayout();
@@ -149,8 +142,6 @@ public class SearchEngineActivity extends AppCompatActivity {
         this.subscribeToModel(searchEngineViewModel);
 
         // TODO: 24/08/2018 Delete!
-        this.addView();
-
     }
 
     @Override
@@ -207,9 +198,18 @@ public class SearchEngineActivity extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // TODO: 24/08/2018 Check this!
-    private void addView () {
+    private void addCheckboxes () {
+        Log.d(TAG, "addCheckboxes: called!");
+
+        for (String typeOfPointOfInterest: getSetOfTypesOfPointsOfInterest()) {
+            addView(typeOfPointOfInterest);
+        }
+    }
+
+    private void addView (String typeOfPointOfInterest) {
         Log.d(TAG, "addView: called!");
+
+        List<CheckBox> checkBoxList = new ArrayList<>();
 
         CheckBox checkBox = new CheckBox(this);
         checkBoxesLinearLayout.addView(checkBox);
@@ -220,9 +220,14 @@ public class SearchEngineActivity extends AppCompatActivity {
         layoutParams.setMarginStart(8);
         layoutParams.setMargins(0,8,0,0);
 
-        checkBox.setLayoutParams(layoutParams);
-        checkBox.setText("New Checkbox");
 
+        // TODO: 25/08/2018 Might be good idea to add all the Checkboxes to a list
+
+        checkBox.setLayoutParams(layoutParams);
+        checkBox.setText(Utils.capitalize(Utils.replaceUnderscore(typeOfPointOfInterest)));
+        checkBox.setTag(typeOfPointOfInterest);
+
+        checkBoxList.add(checkBox);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,29 +239,24 @@ public class SearchEngineActivity extends AppCompatActivity {
         return (RealEstateManagerApp) getApplication();
     }
 
-    private AppDatabase getAppDatabase () {
-        Log.d(TAG, "getAppDatabase: called!");
-        return getApp().getDatabase();
+    private Set<String> getSetOfBuildingTypes () {
+        Log.d(TAG, "getSetOfBuildingTypes: called!");
+        return getApp().getRepository().getSetOfBuildingTypes();
     }
 
-    private Storage getInternalStorage() {
-        Log.d(TAG, "getInternalStorage: called!");
-        return getApp().getInternalStorage();
+    private Set<String> getSetOfLocalities () {
+        Log.d(TAG, "getSetOfLocalities: called!");
+        return getApp().getRepository().getSetOfLocalities();
     }
 
-    private RealEstate getRealEstateCache () {
-        Log.d(TAG, "getRealEstateCache: called!");
-        return getApp().getRepository().getRealEstateCache();
+    private Set<String> getSetOfCities () {
+        Log.d(TAG, "getSetOfCities: called!");
+        return getApp().getRepository().getSetOfCities();
     }
 
-    private List<ImageRealEstate> getListOfImagesRealEstateCache () {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfImagesRealEstateCache();
-    }
-
-    private List<PlaceRealEstate> getListOfPlacesByNearbyCache () {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfPlacesRealEstateCache();
+    private Set<String> getSetOfTypesOfPointsOfInterest () {
+        Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
+        return getApp().getRepository().getSetOfTypesOfPointsOfInterest();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,49 +278,6 @@ public class SearchEngineActivity extends AppCompatActivity {
         }
         return listOfPlaceRealEstate;
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-//    private void createSets (List<RealEstate> listOfListings) {
-//        Log.d(TAG, "createSets: called!");
-//
-//        for (int i = 0; i < listOfListings.size() ; i++) {
-//            getSetOfTypes().add(listOfListings.get(i).getType());
-//            getSetOfCities().add(listOfListings.get(i).getAddress());
-//        }
-//    }
-
-
-    public Set<String> getSetOfTypes () {
-        Log.d(TAG, "getSetOfTypes: called!");
-        if (setOfTypes == null) {
-            setOfTypes = new HashSet<>();
-            //refreshSetOfTypes();
-            return setOfTypes = new HashSet<>();
-        }
-        return setOfTypes;
-    }
-
-    public Set<String> getSetOfCities () {
-        Log.d(TAG, "getSetOfCities: called!");
-        if (setOfCities == null) {
-            return setOfCities = new HashSet<>();
-        }
-        return setOfCities;
-    }
-
-    public void refreshSets () {
-        Log.d(TAG, "refreshSets: called!");
-
-    }
-
-//    private Set<String> refreshSetOfTypes () {
-//        Log.d(TAG, "refreshSetOfTypes: called!");
-//
-//        for (int i = 0; i < listOfListings.; i++) {
-//
-//        }
-//    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -354,6 +311,7 @@ public class SearchEngineActivity extends AppCompatActivity {
         Log.d(TAG, "getTextViews: called!");
 
         this.actvType = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.actvLocality = cardViewLocality.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.actvCity = cardViewCity.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
 
         this.tvPrice = cardViewPrice.findViewById(R.id.textView_title_id);
@@ -378,6 +336,7 @@ public class SearchEngineActivity extends AppCompatActivity {
         // TODO: 23/08/2018 Use Resources instead of hardcoded text
 
         setHint(cardViewType, "Type");
+        setHint(cardViewLocality, "Locality");
         setHint(cardViewCity, "City");
 
     }
@@ -418,7 +377,6 @@ public class SearchEngineActivity extends AppCompatActivity {
                 .of(this, factory)
                 .get(SearchEngineViewModel.class);
 
-
     }
 
     private void subscribeToModel (SearchEngineViewModel searchEngineViewModel) {
@@ -431,7 +389,7 @@ public class SearchEngineActivity extends AppCompatActivity {
                 public void onChanged(@Nullable List<RealEstate> realEstates) {
                     Log.d(TAG, "onChanged: called!");
                     listOfListings = realEstates;
-                    //createSets(listOfListings);
+                    configureAllAutocompleteTextViews();
                 }
             });
 
@@ -440,6 +398,7 @@ public class SearchEngineActivity extends AppCompatActivity {
                 public void onChanged(@Nullable List<PlaceRealEstate> placeRealEstates) {
                     Log.d(TAG, "onChanged: called!");
                     listOfPlaceRealEstate = placeRealEstates;
+                    addCheckboxes();
                 }
             });
         }
@@ -476,8 +435,9 @@ public class SearchEngineActivity extends AppCompatActivity {
     private void configureAllAutocompleteTextViews () {
         Log.d(TAG, "configureAutocompleteTextViews: called!");
 
-        this.configureAutocompleteTextView(actvType, setOfTypes.toArray(new String[setOfTypes.size()]));
-        this.configureAutocompleteTextView(actvCity, setOfCities.toArray(new String[setOfCities.size()]));
+        this.configureAutocompleteTextView(actvType, getSetOfBuildingTypes().toArray(new String[getSetOfBuildingTypes().size()]));
+        this.configureAutocompleteTextView(actvLocality, getSetOfLocalities().toArray(new String[getSetOfLocalities().size()]));
+        this.configureAutocompleteTextView(actvCity, getSetOfCities().toArray(new String[getSetOfCities().size()]));
 
     }
 

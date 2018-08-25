@@ -31,7 +31,7 @@
                 android:id="@+id/card_view_description_id"/>
 
             <include layout="@layout/card_view_address"
-                android:id="@+id/card_view_address_id"/>
+                android:id="@+id/card_view_city_id"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView_media_id"
