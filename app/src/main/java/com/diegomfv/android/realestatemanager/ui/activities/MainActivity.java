@@ -103,7 +103,11 @@ public class MainActivity extends AppCompatActivity {
             } break;
 
             case R.id.menu_search_button: {
+
+                // TODO: 26/08/2018 If there are no listings, do not launch the activity
+
                 Utils.launchActivity(this, SearchEngineActivity.class);
+
 
             } break;
 

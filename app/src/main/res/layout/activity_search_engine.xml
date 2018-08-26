@@ -10,27 +10,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include layout="@layout/card_view_autocomplete"
-            android:id="@+id/card_view_type_id"/>
-
-        <include layout="@layout/card_view_seek_bar"
-            android:id="@+id/card_view_price_id"/>
-
-        <include layout="@layout/card_view_seek_bar"
-            android:id="@+id/card_view_surface_area_id"/>
-
-        <include layout="@layout/card_view_seek_bar"
-            android:id="@+id/card_view_number_rooms_id"/>
-
-        <include layout="@layout/card_view_autocomplete"
-            android:id="@+id/card_view_locality_id"/>
-
-        <include layout="@layout/card_view_autocomplete"
-            android:id="@+id/card_view_city_id"/>
-
-        <include layout="@layout/card_view_seek_bar"
-            android:id="@+id/card_view_amount_photos_id"/>
-
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,103 +17,120 @@
             android:layout_marginTop="5dp">
 
             <LinearLayout
+                android:id="@+id/linear_layout_checkboxes_type_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView_sale_id"
+                    android:id="@+id/textView_types_of_building_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="Sale State" />
-
-                <CheckBox
-                    android:id="@+id/checkbox_on_sale_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="On Sale" />
-
-                <CheckBox
-                    android:id="@+id/checkbox_sold_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Sold" />
+                    android:text="Type of Building" />
 
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:contentPadding="10dp"
-            android:layout_marginTop="5dp">
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/linear_layout_checkboxes_id"
+            <include layout="@layout/card_view_seek_bar"
+                android:id="@+id/card_view_price_id"/>
+
+            <include layout="@layout/card_view_seek_bar"
+                android:id="@+id/card_view_surface_area_id"/>
+
+            <include layout="@layout/card_view_seek_bar"
+                android:id="@+id/card_view_number_rooms_id"/>
+
+            <include layout="@layout/card_view_autocomplete"
+                android:id="@+id/card_view_locality_id"/>
+
+            <include layout="@layout/card_view_autocomplete"
+                android:id="@+id/card_view_city_id"/>
+
+            <include layout="@layout/card_view_seek_bar"
+                android:id="@+id/card_view_amount_photos_id"/>
+
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                app:contentPadding="10dp"
+                android:layout_marginTop="5dp">
 
-                <TextView
-                    android:id="@+id/textView_points_of_interest_id"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Points of Interest Nearby" />
+                    android:orientation="vertical">
 
-                <CheckBox
-                    android:id="@+id/checkbox1_id"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/textView_sale_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="Sale State" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_on_sale_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="On Sale" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_sold_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="Sold" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentPadding="10dp"
+                android:layout_marginTop="5dp">
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_checkboxes_points_of_interest_id"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="School" />
+                    android:orientation="vertical">
 
-                <CheckBox
-                    android:id="@+id/checkbox2_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Business" />
+                    <TextView
+                        android:id="@+id/textView_points_of_interest_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="Points of Interest Nearby" />
 
-                <CheckBox
-                    android:id="@+id/checkbox3_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Museum" />
+                </LinearLayout>
 
-                <CheckBox
-                    android:id="@+id/checkbox4_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Stadium" />
+            </android.support.v7.widget.CardView>
 
-            </LinearLayout>
+            <Button
+                android:id="@+id/button_search_id"
+                style="@style/buttonGeneralStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:text="SEARCH" />
 
-        </android.support.v7.widget.CardView>
-
-        <Button
-            android:id="@+id/button_search_id"
-            style="@style/buttonGeneralStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp"
-            android:text="SEARCH" />
+        </LinearLayout>
 
     </LinearLayout>
 

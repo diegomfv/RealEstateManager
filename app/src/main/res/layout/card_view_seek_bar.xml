@@ -19,8 +19,8 @@
         android:id="@+id/range_seek_bar_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
-        app:textAboveThumbsColor="@color/colorAccent"/>
+        android:layout_marginTop="20dp"
+        app:textAboveThumbsColor="@color/colorAccent" />
 
 </android.support.v7.widget.CardView>
