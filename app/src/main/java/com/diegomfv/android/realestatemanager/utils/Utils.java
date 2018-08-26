@@ -87,6 +87,18 @@ public class Utils {
         }
     }
 
+    public static float getPriceAccordingToCurrency (int currency, float price) {
+        Log.d(TAG, "getPriceAccordingToCurrency: called!");
+
+        if (currency == 0) {
+            return price;
+        } else if (currency == 1) {
+            return Utils.convertDollarToEuro(price);
+        } else {
+             return price;
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Internet Connectivity

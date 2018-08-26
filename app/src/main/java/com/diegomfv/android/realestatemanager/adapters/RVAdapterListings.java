@@ -1,6 +1,9 @@
 package com.diegomfv.android.realestatemanager.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,34 +15,53 @@ import android.widget.TextView;
 
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 
+import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
  */
-public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.MyViewHolder>{
+public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.MyViewHolder> {
 
     private static final String TAG = RVAdapterListings.class.getSimpleName();
 
     //////////////////////
 
     private Context context;
-    private List<RealEstate> realEstates;
+
+    private List<RealEstate> listRealEstates;
+
+    private Map<String,Bitmap> mapOfBitmaps;
+
     private RequestManager glide;
+
+    private int currency;
 
     //////////////////////
 
-    public RVAdapterListings (Context context, RequestManager glide) {
+    public RVAdapterListings(Context context, List<RealEstate> listRealEstates,
+                             Map<String,Bitmap> mapOfBitmaps,
+                             RequestManager glide, int currency) {
+
         Log.d(TAG, "RVAdapterListings: called!");
         this.context = context;
+        this.listRealEstates = listRealEstates;
+        this.mapOfBitmaps = mapOfBitmaps;
         this.glide = glide;
-
+        this.currency = currency;
     }
 
     ///////////////////////
@@ -65,44 +87,51 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
         Log.d(TAG, "onBindViewHolder: called!");
 
         holder.updateItem(position);
-
     }
 
     @Override
     public int getItemCount() {
         Log.d(TAG, "getItemCount: called!");
 
-        if (realEstates == null) {
+        if (listRealEstates == null) {
             return 0;
         }
-
-        return realEstates.size();
+        return listRealEstates.size();
     }
 
-    /** Method to update the data
-     * */
+    /**
+     * Method to update the data
+     */
     public void setData(List<RealEstate> newData) {
-        this.realEstates = newData;
+        Log.d(TAG, "setData: called!");
+        this.listRealEstates = newData;
         notifyDataSetChanged();
     }
 
-    /** Method that retrieves a real estate in Fragment when clicked
-     * */
-    public RealEstate getRealEstate (int position) {
-        return this.realEstates.get(position);
+    public void setDataBitmaps(Map<String,Bitmap> newData) {
+        Log.d(TAG, "setDataBitmaps: called!");
+        this.mapOfBitmaps = newData;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Method that retrieves a real estate in Fragment when clicked
+     */
+    public RealEstate getRealEstate(int position) {
+        return this.listRealEstates.get(position);
     }
 
 
     //////////////////////////
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder {
 
         private final String TAG = MyViewHolder.class.getSimpleName();
 
         @BindView(R.id.image_view_id)
         ImageView imageView;
 
-        @BindView(R.id.type_of_building_id)
+        @BindView(R.id.textView_type_of_building_id)
         TextView textViewBuilding;
 
         @BindView(R.id.surface_area_of_building_id)
@@ -110,6 +139,9 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
         @BindView(R.id.price_of_building_id)
         TextView textViewPrice;
+
+        @BindView(R.id.textView_sold_id)
+        TextView textViewSold;
 
         //////////////////////////
 
@@ -119,29 +151,43 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
             ButterKnife.bind(this, itemView);
         }
 
-        private void updateItem (int position) {
+        private void updateItem(int position) {
             Log.d(TAG, "updateItem: called!");
+            loadImage(position);
             textViewBuilding.setText(getType(position));
             textViewSurfaceArea.setText(getSurfaceArea(position));
             textViewPrice.setText(getPriceOfBuilding(position));
+            setVisibilityOfSoldTextView(position);
         }
 
-        private String getType (int position) {
+        private void loadImage (int position) {
+            Log.d(TAG, "loadImage: called!");
+            glide.load(mapOfBitmaps.get(listRealEstates.get(position).getId())).into(imageView);
+        }
+
+        private String getType(int position) {
             Log.d(TAG, "getType: called!");
-            return Utils.capitalize(realEstates.get(position).getType());
+            return Utils.capitalize(listRealEstates.get(position).getType());
         }
 
-        private String getSurfaceArea (int position) {
+        private String getSurfaceArea(int position) {
             Log.d(TAG, "getSurfaceArea: called!");
-            return String.valueOf(realEstates.get(position).getSurfaceArea()) + " sqm";
+            return String.valueOf(listRealEstates.get(position).getSurfaceArea()) + " sqm";
         }
 
-        private String getPriceOfBuilding (int position) {
+        private String getPriceOfBuilding(int position) {
             Log.d(TAG, "getPriceOfBuilding: called!");
-
-            // TODO: 24/08/2018 Change the currency value to something modificable
-            return "$ " + Utils.formatToDecimals(realEstates.get(position).getPrice(), 0);
+            int price = (int) Utils.getPriceAccordingToCurrency(currency, listRealEstates.get(position).getPrice());
+            return Utils.getCurrencySymbol(currency) + Utils.formatToDecimals(price, currency);
         }
 
+        private void setVisibilityOfSoldTextView (int position) {
+            Log.d(TAG, "setVisibilityOfSoldTextView: called!");
+            if (listRealEstates.get(position).getDateSale() != null) {
+                textViewSold.setVisibility(View.VISIBLE);
+            } else {
+                textViewSold.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 }

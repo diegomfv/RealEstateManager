@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
     //SINGLETON GETTERS
 
-    private RealEstateManagerApp getApp () {
+    public RealEstateManagerApp getApp () {
         Log.d(TAG, "getApp: called");
         return (RealEstateManagerApp) getApplication();
     }
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         return getApp().getDatabase();
     }
 
-    private Storage getInternalStorage() {
+    public Storage getInternalStorage() {
         Log.d(TAG, "getInternalStorage: called!");
         return getApp().getInternalStorage();
     }
@@ -167,6 +167,11 @@ public class MainActivity extends AppCompatActivity {
     private List<PlaceRealEstate> getListOfPlacesByNearbyCache () {
         Log.d(TAG, "getListOfImagesRealEstateCache: called!");
         return getApp().getRepository().getListOfPlacesRealEstateCache();
+    }
+
+    public boolean getAccessInternalStorageGranted () {
+        Log.d(TAG, "getaccessInternalStorageGranted: called");
+        return accessInternalStorageGranted;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

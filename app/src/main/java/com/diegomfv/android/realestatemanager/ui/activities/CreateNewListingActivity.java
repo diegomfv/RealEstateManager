@@ -37,6 +37,7 @@ import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppDatabase;
+import com.diegomfv.android.realestatemanager.data.FakeDataGenerator;
 import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
@@ -184,6 +185,23 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
         this.checkInternalStoragePermissionGranted();
 
+        // TODO: 26/08/2018 Delete
+        generateFakeData();
+
+    }
+
+    // TODO: 26/08/2018 Delete!
+    private void generateFakeData () {
+        Log.d(TAG, "generateFakeData: called!");
+
+        FakeDataGenerator fakeDataGenerator = new FakeDataGenerator();
+        RealEstate realEstate = fakeDataGenerator.generateFakeData();
+        tvTypeOfBuilding.setText(realEstate.getType());
+        tvSurfaceArea.setText(String.valueOf(realEstate.getSurfaceArea()));
+        tvPrice.setText(String.valueOf(realEstate.getPrice()));
+        tvNumberOfRooms.setText(String.valueOf(realEstate.getNumberOfRooms()));
+        tvDescription.setText(realEstate.getDescription());
+
     }
 
     @Override
@@ -251,7 +269,6 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                 if (allChecksCorrect()) {
                     insertListing();
                 }
-
 
             } break;
         }
@@ -529,8 +546,8 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
     private void updateStringValues() {
         Log.d(TAG, "updateStringValues: called!");
 
-        this.getRealEstateCache().setType(tvTypeOfBuilding.getText().toString().trim());
-        this.getRealEstateCache().setDescription(tvDescription.getText().toString().trim());
+        this.getRealEstateCache().setType(Utils.capitalize(tvTypeOfBuilding.getText().toString().trim()));
+        this.getRealEstateCache().setDescription(Utils.capitalize(tvDescription.getText().toString().trim()));
     }
 
     private void updateRealEstateCacheId() {
@@ -610,9 +627,12 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
                             /* Get place details
                             * */
                             getPlaceDetails(placeFromText.getCandidates().get(0).getPlaceId());
+
+                        } else {
+                            ToastHelper.toastLong(CreateNewListingActivity.this, "Address not valid");
                         }
 
-                        ToastHelper.toastLong(CreateNewListingActivity.this, "Address not valid");
+
                     }
 
                     @Override
@@ -808,7 +828,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
         if (accessInternalStorageGranted) {
 
             String mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
-            String temporaryDir = mainPath + File.separator + Constants.TEMPORARY_DIRECTORY + File.separator;
+            String temporaryDir = mainPath + Constants.TEMPORARY_DIRECTORY + File.separator;
 
             counter = getListOfImagesRealEstateCache().size();
 

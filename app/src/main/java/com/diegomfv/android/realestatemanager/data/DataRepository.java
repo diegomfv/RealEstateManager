@@ -148,6 +148,10 @@ public class DataRepository {
         return mDatabase.realStateDao().getAllListingsOrderedByTypeLiveData();
     }
 
+    public LiveData<List<ImageRealEstate>> getObservableAllImagesRealEstate() {
+        return mDatabase.imageRealEstateDao().getAllImagesRealEstateLiveData();
+    }
+
     private LiveData<List<PlaceRealEstate>> getAllPlacesRealEstateLiveData() {
         Log.d(TAG, "getAllPlacesRealEstateLiveData: called!");
         return mDatabase.placeRealEstateDao().getAllPlacesRealEstateLiveData();

@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.data.DataRepository;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public class ListingsSharedViewModel extends AndroidViewModel {
 
     private final LiveData<List<RealEstate>> observableListOfListings;
 
+    private final LiveData<List<ImageRealEstate>> observableListOfImagesRealEstate;
+
     private final MutableLiveData<RealEstate> itemSelected = new MutableLiveData<>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,6 +38,7 @@ public class ListingsSharedViewModel extends AndroidViewModel {
         Log.d(TAG, "ListingsSharedViewModel: called!");
 
         observableListOfListings = dataRepository.getObservableAllListings();
+        observableListOfImagesRealEstate = dataRepository.getObservableAllImagesRealEstate();
     }
 
     /** This method fills the MutableLiveData with the information from
@@ -52,10 +56,14 @@ public class ListingsSharedViewModel extends AndroidViewModel {
         return itemSelected;
     }
 
-    /**
-     * Expose the LiveData so the UI can observe it. */
+    /** Expose the LiveData so the UI can observe it.
+     * */
     public LiveData<List<RealEstate>> getObservableListOfListings() {
         return observableListOfListings;
+    }
+
+    public LiveData<List<ImageRealEstate>> getObservableListOfImagesRealEstate () {
+        return observableListOfImagesRealEstate;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

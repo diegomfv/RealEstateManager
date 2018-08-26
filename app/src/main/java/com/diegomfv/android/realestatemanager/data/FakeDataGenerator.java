@@ -12,11 +12,13 @@ import java.util.Date;
 /**
  * Created by Diego Fajardo on 16/08/2018.
  */
+// TODO: 26/08/2018 Add a textWatcher (RxJava) to the price and surface textViews
+// TODO: 26/08/2018 To format the value (add dots)
 public class FakeDataGenerator {
 
     private static final String TAG = FakeDataGenerator.class.getSimpleName();
 
-    private String[] fake_types = {"flat", "apartment", "house"};
+    private String[] fake_types = {"Flat", "Apartment", "House"};
 
     private String[] fake_description = {
             "This spacious -96 sqm/1033 sqft - modern and minimal apartment is the perfect choice for " +
