@@ -563,14 +563,13 @@ public class SearchEngineActivity extends AppCompatActivity {
 
         List<RealEstate> listOfFilteredRealEstate = new ArrayList<>();
 
-
         for (int i = 0; i < listOfListings.size(); i++) {
 
             if (!allFiltersPassed(listOfListings.get(i))) {
                 continue;
             }
-            listOfFilteredRealEstate.add(listOfListings.get(i));
 
+            listOfFilteredRealEstate.add(listOfListings.get(i));
         }
 
         if (listOfFilteredRealEstate.size() > 0) {
