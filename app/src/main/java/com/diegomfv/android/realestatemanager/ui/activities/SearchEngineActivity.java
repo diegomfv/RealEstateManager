@@ -25,6 +25,7 @@ import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.SearchEngineViewModel;
@@ -41,7 +42,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-public class SearchEngineActivity extends AppCompatActivity {
+public class SearchEngineActivity extends BaseActivity {
 
     private static final String TAG = SearchEngineActivity.class.getSimpleName();
 
@@ -199,35 +200,6 @@ public class SearchEngineActivity extends AppCompatActivity {
             }
             break;
         }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //SINGLETON GETTERS
-
-    private RealEstateManagerApp getApp() {
-        Log.d(TAG, "getApp: called");
-        return (RealEstateManagerApp) getApplication();
-    }
-
-    private Set<String> getSetOfBuildingTypes() {
-        Log.d(TAG, "getSetOfBuildingTypes: called!");
-        return getApp().getRepository().getSetOfBuildingTypes();
-    }
-
-    private Set<String> getSetOfLocalities() {
-        Log.d(TAG, "getSetOfLocalities: called!");
-        return getApp().getRepository().getSetOfLocalities();
-    }
-
-    private Set<String> getSetOfCities() {
-        Log.d(TAG, "getSetOfCities: called!");
-        return getApp().getRepository().getSetOfCities();
-    }
-
-    private Set<String> getSetOfTypesOfPointsOfInterest() {
-        Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
-        return getApp().getRepository().getSetOfTypesOfPointsOfInterest();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

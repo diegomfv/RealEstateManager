@@ -42,6 +42,7 @@ import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.dialogfragments.InsertAddressDialogFragment;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.LatLngForRetrofit;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.PlacesByNearby;
@@ -77,7 +78,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 // TODO: 24/08/2018 Allow writing the information in EUROS
 // TODO: 23/08/2018 If back button clicked when searching for an image, the app crashes
-public class CreateNewListingActivity extends AppCompatActivity implements Observer, InsertAddressDialogFragment.InsertAddressDialogListener {
+public class CreateNewListingActivity extends BaseActivity implements Observer, InsertAddressDialogFragment.InsertAddressDialogListener {
 
     private static final String TAG = CreateNewListingActivity.class.getSimpleName();
 
@@ -386,42 +387,6 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
         ToastHelper.toastShort(this, "The address was not added");
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //SINGLETON GETTERS
-
-    private RealEstateManagerApp getApp () {
-        Log.d(TAG, "getApp: called");
-        return (RealEstateManagerApp) getApplication();
-    }
-
-    private AppDatabase getAppDatabase () {
-        Log.d(TAG, "getAppDatabase: called!");
-        return getApp().getDatabase();
-    }
-
-    private Storage getInternalStorage() {
-        Log.d(TAG, "getInternalStorage: called!");
-        return getApp().getInternalStorage();
-    }
-
-    private RealEstate getRealEstateCache () {
-        Log.d(TAG, "getRealEstateCache: called!");
-        return getApp().getRepository().getRealEstateCache();
-    }
-
-    private List<ImageRealEstate> getListOfImagesRealEstateCache () {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfImagesRealEstateCache();
-    }
-
-    private List<PlaceRealEstate> getListOfPlacesRealEstateCache() {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfPlacesRealEstateCache();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private boolean allChecksCorrect () {
         Log.d(TAG, "allChecksCorrect: called!");
@@ -866,7 +831,7 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
 
         if (accessInternalStorageGranted) {
 
-            List<File> listOfTempFiles = getInternalStorage().getFiles(getApp().getTemporaryDir());
+            List<File> listOfTempFiles = getInternalStorage().getFiles(getTemporaryDir());
 
             byte[] temporaryFileByteArray;
             String pushKey;
@@ -874,14 +839,14 @@ public class CreateNewListingActivity extends AppCompatActivity implements Obser
             for (int i = 0; i < listOfTempFiles.size(); i++) {
 
                 pushKey = listOfTempFiles.get(i).getName();
-                temporaryFileByteArray = getInternalStorage().readFile(getApp().getTemporaryDir() + pushKey);
+                temporaryFileByteArray = getInternalStorage().readFile(getTemporaryDir() + pushKey);
 
-                if (getInternalStorage().isDirectoryExists(getApp().getImagesDir())) {
-                    createFileInImagesDir(getApp().getImagesDir() + pushKey, temporaryFileByteArray);
+                if (getInternalStorage().isDirectoryExists(getImagesDir())) {
+                    createFileInImagesDir(getImagesDir() + pushKey, temporaryFileByteArray);
 
                 } else {
-                    getInternalStorage().createDirectory(getApp().getImagesDir());
-                    createFileInImagesDir(getApp().getImagesDir() + pushKey, temporaryFileByteArray);
+                    getInternalStorage().createDirectory(getImagesDir());
+                    createFileInImagesDir(getImagesDir() + pushKey, temporaryFileByteArray);
                 }
             }
 

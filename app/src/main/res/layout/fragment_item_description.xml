@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -34,13 +35,14 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/textView_description_title_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Description"
                     android:padding="8dp"/>
 
                 <TextView
-                    android:id="@+id/fill_textView_description_id"
+                    android:id="@+id/textView_description_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/lorem_ipsum"
@@ -62,7 +64,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/textView_title_surfaceArea_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -72,119 +74,126 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/textView_surfaceArea_id"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="TextView"
+                    android:text="@string/information_not_available"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView_title_surfaceArea_id" />
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/textView_NumberOfRooms_title_id"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:text="Number of Rooms"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView4" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView_surfaceArea_id" />
 
                 <TextView
-                    android:id="@+id/textView6"
+                    android:id="@+id/textView_numberOfRooms_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="TextView"
+                    android:text="@string/information_not_available"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView_NumberOfRooms_title_id" />
 
                 <TextView
-                    android:id="@+id/textView10"
+                    android:id="@+id/textView_numberOfBathrooms_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="TextView"
+                    android:text="@string/information_not_available"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView_numberOfRooms_id" />
 
                 <TextView
-                    android:id="@+id/textView11"
+                    android:id="@+id/textView_numberOfBedrooms_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="TextView"
+                    android:text="@string/information_not_available"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView10" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView_numberOfBathrooms_id" />
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/textView_address_title_id"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:text="Address"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView11" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView_numberOfBedrooms_id" />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/textView_street_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="TextView"
+                    android:text="@string/information_not_available"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView_address_title_id" />
 
                 <TextView
-                    android:id="@+id/textView7"
+                    android:id="@+id/textView_locality_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="TextView"
+                    android:text="@string/information_not_available"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView5" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView_street_id" />
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/textView_city_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="TextView"
+                    android:text="@string/information_not_available"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView7" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView_locality_id" />
 
                 <TextView
-                    android:id="@+id/textView9"
+                    android:id="@+id/textView_postcode_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="TextView"
+                    android:text="@string/information_not_available"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView8" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView_city_id" />
 
                 <TextView
-                    android:id="@+id/textView12"
+                    android:id="@+id/textView_sold_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:text="TextView"
+                    android:text="@string/information_not_available"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView9" />
-
+                    app:layout_constraintTop_toBottomOf="@+id/textView_postcode_id" />
 
             </android.support.constraint.ConstraintLayout>
 
         </android.support.v7.widget.CardView>
+
+        <FrameLayout
+            android:id="@+id/map"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:background="@drawable/map_png">
+
+        </FrameLayout>
 
     </LinearLayout>
 

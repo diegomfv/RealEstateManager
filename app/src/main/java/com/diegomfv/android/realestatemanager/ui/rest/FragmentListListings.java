@@ -26,6 +26,8 @@ import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.activities.DetailActivity;
 import com.diegomfv.android.realestatemanager.ui.activities.MainActivity;
+import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
+import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
@@ -46,7 +48,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Diego Fajardo on 16/08/2018.
  */
 // TODO: 23/08/2018 Retain the fragment!
-public class FragmentListListings extends Fragment {
+public class FragmentListListings extends BaseFragment {
 
     private static final String TAG = FragmentListListings.class.getSimpleName();
 
@@ -100,8 +102,8 @@ public class FragmentListListings extends Fragment {
         this.unbinder = ButterKnife.bind(this, view);
 
         /* Glide configuration*/
-        if (getRootActivityRef() != null) {
-            this.glide = Glide.with(getRootActivityRef());
+        if (getActivity() != null) {
+            this.glide = Glide.with(getActivity());
         }
 
         this.configureRecyclerView();
@@ -122,10 +124,7 @@ public class FragmentListListings extends Fragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private MainActivity getRootActivityRef () {
-        Log.d(TAG, "getRootActivityRef: called!");
-        return (MainActivity) getActivity();
-    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private List<RealEstate> getListOfRealEstates () {
         Log.d(TAG, "getListOfRealEstates: called");
@@ -135,20 +134,15 @@ public class FragmentListListings extends Fragment {
         return listOfRealEstates;
     }
 
-    private String getImageFilesDir () {
-        Log.d(TAG, "getTemporaryFilesDir: called!");
-        return getRootActivityRef().getApp().getImagesDir();
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void createModel() {
         Log.d(TAG, "createModel: called!");
 
-        if (getRootActivityRef() != null) {
-            ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getRootActivityRef().getApp());
+        if (getActivity() != null) {
+            ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
             this.listingsSharedViewModel = ViewModelProviders
-                    .of(getRootActivityRef(), factory)
+                    .of(getActivity(), factory)
                     .get(ListingsSharedViewModel.class);
         }
     }
@@ -179,7 +173,6 @@ public class FragmentListListings extends Fragment {
         return mapOfBitmaps;
     }
 
-
     @SuppressLint("CheckResult")
     private void fillMapOfBitmaps() {
         Log.d(TAG, "fillMapOfBitmaps: called!");
@@ -190,7 +183,7 @@ public class FragmentListListings extends Fragment {
 
             listingId = listOfRealEstates.get(i).getId();
 
-            Single.just(getRootActivityRef().getInternalStorage().readFile(getImageFilesDir() + listOfRealEstates.get(i).getListOfImagesIds().get(0)))
+            Single.just(getInternalStorage().readFile(getImagesDir() + listOfRealEstates.get(i).getListOfImagesIds().get(0)))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new DisposableSingleObserver<byte[]>() {
@@ -222,12 +215,12 @@ public class FragmentListListings extends Fragment {
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
-        if (getRootActivityRef() != null) {
+        if (getActivity() != null) {
 
             this.recyclerView.setHasFixedSize(true);
-            this.recyclerView.setLayoutManager(new LinearLayoutManager(getRootActivityRef()));
+            this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             this.adapter = new RVAdapterListings(
-                    getRootActivityRef(),
+                    getActivity(),
                     getListOfRealEstates(),
                     getMapOfBitmaps(),
                     glide,
@@ -252,7 +245,7 @@ public class FragmentListListings extends Fragment {
 
                         /* This code runs when we are using a tablet
                          * */
-                        if (getRootActivityRef() != null && getRootActivityRef().findViewById(R.id.fragment2_container_id) != null) {
+                        if (getActivity() != null && getActivity().findViewById(R.id.fragment2_container_id) != null) {
 
                             /** This does not modify the item but triggers the listener
                              * for the other fragment, which is listening (because we set
@@ -265,7 +258,7 @@ public class FragmentListListings extends Fragment {
 
                         /* This code runs when we are using a handset
                          * */
-                        if (getRootActivityRef() != null && getRootActivityRef().findViewById(R.id.fragment2_container_id) == null) {
+                        if (getActivity() != null && getActivity().findViewById(R.id.fragment2_container_id) == null) {
                             launchDetailActivity(adapter.getRealEstate(position));
                         }
                     }
@@ -277,7 +270,7 @@ public class FragmentListListings extends Fragment {
      * with a Parcelable (item clicked) carried by the intent
      */
     private void launchDetailActivity(RealEstate realEstate) {
-        Intent intent = new Intent(getRootActivityRef(), DetailActivity.class);
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
         intent.putExtra(Constants.SEND_PARCELABLE, realEstate);
         startActivity(intent);
     }

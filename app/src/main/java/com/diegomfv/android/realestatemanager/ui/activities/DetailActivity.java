@@ -7,13 +7,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.AppDatabase;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.rest.FragmentItemDescription;
+import com.snatik.storage.Storage;
+
+import java.util.List;
 
 /**
  * Created by Diego Fajardo on 15/08/2018.
  */
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends BaseActivity {
 
     private static final String TAG = DetailActivity.class.getSimpleName();
 
@@ -35,6 +44,8 @@ public class DetailActivity extends AppCompatActivity {
         loadFragment(bundle);
 
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void loadFragment(Bundle bundle) {
         Log.d(TAG, "loadFragmentOrFragments: called!");

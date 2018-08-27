@@ -40,6 +40,7 @@
         <activity android:name=".ui.activities.AddPhotoActivity" />
         <activity android:name=".ui.activities.EditListingActivity" />
         <activity android:name=".ui.activities.PositionActivity" />
+        <activity android:name=".ui.base.BaseActivity" />
 
         <receiver android:name=".receivers.InternetConnectionReceiver"/>
 

@@ -1,0 +1,107 @@
+package com.diegomfv.android.realestatemanager.ui.base;
+
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
+import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
+import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.AppDatabase;
+import com.diegomfv.android.realestatemanager.data.DataRepository;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.snatik.storage.Storage;
+
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Created by Diego Fajardo on 27/08/2018.
+ */
+public class BaseActivity extends AppCompatActivity {
+
+    private static final String TAG = BaseActivity.class.getSimpleName();
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //SINGLETON GETTERS
+
+    protected RealEstateManagerApp getApp() {
+        Log.d(TAG, "getApp: called");
+        return (RealEstateManagerApp) getApplication();
+    }
+
+    protected AppDatabase getAppDatabase() {
+        Log.d(TAG, "getAppDatabase: called!");
+        return getApp().getDatabase();
+    }
+
+    protected DataRepository getRepository() {
+        Log.d(TAG, "getRepository: called!");
+        return getApp().getRepository();
+    }
+
+    protected Storage getInternalStorage() {
+        Log.d(TAG, "getInternalStorage: called!");
+        return getApp().getInternalStorage();
+    }
+
+    protected RealEstate getRealEstateCache() {
+        Log.d(TAG, "getRealEstateCache: called!");
+        return getRepository().getRealEstateCache();
+    }
+
+    protected List<ImageRealEstate> getListOfImagesRealEstateCache() {
+        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
+        return getRepository().getListOfImagesRealEstateCache();
+    }
+
+    protected List<PlaceRealEstate> getListOfPlacesRealEstateCache() {
+        Log.d(TAG, "getListOfPlacesRealEstateCache: called!");
+        return getRepository().getListOfPlacesRealEstateCache();
+    }
+
+    protected List<PlaceRealEstate> getListOfPlacesByNearbyCache() {
+        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
+        return getRepository().getListOfPlacesRealEstateCache();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    protected String getImagesDir () {
+        Log.d(TAG, "getImagesDir: called!");
+        //mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
+        return getInternalStorage().getInternalFilesDirectory() + File.separator
+                + Constants.TEMPORARY_DIRECTORY + File.separator;
+    }
+
+    protected String getTemporaryDir () {
+        Log.d(TAG, "getTemporaryDir: called!");
+        return getInternalStorage().getInternalFilesDirectory() + File.separator
+                + Constants.IMAGES_DIRECTORY + File.separator;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    protected Set<String> getSetOfBuildingTypes() {
+        Log.d(TAG, "getSetOfBuildingTypes: called!");
+        return getApp().getRepository().getSetOfBuildingTypes();
+    }
+
+    protected Set<String> getSetOfLocalities() {
+        Log.d(TAG, "getSetOfLocalities: called!");
+        return getApp().getRepository().getSetOfLocalities();
+    }
+
+    protected Set<String> getSetOfCities() {
+        Log.d(TAG, "getSetOfCities: called!");
+        return getApp().getRepository().getSetOfCities();
+    }
+
+    protected Set<String> getSetOfTypesOfPointsOfInterest() {
+        Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
+        return getApp().getRepository().getSetOfTypesOfPointsOfInterest();
+    }
+
+}

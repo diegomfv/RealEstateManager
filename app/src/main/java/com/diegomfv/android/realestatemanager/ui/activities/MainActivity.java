@@ -3,25 +3,17 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
-import com.diegomfv.android.realestatemanager.data.AppDatabase;
-import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
-import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
-import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.rest.FragmentItemDescription;
 import com.diegomfv.android.realestatemanager.ui.rest.FragmentListListings;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
-import com.snatik.storage.Storage;
-
-import java.util.List;
 
 /** How crashes were solved:
  * 1. Modified the id of the view from activity_second_activity_text_view_main
@@ -29,7 +21,7 @@ import java.util.List;
  * 2. Add String.valueOf() to convert int to String
  * */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -44,7 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
         this.accessInternalStorageGranted = false;
 
-        getApp().getRepository().deleteCache();
+        /* We delete the cache in MainActivity
+        * */
+        getRepository().deleteCache();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_main);
@@ -137,44 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //SINGLETON GETTERS
 
-    public RealEstateManagerApp getApp () {
-        Log.d(TAG, "getApp: called");
-        return (RealEstateManagerApp) getApplication();
-    }
-
-    private AppDatabase getAppDatabase () {
-        Log.d(TAG, "getAppDatabase: called!");
-        return getApp().getDatabase();
-    }
-
-    public Storage getInternalStorage() {
-        Log.d(TAG, "getInternalStorage: called!");
-        return getApp().getInternalStorage();
-    }
-
-    private RealEstate getRealEstateCache () {
-        Log.d(TAG, "getRealEstateCache: called!");
-        return getApp().getRepository().getRealEstateCache();
-    }
-
-    private List<ImageRealEstate> getListOfImagesRealEstateCache () {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfImagesRealEstateCache();
-    }
-
-    private List<PlaceRealEstate> getListOfPlacesByNearbyCache () {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfPlacesRealEstateCache();
-    }
-
-    public boolean getAccessInternalStorageGranted () {
-        Log.d(TAG, "getaccessInternalStorageGranted: called");
-        return accessInternalStorageGranted;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Method that loads one or two fragments depending on the device
      * */
@@ -216,12 +173,12 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "createDirectories: called");
 
         if (accessInternalStorageGranted) {
-            if (!getInternalStorage().isDirectoryExists(getApp().getImagesDir())) {
-                getInternalStorage().createDirectory(getApp().getImagesDir());
+            if (!getInternalStorage().isDirectoryExists(getImagesDir())) {
+                getInternalStorage().createDirectory(getImagesDir());
             }
 
-            if (!getInternalStorage().isDirectoryExists(getApp().getTemporaryDir())) {
-                getInternalStorage().createDirectory(getApp().getTemporaryDir());
+            if (!getInternalStorage().isDirectoryExists(getTemporaryDir())) {
+                getInternalStorage().createDirectory(getTemporaryDir());
             }
         }
     }

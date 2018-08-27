@@ -24,6 +24,7 @@ import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppDatabase;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.utils.FirebasePushIdGenerator;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
@@ -46,7 +47,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Diego Fajardo on 18/08/2018.
  */
-public class AddPhotoActivity extends AppCompatActivity {
+public class AddPhotoActivity extends BaseActivity {
 
     private static final String TAG = AddPhotoActivity.class.getSimpleName();
 
@@ -167,35 +168,6 @@ public class AddPhotoActivity extends AppCompatActivity {
             }
             break;
         }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //SINGLETON GETTERS
-
-    private RealEstateManagerApp getApp () {
-        Log.d(TAG, "getApp: called");
-        return (RealEstateManagerApp) getApplication();
-    }
-
-    private AppDatabase getAppDatabase () {
-        Log.d(TAG, "getAppDatabase: called!");
-        return getApp().getDatabase();
-    }
-
-    private Storage getInternalStorage() {
-        Log.d(TAG, "getInternalStorage: called!");
-        return getApp().getInternalStorage();
-    }
-
-    private RealEstate getRealEstateCache () {
-        Log.d(TAG, "getRealEstateCache: called!");
-        return getApp().getRepository().getRealEstateCache();
-    }
-
-    private List<ImageRealEstate> getListOfImagesRealEstateCache () {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfImagesRealEstateCache();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

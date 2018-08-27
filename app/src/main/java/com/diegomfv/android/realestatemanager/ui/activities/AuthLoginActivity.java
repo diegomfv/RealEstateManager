@@ -14,6 +14,7 @@ import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppDatabase;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 import com.snatik.storage.Storage;
@@ -26,7 +27,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 // TODO: 21/08/2018 Clean caches!
-public class AuthLoginActivity extends AppCompatActivity {
+public class AuthLoginActivity extends BaseActivity {
 
     private static final String TAG = AuthLoginActivity.class.getSimpleName();
 
@@ -57,14 +58,14 @@ public class AuthLoginActivity extends AppCompatActivity {
         unbinder = ButterKnife.bind(this);
 
         /* We check if we have permissions
-        * */
+         * */
         Utils.checkAllPermissions(this);
 
     }
 
-    @OnClick ({R.id.button_sign_up_password_id, R.id.button_sign_in_password_id, R.id.button_google_id, R.id.button_facebook_id})
-    public void buttonClicked (View view) {
-        Log.d(TAG, "buttonClicked: " + ((Button)view).getText().toString() + " clicked!");
+    @OnClick({R.id.button_sign_up_password_id, R.id.button_sign_in_password_id, R.id.button_google_id, R.id.button_facebook_id})
+    public void buttonClicked(View view) {
+        Log.d(TAG, "buttonClicked: " + ((Button) view).getText().toString() + " clicked!");
 
         switch (view.getId()) {
 
@@ -73,22 +74,23 @@ public class AuthLoginActivity extends AppCompatActivity {
                 ToastHelper.toastButtonClicked(this, view);
 
 
-            } break;
+            }
+            break;
 
             case R.id.button_sign_in_password_id: {
 
                 ToastHelper.toastButtonClicked(this, view);
-
                 Utils.launchActivity(this, MainActivity.class);
 
-            } break;
+            }
+            break;
 
             case R.id.button_google_id: {
 
                 ToastHelper.toastButtonClicked(this, view);
-                Utils.launchActivity(this, CreateNewListingActivity.class);
 
-            } break;
+            }
+            break;
 
             case R.id.button_facebook_id: {
 
@@ -97,7 +99,8 @@ public class AuthLoginActivity extends AppCompatActivity {
                 // TODO: 16/08/2018 Delete!
                 DebugDB.getAddressLog();
 
-            } break;
+            }
+            break;
 
         }
     }
@@ -106,7 +109,6 @@ public class AuthLoginActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: called!");
-
         unbinder.unbind();
     }
 
@@ -133,37 +135,4 @@ public class AuthLoginActivity extends AppCompatActivity {
             }
         }
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //SINGLETON GETTERS
-
-    private RealEstateManagerApp getApp () {
-        Log.d(TAG, "getApp: called");
-        return (RealEstateManagerApp) getApplication();
-    }
-
-    private AppDatabase getAppDatabase () {
-        Log.d(TAG, "getAppDatabase: called!");
-        return getApp().getDatabase();
-    }
-
-    private Storage getInternalStorage() {
-        Log.d(TAG, "getInternalStorage: called!");
-        return getApp().getInternalStorage();
-    }
-
-    private RealEstate getRealEstateCache () {
-        Log.d(TAG, "getRealEstateCache: called!");
-        return getApp().getRepository().getRealEstateCache();
-    }
-
-    private List<ImageRealEstate> getListOfImagesRealEstateCache () {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfImagesRealEstateCache();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 }

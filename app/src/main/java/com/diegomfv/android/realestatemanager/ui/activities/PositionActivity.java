@@ -26,6 +26,7 @@ import com.diegomfv.android.realestatemanager.data.AppDatabase;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
@@ -57,7 +58,7 @@ import butterknife.Unbinder;
  * Created by Diego Fajardo on 23/08/2018.
  */
 
-public class PositionActivity extends AppCompatActivity {
+public class PositionActivity extends BaseActivity {
 
     private static final String TAG = PositionActivity.class.getSimpleName();
 
@@ -151,54 +152,6 @@ public class PositionActivity extends AppCompatActivity {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //SINGLETON GETTERS
-
-    private RealEstateManagerApp getApp () {
-        Log.d(TAG, "getApp: called");
-        return (RealEstateManagerApp) getApplication();
-    }
-
-    private AppDatabase getAppDatabase () {
-        Log.d(TAG, "getAppDatabase: called!");
-        return getApp().getDatabase();
-    }
-
-    private Storage getInternalStorage() {
-        Log.d(TAG, "getInternalStorage: called!");
-        return getApp().getInternalStorage();
-    }
-
-    private RealEstate getRealEstateCache () {
-        Log.d(TAG, "getRealEstateCache: called!");
-        return getApp().getRepository().getRealEstateCache();
-    }
-
-    private List<ImageRealEstate> getListOfImagesRealEstateCache () {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfImagesRealEstateCache();
-    }
-
-    private List<PlaceRealEstate> getListOfPlacesRealEstateCache() {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getApp().getRepository().getListOfPlacesRealEstateCache();
-    }
-
-    private List<RealEstate> getListOfListings () {
-        if (listOfListings == null) {
-            return listOfListings = new ArrayList<>();
-        }
-        return listOfListings;
-    }
-
-    private List<Marker> getListOfMarkers () {
-        if (listOfMarkers == null) {
-            return listOfMarkers = new ArrayList<>();
-        }
-        return listOfMarkers;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu: called!");
@@ -228,6 +181,22 @@ public class PositionActivity extends AppCompatActivity {
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private List<RealEstate> getListOfListings () {
+        if (listOfListings == null) {
+            return listOfListings = new ArrayList<>();
+        }
+        return listOfListings;
+    }
+
+    private List<Marker> getListOfMarkers () {
+        if (listOfMarkers == null) {
+            return listOfMarkers = new ArrayList<>();
+        }
+        return listOfMarkers;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

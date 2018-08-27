@@ -24,4 +24,5 @@
     <string name="cant_make_map_requests">You can\'t make map request with these Google Services</string>
     <string name="change_currency">Change currency</string>
     <string name="go_back">Go back</string>
+    <string name="information_not_available">Information not Available</string>
 </resources>
