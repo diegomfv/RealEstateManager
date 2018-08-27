@@ -1,4 +1,4 @@
-package com.diegomfv.android.realestatemanager.ui.rest;
+package com.diegomfv.android.realestatemanager.ui.rest.fragments.handset;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
@@ -8,8 +8,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,8 +22,6 @@ import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
-import com.diegomfv.android.realestatemanager.ui.activities.DetailActivity;
-import com.diegomfv.android.realestatemanager.ui.activities.MainActivity;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
@@ -47,9 +43,9 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 // TODO: 23/08/2018 Retain the fragment!
-public class FragmentItemDescription extends BaseFragment {
+public class FragmentHandsetItemDescription extends BaseFragment {
 
-    private static final String TAG = FragmentItemDescription.class.getSimpleName();
+    private static final String TAG = FragmentHandsetItemDescription.class.getSimpleName();
 
     private boolean deviceIsHandset;
 
@@ -109,11 +105,10 @@ public class FragmentItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static FragmentItemDescription newInstance() {
+    public static FragmentHandsetItemDescription newInstance() {
         Log.d(TAG, "newInstance: called!");
-        return new FragmentItemDescription();
+        return new FragmentHandsetItemDescription();
     }
-
 
     @Nullable
     @Override

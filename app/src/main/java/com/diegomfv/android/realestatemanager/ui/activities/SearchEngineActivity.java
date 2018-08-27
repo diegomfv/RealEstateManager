@@ -171,7 +171,6 @@ public class SearchEngineActivity extends BaseActivity {
 
                 changeCurrencyIcon(item);
                 changeCurrency();
-
                 updatePriceTextView();
 
             }
@@ -433,6 +432,8 @@ public class SearchEngineActivity extends BaseActivity {
             });
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void changeCurrencyIcon(MenuItem item) {
         Log.d(TAG, "changeCurrencyIcon: called!");

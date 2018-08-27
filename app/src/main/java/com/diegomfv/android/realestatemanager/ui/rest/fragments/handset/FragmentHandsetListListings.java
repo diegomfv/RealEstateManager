@@ -1,4 +1,4 @@
-package com.diegomfv.android.realestatemanager.ui.rest;
+package com.diegomfv.android.realestatemanager.ui.rest.fragments.handset;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,11 +21,8 @@ import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterListings;
 import com.diegomfv.android.realestatemanager.constants.Constants;
-import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.activities.DetailActivity;
-import com.diegomfv.android.realestatemanager.ui.activities.MainActivity;
-import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
@@ -47,10 +43,10 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Diego Fajardo on 16/08/2018.
  */
-// TODO: 23/08/2018 Retain the fragment!
-public class FragmentListListings extends BaseFragment {
 
-    private static final String TAG = FragmentListListings.class.getSimpleName();
+public class FragmentHandsetListListings extends BaseFragment {
+
+    private static final String TAG = FragmentHandsetListListings.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -81,12 +77,19 @@ public class FragmentListListings extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static FragmentListListings newInstance() {
+    public static FragmentHandsetListListings newInstance() {
         Log.d(TAG, "newInstance: called!");
-        return new FragmentListListings();
+        return new FragmentHandsetListListings();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // TODO: 27/08/2018 Check this!
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Nullable
     @Override
@@ -121,8 +124,6 @@ public class FragmentListListings extends BaseFragment {
         Log.d(TAG, "onDestroyView: called!");
         this.unbinder.unbind();
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -190,7 +191,7 @@ public class FragmentListListings extends BaseFragment {
                         @Override
                         public void onSuccess(byte[] data) {
                             Log.i(TAG, "onSuccess: called!");
-                            Log.i(TAG, "onSuccess: data = " + data);
+
                             getMapOfBitmaps().put(
                                     listingId,
                                     BitmapFactory.decodeByteArray(data, 0 , data.length));

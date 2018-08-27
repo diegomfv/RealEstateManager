@@ -3,21 +3,12 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
-import com.diegomfv.android.realestatemanager.data.AppDatabase;
-import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
-import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
-import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.rest.FragmentItemDescription;
-import com.snatik.storage.Storage;
-
-import java.util.List;
+import com.diegomfv.android.realestatemanager.ui.rest.fragments.handset.FragmentHandsetItemDescription;
 
 /**
  * Created by Diego Fajardo on 15/08/2018.
@@ -50,7 +41,7 @@ public class DetailActivity extends BaseActivity {
     private void loadFragment(Bundle bundle) {
         Log.d(TAG, "loadFragmentOrFragments: called!");
 
-        FragmentItemDescription fragmentItemDescription = FragmentItemDescription.newInstance();
+        FragmentHandsetItemDescription fragmentItemDescription = FragmentHandsetItemDescription.newInstance();
         fragmentItemDescription.setArguments(bundle);
 
         getSupportFragmentManager()

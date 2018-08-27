@@ -108,8 +108,14 @@ public class DataRepository {
         return listOfPlacesNearbyCache;
     }
 
-    public void deleteCache () {
+    public void deleteCacheAndSets() {
         Log.d(TAG, "nullifyCache: called!");
+        deleteCache();
+        deleteSets();
+    }
+
+    private void deleteCache () {
+        Log.d(TAG, "deleteCache: called!");
 
         realEstateCache = null;
 
@@ -124,6 +130,14 @@ public class DataRepository {
         }
 
         listOfPlacesNearbyCache = null;
+    }
+
+    private void deleteSets () {
+        Log.d(TAG, "deleteSets: called!");
+        setOfBuildingTypes = null;
+        setOfLocalities = null;
+        setOfCities = null;
+        setOfTypesOfPointsOfInterest = null;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,6 +157,7 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // TODO: 27/08/2018 Modified to public
     private LiveData<List<RealEstate>> getAllListingsLiveData() {
         Log.d(TAG, "getAllListingsLiveData: called!");
         return mDatabase.realStateDao().getAllListingsOrderedByTypeLiveData();

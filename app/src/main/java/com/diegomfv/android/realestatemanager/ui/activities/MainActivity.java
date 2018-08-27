@@ -3,17 +3,26 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.rest.FragmentItemDescription;
-import com.diegomfv.android.realestatemanager.ui.rest.FragmentListListings;
+import com.diegomfv.android.realestatemanager.ui.rest.fragments.handset.FragmentHandsetListListings;
+import com.diegomfv.android.realestatemanager.ui.rest.fragments.tablet.FragmentTabletItemDescription;
+import com.diegomfv.android.realestatemanager.ui.rest.fragments.tablet.FragmentTabletListListings;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /** How crashes were solved:
  * 1. Modified the id of the view from activity_second_activity_text_view_main
@@ -25,7 +34,19 @@ public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    @BindView(R.id.textView_please_insert_data_id)
+    TextView tvInsertData;
+
+    @BindView(R.id.fragment1_container_id)
+    FrameLayout fragment1Layout;
+
+    private boolean dataAvailable;
+
     private boolean accessInternalStorageGranted;
+
+    private int currency;
+
+    private Unbinder unbinder;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,19 +55,33 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
 
+        /* We delete the cache in MainActivity
+         * */
+        getRepository().deleteCacheAndSets();
+
         this.accessInternalStorageGranted = false;
 
-        /* We delete the cache in MainActivity
-        * */
-        getRepository().deleteCache();
+        this.currency = 0;
+
+        dataAvailable = !getRepository().getSetOfBuildingTypes().isEmpty();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_main);
+        unbinder = ButterKnife.bind(this);
 
-        this.loadFragmentOrFragments();
+        if (dataAvailable) {
+            this.loadFragmentOrFragments();
+        }
 
         this.checkInternalStoragePermissionGranted();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: called!");
+        unbinder.unbind();
     }
 
     @Override
@@ -81,7 +116,8 @@ public class MainActivity extends BaseActivity {
 
             case R.id.menu_change_currency_button: {
 
-                // TODO: 23/08/2018 Code
+               changeCurrency();
+               changeCurrencyIcon(item);
 
             } break;
 
@@ -104,8 +140,6 @@ public class MainActivity extends BaseActivity {
 
 
             } break;
-
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -131,27 +165,62 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public int getCurrency () {
+        Log.d(TAG, "getCurrency: called!");
+        return currency;
+    }
 
+    private void changeCurrencyIcon(MenuItem item) {
+        Log.d(TAG, "changeCurrencyIcon: called!");
+
+        if (this.currency == 0) {
+            item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_euro_symbol_white_24dp));
+
+        } else {
+            item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_dollar_symbol_white_24dp));
+        }
+    }
+
+    private void changeCurrency() {
+        Log.d(TAG, "changeCurrency: called!");
+
+        if (this.currency == 0) {
+            this.currency = 1;
+        } else {
+            this.currency = 0;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Method that loads one or two fragments depending on the device
      * */
     private void loadFragmentOrFragments() {
         Log.d(TAG, "loadFragmentOrFragments: called!");
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment1_container_id, FragmentListListings.newInstance())
-                .commit();
+        hideTextViewShowFragments();
 
-        /* Only load the fragment if we are in a tablet
-        * */
-        if (findViewById(R.id.fragment2_container_id) != null) {
+        if (findViewById(R.id.fragment2_container_id) == null) {
+            /* Code for handsets
+             * */
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment2_container_id, FragmentItemDescription.newInstance())
+                    .add(R.id.fragment1_container_id, FragmentHandsetListListings.newInstance())
                     .commit();
 
+        } else {
+            /* Code for tablets
+            * */
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment1_container_id, FragmentTabletListListings.newInstance())
+                    .commit();
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment2_container_id, FragmentTabletItemDescription.newInstance())
+                    .commit();
         }
     }
 
@@ -181,5 +250,15 @@ public class MainActivity extends BaseActivity {
                 getInternalStorage().createDirectory(getTemporaryDir());
             }
         }
+    }
+
+    private void hideTextViewShowFragments() {
+        Log.d(TAG, "hideTextViewData: called!");
+        tvInsertData.setVisibility(View.GONE);
+        fragment1Layout.setVisibility(View.VISIBLE);
+        if (findViewById(R.id.fragment2_container_id) != null) {
+            findViewById(R.id.fragment2_container_id).setVisibility(View.VISIBLE);
+        }
+
     }
 }
