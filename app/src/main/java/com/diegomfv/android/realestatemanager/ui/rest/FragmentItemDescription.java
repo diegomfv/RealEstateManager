@@ -17,9 +17,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
+import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.activities.MainActivity;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,6 +56,9 @@ public class FragmentItemDescription extends Fragment {
     //ViewModel
     private ListingsSharedViewModel listingsViewModel;
 
+    //RecyclerView Adapter
+    private RVAdapterMediaHorizontal adapter;
+
     //Glide
     private RequestManager glide;
 
@@ -71,21 +79,23 @@ public class FragmentItemDescription extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: called!");
 
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
         View view = inflater.inflate(R.layout.fragment_item_description, container, false);
         this.unbinder = ButterKnife.bind(this, view);
 
-        if (getActivity() != null) {
-            this.app = (RealEstateManagerApp) getActivity().getApplication();
+        if (getRootActivityRef() != null) {
+            this.app = (RealEstateManagerApp) getRootActivityRef().getApplication();
         }
 
         /* Glide configuration*/
-        if (getActivity() != null) {
-            this.glide = Glide.with(getActivity());
+        if (getRootActivityRef() != null) {
+            this.glide = Glide.with(getRootActivityRef());
         }
 
         /* This code runs in handsets
         * */
-        if (getActivity() != null && getActivity().findViewById(R.id.fragment2_container_id) == null) {
+        if (getRootActivityRef() != null && getRootActivityRef().findViewById(R.id.fragment2_container_id) == null) {
 
             Bundle bundle = getArguments();
             if (bundle != null) {
@@ -99,7 +109,7 @@ public class FragmentItemDescription extends Fragment {
 
         /* This code runs in tablets
         * */
-        if (getActivity() != null && getActivity().findViewById(R.id.fragment2_container_id) != null) {
+        if (getRootActivityRef() != null && getRootActivityRef().findViewById(R.id.fragment2_container_id) != null) {
 
             this.listingsViewModel = this.createModel();
 
@@ -117,15 +127,29 @@ public class FragmentItemDescription extends Fragment {
         this.unbinder.unbind();
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private MainActivity getRootActivityRef () {
+        Log.d(TAG, "getRootActivityRef: called!");
+        return (MainActivity) getRootActivityRef();
+    }
+
+    private String getImageFilesDir () {
+        Log.d(TAG, "getTemporaryFilesDir: called!");
+        return getRootActivityRef().getApp().getImagesDir();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     ///////////////////////////////
 
     private ListingsSharedViewModel createModel () {
         Log.d(TAG, "createModel: called!");
 
-        if (getActivity() != null) {
+        if (getRootActivityRef() != null) {
             ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(app);
             this.listingsViewModel = ViewModelProviders
-                    .of(getActivity(), factory)
+                    .of(getRootActivityRef(), factory)
                     .get(ListingsSharedViewModel.class);
 
             return listingsViewModel;
@@ -145,11 +169,33 @@ public class FragmentItemDescription extends Fragment {
                     Log.d(TAG, "onChanged: called!");
 
                     if (realEstate != null) {
-                        textViewDescriptionText.setText(realEstate.getDescription());
+                        fillLayoutWithRealEstateInfo(realEstate);
                     }
                 }
             });
         }
     }
+
+    private void fillLayoutWithRealEstateInfo(RealEstate realEstate) {
+        Log.d(TAG, "fillLayoutWithRealEstateInfo: called!");
+
+
+
+
+        setDescription(realEstate);
+
+
+
+
+
+    }
+
+    private void setDescription (RealEstate realEstate) {
+        Log.d(TAG, "setDescription: called!");
+
+        textViewDescriptionText.setText(realEstate.getDescription());
+
+    }
+
 
 }
