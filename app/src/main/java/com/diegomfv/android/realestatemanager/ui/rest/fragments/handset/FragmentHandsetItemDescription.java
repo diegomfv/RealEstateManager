@@ -22,9 +22,11 @@ import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.activities.MainActivity;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
+import com.diegomfv.android.realestatemanager.utils.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
 import java.util.ArrayList;
@@ -47,8 +49,6 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
     private static final String TAG = FragmentHandsetItemDescription.class.getSimpleName();
 
-    private boolean deviceIsHandset;
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @BindView(R.id.recyclerView_media_id)
@@ -57,7 +57,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
     @BindView(R.id.textView_description_id)
     TextView tvDescription;
 
-    @BindView(R.id.textView_surfaceArea_id)
+    @BindView(R.id.textView_surface_area_id)
     TextView tvSurfaceArea;
 
     @BindView(R.id.textView_numberOfRooms_id)
@@ -81,17 +81,19 @@ public class FragmentHandsetItemDescription extends BaseFragment {
     @BindView(R.id.textView_postcode_id)
     TextView tvPostCode;
 
+    @BindView(R.id.textView_price_id)
+    TextView tvPrice;
+
     @BindView(R.id.textView_sold_id)
     TextView tvSold;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private int currency;
+
     private List<Bitmap> listOfBitmaps;
 
     private int imagesCounter;
-
-    //ViewModel
-    private ListingsSharedViewModel listingsViewModel;
 
     //RecyclerView Adapter
     private RVAdapterMediaHorizontal adapter;
@@ -115,52 +117,34 @@ public class FragmentHandsetItemDescription extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: called!");
 
+        if (getActivity() != null) {
+            this.currency = Utils.readCurrentCurrencyShPref(getActivity());
+        }
+
         this.imagesCounter = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         View view = inflater.inflate(R.layout.fragment_item_description, container, false);
         this.unbinder = ButterKnife.bind(this, view);
 
-        /* This code runs in handsets
-        * */
-        if (getActivity() != null && getActivity().findViewById(R.id.fragment2_container_id) == null) {
-
-            deviceIsHandset = true;
-
-            /* Glide configuration*/
-            if (getActivity() != null) {
-                this.glide = Glide.with(getActivity());
-            }
-
-            Bundle bundle = getArguments();
-            if (bundle != null) {
-                realEstate = bundle.getParcelable(Constants.GET_PARCELABLE);
-            }
-
-            this.configureRecyclerView();
-
-            if (realEstate != null) {
-                fillLayoutWithRealEstateInfo(realEstate);
-            }
+        /* Glide configuration*/
+        if (getActivity() != null) {
+            this.glide = Glide.with(getActivity());
         }
 
-
-        /* This code runs in tablets
-        * */
-        if (getActivity() != null && getActivity().findViewById(R.id.fragment2_container_id) != null) {
-
-            deviceIsHandset = false;
-
-            /* Glide configuration*/
-            if (getActivity() != null) {
-                this.glide = Glide.with(getActivity());
-            }
-
-            this.listingsViewModel = this.createModel();
-
-            this.subscribeToModel(listingsViewModel);
-
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            realEstate = bundle.getParcelable(Constants.GET_PARCELABLE);
+            Log.i(TAG, "onCreateView: bundle = " + bundle);
         }
+
+        this.configureRecyclerView();
+
+        if (realEstate != null) {
+            fillLayoutWithRealEstateInfo(realEstate);
+        }
+
+        Log.i(TAG, "onCreateView: tvSurfaceArea = " + tvSurfaceArea);
 
         return view;
     }
@@ -174,42 +158,12 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    private ListingsSharedViewModel createModel () {
-        Log.d(TAG, "createModel: called!");
-
-        if (!deviceIsHandset && getActivity() != null) {
-            ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
-            this.listingsViewModel = ViewModelProviders
-                    .of(getActivity(), factory)
-                    .get(ListingsSharedViewModel.class);
-            return listingsViewModel;
-        }
-        return null;
-    }
-
-    private void subscribeToModel (ListingsSharedViewModel listingsViewModel) {
-        Log.d(TAG, "subscribeToModel: called!");
-
-        if (!deviceIsHandset && listingsViewModel != null) {
-
-            this.listingsViewModel.getItemSelected().observe(this, new Observer<RealEstate>() {
-                @Override
-                public void onChanged(@Nullable RealEstate realEstate) {
-                    Log.d(TAG, "onChanged: called!");
-                    if (realEstate != null) {
-                        fillLayoutWithRealEstateInfo(realEstate);
-                    }
-                }
-            });
-        }
-    }
-
     private void fillLayoutWithRealEstateInfo(RealEstate realEstate) {
         Log.d(TAG, "fillLayoutWithRealEstateInfo: called!");
         setDescription(realEstate);
         setSurfaceArea(realEstate);
         setAddress(realEstate);
+        setPrice(realEstate);
         fillMapOfBitmaps(realEstate);
     }
 
@@ -220,7 +174,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
     private void setSurfaceArea (RealEstate realEstate) {
         Log.d(TAG, "setSurfaceArea: called!");
-        tvSurfaceArea.setText(realEstate.getSurfaceArea());
+        tvSurfaceArea.setText(String.valueOf(realEstate.getSurfaceArea()));
     }
 
     private void setAddress (RealEstate realEstate) {
@@ -229,6 +183,17 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         tvLocality.setText(realEstate.getAddress().getLocality());
         tvCity.setText(realEstate.getAddress().getCity());
         tvPostCode.setText(realEstate.getAddress().getPostcode());
+    }
+
+    // TODO: 28/08/2018 Use Placeholders
+    @SuppressLint("SetTextI18n")
+    private void setPrice (RealEstate realEstate) {
+        Log.d(TAG, "setPrice: called!");
+        tvPrice.setText(
+                Utils.getCurrencySymbol(currency)
+                        + " "
+                        + (Utils.formatToDecimals((int) Utils.getPriceAccordingToCurrency(
+                                currency, realEstate.getPrice()), currency)));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -245,7 +210,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
     private void fillMapOfBitmaps(RealEstate realEstate) {
         Log.d(TAG, "fillMapOfBitmaps: called!");
 
-        if (deviceIsHandset && getActivity() != null) {
+        if (getActivity() != null) {
 
             imagesCounter = realEstate.getListOfImagesIds().size();
 
@@ -310,4 +275,8 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                     }
                 });
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 }

@@ -25,6 +25,7 @@ import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.activities.DetailActivity;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
+import com.diegomfv.android.realestatemanager.utils.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
 import java.util.ArrayList;
@@ -96,7 +97,9 @@ public class FragmentHandsetListListings extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: called!");
 
-        this.currency = 0;
+        if (getActivity() != null) {
+            this.currency = Utils.readCurrentCurrencyShPref(getActivity());
+        }
 
         this.listingsCounter = 0;
 
@@ -156,9 +159,11 @@ public class FragmentHandsetListListings extends BaseFragment {
                 @Override
                 public void onChanged(@Nullable List<RealEstate> realEstates) {
                     Log.d(TAG, "onChanged: called!");
-                    listOfRealEstates = realEstates;
-                    fillMapOfBitmaps();
-                    adapter.setData(realEstates);
+                    if (realEstates != null) {
+                        listOfRealEstates = realEstates;
+                        fillMapOfBitmaps(realEstates);
+                        adapter.setData(realEstates);
+                    }
                 }
             });
         }
@@ -174,41 +179,53 @@ public class FragmentHandsetListListings extends BaseFragment {
         return mapOfBitmaps;
     }
 
-    @SuppressLint("CheckResult")
-    private void fillMapOfBitmaps() {
+    private void fillMapOfBitmaps(List<RealEstate> realEstates) {
         Log.d(TAG, "fillMapOfBitmaps: called!");
 
-        listingsCounter = listOfRealEstates.size();
+        listingsCounter = realEstates.size();
+        Log.i(TAG, "fillMapOfBitmaps: realEstates.size() = " + realEstates.size());
 
-        for (int i = 0; i < listOfRealEstates.size() ; i++) {
+        for (int i = 0; i < realEstates.size(); i++) {
 
-            listingId = listOfRealEstates.get(i).getId();
+            listingId = realEstates.get(i).getId();
+            Log.i(TAG, "fillMapOfBitmaps: listingId = " + listingId);
 
-            Single.just(getInternalStorage().readFile(getImagesDir() + listOfRealEstates.get(i).getListOfImagesIds().get(0)))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableSingleObserver<byte[]>() {
-                        @Override
-                        public void onSuccess(byte[] data) {
-                            Log.i(TAG, "onSuccess: called!");
+            getImageFromInternalStorage (realEstates.get(i), listingId);
 
-                            getMapOfBitmaps().put(
-                                    listingId,
-                                    BitmapFactory.decodeByteArray(data, 0 , data.length));
-                            listingsCounter--;
-
-                            if (listingsCounter == 0) {
-                                adapter.setDataBitmaps(getMapOfBitmaps());
-                            }
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e(TAG, "onError: " + e.getMessage());
-
-                        }
-                    });
         }
+    }
+
+    @SuppressLint("CheckResult")
+    private void getImageFromInternalStorage(RealEstate realEstate, final String listingId) {
+        Log.d(TAG, "getImageFromInternalStorage: called!");
+
+        Single.just(getInternalStorage().readFile(getImagesDir() + realEstate.getListOfImagesIds().get(0)))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] data) {
+                        Log.i(TAG, "onSuccess: called!");
+
+                        Log.i(TAG, "onSuccess: listingId = " + listingId);
+
+                        getMapOfBitmaps().put(
+                                listingId,
+                                BitmapFactory.decodeByteArray(data, 0 , data.length));
+                        listingsCounter--;
+
+                        if (listingsCounter == 0) {
+                            adapter.setDataBitmaps(getMapOfBitmaps());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+                });
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

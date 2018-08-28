@@ -54,7 +54,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
     @BindView(R.id.textView_description_id)
     TextView tvDescription;
 
-    @BindView(R.id.textView_surfaceArea_id)
+    @BindView(R.id.textView_surface_area_id)
     TextView tvSurfaceArea;
 
     @BindView(R.id.textView_numberOfRooms_id)

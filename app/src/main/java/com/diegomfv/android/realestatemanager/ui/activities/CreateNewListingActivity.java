@@ -19,11 +19,11 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -33,13 +33,10 @@ import android.widget.ScrollView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
-import com.diegomfv.android.realestatemanager.data.AppDatabase;
 import com.diegomfv.android.realestatemanager.data.FakeDataGenerator;
 import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
-import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
@@ -55,7 +52,6 @@ import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.utils.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
-import com.snatik.storage.Storage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -76,7 +72,6 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Diego Fajardo on 18/08/2018.
  */
-// TODO: 24/08/2018 Allow writing the information in EUROS
 // TODO: 23/08/2018 If back button clicked when searching for an image, the app crashes
 public class CreateNewListingActivity extends BaseActivity implements Observer, InsertAddressDialogFragment.InsertAddressDialogListener {
 
@@ -134,6 +129,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     /////////////////////////////////
 
+    private int currency;
+
     private ActionBar actionBar;
 
     //RecyclerView Adapter
@@ -161,6 +158,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
+
+        this.currency = Utils.readCurrentCurrencyShPref(this);
 
         this.listOfBitmaps = new ArrayList<>();
 
@@ -237,6 +236,37 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu: called!");
+        getMenuInflater().inflate(R.menu.currency_menu, menu);
+        Utils.updateCurrencyIconWhenMenuCreated(this, currency, menu, R.id.menu_change_currency_button);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: called!");
+
+        switch (item.getItemId()) {
+
+            case android.R.id.home: {
+                Utils.launchActivity(this, MainActivity.class);
+
+            } break;
+
+            case R.id.menu_change_currency_button: {
+
+                changeCurrency();
+                Utils.updateCurrencyIcon(this, currency, item);
+                updatePriceHint();
+
+            } break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void update(Observable o, Object internetAvailable) {
         Log.d(TAG, "update: called!");
         isInternetAvailable = Utils.setInternetAvailability(internetAvailable);
@@ -293,21 +323,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected: called!");
-
-        switch (item.getItemId()) {
-
-            case android.R.id.home: {
-                Utils.launchActivity(this, MainActivity.class);
-
-            } break;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void configureActionBar() {
@@ -320,6 +335,19 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void changeCurrency() {
+        Log.d(TAG, "changeCurrency: called!");
+
+        if (this.currency == 0) {
+            this.currency = 1;
+        } else {
+            this.currency = 0;
+        }
+        Utils.writeCurrentCurrencyShPref(this,currency);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -348,7 +376,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         // TODO: 23/08/2018 Use Resources instead of hardcoded
 
         setHint(cardViewType, "Type");
-        setHint(cardViewPrice, "Price ($)");
+        setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
         setHint(cardViewSurfaceArea, "Surface Area (sqm)");
         setHint(cardViewNumberOfRooms, "Number of Rooms");
         setHint(cardViewDescription, "Description");
@@ -360,6 +388,12 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
+    }
+
+    private void updatePriceHint() {
+        Log.d(TAG, "updatePriceHint: called!");
+        TextInputLayout textInputLayout = cardViewPrice.findViewById(R.id.text_input_layout_id);
+        textInputLayout.setHint("Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -503,7 +537,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void updateIntegerValues() {
         Log.d(TAG, "updateIntegerValues: called!");
 
-        this.getRealEstateCache().setPrice(Utils.getTextViewInteger(tvPrice));
+        this.getRealEstateCache().setPrice((int) Utils.getPriceAccordingToCurrency(currency, Utils.getTextViewInteger(tvPrice)));
         this.getRealEstateCache().setSurfaceArea(Utils.getTextViewInteger(tvSurfaceArea));
         this.getRealEstateCache().setNumberOfRooms(Utils.getTextViewInteger(tvNumberOfRooms));
     }

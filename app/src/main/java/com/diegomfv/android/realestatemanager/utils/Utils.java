@@ -6,12 +6,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -96,6 +99,27 @@ public class Utils {
             return Utils.convertDollarToEuro(price);
         } else {
              return price;
+        }
+    }
+
+    public static void updateCurrencyIconWhenMenuCreated(Context context, int currency, Menu menu, int itemRef) {
+        Log.d(TAG, "updateCurrencyIconWhenMenuCreated: called!");
+        MenuItem item = menu.findItem(itemRef);
+        if (currency == 0) {
+            item.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_dollar_symbol_white_24dp));
+
+        } else {
+            item.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_euro_symbol_white_24dp));
+        }
+    }
+
+    public static void updateCurrencyIcon(Context context, int currency, MenuItem item) {
+        Log.d(TAG, "updateCurrencyIconWhenMenuCreated: called!");
+        if (currency == 0) {
+            item.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_dollar_symbol_white_24dp));
+
+        } else {
+            item.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_euro_symbol_white_24dp));
         }
     }
 
@@ -460,7 +484,7 @@ public class Utils {
     public static String formatToDecimals(int number, int currency) {
         Log.d(TAG, "formatToDecimalsWithComma: called!");
 
-        //currency
+        //CURRENCY
         //0: dollars
         //1: euros
 
@@ -514,5 +538,18 @@ public class Utils {
 
     }
 
+    public static void writeCurrentCurrencyShPref (Context context, int currency) {
+        Log.d(TAG, "writeCurrentCurrencyShPref: called!");
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_CURRENCY_SETTINGS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(Constants.CURRENCY, currency);
+        editor.apply();
+    }
+
+    public static int readCurrentCurrencyShPref (Context context) {
+        Log.d(TAG, "saveCurrentCurrency: called!");
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_CURRENCY_SETTINGS, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(Constants.CURRENCY, 0);
+    }
 
 }

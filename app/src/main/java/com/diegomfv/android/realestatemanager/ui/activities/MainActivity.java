@@ -30,6 +30,7 @@ import butterknife.Unbinder;
  * 2. Add String.valueOf() to convert int to String
  * */
 
+// TODO: 28/08/2018 Add a listener for when changing CURRENCY
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -61,7 +62,7 @@ public class MainActivity extends BaseActivity {
 
         this.accessInternalStorageGranted = false;
 
-        this.currency = 0;
+        this.currency = Utils.readCurrentCurrencyShPref(this);
 
         dataAvailable = !getRepository().getSetOfBuildingTypes().isEmpty();
 
@@ -88,6 +89,7 @@ public class MainActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu: called!");
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        Utils.updateCurrencyIconWhenMenuCreated(this, currency, menu, R.id.menu_change_currency_button);
         return true;
     }
 
@@ -96,6 +98,8 @@ public class MainActivity extends BaseActivity {
         Log.d(TAG, "onOptionsItemSelected: called!");
 
         switch (item.getItemId()) {
+
+            // TODO: 28/08/2018 Add back button! 
 
             case R.id.menu_add_listing_button: {
 
@@ -117,7 +121,7 @@ public class MainActivity extends BaseActivity {
             case R.id.menu_change_currency_button: {
 
                changeCurrency();
-               changeCurrencyIcon(item);
+               Utils.updateCurrencyIcon(this, currency, item);
 
             } break;
 
@@ -165,22 +169,6 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public int getCurrency () {
-        Log.d(TAG, "getCurrency: called!");
-        return currency;
-    }
-
-    private void changeCurrencyIcon(MenuItem item) {
-        Log.d(TAG, "changeCurrencyIcon: called!");
-
-        if (this.currency == 0) {
-            item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_euro_symbol_white_24dp));
-
-        } else {
-            item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_dollar_symbol_white_24dp));
-        }
-    }
-
     private void changeCurrency() {
         Log.d(TAG, "changeCurrency: called!");
 
@@ -189,6 +177,8 @@ public class MainActivity extends BaseActivity {
         } else {
             this.currency = 0;
         }
+        Utils.writeCurrentCurrencyShPref(this, currency);
+        loadFragmentOrFragments();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

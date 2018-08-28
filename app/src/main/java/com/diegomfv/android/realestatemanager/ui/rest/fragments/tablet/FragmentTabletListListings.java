@@ -23,6 +23,7 @@ import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.activities.MainActivity;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
+import com.diegomfv.android.realestatemanager.utils.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
 import java.util.ArrayList;
@@ -86,8 +87,7 @@ public class FragmentTabletListListings extends BaseFragment {
         Log.d(TAG, "onCreateView: called!");
 
         if (getActivity() != null) {
-            MainActivity mainActivityRef = (MainActivity) getActivity();
-            this.currency = mainActivityRef.getCurrency();
+            this.currency = Utils.readCurrentCurrencyShPref(getActivity());
             this.glide = Glide.with(getActivity());
         }
 

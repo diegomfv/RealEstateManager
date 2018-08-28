@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -13,41 +11,39 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp">
+            android:layout_marginTop="8dp">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView_media_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"/>
+                android:layout_margin="10dp"/>
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_margin="10dp">
 
                 <TextView
                     android:id="@+id/textView_description_title_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Description"
-                    android:padding="8dp"/>
+                    style="@style/textViewTitleStyle"
+                    android:text="Description"/>
 
                 <TextView
                     android:id="@+id/textView_description_id"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    style="@style/textViewInfoStyle"
+                    android:paddingRight="16dp"
                     android:text="@string/lorem_ipsum"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"/>
+                    />
 
             </LinearLayout>
 
@@ -56,134 +52,87 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="8dp">
 
-            <android.support.constraint.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="10dp">
 
                 <TextView
                     android:id="@+id/textView_title_surfaceArea_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Surface Area"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    style="@style/textViewTitleStyle"
+                    android:text="Surface Area" />
 
                 <TextView
-                    android:id="@+id/textView_surfaceArea_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/information_not_available"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_title_surfaceArea_id" />
+                    android:id="@+id/textView_surface_area_id"
+                    style="@style/textViewInfoStyle"
+                    android:text="@string/information_not_available" />
 
                 <TextView
                     android:id="@+id/textView_NumberOfRooms_title_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Number of Rooms"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_surfaceArea_id" />
+                    style="@style/textViewTitleStyle"
+                    android:text="Number of Rooms" />
 
                 <TextView
                     android:id="@+id/textView_numberOfRooms_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/information_not_available"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_NumberOfRooms_title_id" />
+                    style="@style/textViewInfoStyle"
+                    android:text="@string/information_not_available" />
 
                 <TextView
                     android:id="@+id/textView_numberOfBathrooms_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/information_not_available"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_numberOfRooms_id" />
+                    style="@style/textViewInfoStyle"
+                    android:text="@string/information_not_available" />
 
                 <TextView
                     android:id="@+id/textView_numberOfBedrooms_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/information_not_available"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_numberOfBathrooms_id" />
+                    style="@style/textViewInfoStyle"
+                    android:text="@string/information_not_available" />
 
                 <TextView
                     android:id="@+id/textView_address_title_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Address"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_numberOfBedrooms_id" />
+                    style="@style/textViewTitleStyle"
+                    android:text="Address" />
 
                 <TextView
                     android:id="@+id/textView_street_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/information_not_available"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_address_title_id" />
+                    style="@style/textViewInfoStyle"
+                    android:text="@string/information_not_available" />
 
                 <TextView
                     android:id="@+id/textView_locality_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/information_not_available"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_street_id" />
+                    style="@style/textViewInfoStyle"
+                    android:text="@string/information_not_available" />
 
                 <TextView
                     android:id="@+id/textView_city_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/information_not_available"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_locality_id" />
+                    style="@style/textViewInfoStyle"
+                    android:text="@string/information_not_available" />
 
                 <TextView
                     android:id="@+id/textView_postcode_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/information_not_available"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_city_id" />
+                    style="@style/textViewInfoStyle"
+                    android:text="@string/information_not_available" />
 
                 <TextView
-                    android:id="@+id/textView_sold_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/information_not_available"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_postcode_id" />
+                    android:id="@+id/textView_price_title_id"
+                    style="@style/textViewTitleStyle"
+                    android:text="Price" />
 
-            </android.support.constraint.ConstraintLayout>
+                <TextView
+                    android:id="@+id/textView_price_id"
+                    style="@style/textViewInfoStyle"
+                    android:text="@string/information_not_available" />
+                
+                <TextView
+                    android:id="@+id/textView_sold_id"
+                    style="@style/textViewTitleStyle"
+                    android:text="@string/information_not_available"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
 
         </android.support.v7.widget.CardView>
 
@@ -191,6 +140,9 @@
             android:id="@+id/map"
             android:layout_width="300dp"
             android:layout_height="300dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="30dp"
             android:background="@drawable/map_png">
 
         </FrameLayout>

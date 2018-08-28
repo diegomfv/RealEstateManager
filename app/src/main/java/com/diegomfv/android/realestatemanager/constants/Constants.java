@@ -54,4 +54,9 @@ public interface Constants {
     //Google Maps
     float MAPS_DEFAULT_ZOOM = 17f;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    String CURRENCY = "CURRENCY";
+    String SH_PREF_CURRENCY_SETTINGS = "currency_settings";
+
 }

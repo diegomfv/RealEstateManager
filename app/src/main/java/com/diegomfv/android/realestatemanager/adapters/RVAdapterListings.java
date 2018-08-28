@@ -114,6 +114,12 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
         notifyDataSetChanged();
     }
 
+    public void setCurrency (int newData) {
+        Log.d(TAG, "setCurrency: called!");
+        this.currency = newData;
+        notifyDataSetChanged();
+    }
+
     /**
      * Method that retrieves a real estate in Fragment when clicked
      */
@@ -162,6 +168,11 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
         private void loadImage (int position) {
             Log.d(TAG, "loadImage: called!");
+
+            for (Map.Entry<String, Bitmap> entry : mapOfBitmaps.entrySet())
+            {
+                Log.i(TAG, "loadImage: entry --->" + entry);
+            }
             glide.load(mapOfBitmaps.get(listRealEstates.get(position).getId())).into(imageView);
         }
 
@@ -178,7 +189,7 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
         private String getPriceOfBuilding(int position) {
             Log.d(TAG, "getPriceOfBuilding: called!");
             int price = (int) Utils.getPriceAccordingToCurrency(currency, listRealEstates.get(position).getPrice());
-            return Utils.getCurrencySymbol(currency) + Utils.formatToDecimals(price, currency);
+            return Utils.getCurrencySymbol(currency) + " " + Utils.formatToDecimals(price, currency);
         }
 
         private void setVisibilityOfSoldTextView (int position) {

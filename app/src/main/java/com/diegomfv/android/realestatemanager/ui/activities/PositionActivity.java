@@ -10,9 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,11 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
-import com.diegomfv.android.realestatemanager.data.AppDatabase;
-import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
-import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
@@ -45,7 +39,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.snatik.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +101,7 @@ public class PositionActivity extends BaseActivity {
         this.myLatitude = 0d;
         this.myLongitude = 0d;
 
-        this.currency = 0;
+        this.currency = Utils.readCurrentCurrencyShPref(this);
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_position);
@@ -155,7 +148,8 @@ public class PositionActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu: called!");
-        getMenuInflater().inflate(R.menu.position_menu, menu);
+        getMenuInflater().inflate(R.menu.currency_menu, menu);
+        Utils.updateCurrencyIconWhenMenuCreated(this, currency, menu, R.id.menu_change_currency_button);
         return true;
     }
 
@@ -167,9 +161,8 @@ public class PositionActivity extends BaseActivity {
 
             case R.id.menu_change_currency_button: {
 
-                changeCurrencyIcon(item);
-                changeCurrency();
-
+                Utils.updateCurrencyIcon(this, currency, item);
+                updateCurrency();
                 updateMapWithPins();
 
             } break;
@@ -215,25 +208,15 @@ public class PositionActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void changeCurrencyIcon (MenuItem item) {
-        Log.d(TAG, "changeCurrencyIcon: called!");
-
-        if (this.currency == 0) {
-           item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_euro_symbol_white_24dp));
-
-        } else {
-            item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_dollar_symbol_white_24dp));
-        }
-    }
-
-    private void changeCurrency() {
-        Log.d(TAG, "changeCurrency: called!");
+    private void updateCurrency() {
+        Log.d(TAG, "updateCurrency: called!");
 
         if (this.currency == 0) {
             this.currency = 1;
         } else {
             this.currency = 0;
         }
+        Utils.writeCurrentCurrencyShPref(this,currency);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
