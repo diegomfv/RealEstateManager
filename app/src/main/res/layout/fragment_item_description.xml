@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -24,24 +25,22 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:layout_marginTop="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_margin="10dp">
+                android:layout_margin="15dp">
 
                 <TextView
                     android:id="@+id/textView_description_title_id"
                     style="@style/textViewTitleStyle"
-                    android:text="Description"/>
+                    android:text="Description" />
 
                 <TextView
                     android:id="@+id/textView_description_id"
                     style="@style/textViewInfoStyle"
-                    android:paddingRight="16dp"
                     android:text="@string/lorem_ipsum"
                     />
 
@@ -58,13 +57,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp">
+                android:layout_margin="15dp">
 
                 <TextView
                     android:id="@+id/textView_title_surfaceArea_id"
                     style="@style/textViewTitleStyle"
+                    android:fontFamily="@font/anaheim"
                     android:text="Surface Area" />
 
                 <TextView
@@ -74,6 +72,7 @@
 
                 <TextView
                     android:id="@+id/textView_NumberOfRooms_title_id"
+                    android:layout_marginTop="15dp"
                     style="@style/textViewTitleStyle"
                     android:text="Number of Rooms" />
 
@@ -94,6 +93,7 @@
 
                 <TextView
                     android:id="@+id/textView_address_title_id"
+                    android:layout_marginTop="15dp"
                     style="@style/textViewTitleStyle"
                     android:text="Address" />
 
@@ -119,6 +119,7 @@
 
                 <TextView
                     android:id="@+id/textView_price_title_id"
+                    android:layout_marginTop="15dp"
                     style="@style/textViewTitleStyle"
                     android:text="Price" />
 
@@ -129,9 +130,10 @@
                 
                 <TextView
                     android:id="@+id/textView_sold_id"
+                    android:layout_marginTop="15dp"
                     style="@style/textViewTitleStyle"
                     android:text="@string/information_not_available"
-                    android:visibility="gone"/>
+                    />
 
             </LinearLayout>
 

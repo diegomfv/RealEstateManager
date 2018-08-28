@@ -1,9 +1,7 @@
 package com.diegomfv.android.realestatemanager.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,21 +13,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.constants.Constants;
-import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
@@ -74,7 +65,7 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         View view = layoutInflater.inflate(
-                R.layout.fragment_list_listings_item,
+                R.layout.rv_list_listings_item,
                 parent,
                 false);
 

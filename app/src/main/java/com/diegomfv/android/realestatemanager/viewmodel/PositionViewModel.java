@@ -83,7 +83,7 @@ public class PositionViewModel extends AndroidViewModel {
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
             //noinspection unchecked
-            return (T) new ListingsSharedViewModel(mApplication, mRepository);
+            return (T) new PositionViewModel(mApplication, mRepository);
         }
     }
 }

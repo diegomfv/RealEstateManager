@@ -18,6 +18,7 @@
             style="@style/textInputLayoutStyle"
             android:layout_marginBottom="5dp"
             android:focusable="false"
+            android:fontFamily="@font/anaheim"
             android:defaultFocusHighlightEnabled="false"
             android:focusableInTouchMode="false"
             android:clickable="false">
@@ -28,6 +29,7 @@
                 android:inputType="text"
                 android:textColor="@color/colorPrimaryDark"
                 android:hint="Text"
+                android:fontFamily="@font/anaheim"
                 android:focusable="false"
                 android:defaultFocusHighlightEnabled="false"
                 android:focusedByDefault="false"
