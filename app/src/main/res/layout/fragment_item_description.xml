@@ -52,14 +52,15 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:layout_marginTop="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_margin="10dp">
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp">
 
                 <TextView
                     android:id="@+id/textView_title_surfaceArea_id"
@@ -136,16 +137,24 @@
 
         </android.support.v7.widget.CardView>
 
-        <FrameLayout
-            android:id="@+id/map"
-            android:layout_width="300dp"
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/map_png">
+            android:layout_marginTop="8dp">
 
-        </FrameLayout>
+            <fragment
+                android:id="@+id/map"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:map="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                tools:context=".MapsActivity"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                map:liteMode="true" />
+
+        </android.support.v7.widget.CardView>
 
     </LinearLayout>
 

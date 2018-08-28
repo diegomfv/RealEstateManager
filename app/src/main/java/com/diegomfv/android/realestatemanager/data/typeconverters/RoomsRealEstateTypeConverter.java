@@ -18,13 +18,13 @@ public class RoomsRealEstateTypeConverter {
 
     @TypeConverter
     public static RoomsRealEstate fromString (String value) {
-        Type listType = new TypeToken<AddressRealEstate>() {}.getType();
+        Type listType = new TypeToken<RoomsRealEstate>() {}.getType();
         return new Gson().fromJson(value, listType);
     }
 
     @TypeConverter
-    public static String fromAddress (RoomsRealEstate addressRealEstate) {
+    public static String fromAddress (RoomsRealEstate roomsRealEstate) {
         Gson gson = new Gson();
-        return gson.toJson(addressRealEstate);
+        return gson.toJson(roomsRealEstate);
     }
 }

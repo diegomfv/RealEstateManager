@@ -59,4 +59,9 @@ public class ToastHelper {
         Log.d(TAG, "toastSomeAccessNotGranted: called!");
         Toast.makeText(context, context.getResources().getString(R.string.some_access_not_granted), Toast.LENGTH_SHORT).show();
     }
+
+    public static void toastNotImplemented(Context context) {
+        Log.d(TAG, "toastNotImplemented: called!");
+        Toast.makeText(context, context.getResources().getString(R.string.not_implemented), Toast.LENGTH_SHORT).show();
+    }
 }

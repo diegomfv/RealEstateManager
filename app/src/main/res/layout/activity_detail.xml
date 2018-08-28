@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.DetailActivity"
-    android:background="@color/colorPrimaryLighter">
+    tools:context=".ui.activities.DetailActivity">
 
     <FrameLayout
         android:id="@+id/fragment2_container_id"

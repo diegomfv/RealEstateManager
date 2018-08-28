@@ -1,6 +1,5 @@
 package com.diegomfv.android.realestatemanager.data.datamodels;
 
-import android.arch.persistence.room.Ignore;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -15,15 +14,14 @@ public class RoomsRealEstate implements Parcelable {
 
     int bathrooms;
 
-    int others;
+    int otherRooms;
 
-    @Ignore
     public RoomsRealEstate () {}
 
-    public RoomsRealEstate(int bedrooms, int bathrooms, int others) {
+    public RoomsRealEstate(int bedrooms, int bathrooms, int otherRooms) {
         this.bedrooms = bedrooms;
         this.bathrooms = bathrooms;
-        this.others = others;
+        this.otherRooms = otherRooms;
     }
 
     public int getBedrooms() {
@@ -42,12 +40,16 @@ public class RoomsRealEstate implements Parcelable {
         this.bathrooms = bathrooms;
     }
 
-    public int getOthers() {
-        return others;
+    public int getOtherRooms() {
+        return otherRooms;
     }
 
-    public void setOthers(int others) {
-        this.others = others;
+    public void setOtherRooms(int otherRooms) {
+        this.otherRooms = otherRooms;
+    }
+
+    public int getTotalNumberOfRooms () {
+        return bedrooms + bathrooms + otherRooms;
     }
 
     @Override
@@ -55,7 +57,7 @@ public class RoomsRealEstate implements Parcelable {
         return "RoomsRealEstate{" +
                 "bedrooms=" + bedrooms +
                 ", bathrooms=" + bathrooms +
-                ", others=" + others +
+                ", otherRooms=" + otherRooms +
                 '}';
     }
 
@@ -68,13 +70,13 @@ public class RoomsRealEstate implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.bedrooms);
         dest.writeInt(this.bathrooms);
-        dest.writeInt(this.others);
+        dest.writeInt(this.otherRooms);
     }
 
     protected RoomsRealEstate(Parcel in) {
         this.bedrooms = in.readInt();
         this.bathrooms = in.readInt();
-        this.others = in.readInt();
+        this.otherRooms = in.readInt();
     }
 
     public static final Creator<RoomsRealEstate> CREATOR = new Creator<RoomsRealEstate>() {

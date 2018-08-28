@@ -37,6 +37,7 @@ import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.FakeDataGenerator;
 import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
+import com.diegomfv.android.realestatemanager.data.datamodels.RoomsRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
@@ -94,8 +95,14 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     @BindView(R.id.card_view_surface_area_id)
     CardView cardViewSurfaceArea;
 
-    @BindView(R.id.card_view_number_rooms_id)
-    CardView cardViewNumberOfRooms;
+    @BindView(R.id.card_view_number_bedrooms_id)
+    CardView cardViewNumberOfBedrooms;
+
+    @BindView(R.id.card_view_number_bathrooms_id)
+    CardView cardViewNumberOfBathrooms;
+
+    @BindView(R.id.card_view_number_rooms_other_id)
+    CardView cardViewNumberOfOtherRooms;
 
     @BindView(R.id.card_view_description_id)
     CardView cardViewDescription;
@@ -109,7 +116,11 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private TextInputAutoCompleteTextView tvSurfaceArea;
 
-    private TextInputAutoCompleteTextView tvNumberOfRooms;
+    private TextInputAutoCompleteTextView tvNumberOfBedrooms;
+
+    private TextInputAutoCompleteTextView tvNumberOfBathrooms;
+
+    private TextInputAutoCompleteTextView tvNumberOfOtherRooms;
 
     private TextInputAutoCompleteTextView tvDescription;
 
@@ -187,7 +198,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         // TODO: 26/08/2018 Delete
         generateFakeData();
-
     }
 
     // TODO: 26/08/2018 Delete!
@@ -199,9 +209,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         tvTypeOfBuilding.setText(realEstate.getType());
         tvSurfaceArea.setText(String.valueOf(realEstate.getSurfaceArea()));
         tvPrice.setText(String.valueOf(realEstate.getPrice()));
-        tvNumberOfRooms.setText(String.valueOf(realEstate.getNumberOfRooms()));
+        tvNumberOfBedrooms.setText(String.valueOf(realEstate.getRooms().getBedrooms()));
+        tvNumberOfBathrooms.setText(String.valueOf(realEstate.getRooms().getBathrooms()));
+        tvNumberOfOtherRooms.setText(String.valueOf(realEstate.getRooms().getOtherRooms()));
         tvDescription.setText(realEstate.getDescription());
-
     }
 
     @Override
@@ -365,7 +376,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.tvTypeOfBuilding = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvNumberOfRooms = cardViewNumberOfRooms.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvNumberOfBedrooms = cardViewNumberOfBedrooms.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvNumberOfBathrooms= cardViewNumberOfBathrooms.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvNumberOfOtherRooms = cardViewNumberOfOtherRooms.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
     }
@@ -378,7 +391,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         setHint(cardViewType, "Type");
         setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
         setHint(cardViewSurfaceArea, "Surface Area (sqm)");
-        setHint(cardViewNumberOfRooms, "Number of Rooms");
+        setHint(cardViewNumberOfBedrooms, "Number of Bedrooms");
+        setHint(cardViewNumberOfBathrooms, "Number of Bathrooms");
+        setHint(cardViewNumberOfOtherRooms, "Number of Other Rooms");
         setHint(cardViewDescription, "Description");
         setHint(cardViewAddress, "AddressRealEstate");
     }
@@ -518,33 +533,38 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private void updateViews() {
         Log.d(TAG, "updateViews: called!");
-
         this.tvTypeOfBuilding.setText(getRealEstateCache().getType());
         this.tvPrice.setText(String.valueOf(getRealEstateCache().getPrice()));
         this.tvSurfaceArea.setText(String.valueOf(getRealEstateCache().getSurfaceArea()));
-        this.tvNumberOfRooms.setText(String.valueOf(getRealEstateCache().getNumberOfRooms()));
+        this.tvNumberOfBedrooms.setText(String.valueOf(getRealEstateCache().getRooms()));
         this.tvDescription.setText(getRealEstateCache().getDescription());
         this.tvAddress.setText(Utils.getAddressAsString(getRealEstateCache()));
     }
 
     private void updateRealEstateCache() {
         Log.d(TAG, "updateRealEstateCache: called!");
-
         this.updateStringValues();
         this.updateIntegerValues();
     }
 
     private void updateIntegerValues() {
         Log.d(TAG, "updateIntegerValues: called!");
-
         this.getRealEstateCache().setPrice((int) Utils.getPriceAccordingToCurrency(currency, Utils.getTextViewInteger(tvPrice)));
         this.getRealEstateCache().setSurfaceArea(Utils.getTextViewInteger(tvSurfaceArea));
-        this.getRealEstateCache().setNumberOfRooms(Utils.getTextViewInteger(tvNumberOfRooms));
+        setRooms(this.getRealEstateCache());
+
+    }
+
+    private void setRooms (RealEstate realEstate) {
+        Log.d(TAG, "setRooms: called!");
+        realEstate.setRooms(new RoomsRealEstate(
+                Utils.getTextViewInteger(tvNumberOfBedrooms),
+                Utils.getTextViewInteger(tvNumberOfBathrooms),
+                Utils.getTextViewInteger(tvNumberOfOtherRooms)));
     }
 
     private void updateStringValues() {
         Log.d(TAG, "updateStringValues: called!");
-
         this.getRealEstateCache().setType(Utils.capitalize(tvTypeOfBuilding.getText().toString().trim()));
         this.getRealEstateCache().setDescription(Utils.capitalize(tvDescription.getText().toString().trim()));
     }

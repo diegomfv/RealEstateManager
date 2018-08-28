@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -367,8 +366,8 @@ public class SearchEngineActivity extends BaseActivity {
             if (maxSurfaceArea < listOfRealEstates.get(i).getSurfaceArea()) {
                 maxSurfaceArea = listOfRealEstates.get(i).getSurfaceArea();
             }
-            if (maxNumberOfRooms < listOfRealEstates.get(i).getNumberOfRooms()) {
-                maxNumberOfRooms = listOfRealEstates.get(i).getNumberOfRooms();
+            if (maxNumberOfRooms < listOfRealEstates.get(i).getRooms().getTotalNumberOfRooms()) {
+                maxNumberOfRooms = listOfRealEstates.get(i).getRooms().getTotalNumberOfRooms();
             }
             if (maxAmountOfPhotos < listOfRealEstates.get(i).getListOfImagesIds().size()) {
                 maxAmountOfPhotos = listOfRealEstates.get(i).getListOfImagesIds().size();
@@ -671,7 +670,7 @@ public class SearchEngineActivity extends BaseActivity {
             return true;
         }
 
-        if (maxMinValuesFilterPassed(seekBarNumberOfRooms, realEstate.getNumberOfRooms())) {
+        if (maxMinValuesFilterPassed(seekBarNumberOfRooms, realEstate.getRooms().getTotalNumberOfRooms())) {
             return true;
         }
         return false;
@@ -713,7 +712,7 @@ public class SearchEngineActivity extends BaseActivity {
             return true;
         }
 
-        if (maxMinValuesFilterPassed(seekBarAmountOfPhotos, realEstate.getNumberOfRooms())) {
+        if (maxMinValuesFilterPassed(seekBarAmountOfPhotos, realEstate.getListOfImagesIds().size())) {
             return true;
         }
         return false;

@@ -23,7 +23,7 @@ import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
-import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
+import com.diegomfv.android.realestatemanager.viewmodel.PositionViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -74,18 +74,18 @@ public class PositionActivity extends BaseActivity {
 
     private List<Marker> listOfMarkers;
 
+    private boolean deviceLocationPermissionGranted;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private ActionBar actionBar;
-
-    private boolean deviceLocationPermissionGranted;
 
     private List<RealEstate> listOfListings;
 
     private int currency;
 
     //ViewModel
-    private ListingsSharedViewModel positionViewModel;
+    private PositionViewModel positionViewModel;
 
     private Unbinder unbinder;
 
@@ -111,9 +111,8 @@ public class PositionActivity extends BaseActivity {
 
         this.checkDeviceLocationPermissionGranted();
 
-        this.createModel();
+        this.createViewModel();
 
-        this.subscribeToModel(positionViewModel);
     }
 
     @Override
@@ -243,21 +242,21 @@ public class PositionActivity extends BaseActivity {
 
     //VIEWMODEL
 
-    private void createModel () {
-        Log.d(TAG, "createModel: called!");
+    private void createViewModel() {
+        Log.d(TAG, "createViewModel: called!");
 
-        ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
+        PositionViewModel.Factory factory = new PositionViewModel.Factory(getApp());
         this.positionViewModel = ViewModelProviders
                 .of(this, factory)
-                .get(ListingsSharedViewModel.class);
+                .get(PositionViewModel.class);
 
-
+        subscribeToModel(positionViewModel);
     }
 
-    private void subscribeToModel (ListingsSharedViewModel listingsViewModel) {
+    private void subscribeToModel (PositionViewModel positionViewModel) {
         Log.d(TAG, "subscribeToModel: called!");
 
-        if (listingsViewModel != null) {
+        if (positionViewModel != null) {
 
             this.positionViewModel.getObservableListOfListings().observe(this, new Observer<List<RealEstate>>() {
                 @Override
@@ -373,7 +372,7 @@ public class PositionActivity extends BaseActivity {
 
                         moveCamera(
                                 new LatLng(myLatitude, myLongitude),
-                                Constants.MAPS_DEFAULT_ZOOM);
+                                Constants.MAPS_POSITION_DEFAULT_ZOOM);
 
                         updateMapWithPins();
 

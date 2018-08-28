@@ -1,16 +1,12 @@
 package com.diegomfv.android.realestatemanager.data.datamodels;
 
-import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 /**
  * Created by Diego Fajardo on 24/08/2018.
  */
-@Entity(tableName = "address")
 public class AddressRealEstate implements Parcelable {
 
     private String street;
