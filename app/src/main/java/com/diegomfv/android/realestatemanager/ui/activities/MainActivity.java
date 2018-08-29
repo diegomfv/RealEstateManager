@@ -47,6 +47,10 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.fragment1_container_id)
     FrameLayout fragment1Layout;
 
+    private ActionBar actionBar;
+
+    private boolean editModeActive;
+
     private boolean dataAvailable;
 
     private boolean accessInternalStorageGranted;
@@ -62,6 +66,8 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
 
+        this.editModeActive = false;
+
         /* We delete the cache in MainActivity
          * */
         getRepository().deleteCacheAndSets();
@@ -76,16 +82,14 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
 
+        actionBar = getSupportActionBar();
+
         if (dataAvailable) {
             this.loadFragmentOrFragments();
         }
 
         this.checkInternalStoragePermissionGranted();
-
     }
-
-
-
 
     @Override
     protected void onDestroy() {
@@ -137,7 +141,7 @@ public class MainActivity extends BaseActivity {
             case R.id.menu_edit_listing_button: {
 
                 if (accessInternalStorageGranted) {
-                    Utils.launchActivity(this, EditListingActivity.class);
+                    updateMode();
 
                 } else {
                     ToastHelper.toastSomeAccessNotGranted(this);
@@ -172,6 +176,29 @@ public class MainActivity extends BaseActivity {
                 }
             }
             break;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** Method used in the fragments
+     * */
+    public boolean getEditModeActive () {
+        Log.d(TAG, "getEditMode: called!");
+        return editModeActive;
+    }
+
+    private void updateMode () {
+        Log.d(TAG, "updateMode: called!");
+
+        if (!editModeActive) {
+            actionBar.setTitle("Edit mode");
+            actionBar.setSubtitle("Click an element");
+            editModeActive = true;
+        } else {
+            actionBar.setTitle("Real Estate Manager");
+            actionBar.setSubtitle(null);
+            editModeActive = false;
         }
 
     }

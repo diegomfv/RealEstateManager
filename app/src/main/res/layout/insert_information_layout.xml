@@ -37,7 +37,7 @@
                 android:id="@+id/card_view_description_id"/>
 
             <include layout="@layout/card_view_address"
-                android:id="@+id/card_view_city_id"/>
+                android:id="@+id/card_view_address_id"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView_media_id"
@@ -63,7 +63,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="30dp"
-                android:text="INSERT LISTING" />
+                android:text="Some Text"/>
 
         </LinearLayout>
 

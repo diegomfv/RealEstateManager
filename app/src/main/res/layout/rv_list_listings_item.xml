@@ -44,10 +44,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
+                android:fontFamily="@font/arima_madurai"
                 android:text="Flat"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="20sp"
-                android:fontFamily="@font/anaheim"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,7 +58,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="Bristol"
-                android:fontFamily="@font/anaheim"
                 android:textColor="@color/colorPrimary"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView_type_of_building_id" />
@@ -70,7 +69,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="£200.000"
-                android:fontFamily="@font/anaheim"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="@+id/guideline"

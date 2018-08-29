@@ -132,6 +132,7 @@
                     android:id="@+id/textView_sold_id"
                     android:layout_marginTop="15dp"
                     style="@style/textViewTitleStyle"
+                    android:textStyle="bold"
                     android:text="@string/information_not_available"
                     />
 

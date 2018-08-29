@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/arima_madurai</item>
     </style>
 
     <style name="buttonGeneralStyle">
@@ -59,7 +60,7 @@
         <item name="android:layout_marginStart">10dp</item>
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:fontFamily">@font/anaheim</item>
+
     </style>
 
     <style name="textViewInfoStyle">
@@ -69,7 +70,7 @@
         <item name="android:layout_marginStart">20dp</item>
         <item name="android:layout_marginEnd">15dp</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
-        <item name="android:fontFamily">@font/anaheim</item>
+
     </style>
 
 </resources>

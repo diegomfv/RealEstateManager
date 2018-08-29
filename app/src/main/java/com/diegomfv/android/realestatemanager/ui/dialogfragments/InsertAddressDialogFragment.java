@@ -54,7 +54,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
     @BindView(R.id.card_view_locality_id)
     CardView cardViewLocality;
 
-    @BindView(R.id.card_view_city_id)
+    @BindView(R.id.card_view_address_id)
     CardView cardViewCity;
 
     @BindView(R.id.card_view_postcode_id)

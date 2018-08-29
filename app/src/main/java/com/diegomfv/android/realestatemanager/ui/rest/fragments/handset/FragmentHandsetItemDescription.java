@@ -7,6 +7,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -209,6 +210,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         setSurfaceArea(realEstate);
         setAddress(realEstate);
         setPrice(realEstate);
+        setSoldState(realEstate);
         fillMapOfBitmaps(realEstate);
     }
 
@@ -239,6 +241,19 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                         + " "
                         + (Utils.formatToDecimals((int) Utils.getPriceAccordingToCurrency(
                         currency, realEstate.getPrice()), currency)));
+    }
+
+    private void setSoldState (RealEstate realEstate) {
+        Log.d(TAG, "setSoldState: called!");
+        if (realEstate.getDateSale() != null) {
+            tvSold.setText("SOLD on " + realEstate.getDateSale());
+            tvSold.setTextColor(getResources().getColor(android.R.color.white));
+            tvSold.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        } else {
+            tvSold.setText("On Sale");
+            tvSold.setTextColor(getResources().getColor(R.color.colorPrimary));
+            tvSold.setBackgroundColor(getResources().getColor(android.R.color.white));
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

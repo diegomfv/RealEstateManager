@@ -107,7 +107,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     @BindView(R.id.card_view_description_id)
     CardView cardViewDescription;
 
-    @BindView(R.id.card_view_city_id)
+    @BindView(R.id.card_view_address_id)
     CardView cardViewAddress;
 
     private TextInputAutoCompleteTextView tvTypeOfBuilding;
@@ -368,6 +368,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         this.getAutocompleteTextViews();
         this.setAllHints();
+        this.setTextLastButton();
     }
 
     private void getAutocompleteTextViews () {
@@ -395,7 +396,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         setHint(cardViewNumberOfBathrooms, "Number of Bathrooms");
         setHint(cardViewNumberOfOtherRooms, "Number of Other Rooms");
         setHint(cardViewDescription, "Description");
-        setHint(cardViewAddress, "AddressRealEstate");
+        setHint(cardViewAddress, "Address");
     }
 
     private void setHint (CardView cardView, String hint) {
@@ -409,6 +410,11 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "updatePriceHint: called!");
         TextInputLayout textInputLayout = cardViewPrice.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint("Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
+    }
+
+    private void setTextLastButton() {
+        Log.d(TAG, "setTextLastButton: called!");
+        buttonInsertListing.setText("Insert Listing");
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

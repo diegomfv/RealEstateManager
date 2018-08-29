@@ -52,7 +52,7 @@
                 android:id="@+id/card_view_locality_id"/>
 
             <include layout="@layout/card_view_autocomplete"
-                android:id="@+id/card_view_city_id"/>
+                android:id="@+id/card_view_address_id"/>
 
             <include layout="@layout/card_view_seek_bar"
                 android:id="@+id/card_view_amount_photos_id"/>

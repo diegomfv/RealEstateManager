@@ -2,5 +2,6 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/anaheim</item>
+        <item>@font/arima_madurai</item>
     </array>
 </resources>

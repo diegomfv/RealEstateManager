@@ -26,7 +26,7 @@
         android:layout_width="match_parent"/>
 
     <include layout="@layout/card_view_autocomplete"
-        android:id="@+id/card_view_city_id"
+        android:id="@+id/card_view_address_id"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_marginTop="10dp"/>

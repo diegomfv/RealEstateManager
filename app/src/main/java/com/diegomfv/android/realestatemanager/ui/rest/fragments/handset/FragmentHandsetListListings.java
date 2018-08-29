@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,6 +24,8 @@ import com.diegomfv.android.realestatemanager.adapters.RVAdapterListings;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.activities.DetailActivity;
+import com.diegomfv.android.realestatemanager.ui.activities.EditListingActivity;
+import com.diegomfv.android.realestatemanager.ui.activities.MainActivity;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.utils.Utils;
@@ -261,34 +264,27 @@ public class FragmentHandsetListListings extends BaseFragment {
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
 
-                        /* This code runs when we are using a tablet
-                         * */
-                        if (getActivity() != null && getActivity().findViewById(R.id.fragment2_container_id) != null) {
-
-                            /** This does not modify the item but triggers the listener
-                             * for the other fragment, which is listening (because we set
-                             * a MutableLiveData with the value of the real estate)
-                             * */
-                            if (adapter.getRealEstate(position) != null) {
-                                listingsSharedViewModel.selectItem(adapter.getRealEstate(position));
-                            }
-                        }
-
                         /* This code runs when we are using a handset
                          * */
-                        if (getActivity() != null && getActivity().findViewById(R.id.fragment2_container_id) == null) {
-                            launchDetailActivity(adapter.getRealEstate(position));
+                        if (getActivity() != null) {
+
+                            if (((MainActivity)getActivity()).getEditModeActive()) {
+                                launchActivityWithRealEstate(adapter.getRealEstate(position), EditListingActivity.class);
+
+                            } else {
+                                launchActivityWithRealEstate(adapter.getRealEstate(position), DetailActivity.class);
+                            }
                         }
                     }
                 });
     }
 
     /**
-     * Launches detail activity
+     * Launches an activity
      * with a Parcelable (item clicked) carried by the intent
      */
-    private void launchDetailActivity(RealEstate realEstate) {
-        Intent intent = new Intent(getActivity(), DetailActivity.class);
+    private void launchActivityWithRealEstate(RealEstate realEstate, Class <? extends AppCompatActivity> activity) {
+        Intent intent = new Intent(getActivity(), activity);
         intent.putExtra(Constants.SEND_PARCELABLE, realEstate);
         startActivity(intent);
     }
