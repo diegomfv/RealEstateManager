@@ -29,9 +29,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
+import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.constants.Constants;
@@ -116,11 +123,14 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private TextInputAutoCompleteTextView tvSurfaceArea;
 
-    private TextInputAutoCompleteTextView tvNumberOfBedrooms;
+    private TextView tvNumberOfBedrooms;
+    private CrystalSeekbar seekBarBedrooms;
 
-    private TextInputAutoCompleteTextView tvNumberOfBathrooms;
+    private TextView tvNumberOfBathrooms;
+    private CrystalSeekbar seekBarBathrooms;
 
-    private TextInputAutoCompleteTextView tvNumberOfOtherRooms;
+    private TextView tvNumberOfOtherRooms;
+    private CrystalSeekbar seekBarOtherRooms;
 
     private TextInputAutoCompleteTextView tvDescription;
 
@@ -201,7 +211,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     }
 
     // TODO: 26/08/2018 Delete!
-    private void generateFakeData () {
+    private void generateFakeData() {
         Log.d(TAG, "generateFakeData: called!");
 
         FakeDataGenerator fakeDataGenerator = new FakeDataGenerator();
@@ -209,9 +219,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         tvTypeOfBuilding.setText(realEstate.getType());
         tvSurfaceArea.setText(String.valueOf(realEstate.getSurfaceArea()));
         tvPrice.setText(String.valueOf(realEstate.getPrice()));
-        tvNumberOfBedrooms.setText(String.valueOf(realEstate.getRooms().getBedrooms()));
-        tvNumberOfBathrooms.setText(String.valueOf(realEstate.getRooms().getBathrooms()));
-        tvNumberOfOtherRooms.setText(String.valueOf(realEstate.getRooms().getOtherRooms()));
+        seekBarBedrooms.setMinValue(realEstate.getRooms().getBedrooms());
+        seekBarBathrooms.setMinValue(realEstate.getRooms().getBathrooms());
+        seekBarOtherRooms.setMinValue(realEstate.getRooms().getOtherRooms());
         tvDescription.setText(realEstate.getDescription());
     }
 
@@ -263,7 +273,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
             case android.R.id.home: {
                 Utils.launchActivity(this, MainActivity.class);
 
-            } break;
+            }
+            break;
 
             case R.id.menu_change_currency_button: {
 
@@ -271,7 +282,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 Utils.updateCurrencyIcon(this, currency, item);
                 updatePriceHint();
 
-            } break;
+            }
+            break;
 
         }
         return super.onOptionsItemSelected(item);
@@ -284,21 +296,23 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         snackbarConfiguration();
     }
 
-    @OnClick ({R.id.button_add_address_id, R.id.button_add_photo_id, R.id.button_insert_listing_id})
-    public void buttonClicked (View view) {
-        Log.d(TAG, "buttonClicked: " + ((Button)view).getText().toString() + " clicked!");
+    @OnClick({R.id.button_add_address_id, R.id.button_add_photo_id, R.id.button_insert_listing_id})
+    public void buttonClicked(View view) {
+        Log.d(TAG, "buttonClicked: " + ((Button) view).getText().toString() + " clicked!");
 
         switch (view.getId()) {
 
             case R.id.button_add_address_id: {
                 launchInsertAddressDialog();
 
-            } break;
+            }
+            break;
 
             case R.id.button_add_photo_id: {
                 launchAddPhotoActivity();
 
-            } break;
+            }
+            break;
 
             case R.id.button_insert_listing_id: {
 
@@ -312,7 +326,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                     insertListing();
                 }
 
-            } break;
+            }
+            break;
         }
     }
 
@@ -358,7 +373,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         } else {
             this.currency = 0;
         }
-        Utils.writeCurrentCurrencyShPref(this,currency);
+        Utils.writeCurrentCurrencyShPref(this, currency);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -367,21 +382,46 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "configureLayout: called!");
 
         this.getAutocompleteTextViews();
+        this.getSeekBars();
+        this.setSeekBarsMinMaxValues();
+        this.setCrystalSeekBarListeners();
         this.setAllHints();
         this.setTextLastButton();
     }
 
-    private void getAutocompleteTextViews () {
+    private void getAutocompleteTextViews() {
         Log.d(TAG, "getAutocompleteTextViews: called!");
 
         this.tvTypeOfBuilding = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvNumberOfBedrooms = cardViewNumberOfBedrooms.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvNumberOfBathrooms= cardViewNumberOfBathrooms.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvNumberOfOtherRooms = cardViewNumberOfOtherRooms.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvNumberOfBedrooms = cardViewNumberOfBedrooms.findViewById(R.id.textView_title_id);
+        this.tvNumberOfBathrooms = cardViewNumberOfBathrooms.findViewById(R.id.textView_title_id);
+        this.tvNumberOfOtherRooms = cardViewNumberOfOtherRooms.findViewById(R.id.textView_title_id);
         this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
+    }
+
+    private void getSeekBars() {
+        Log.d(TAG, "getSeekBars: called!");
+        this.seekBarBedrooms = cardViewNumberOfBedrooms.findViewById(R.id.single_seek_bar_id);
+        this.seekBarBathrooms = cardViewNumberOfBathrooms.findViewById(R.id.single_seek_bar_id);
+        this.seekBarOtherRooms = cardViewNumberOfOtherRooms.findViewById(R.id.single_seek_bar_id);
+    }
+
+    private void setSeekBarsMinMaxValues() {
+        Log.d(TAG, "setSeekBarsMinMaxValues: called!");
+        setMinMaxValues(seekBarBedrooms);
+        setMinMaxValues(seekBarBathrooms);
+        setMinMaxValues(seekBarOtherRooms);
+    }
+
+    // TODO: 29/08/2018 Check!
+    private void setMinMaxValues(CrystalSeekbar seekBar) {
+        Log.d(TAG, "setMinMaxValues: called!");
+        seekBar.setMinValue(0f);
+        seekBar.setMinStartValue(0f);
+        seekBar.setMaxValue(9f);
     }
 
     private void setAllHints() {
@@ -389,18 +429,15 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         // TODO: 23/08/2018 Use Resources instead of hardcoded
 
-        setHint(cardViewType, "Type");
-        setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
-        setHint(cardViewSurfaceArea, "Surface Area (sqm)");
-        setHint(cardViewNumberOfBedrooms, "Number of Bedrooms");
-        setHint(cardViewNumberOfBathrooms, "Number of Bathrooms");
-        setHint(cardViewNumberOfOtherRooms, "Number of Other Rooms");
-        setHint(cardViewDescription, "Description");
-        setHint(cardViewAddress, "Address");
+        setAcTvHint(cardViewType, "Type");
+        setAcTvHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
+        setAcTvHint(cardViewSurfaceArea, "Surface Area (sqm)");
+        setAcTvHint(cardViewDescription, "Description");
+        setAcTvHint(cardViewAddress, "Address");
     }
 
-    private void setHint (CardView cardView, String hint) {
-        Log.d(TAG, "setHint: called!");
+    private void setAcTvHint(CardView cardView, String hint) {
+        Log.d(TAG, "setAcTvHint: called!");
 
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
@@ -415,6 +452,45 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void setTextLastButton() {
         Log.d(TAG, "setTextLastButton: called!");
         buttonInsertListing.setText("Insert Listing");
+    }
+
+    private void setCrystalSeekBarListeners() {
+        Log.d(TAG, "setCrystalSeekBarListeners: called!");
+        setListeners(seekBarBedrooms);
+        setListeners(seekBarBathrooms);
+        setListeners(seekBarOtherRooms);
+    }
+
+    private void setListeners(final CrystalSeekbar seekBar) {
+        Log.d(TAG, "setListeners: called!");
+
+        seekBar.setOnSeekbarChangeListener(new OnSeekbarChangeListener() {
+            @Override
+            public void valueChanged(Number value) {
+                Log.d(TAG, "valueChanged: called! --> " + value);
+                setTextDependingOnSeekBar(seekBar, value);
+            }
+        });
+
+        seekBar.setOnSeekbarFinalValueListener(new OnSeekbarFinalValueListener() {
+            @Override
+            public void finalValue(Number value) {
+                Log.d(TAG, "finalValue: called! --> " + value);
+                setTextDependingOnSeekBar(seekBar, value);
+            }
+        });
+
+    }
+
+    private void setTextDependingOnSeekBar(CrystalSeekbar seekBar, Number value) {
+        Log.d(TAG, "setTextDependingOnTextView: called!");
+        if (seekBar == seekBarBedrooms) {
+            tvNumberOfBedrooms.setText("Bedrooms (" + value + ")");
+        } else if (seekBar == seekBarBathrooms) {
+            tvNumberOfBathrooms.setText("Bathrooms (" + value + ")");
+        } else if (seekBar == seekBarOtherRooms) {
+            tvNumberOfOtherRooms.setText("Other Rooms (" + value + ")");
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -443,7 +519,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         ToastHelper.toastShort(this, "The address was not added");
     }
 
-    private boolean allChecksCorrect () {
+    private boolean allChecksCorrect() {
         Log.d(TAG, "allChecksCorrect: called!");
 
         // TODO: 24/08/2018 DO THIS!
@@ -454,11 +530,20 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void insertListing() {
         Log.d(TAG, "insertListing: called!");
 
-        Utils.hideMainContent(progressBarContent, mainLayout);
+        if (Utils.getTextViewString(tvAddress).length() > 0
+                && getRealEstateCache().getLatitude() != 0d
+                && getRealEstateCache().getLongitude() != 0d) {
 
-        /* Start insertion process
-        * */
-        insertRealEstateObject();
+            Utils.hideMainContent(progressBarContent, mainLayout);
+
+            /* Start insertion process
+             * */
+            insertRealEstateObject();
+
+        } else {
+            ToastHelper.toastLong(this, "Please, insert a valid address");
+
+        }
     }
 
     @SuppressLint("CheckResult")
@@ -513,7 +598,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     }
 
     @SuppressLint("CheckResult")
-    public void insertListPlacesRealEstate () {
+    public void insertListPlacesRealEstate() {
         Log.d(TAG, "insertListPlacesRealEstate: called");
 
         // TODO: 23/08/2018 Could be done just with App Executors
@@ -542,7 +627,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.tvTypeOfBuilding.setText(getRealEstateCache().getType());
         this.tvPrice.setText(String.valueOf(getRealEstateCache().getPrice()));
         this.tvSurfaceArea.setText(String.valueOf(getRealEstateCache().getSurfaceArea()));
-        this.tvNumberOfBedrooms.setText(String.valueOf(getRealEstateCache().getRooms()));
+        this.tvNumberOfBedrooms.setText("Bedrooms (" + getRealEstateCache().getRooms().getBedrooms() + ")");
+        this.tvNumberOfBathrooms.setText("Bathrooms (" + getRealEstateCache().getRooms().getBathrooms() + ")");
+        this.tvNumberOfOtherRooms.setText("Other Rooms (" + getRealEstateCache().getRooms().getOtherRooms() + ")");
         this.tvDescription.setText(getRealEstateCache().getDescription());
         this.tvAddress.setText(Utils.getAddressAsString(getRealEstateCache()));
     }
@@ -557,16 +644,15 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "updateIntegerValues: called!");
         this.getRealEstateCache().setPrice((int) Utils.getPriceAccordingToCurrency(currency, Utils.getTextViewInteger(tvPrice)));
         this.getRealEstateCache().setSurfaceArea(Utils.getTextViewInteger(tvSurfaceArea));
-        setRooms(this.getRealEstateCache());
-
+        this.setRooms(this.getRealEstateCache());
     }
 
-    private void setRooms (RealEstate realEstate) {
+    private void setRooms(RealEstate realEstate) {
         Log.d(TAG, "setRooms: called!");
         realEstate.setRooms(new RoomsRealEstate(
-                Utils.getTextViewInteger(tvNumberOfBedrooms),
-                Utils.getTextViewInteger(tvNumberOfBathrooms),
-                Utils.getTextViewInteger(tvNumberOfOtherRooms)));
+                seekBarBedrooms.getSelectedMinValue().intValue(),
+                seekBarBathrooms.getSelectedMinValue().intValue(),
+                seekBarOtherRooms.getSelectedMinValue().intValue()));
     }
 
     private void updateStringValues() {
@@ -627,7 +713,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         GoogleServiceStreams.streamFetchPlaceFromText(
                 addressRealEstate.getStreet() + ","
                         + addressRealEstate.getLocality() + ","
-                        + addressRealEstate.getCity()+ ","
+                        + addressRealEstate.getCity() + ","
                         + addressRealEstate.getPostcode(),
                 "textquery",
                 getResources().getString(R.string.a_k_p))
@@ -642,15 +728,15 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                                     "The address is valid");
 
                             /* Fill the address of the cache
-                            * */
+                             * */
                             updateRealEstateCacheWithAddress(addressRealEstate);
 
                             /* Set the address in the textView
-                            * */
+                             * */
                             tvAddress.setText(Utils.getAddressAsString(getRealEstateCache()));
 
                             /* Get place details
-                            * */
+                             * */
                             getPlaceDetails(placeFromText.getCandidates().get(0).getPlaceId());
 
                         } else {
@@ -689,11 +775,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                             getRealEstateCache().setLongitude(placeDetails.getResult().getGeometry().getLocation().getLng());
 
                             /* We use the latitude and longitude to fetch nearby places
-                            * */
+                             * */
                             getNearbyPlaces(
                                     placeDetails.getResult().getGeometry().getLocation().getLat(),
                                     placeDetails.getResult().getGeometry().getLocation().getLng());
-
 
 
                         } else {
@@ -717,17 +802,17 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     }
 
     @SuppressLint("CheckResult")
-    private void getNearbyPlaces (double latitude, double longitude) {
+    private void getNearbyPlaces(double latitude, double longitude) {
         Log.d(TAG, "getNearbyPlaces: called!");
 
         /* Clear the cache
-        * */
+         * */
         getListOfPlacesRealEstateCache().clear();
 
         // TODO: 22/08/2018 Constraint the search with types!
 
         GoogleServiceStreams.streamFetchPlacesNearby(
-                new LatLngForRetrofit(latitude,longitude),
+                new LatLngForRetrofit(latitude, longitude),
                 Constants.FETCH_NEARBY_RANKBY,
                 getResources().getString(R.string.a_k_p))
                 .subscribeWith(new DisposableObserver<PlacesByNearby>() {
@@ -754,7 +839,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                                             placesByNearby.getResults().get(i).getGeometry().getLocation().getLng());
 
                                     /* If the result passes all checks, add the place to the cache
-                                    * */
+                                     * */
                                     getListOfPlacesRealEstateCache().add(placeRealEstate);
                                     listPlaceRealEstateIds.add(placeRealEstate.getId());
 
@@ -782,10 +867,11 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     //INTERNET CONNECTION RECEIVER
 
-    /** Method that connects a broadcastReceiver to the activity.
+    /**
+     * Method that connects a broadcastReceiver to the activity.
      * It allows to notify the user about the internet state
-     * */
-    private void connectBroadcastReceiver () {
+     */
+    private void connectBroadcastReceiver() {
         Log.d(TAG, "connectBroadcastReceiver: called!");
 
         receiver = new InternetConnectionReceiver();
@@ -793,9 +879,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Utils.connectReceiver(this, receiver, intentFilter, this);
     }
 
-    /** Method that disconnects the broadcastReceiver from the activity.
-     * */
-    private void disconnectBroadcastReceiver () {
+    /**
+     * Method that disconnects the broadcastReceiver from the activity.
+     */
+    private void disconnectBroadcastReceiver() {
         Log.d(TAG, "disconnectBroadcastReceiver: called!");
 
         if (receiver != null) {
@@ -809,7 +896,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         snackbar = null;
     }
 
-    private void snackbarConfiguration () {
+    private void snackbarConfiguration() {
         Log.d(TAG, "snackbarConfiguration: called!");
 
         if (isInternetAvailable) {
@@ -867,7 +954,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                             public void onSuccess(byte[] data) {
                                 Log.i(TAG, "onSuccess: called!");
 
-                                listOfBitmaps.add(BitmapFactory.decodeByteArray(data, 0 , data.length));
+                                listOfBitmaps.add(BitmapFactory.decodeByteArray(data, 0, data.length));
 
                                 counter--;
                                 if (counter == 0) {
@@ -910,19 +997,19 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 }
             }
 
-            Utils.launchActivity(this, AuthLoginActivity.class);
+            Utils.launchActivity(this, MainActivity.class);
             createNotification();
 
         } else {
-                // TODO: 18/08/2018 Create a dialog asking for permissions! It should load configure internal storage again!
-                ToastHelper.toastInternalStorageAccessNotGranted(this);
+            // TODO: 18/08/2018 Create a dialog asking for permissions! It should load configure internal storage again!
+            ToastHelper.toastInternalStorageAccessNotGranted(this);
 
         }
 
     }
 
     @SuppressLint("CheckResult")
-    private void createFileInImagesDir (String filePath, byte[] file) {
+    private void createFileInImagesDir(String filePath, byte[] file) {
         Log.d(TAG, "createFileInImagesDir: called!");
 
         Single.just(getInternalStorage().createFile(filePath, file))
@@ -934,6 +1021,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                         Log.i(TAG, "onSuccess: called!");
 
                     }
+
                     @Override
                     public void onError(Throwable e) {
                         Log.i(TAG, "onError: called!");
@@ -960,7 +1048,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     }
 
-    private void configureOnClickRecyclerView () {
+    private void configureOnClickRecyclerView() {
         Log.d(TAG, "configureOnClickRecyclerView: called!");
 
         ItemClickSupport.addTo(recyclerView)
@@ -987,7 +1075,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         }
     }
 
-    private void createNotification () {
+    private void createNotification() {
         Log.d(TAG, "createNotification: called!");
 
         NotificationManager notificationManager =

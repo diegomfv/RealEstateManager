@@ -17,8 +17,15 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
+import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
@@ -86,19 +93,23 @@ public class SearchEngineActivity extends BaseActivity {
     private List<CheckBox> listOfPointOfInterestCheckboxes;
 
     private TextView tvPrice;
-    private RangeSeekBar seekBarPrice;
+    private CrystalRangeSeekbar seekBarPrice;
+    private boolean seekBarPriceUsed;
 
     private TextView tvSurfaceArea;
-    private RangeSeekBar seekBarSurfaceArea;
+    private CrystalRangeSeekbar seekBarSurfaceArea;
+    private boolean seekBarSurfaceAreaUsed;
 
     private TextView tvNumberOfRooms;
-    private RangeSeekBar seekBarNumberOfRooms;
+    private CrystalRangeSeekbar seekBarNumberOfRooms;
+    private boolean seekBarNumberOfRoomsUsed;
 
     private AutoCompleteTextView actvLocality;
     private AutoCompleteTextView actvCity;
 
     private TextView tvAmountOfPhotos;
-    private RangeSeekBar seekBarAmountOfPhotos;
+    private CrystalRangeSeekbar seekBarAmountOfPhotos;
+    private boolean seekbarAmountOfPhotosUsed;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -122,6 +133,11 @@ public class SearchEngineActivity extends BaseActivity {
         Log.d(TAG, "onCreate: called!");
 
         this.currency = Utils.readCurrentCurrencyShPref(this);
+
+        this.seekBarPriceUsed = false;
+        this.seekBarSurfaceAreaUsed = false;
+        this.seekBarNumberOfRoomsUsed = false;
+        this.seekbarAmountOfPhotosUsed = false;
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_search_engine);
@@ -297,9 +313,9 @@ public class SearchEngineActivity extends BaseActivity {
 
         this.getTextViews();
         this.getSeekBars();
-
         this.setAllHints();
         this.setAllTexts();
+        this.setCrystalSeekBarListeners();
 
     }
 
@@ -318,10 +334,10 @@ public class SearchEngineActivity extends BaseActivity {
     private void getSeekBars() {
         Log.d(TAG, "getSeekBars: called!");
 
-        this.seekBarPrice = cardViewPrice.findViewById(R.id.range_seek_bar_id);
-        this.seekBarSurfaceArea = cardViewSurfaceArea.findViewById(R.id.range_seek_bar_id);
-        this.seekBarNumberOfRooms = cardViewNumberOfRooms.findViewById(R.id.range_seek_bar_id);
-        this.seekBarAmountOfPhotos = cardViewAmountPhotos.findViewById(R.id.range_seek_bar_id);
+        this.seekBarPrice = cardViewPrice.findViewById(R.id.single_seek_bar_id);
+        this.seekBarSurfaceArea = cardViewSurfaceArea.findViewById(R.id.single_seek_bar_id);
+        this.seekBarNumberOfRooms = cardViewNumberOfRooms.findViewById(R.id.single_seek_bar_id);
+        this.seekBarAmountOfPhotos = cardViewAmountPhotos.findViewById(R.id.single_seek_bar_id);
 
     }
 
@@ -376,10 +392,10 @@ public class SearchEngineActivity extends BaseActivity {
 
         Log.d(TAG, "setMinMaxValuesRangeSeekBars: maxAmountOfPhotos = " + maxAmountOfPhotos);
 
-        seekBarPrice.setRangeValues(0, maxPrice);
-        seekBarSurfaceArea.setRangeValues(50, maxSurfaceArea);
-        seekBarNumberOfRooms.setRangeValues(1, maxNumberOfRooms);
-        seekBarAmountOfPhotos.setRangeValues(1, maxAmountOfPhotos);
+        setMinMaxValues(seekBarPrice, 0, maxPrice);
+        setMinMaxValues(seekBarSurfaceArea, 50, maxSurfaceArea);
+        setMinMaxValues(seekBarNumberOfRooms, 1, maxNumberOfRooms);
+        setMinMaxValues(seekBarAmountOfPhotos, 1, maxAmountOfPhotos);
 
         if (maxNumberOfRooms == 1) {
             seekBarNumberOfRooms.setEnabled(false);
@@ -392,6 +408,74 @@ public class SearchEngineActivity extends BaseActivity {
         }
 
     }
+
+    private void setMinMaxValues(CrystalRangeSeekbar seekBar, float min, float max) {
+        Log.d(TAG, "setMinMaxValues: called!");
+        seekBar.setMinValue(min);
+        seekBar.setMaxValue(max);
+    }
+
+    private void setCrystalSeekBarListeners() {
+        Log.d(TAG, "setCrystalSeekBarListeners: called!");
+        setListeners(seekBarPrice);
+        setListeners(seekBarSurfaceArea);
+        setListeners(seekBarNumberOfRooms);
+        setListeners(seekBarAmountOfPhotos);
+    }
+
+    private void setListeners(final CrystalRangeSeekbar seekBar) {
+        Log.d(TAG, "setListeners: called!");
+
+        seekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
+            @Override
+            public void valueChanged(Number minValue, Number maxValue) {
+                Log.d(TAG, "valueChanged: min = " + minValue + " - " + "maxValue = " + maxValue);
+                setTextDependingOnSeekBar(seekBar,minValue,maxValue);
+                setUsedStateAccordingToSeekBar(seekBar);
+            }
+        });
+
+        seekBar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
+            @Override
+            public void finalValue(Number minValue, Number maxValue) {
+                Log.d(TAG, "finalValue: called1");
+                setTextDependingOnSeekBar(seekBar,minValue,maxValue);
+                setUsedStateAccordingToSeekBar(seekBar);
+            }
+        });
+    }
+
+    private void setTextDependingOnSeekBar(CrystalRangeSeekbar seekBar, Number min, Number max) {
+        Log.d(TAG, "setTextDependingOnTextView: called!");
+        if (seekBar == seekBarPrice) {
+            tvPrice.setText("Price (" + Utils.getCurrencySymbol(currency) + ") - [" + min + ", " + max + "]");
+            this.seekBarPriceUsed = true;
+        } else if (seekBar == seekBarSurfaceArea) {
+            tvSurfaceArea.setText("Surface Area (sqm) - [" + min + ", " + max + "]");
+            this.seekBarSurfaceAreaUsed = true;
+        } else if (seekBar == seekBarNumberOfRooms) {
+            tvNumberOfRooms.setText("Number of Rooms - [" + min + ", " + max + "]");
+            this.seekBarNumberOfRoomsUsed = true;
+        } else if (seekBar == seekBarAmountOfPhotos) {
+            tvAmountOfPhotos.setText("Amount of Photos - [" + min + ", " + max + "]");
+            this.seekbarAmountOfPhotosUsed = true;
+        }
+    }
+
+    private void setUsedStateAccordingToSeekBar (CrystalRangeSeekbar seekBar) {
+        Log.d(TAG, "setUsedStateAccordingToSeekBar: called!");
+        if (seekBar == seekBarPrice) {
+            this.seekBarPriceUsed = true;
+        } else if (seekBar == seekBarSurfaceArea) {
+            this.seekBarSurfaceAreaUsed = true;
+        } else if (seekBar == seekBarNumberOfRooms) {
+            this.seekBarNumberOfRoomsUsed = true;
+        } else if (seekBar == seekBarAmountOfPhotos) {
+            this.seekbarAmountOfPhotosUsed = true;
+        }
+    }
+
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -481,24 +565,30 @@ public class SearchEngineActivity extends BaseActivity {
         return Utils.capitalize(Utils.getTextViewString(textView));
     }
 
-    private int getMaxValueFromSeekBar(RangeSeekBar rangeSeekBar) {
+    private int getMaxValueFromSeekBar(CrystalRangeSeekbar rangeSeekBar) {
         Log.d(TAG, "getMaxValueFromSeekBar: called!");
         return (int) rangeSeekBar.getSelectedMaxValue();
     }
 
-    private int getMinValueFromSeekBar(RangeSeekBar rangeSeekBar) {
+    private int getMinValueFromSeekBar(CrystalRangeSeekbar rangeSeekBar) {
         Log.d(TAG, "getMinValueFromSeekBar: called!");
         return (int) rangeSeekBar.getSelectedMinValue();
     }
 
-    private boolean seekBarNotUsed(RangeSeekBar rangeSeekBar) {
+    private boolean seekBarNotUsed(CrystalRangeSeekbar seekBar) {
         Log.d(TAG, "seekBarNotUsed: called!");
 
-        if ((int) rangeSeekBar.getSelectedMinValue() == (int) rangeSeekBar.getAbsoluteMinValue()
-                && (int) rangeSeekBar.getSelectedMaxValue() == (int) rangeSeekBar.getAbsoluteMaxValue()) {
+        if (seekBar == seekBarPrice) {
+            return seekBarPriceUsed;
+        } else if (seekBar == seekBarSurfaceArea) {
+           return seekBarSurfaceAreaUsed;
+        } else if (seekBar == seekBarNumberOfRooms) {
+           return seekBarNumberOfRoomsUsed;
+        } else if (seekBar == seekBarAmountOfPhotos) {
+            return seekbarAmountOfPhotosUsed;
+        } else {
             return true;
         }
-        return false;
     }
 
     private boolean textViewNotUsed(TextView textView) {
@@ -506,7 +596,7 @@ public class SearchEngineActivity extends BaseActivity {
         return getTextFromView(textView).equals("");
     }
 
-    private boolean maxMinValuesFilterPassed(RangeSeekBar rangeSeekBar, int value) {
+    private boolean maxMinValuesFilterPassed(CrystalRangeSeekbar rangeSeekBar, int value) {
         Log.d(TAG, "maxMinValuesFilterPassed: called!");
 
         if (value > (int) rangeSeekBar.getSelectedMinValue()
@@ -582,7 +672,7 @@ public class SearchEngineActivity extends BaseActivity {
             return false;
         }
 
-        if (!onSaleFilterPassed(realEstate)){
+        if (!onSaleFilterPassed(realEstate)) {
             return false;
         }
 

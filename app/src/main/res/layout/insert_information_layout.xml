@@ -24,13 +24,13 @@
             <include layout="@layout/card_view_autocomplete"
                 android:id="@+id/card_view_surface_area_id"/>
 
-            <include layout="@layout/card_view_autocomplete"
+            <include layout="@layout/card_view_crystal_single_seek_bar"
                 android:id="@+id/card_view_number_bedrooms_id" />
 
-            <include layout="@layout/card_view_autocomplete"
+            <include layout="@layout/card_view_crystal_single_seek_bar"
                 android:id="@+id/card_view_number_bathrooms_id" />
 
-            <include layout="@layout/card_view_autocomplete"
+            <include layout="@layout/card_view_crystal_single_seek_bar"
                 android:id="@+id/card_view_number_rooms_other_id" />
 
             <include layout="@layout/card_view_autocomplete"

@@ -9,8 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,6 +50,10 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Diego Fajardo on 18/08/2018.
  */
+// TODO: 29/08/2018 Modify the layout: 
+// TODO: 29/08/2018 Photo
+// TODO: 29/08/2018 TextTitle 
+// TODO: 29/08/2018 User can press enter
 public class AddPhotoActivity extends BaseActivity {
 
     private static final String TAG = AddPhotoActivity.class.getSimpleName();
@@ -56,16 +63,15 @@ public class AddPhotoActivity extends BaseActivity {
     @BindView(R.id.image_view_id)
     ImageView imageView;
 
-    @BindView(R.id.edit_text_description_id)
+    @BindView(R.id.editText_description_id)
     EditText editTextDescription;
-
-    @BindView(R.id.button_go_back_id)
-    Button buttonGoBack;
 
     @BindView(R.id.button_add_photo_id)
     Button buttonAddPhoto;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private ActionBar actionBar;
 
     private boolean accessInternalStorageGranted;
 
@@ -88,6 +94,8 @@ public class AddPhotoActivity extends BaseActivity {
         setContentView(R.layout.activity_add_photo);
         unbinder = ButterKnife.bind(this);
 
+        this.configureActionBar();
+
         this.configureImageViewOnClickListener();
 
         this.checkInternalStoragePermissionGranted();
@@ -103,16 +111,11 @@ public class AddPhotoActivity extends BaseActivity {
 
     }
 
-    @OnClick ({R.id.image_view_id, R.id.button_go_back_id, R.id.button_add_photo_id})
-    public void buttonClicked (View view) {
-        Log.d(TAG, "buttonClicked: " + ((Button)view).getText().toString() + " clicked!");
+    @OnClick({R.id.image_view_id, R.id.button_add_photo_id})
+    public void buttonClicked(View view) {
+        Log.d(TAG, "buttonClicked: " + ((Button) view).getText().toString() + " clicked!");
 
         switch (view.getId()) {
-
-            case R.id.button_go_back_id: {
-                Utils.launchActivity(this, CreateNewListingActivity.class);
-
-            } break;
 
             case R.id.button_add_photo_id: {
                 if (editTextDescription.getText().toString().trim().length() < 10) {
@@ -122,7 +125,8 @@ public class AddPhotoActivity extends BaseActivity {
                     addPhoto();
                 }
 
-            } break;
+            }
+            break;
         }
     }
 
@@ -131,25 +135,29 @@ public class AddPhotoActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: called!");
 
-        if (requestCode == Constants.REQUEST_CODE_GALLERY) {
-
-            try {
-                final Uri imageUri = data.getData();
-                if (imageUri != null) {
-                    final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                    final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                    imageView.setImageBitmap(selectedImage);
-                }
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                ToastHelper.toastShort(AddPhotoActivity.this, getResources().getString(R.string.there_was_an_error));
-            }
+        if (data == null) {
+            ToastHelper.toastShort(AddPhotoActivity.this, getResources().getString(R.string.no_image_was_picked));
 
         } else {
-            ToastHelper.toastShort(AddPhotoActivity.this, getResources().getString(R.string.no_image_was_picked));
-        }
+            if (requestCode == Constants.REQUEST_CODE_GALLERY) {
 
+                try {
+                    final Uri imageUri = data.getData();
+                    if (imageUri != null) {
+                        final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                        final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                        imageView.setImageBitmap(selectedImage);
+                    }
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    ToastHelper.toastShort(AddPhotoActivity.this, getResources().getString(R.string.there_was_an_error));
+                }
+
+            } else {
+                ToastHelper.toastShort(AddPhotoActivity.this, getResources().getString(R.string.no_image_was_picked));
+            }
+        }
     }
 
     @Override
@@ -170,6 +178,37 @@ public class AddPhotoActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: called!");
+
+        switch (item.getItemId()) {
+
+            case android.R.id.home: {
+                ToastHelper.toastShort(this, "No picture added");
+                Utils.launchActivity(this, CreateNewListingActivity.class);
+            }
+            break;
+
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void configureActionBar() {
+        Log.d(TAG, "configureActionBar: called!");
+
+        actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void checkInternalStoragePermissionGranted() {
@@ -186,7 +225,7 @@ public class AddPhotoActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureImageViewOnClickListener () {
+    private void configureImageViewOnClickListener() {
         Log.d(TAG, "configureImageViewOnClickListener: called!");
         imageView.setOnClickListener(imageViewOnClickListener);
 
@@ -201,20 +240,20 @@ public class AddPhotoActivity extends BaseActivity {
         }
     };
 
-    private void launchGallery () {
+    private void launchGallery() {
         Log.d(TAG, "launchGallery: called!");
 
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        startActivityForResult(intent,Constants.REQUEST_CODE_GALLERY);
+        startActivityForResult(intent, Constants.REQUEST_CODE_GALLERY);
 
     }
 
-    private void addPhoto () {
+    private void addPhoto() {
         Log.d(TAG, "addPhoto: called!");
 
         /* Generate push key and add to the image
-        * */
+         * */
         imageRealEstateCache = new ImageRealEstate(
                 FirebasePushIdGenerator.generate(),
                 editTextDescription.getText().toString().trim());
@@ -226,7 +265,7 @@ public class AddPhotoActivity extends BaseActivity {
 
     }
 
-    private void configureInternalStorage () {
+    private void configureInternalStorage() {
         Log.d(TAG, "configureInternalStorage: called!");
 
         if (accessInternalStorageGranted) {
@@ -249,10 +288,11 @@ public class AddPhotoActivity extends BaseActivity {
         }
     }
 
-    /** This method saves the fetched image in the internal storage asynchronously
-     * */
+    /**
+     * This method saves the fetched image in the internal storage asynchronously
+     */
     @SuppressLint("CheckResult")
-    private void saveImageInInternalStorage (String temporaryDir, String imageId) {
+    private void saveImageInInternalStorage(String temporaryDir, String imageId) {
         Log.d(TAG, "saveImageInInternalStorage: called!");
 
         if (getInternalStorage().isDirectoryExists(temporaryDir)) {
@@ -278,6 +318,7 @@ public class AddPhotoActivity extends BaseActivity {
                                     addImageToListOfImagesInCache();
                                     Utils.launchActivity(AddPhotoActivity.this, CreateNewListingActivity.class);
                                 }
+
                                 @Override
                                 public void onError(Throwable e) {
                                     Log.i(TAG, "onError: called!");

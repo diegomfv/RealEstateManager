@@ -30,11 +30,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-/** How crashes were solved:
+/**
+ * How crashes were solved:
  * 1. Modified the id of the view from activity_second_activity_text_view_main
  * to activity_main_activity_text_view_quantity
  * 2. Add String.valueOf() to convert int to String
- * */
+ */
 
 // TODO: 28/08/2018 Add a listener for when changing CURRENCY
 public class MainActivity extends BaseActivity {
@@ -82,7 +83,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
 
-        actionBar = getSupportActionBar();
+        this.configureActionBar();
 
         if (dataAvailable) {
             this.loadFragmentOrFragments();
@@ -112,7 +113,11 @@ public class MainActivity extends BaseActivity {
 
         switch (item.getItemId()) {
 
-            // TODO: 28/08/2018 Add back button! 
+            case android.R.id.home: {
+                Utils.launchActivity(this, AuthLoginActivity.class);
+
+            }
+            break;
 
             case R.id.menu_add_listing_button: {
 
@@ -122,21 +127,22 @@ public class MainActivity extends BaseActivity {
                 } else {
                     ToastHelper.toastSomeAccessNotGranted(this);
                 }
-
-
-            } break;
+            }
+            break;
 
             case R.id.menu_position_button: {
                 Utils.launchActivity(this, PositionActivity.class);
 
-            } break;
+            }
+            break;
 
             case R.id.menu_change_currency_button: {
 
-               changeCurrency();
-               Utils.updateCurrencyIcon(this, currency, item);
+                changeCurrency();
+                Utils.updateCurrencyIcon(this, currency, item);
 
-            } break;
+            }
+            break;
 
             case R.id.menu_edit_listing_button: {
 
@@ -147,7 +153,8 @@ public class MainActivity extends BaseActivity {
                     ToastHelper.toastSomeAccessNotGranted(this);
                 }
 
-            } break;
+            }
+            break;
 
             case R.id.menu_search_button: {
 
@@ -156,7 +163,8 @@ public class MainActivity extends BaseActivity {
                 Utils.launchActivity(this, SearchEngineActivity.class);
 
 
-            } break;
+            }
+            break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -181,14 +189,29 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Method used in the fragments
-     * */
-    public boolean getEditModeActive () {
+    private void configureActionBar() {
+        Log.d(TAG, "configureActionBar: called!");
+
+        actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Method used in the fragments
+     */
+    public boolean getEditModeActive() {
         Log.d(TAG, "getEditMode: called!");
         return editModeActive;
     }
 
-    private void updateMode () {
+    private void updateMode() {
         Log.d(TAG, "updateMode: called!");
 
         if (!editModeActive) {
@@ -219,8 +242,9 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Method that loads one or two fragments depending on the device
-     * */
+    /**
+     * Method that loads one or two fragments depending on the device
+     */
     private void loadFragmentOrFragments() {
         Log.d(TAG, "loadFragmentOrFragments: called!");
 
@@ -237,7 +261,7 @@ public class MainActivity extends BaseActivity {
 
         } else {
             /* Code for tablets
-            * */
+             * */
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.fragment1_container_id, FragmentTabletListListings.newInstance())
@@ -264,7 +288,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void createDirectories () {
+    private void createDirectories() {
         Log.d(TAG, "createDirectories: called");
 
         if (accessInternalStorageGranted) {
