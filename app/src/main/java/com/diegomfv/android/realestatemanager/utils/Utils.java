@@ -10,8 +10,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -391,13 +393,13 @@ public class Utils {
         return true;
     }
 
-    public static String getTextViewString(TextView textView) {
+    public static String getStringFromTextView(TextView textView) {
         Log.d(TAG, "getViewsText: called!");
         return textView.getText().toString().trim();
     }
 
-    public static int getTextViewInteger(TextView textView) {
-        Log.d(TAG, "getTextViewInteger: called!");
+    public static int getIntegerFromTextView(TextView textView) {
+        Log.d(TAG, "getIntegerFromTextView: called!");
 
         if (isInteger(textView.getText().toString().trim())) {
             return Integer.parseInt(textView.getText().toString().trim());
@@ -442,6 +444,18 @@ public class Utils {
         }
     }
 
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static TextInputLayout getTextInputLayoutFromCardview(CardView cardView) {
+        Log.d(TAG, "getTextInputLayoutFromCardview: called!");
+        return cardView.findViewById(R.id.text_input_layout_id);
+    }
+
+    public static TextInputAutoCompleteTextView getTextInputAutoCompleteTextViewFromCardView(CardView cardView) {
+        Log.d(TAG, "getTextInputAutoCompleteTextViewFromCardView: called!");
+        return getTextInputLayoutFromCardview(cardView).findViewById(R.id.text_input_autocomplete_text_view_id);
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -552,4 +566,29 @@ public class Utils {
         return sharedPreferences.getInt(Constants.CURRENCY, 0);
     }
 
+    public static void writeAgentDataShPref (Context context, String firstName, String lastName, String email, String password, String memDataQ, String memDataA) {
+        Log.d(TAG, "writeAgentDataShPref: called!");
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_AGENT_SETTINGS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(Constants.SH_PREF_AGENT_FIRST_NAME, firstName);
+        editor.putString(Constants.SH_PREF_AGENT_LAST_NAME, lastName);
+        editor.putString(Constants.SH_PREF_AGENT_EMAIL, email);
+        editor.putString(Constants.SH_PREF_AGENT_PASSWORD, password);
+        editor.putString(Constants.SH_PREF_AGENT_MEMORABLE_DATA_QUESTION, memDataQ);
+        editor.putString(Constants.SH_PREF_AGENT_MEMORABLE_DATA_ANSWER, memDataA);
+        editor.apply();
+    }
+
+    public static String[] readCurrentAgentData (Context context) {
+        Log.d(TAG, "saveCurrentCurrency: called!");
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_AGENT_SETTINGS, Context.MODE_PRIVATE);
+        return new String[]{
+                sharedPreferences.getString(Constants.SH_PREF_AGENT_FIRST_NAME, ""),
+                sharedPreferences.getString(Constants.SH_PREF_AGENT_LAST_NAME, ""),
+                sharedPreferences.getString(Constants.SH_PREF_AGENT_EMAIL, ""),
+                sharedPreferences.getString(Constants.SH_PREF_AGENT_PASSWORD, ""),
+                sharedPreferences.getString(Constants.SH_PREF_AGENT_MEMORABLE_DATA_QUESTION, ""),
+                sharedPreferences.getString(Constants.SH_PREF_AGENT_MEMORABLE_DATA_ANSWER, ""),
+        };
+    }
 }

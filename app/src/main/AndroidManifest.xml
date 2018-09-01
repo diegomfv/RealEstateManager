@@ -44,6 +44,9 @@
         <activity android:name=".ui.activities.EditListingActivity" />
         <activity android:name=".ui.activities.PositionActivity" />
         <activity android:name=".ui.base.BaseActivity" />
+        <activity android:name=".ui.activities.EditPhotoActivity" />
+        <activity android:name=".ui.activities.ForgotPasswordActivity" />
+        <activity android:name=".ui.activities.SignUpActivity" />
 
         <receiver android:name=".receivers.InternetConnectionReceiver"/>
 

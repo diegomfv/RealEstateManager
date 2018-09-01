@@ -17,7 +17,7 @@
             style="@style/textInputEditTextStyle"
             android:inputType="text"
             android:textColor="@color/colorPrimaryDark"
-            android:hint="Text"/>
+            android:hint="Text" />
 
     </android.support.design.widget.TextInputLayout>
 

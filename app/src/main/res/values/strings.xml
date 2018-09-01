@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Real Estate Manager</string>
     <string name="a_k_p">AIzaSyDDaW_rQKqJtwEdqnib_-WQLCeSodUnb5g</string>
-    <string name="password_sign_up">Sign up with Password</string>
-    <string name="password_sign_in">Sign in with Password</string>
+    <string name="password_sign_up">Sign up</string>
+    <string name="password_sign_in">Sign in</string>
     <string name="google_sign_in">Sign In with Google</string>
     <string name="facebook_sign_in">Sign In with Facebook</string>
     <string name="main_add">Add Listing</string>
@@ -18,7 +18,8 @@
     <string name="snackbarNoInternetButton">HIDE</string>
     <string name="notif_notification_channel_name">notification_channel</string>
     <string name="loading_please_wait">Loading... please wait...</string>
-    <string name="notification_title">Listing created</string>
+    <string name="notification_title_create">Listing created successfully</string>
+    <string name="notification_title_edit">Listing edited successfully</string>
     <string name="notification_text">Address: %1$s</string>
     <string name="main_current_location">Current Location</string>
     <string name="cant_make_map_requests">You can\'t make map request with these Google Services</string>

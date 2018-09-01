@@ -29,15 +29,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
-import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
@@ -136,16 +133,16 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private TextInputEditText tvAddress;
 
-    @BindView(R.id.button_add_address_id)
+    @BindView(R.id.button_add_edit_address_id)
     Button buttonAddAddress;
 
     @BindView(R.id.recyclerView_media_id)
     RecyclerView recyclerView;
 
-    @BindView(R.id.button_add_photo_id)
+    @BindView(R.id.button_add_edit_photo_id)
     Button buttonAddPhoto;
 
-    @BindView(R.id.button_insert_listing_id)
+    @BindView(R.id.button_insert_edit_listing_id)
     Button buttonInsertListing;
 
     /////////////////////////////////
@@ -189,7 +186,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         this.counter = 0;
 
-        this.glide = Glide.with(CreateNewListingActivity.this);
+        this.glide = Glide.with(this);
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.insert_information_layout);
@@ -296,25 +293,25 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         snackbarConfiguration();
     }
 
-    @OnClick({R.id.button_add_address_id, R.id.button_add_photo_id, R.id.button_insert_listing_id})
+    @OnClick({R.id.button_add_edit_address_id, R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id})
     public void buttonClicked(View view) {
         Log.d(TAG, "buttonClicked: " + ((Button) view).getText().toString() + " clicked!");
 
         switch (view.getId()) {
 
-            case R.id.button_add_address_id: {
+            case R.id.button_add_edit_address_id: {
                 launchInsertAddressDialog();
 
             }
             break;
 
-            case R.id.button_add_photo_id: {
+            case R.id.button_add_edit_photo_id: {
                 launchAddPhotoActivity();
 
             }
             break;
 
-            case R.id.button_insert_listing_id: {
+            case R.id.button_insert_edit_listing_id: {
 
                 // TODO: 24/08/2018 Check that we have all the necessary information!
                 // TODO: 24/08/2018 If there was no internet, we might not have all!
@@ -382,24 +379,29 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "configureLayout: called!");
 
         this.getAutocompleteTextViews();
+        this.getTextViews();
         this.getSeekBars();
-        this.setSeekBarsMinMaxValues();
-        this.setCrystalSeekBarListeners();
+
+        this.setCrystalSeekBarsMinMaxValues();
+        this.setCrystalSeekBarsListeners();
         this.setAllHints();
         this.setTextLastButton();
     }
 
     private void getAutocompleteTextViews() {
         Log.d(TAG, "getAutocompleteTextViews: called!");
-
         this.tvTypeOfBuilding = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
+    }
+
+    private void getTextViews() {
+        Log.d(TAG, "getTextViews: called!");
         this.tvNumberOfBedrooms = cardViewNumberOfBedrooms.findViewById(R.id.textView_title_id);
         this.tvNumberOfBathrooms = cardViewNumberOfBathrooms.findViewById(R.id.textView_title_id);
         this.tvNumberOfOtherRooms = cardViewNumberOfOtherRooms.findViewById(R.id.textView_title_id);
-        this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
     }
 
     private void getSeekBars() {
@@ -409,8 +411,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.seekBarOtherRooms = cardViewNumberOfOtherRooms.findViewById(R.id.single_seek_bar_id);
     }
 
-    private void setSeekBarsMinMaxValues() {
-        Log.d(TAG, "setSeekBarsMinMaxValues: called!");
+    private void setCrystalSeekBarsMinMaxValues() {
+        Log.d(TAG, "setCrystalSeekBarsMinMaxValues: called!");
         setMinMaxValues(seekBarBedrooms);
         setMinMaxValues(seekBarBathrooms);
         setMinMaxValues(seekBarOtherRooms);
@@ -419,16 +421,14 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     // TODO: 29/08/2018 Check!
     private void setMinMaxValues(CrystalSeekbar seekBar) {
         Log.d(TAG, "setMinMaxValues: called!");
-        seekBar.setMinValue(0f);
-        seekBar.setMinStartValue(0f);
-        seekBar.setMaxValue(9f);
+        seekBar.setMinValue(0);
+        seekBar.setMaxValue(9);
     }
 
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
 
         // TODO: 23/08/2018 Use Resources instead of hardcoded
-
         setAcTvHint(cardViewType, "Type");
         setAcTvHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
         setAcTvHint(cardViewSurfaceArea, "Surface Area (sqm)");
@@ -438,7 +438,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private void setAcTvHint(CardView cardView, String hint) {
         Log.d(TAG, "setAcTvHint: called!");
-
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
     }
@@ -454,8 +453,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         buttonInsertListing.setText("Insert Listing");
     }
 
-    private void setCrystalSeekBarListeners() {
-        Log.d(TAG, "setCrystalSeekBarListeners: called!");
+    private void setCrystalSeekBarsListeners() {
+        Log.d(TAG, "setCrystalSeekBarsListeners: called!");
         setListeners(seekBarBedrooms);
         setListeners(seekBarBathrooms);
         setListeners(seekBarOtherRooms);
@@ -479,7 +478,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 setTextDependingOnSeekBar(seekBar, value);
             }
         });
-
     }
 
     private void setTextDependingOnSeekBar(CrystalSeekbar seekBar, Number value) {
@@ -530,7 +528,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void insertListing() {
         Log.d(TAG, "insertListing: called!");
 
-        if (Utils.getTextViewString(tvAddress).length() > 0
+        if (Utils.getStringFromTextView(tvAddress).length() > 0
                 && getRealEstateCache().getLatitude() != 0d
                 && getRealEstateCache().getLongitude() != 0d) {
 
@@ -642,8 +640,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private void updateIntegerValues() {
         Log.d(TAG, "updateIntegerValues: called!");
-        this.getRealEstateCache().setPrice((int) Utils.getPriceAccordingToCurrency(currency, Utils.getTextViewInteger(tvPrice)));
-        this.getRealEstateCache().setSurfaceArea(Utils.getTextViewInteger(tvSurfaceArea));
+        this.getRealEstateCache().setPrice((int) Utils.getPriceAccordingToCurrency(currency, Utils.getIntegerFromTextView(tvPrice)));
+        this.getRealEstateCache().setSurfaceArea(Utils.getIntegerFromTextView(tvSurfaceArea));
         this.setRooms(this.getRealEstateCache());
     }
 
@@ -919,6 +917,14 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private List<Bitmap> getListOfBitmaps () {
+        Log.d(TAG, "getListOfBitmaps: called!");
+        if (listOfBitmaps == null) {
+            return listOfBitmaps = new ArrayList<>();
+        }
+        return listOfBitmaps;
+    }
+
     //INTERNAL STORAGE
 
     private void checkInternalStoragePermissionGranted() {
@@ -939,14 +945,11 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         if (accessInternalStorageGranted) {
 
-            String mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
-            String temporaryDir = mainPath + Constants.TEMPORARY_DIRECTORY + File.separator;
-
             counter = getListOfImagesRealEstateCache().size();
 
             for (int i = 0; i < getListOfImagesRealEstateCache().size(); i++) {
 
-                Single.just(getInternalStorage().readFile(temporaryDir + getListOfImagesRealEstateCache().get(i).getId()))
+                Single.just(getInternalStorage().readFile(getTemporaryDir() + getListOfImagesRealEstateCache().get(i).getId()))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<byte[]>() {
@@ -954,7 +957,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                             public void onSuccess(byte[] data) {
                                 Log.i(TAG, "onSuccess: called!");
 
-                                listOfBitmaps.add(BitmapFactory.decodeByteArray(data, 0, data.length));
+                                getListOfBitmaps().add(BitmapFactory.decodeByteArray(data, 0, data.length));
 
                                 counter--;
                                 if (counter == 0) {
@@ -1040,7 +1043,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 this, LinearLayoutManager.HORIZONTAL, false));
         this.adapter = new RVAdapterMediaHorizontal(
                 this,
-                listOfBitmaps,
+                getListOfBitmaps(),
                 glide);
         this.recyclerView.setAdapter(this.adapter);
 
@@ -1095,7 +1098,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.real_estate_logo)
-                        .setContentTitle(getResources().getString(R.string.notification_title))
+                        .setContentTitle(getResources().getString(R.string.notification_title_create))
                         .setContentText(getResources().getString(R.string.notification_text, Utils.getAddressAsString(getRealEstateCache())))
                         .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                         .setAutoCancel(true);

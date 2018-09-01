@@ -204,26 +204,26 @@ public class InsertAddressDialogFragment extends DialogFragment {
     private void checkTextViewsText(AlertDialog dialog) {
         Log.d(TAG, "checkTextViewsText: called!");
 
-        if (Utils.getTextViewString(tvStreet).length() == 0) {
+        if (Utils.getStringFromTextView(tvStreet).length() == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a street");
 
-        } else if (Utils.getTextViewString(tvLocality).length() == 0) {
+        } else if (Utils.getStringFromTextView(tvLocality).length() == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a city");
 
-        } else if (Utils.getTextViewString(tvCity).length() == 0) {
+        } else if (Utils.getStringFromTextView(tvCity).length() == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a locality");
 
-        } else if (Utils.getTextViewString(tvPostcode).length() == 0) {
+        } else if (Utils.getStringFromTextView(tvPostcode).length() == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a postcode");
 
         } else {
             onButtonClickedListener.onDialogPositiveClick(
                     InsertAddressDialogFragment.this,
                     new AddressRealEstate(
-                            Utils.getTextViewString(tvStreet),
-                            Utils.getTextViewString(tvLocality),
-                            Utils.getTextViewString(tvCity),
-                            Utils.getTextViewString(tvPostcode)
+                            Utils.getStringFromTextView(tvStreet),
+                            Utils.getStringFromTextView(tvLocality),
+                            Utils.getStringFromTextView(tvCity),
+                            Utils.getStringFromTextView(tvPostcode)
                     ));
 
             dialog.dismiss();

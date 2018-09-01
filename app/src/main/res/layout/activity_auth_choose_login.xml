@@ -1,74 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryLighter"
-    tools:context=".ui.activities.AuthLoginActivity"
-    tools:layout_editor_absoluteY="81dp">
+    android:orientation="vertical"
+    tools:context=".ui.activities.AuthLoginActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/logo_image_id"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
         android:src="@drawable/real_estate_logo"
         app:civ_border_color="@color/colorPrimaryDark"
-        app:civ_border_width="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_sign_up_password_id"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"/>
+        app:civ_border_width="2dp" />
 
-    <Button
-        android:id="@+id/button_sign_up_password_id"
-        style="@style/buttonGeneralStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/password_sign_up"
-        app:layout_constraintBottom_toTopOf="@+id/button_sign_in_password_id"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo_image_id" />
+    <include layout="@layout/card_view_autocomplete"
+        android:id="@+id/card_view_email_id"/>
+
+    <include layout="@layout/card_view_autocomplete"
+        android:id="@+id/card_view_password_id"/>
 
     <Button
         android:id="@+id/button_sign_in_password_id"
         style="@style/buttonGeneralStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/password_sign_in"
-        app:layout_constraintBottom_toTopOf="@+id/button_google_id"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_sign_up_password_id" />
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:text="@string/password_sign_in"/>
+
+    <TextView
+        android:id="@+id/forgot_password_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Did you forget your password?"
+        android:textColor="@color/colorPrimaryDark"
+        android:clickable="true"/>
 
     <Button
-        android:id="@+id/button_google_id"
+        android:id="@+id/button_sign_up_password_id"
         style="@style/buttonGeneralStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/google_sign_in"
-        app:layout_constraintBottom_toTopOf="@+id/button_facebook_id"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_sign_in_password_id" />
+        android:layout_margin="15dp"
+        android:layout_gravity="center"
+        android:text="@string/password_sign_up"/>
 
-    <Button
-        android:id="@+id/button_facebook_id"
-        style="@style/buttonGeneralStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/facebook_sign_in"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_google_id" />
-
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

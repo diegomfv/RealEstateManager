@@ -17,15 +17,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
-import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
-import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
-import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
@@ -33,8 +29,6 @@ import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
 import com.diegomfv.android.realestatemanager.utils.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.SearchEngineViewModel;
-
-import org.florescu.android.rangeseekbar.RangeSeekBar;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -562,7 +556,7 @@ public class SearchEngineActivity extends BaseActivity {
 
     private String getTextFromView(TextView textView) {
         Log.d(TAG, "getTextFromView: called!");
-        return Utils.capitalize(Utils.getTextViewString(textView));
+        return Utils.capitalize(Utils.getStringFromTextView(textView));
     }
 
     private int getMaxValueFromSeekBar(CrystalRangeSeekbar rangeSeekBar) {
@@ -692,7 +686,7 @@ public class SearchEngineActivity extends BaseActivity {
 
         for (int i = 0; i < getListOfBuildingTypeCheckboxes().size(); i++) {
             if (getListOfBuildingTypeCheckboxes().get(i).isChecked()) {
-                listOfCheckedTypes.add(Utils.getTextViewString(getListOfBuildingTypeCheckboxes().get(i)));
+                listOfCheckedTypes.add(Utils.getStringFromTextView(getListOfBuildingTypeCheckboxes().get(i)));
             }
         }
 
@@ -833,7 +827,7 @@ public class SearchEngineActivity extends BaseActivity {
 
         for (int i = 0; i < getListOfPointOfInterestCheckboxes().size(); i++) {
             if (getListOfPointOfInterestCheckboxes().get(i).isChecked()) {
-                listOfCheckedPointsOfInterest.add(Utils.getTextViewString(getListOfPointOfInterestCheckboxes().get(i)));
+                listOfCheckedPointsOfInterest.add(Utils.getStringFromTextView(getListOfPointOfInterestCheckboxes().get(i)));
             }
         }
 

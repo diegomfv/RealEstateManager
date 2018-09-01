@@ -22,6 +22,7 @@ import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.utils.FirebasePushIdGenerator;
 import com.diegomfv.android.realestatemanager.utils.ToastHelper;
@@ -41,15 +42,11 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by Diego Fajardo on 18/08/2018.
+ * Created by Diego Fajardo on 29/08/2018.
  */
-// TODO: 29/08/2018 Modify the layout: 
-// TODO: 29/08/2018 Photo
-// TODO: 29/08/2018 TextTitle 
-// TODO: 29/08/2018 User can press enter
-public class AddPhotoActivity extends BaseActivity {
+public class EditPhotoActivity extends BaseActivity {
 
-    private static final String TAG = AddPhotoActivity.class.getSimpleName();
+    private static final String TAG = EditPhotoActivity.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,6 +62,8 @@ public class AddPhotoActivity extends BaseActivity {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private ActionBar actionBar;
+
+    private RealEstate realEstate;
 
     private boolean accessInternalStorageGranted;
 
@@ -87,7 +86,13 @@ public class AddPhotoActivity extends BaseActivity {
         setContentView(R.layout.activity_add_photo);
         unbinder = ButterKnife.bind(this);
 
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            realEstate = getIntent().getExtras().getParcelable(Constants.REAL_ESTATE);
+        }
+
         this.configureActionBar();
+
+        this.configureLayout();
 
         this.configureImageViewOnClickListener();
 
@@ -129,7 +134,7 @@ public class AddPhotoActivity extends BaseActivity {
         Log.d(TAG, "onActivityResult: called!");
 
         if (data == null) {
-            ToastHelper.toastShort(AddPhotoActivity.this, getResources().getString(R.string.no_image_was_picked));
+            ToastHelper.toastShort(EditPhotoActivity.this, getResources().getString(R.string.no_image_was_picked));
 
         } else {
             if (requestCode == Constants.REQUEST_CODE_GALLERY) {
@@ -144,11 +149,11 @@ public class AddPhotoActivity extends BaseActivity {
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    ToastHelper.toastShort(AddPhotoActivity.this, getResources().getString(R.string.there_was_an_error));
+                    ToastHelper.toastShort(EditPhotoActivity.this, getResources().getString(R.string.there_was_an_error));
                 }
 
             } else {
-                ToastHelper.toastShort(AddPhotoActivity.this, getResources().getString(R.string.no_image_was_picked));
+                ToastHelper.toastShort(EditPhotoActivity.this, getResources().getString(R.string.no_image_was_picked));
             }
         }
     }
@@ -201,6 +206,12 @@ public class AddPhotoActivity extends BaseActivity {
             actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
         }
     }
+
+    private void configureLayout () {
+        Log.d(TAG, "configureLayout: called!");
+        editTextDescription.setText(realEstate.getDescription());
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -309,13 +320,13 @@ public class AddPhotoActivity extends BaseActivity {
                                 public void onSuccess(Boolean fileIsCreated) {
                                     Log.i(TAG, "onSuccess: called!");
                                     addImageToListOfImagesInCache();
-                                    Utils.launchActivity(AddPhotoActivity.this, CreateNewListingActivity.class);
+                                    Utils.launchActivity(EditPhotoActivity.this, CreateNewListingActivity.class);
                                 }
 
                                 @Override
                                 public void onError(Throwable e) {
                                     Log.i(TAG, "onError: called!");
-                                    ToastHelper.toastThereWasAnError(AddPhotoActivity.this);
+                                    ToastHelper.toastThereWasAnError(EditPhotoActivity.this);
                                 }
                             });
 
@@ -341,5 +352,4 @@ public class AddPhotoActivity extends BaseActivity {
         Log.d(TAG, "addImageToListOfImagesInCache: called!");
         getListOfImagesRealEstateCache().add(imageRealEstateCache);
     }
-
 }

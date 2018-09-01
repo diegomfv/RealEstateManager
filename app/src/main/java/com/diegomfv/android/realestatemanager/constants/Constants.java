@@ -57,7 +57,20 @@ public interface Constants {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    String CURRENCY = "CURRENCY";
+
+
+    String REAL_ESTATE = "real_estate";
+
     String SH_PREF_CURRENCY_SETTINGS = "currency_settings";
+    String CURRENCY = "currency";
+
+    String SH_PREF_AGENT_SETTINGS = "agent_settings";
+    String SH_PREF_AGENT_FIRST_NAME = "first_name";
+    String SH_PREF_AGENT_LAST_NAME = "last_name";
+    String SH_PREF_AGENT_EMAIL = "email";
+    String SH_PREF_AGENT_PASSWORD = "password";
+    String SH_PREF_AGENT_MEMORABLE_DATA_QUESTION = "memorable_data_question";
+    String SH_PREF_AGENT_MEMORABLE_DATA_ANSWER = "memorable_data_answer";
+
 
 }
