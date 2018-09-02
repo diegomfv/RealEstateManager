@@ -23,8 +23,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
+import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
+import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalDescr;
 import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
@@ -114,12 +116,14 @@ public class FragmentHandsetItemDescription extends BaseFragment {
     private int imagesCounter;
 
     //RecyclerView Adapter
-    private RVAdapterMediaHorizontal adapter;
+    private RVAdapterMediaHorizontalDescr adapter;
 
     //Glide
     private RequestManager glide;
 
     private RealEstate realEstate;
+
+    private List<ImageRealEstate> listOfImagesRealEstate;
 
     //ViewModel
     private ItemDescriptionViewModel itemDescriptionViewModel;
@@ -179,7 +183,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
             Log.i(TAG, "onCreateView: bundle = " + bundle);
         }
 
-        //this.configureRecyclerView();
+        this.configureRecyclerView();
 
         if (realEstate != null) {
             fillLayoutWithRealEstateInfo(realEstate);
@@ -210,7 +214,6 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         setAddress(realEstate);
         setPrice(realEstate);
         setSoldState(realEstate);
-        fillMapOfBitmaps(realEstate);
     }
 
     private void setDescription(RealEstate realEstate) {
@@ -257,56 +260,6 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<Bitmap> getListOfBitmaps() {
-        Log.d(TAG, "getMapOfBitmaps: called!");
-        if (listOfBitmaps == null) {
-            return listOfBitmaps = new ArrayList<>();
-        }
-        return listOfBitmaps;
-    }
-
-    @SuppressLint("CheckResult")
-    private void fillMapOfBitmaps(RealEstate realEstate) {
-        Log.d(TAG, "fillMapOfBitmaps: called!");
-
-        if (getActivity() != null) {
-
-            imagesCounter = realEstate.getListOfImagesIds().size();
-
-            for (int i = 0; i < realEstate.getListOfImagesIds().size(); i++) {
-
-                Single.just(getInternalStorage().readFile(getImagesDir() + realEstate.getListOfImagesIds().get(i)))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<byte[]>() {
-                            @Override
-                            public void onSuccess(byte[] data) {
-                                Log.i(TAG, "onSuccess: called!");
-                                Log.i(TAG, "onSuccess: data = " + data);
-
-                                getListOfBitmaps().add(
-                                        BitmapFactory.decodeByteArray(data, 0, data.length));
-
-                                if (imagesCounter == 0) {
-                                    //adapter.setData(getListOfBitmaps());
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e(TAG, "onError: " + e.getMessage());
-
-                            }
-                        });
-            }
-
-        } else {
-            Log.i(TAG, "fillMapOfBitmaps: We are here!");
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     //VIEWMODEL
 
     private void createViewModel() {
@@ -334,38 +287,57 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
                 }
             });
+
+            this.itemDescriptionViewModel.getObservableImagesRealEstate().observe(this, new Observer<List<ImageRealEstate>>() {
+                @Override
+                public void onChanged(@Nullable List<ImageRealEstate> imageRealEstates) {
+                    Log.d(TAG, "onChanged: called!");
+                    listOfImagesRealEstate = imageRealEstates;
+                    Log.w(TAG, "onChanged: imageRealEstates.size(): " + imageRealEstates.size());
+                }
+            });
         }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-//    private void configureRecyclerView() {
-//        Log.d(TAG, "configureRecyclerView: called!");
-//        this.recyclerViewMedia.setHasFixedSize(true);
-//        this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
-//                getActivity(), LinearLayoutManager.HORIZONTAL, false));
-//        this.adapter = new RVAdapterMediaHorizontal(
-//                getActivity(),
-//                getListOfBitmaps(),
-//                glide);
-//        this.recyclerViewMedia.setAdapter(this.adapter);
-//
-//        this.configureOnClickRecyclerView();
-//    }
-//
-//    private void configureOnClickRecyclerView() {
-//        Log.d(TAG, "configureOnClickRecyclerView: called!");
-//
-//        ItemClickSupport.addTo(recyclerViewMedia)
-//                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClicked(RecyclerView recyclerViewMedia, int position, View v) {
-//                        Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
-//                        // TODO: 27/08/2018
-//                        ToastHelper.toastShort(getActivity(), "Delete this!");
-//                    }
-//                });
-//    }
+    private void configureRecyclerView() {
+        Log.d(TAG, "configureRecyclerView: called!");
+        this.recyclerViewMedia.setHasFixedSize(true);
+        this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
+                getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        this.adapter = new RVAdapterMediaHorizontalDescr(
+                getActivity(),
+                getRepository(),
+                getInternalStorage(),
+                getImagesDir(),
+                realEstate,
+                glide,
+                currency);
+        this.recyclerViewMedia.setAdapter(this.adapter);
+
+        this.configureOnClickRecyclerView();
+    }
+
+    private void configureOnClickRecyclerView() {
+        Log.d(TAG, "configureOnClickRecyclerView: called!");
+
+        ItemClickSupport.addTo(recyclerViewMedia)
+                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerViewMedia, int position, View v) {
+                        Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
+                        Log.w(TAG, "onItemClicked: key = " + adapter.getKey(position) );
+                        String key = adapter.getKey(position);
+
+                        for (int i = 0; i < listOfImagesRealEstate.size(); i++) {
+                            if (listOfImagesRealEstate.get(i).getId().equals(key)){
+                                ToastHelper.toastShort(getActivity(), listOfImagesRealEstate.get(i).getDescription());
+                            }
+                        }
+                    }
+                });
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 

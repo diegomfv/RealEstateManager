@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amitshekhar.DebugDB;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
@@ -103,7 +104,8 @@ public class AuthLoginActivity extends BaseActivity {
             break;
 
             case R.id.button_sign_up_password_id: {
-                Utils.launchActivity(this, SignUpActivity.class);
+               // Utils.launchActivity(this, SignUpActivity.class);
+                DebugDB.getAddressLog();
             }
             break;
 

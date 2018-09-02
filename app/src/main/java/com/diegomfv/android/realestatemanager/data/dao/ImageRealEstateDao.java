@@ -20,7 +20,7 @@ public interface ImageRealEstateDao {
     // -------------------
     // READ
 
-    @Query("SELECT * FROM realestate ORDER BY type")
+    @Query("SELECT * FROM image")
     LiveData<List<ImageRealEstate>> getAllImagesRealEstateLiveData();
 
     // -------------------

@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Diego Fajardo on 19/08/2018.
  */
-public class RVAdapterMediaHorizontal extends RecyclerView.Adapter<RVAdapterMediaHorizontal.MyViewHolder>{
+public class RVAdapterMediaHorizontalCreate extends RecyclerView.Adapter<RVAdapterMediaHorizontalCreate.MyViewHolder>{
 
     private static final String TAG = RVAdapterListings.class.getSimpleName();
 
@@ -36,7 +36,7 @@ public class RVAdapterMediaHorizontal extends RecyclerView.Adapter<RVAdapterMedi
 
 //////////////////////
 
-    public RVAdapterMediaHorizontal (Context context, List<String> listOfKeys, Map<String,Bitmap> bitmapCache, String imagesDir, RequestManager glide) {
+    public RVAdapterMediaHorizontalCreate(Context context, List<String> listOfKeys, Map<String,Bitmap> bitmapCache, String imagesDir, RequestManager glide) {
         Log.d(TAG, "RVAdapterListings: called!");
 
         this.context = context;
@@ -51,7 +51,7 @@ public class RVAdapterMediaHorizontal extends RecyclerView.Adapter<RVAdapterMedi
 
     @NonNull
     @Override
-    public RVAdapterMediaHorizontal.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RVAdapterMediaHorizontalCreate.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d(TAG, "onCreateViewHolder: called!");
 
         LayoutInflater layoutInflater = LayoutInflater.from(context);
@@ -61,12 +61,12 @@ public class RVAdapterMediaHorizontal extends RecyclerView.Adapter<RVAdapterMedi
                 parent,
                 false);
 
-        return new RVAdapterMediaHorizontal.MyViewHolder(view);
+        return new RVAdapterMediaHorizontalCreate.MyViewHolder(view);
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RVAdapterMediaHorizontal.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RVAdapterMediaHorizontalCreate.MyViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called!");
 
         holder.updateItem(position);
@@ -108,7 +108,7 @@ public class RVAdapterMediaHorizontal extends RecyclerView.Adapter<RVAdapterMedi
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
-        private final String TAG = RVAdapterMediaHorizontal.MyViewHolder.class.getSimpleName();
+        private final String TAG = RVAdapterMediaHorizontalCreate.MyViewHolder.class.getSimpleName();
 
         @BindView(R.id.image_view_id)
         ImageView imageView;

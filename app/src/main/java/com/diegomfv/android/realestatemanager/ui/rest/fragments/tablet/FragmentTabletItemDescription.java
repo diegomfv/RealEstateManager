@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
+import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.ui.rest.fragments.handset.FragmentHandsetItemDescription;
@@ -96,7 +95,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
     private RequestManager glide;
 
     //RecyclerView Adapter
-    private RVAdapterMediaHorizontal adapter;
+    private RVAdapterMediaHorizontalCreate adapter;
 
     private Unbinder unbinder;
 
@@ -259,7 +258,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
 //        this.recyclerViewMedia.setHasFixedSize(true);
 //        this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
 //                getActivity(), LinearLayoutManager.HORIZONTAL, false));
-//        this.adapter = new RVAdapterMediaHorizontal(
+//        this.adapter = new RVAdapterMediaHorizontalCreate(
 //                getActivity(),
 //                getListOfBitmaps(),
 //                glide);

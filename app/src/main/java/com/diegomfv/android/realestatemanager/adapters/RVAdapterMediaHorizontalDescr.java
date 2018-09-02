@@ -1,7 +1,6 @@
 package com.diegomfv.android.realestatemanager.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,46 +11,58 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
-
-import java.util.List;
-import java.util.Map;
+import com.diegomfv.android.realestatemanager.data.DataRepository;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.snatik.storage.Storage;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by Diego Fajardo on 02/09/2018.
+ * Created by Diego Fajardo on 19/08/2018.
  */
-public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.MyViewHolder>{
+public class RVAdapterMediaHorizontalDescr extends RecyclerView.Adapter<RVAdapterMediaHorizontalDescr.MyViewHolder>{
 
     private static final String TAG = RVAdapterListings.class.getSimpleName();
 
-//////////////////////
+    //////////////////////
 
     private Context context;
-    private List<String> listOfKeys;
-    private Map<String,Bitmap> bitmapCache;
+
+    private DataRepository dataRepository;
+
+    private Storage internalStorage;
+
     private String imagesDir;
+
+    private RealEstate realEstate;
+
     private RequestManager glide;
 
-//////////////////////
+    private int currency;
 
-    public RVAdapterMediaGrid (Context context, List<String> listOfKeys, Map<String,Bitmap> bitmapCache, String imagesDir, RequestManager glide) {
-        Log.d(TAG, "RVAdapterListings: called!");
+    //////////////////////
 
+    public RVAdapterMediaHorizontalDescr (Context context, DataRepository dataRepository,
+                                     Storage storage, String imageDir,
+                                     RealEstate realEstate,
+                                     RequestManager glide, int currency) {
+
+        Log.d(TAG, "RVAdapterMediaHorizontal: called!");
         this.context = context;
-        this.listOfKeys = listOfKeys;
-        this.bitmapCache = bitmapCache;
-        this.imagesDir = imagesDir;
+        this.dataRepository = dataRepository;
+        this.internalStorage = storage;
+        this.imagesDir = imageDir;
+        this.realEstate = realEstate;
         this.glide = glide;
-
+        this.currency = currency;
     }
 
 ///////////////////////
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RVAdapterMediaHorizontalDescr.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d(TAG, "onCreateViewHolder: called!");
 
         LayoutInflater layoutInflater = LayoutInflater.from(context);
@@ -61,12 +72,12 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
                 parent,
                 false);
 
-        return new MyViewHolder(view);
+        return new RVAdapterMediaHorizontalDescr.MyViewHolder(view);
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RVAdapterMediaHorizontalDescr.MyViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called!");
 
         holder.updateItem(position);
@@ -77,38 +88,25 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
     public int getItemCount() {
         Log.d(TAG, "getItemCount: called!");
 
-        if (listOfKeys == null) {
+        if (realEstate.getListOfImagesIds() == null) {
             return 0;
         }
 
-        return listOfKeys.size();
+        return realEstate.getListOfImagesIds().size();
     }
-
-    /** Method to update the data
-     * */
-    public void setDataKeys(List<String> newData) {
-        this.listOfKeys = newData;
-        notifyDataSetChanged();
-    }
-
-    public void setDataBitmapCache(Map<String,Bitmap> newData) {
-        this.bitmapCache = newData;
-        notifyDataSetChanged();
-    }
-
 
     /** Method that retrieves the key when an item is clicked
      * */
     public String getKey (int position) {
         Log.d(TAG, "getKey: called!");
-        return listOfKeys.get(position);
+        return realEstate.getListOfImagesIds().get(position);
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
-        private final String TAG = RVAdapterMediaHorizontalCreate.MyViewHolder.class.getSimpleName();
+        private final String TAG = RVAdapterMediaHorizontalDescr.MyViewHolder.class.getSimpleName();
 
         @BindView(R.id.image_view_id)
         ImageView imageView;
@@ -125,14 +123,15 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
             Log.d(TAG, "updateItem: called!");
             loadBitmap(position, imageView);
         }
-    }
 
-    public void loadBitmap (int position, ImageView imageView) {
-        Log.d(TAG, "loadBitmap: called!");
-        Log.i(TAG, "loadBitmap: bitmapCacheSize = " + bitmapCache.size());
-        Log.i(TAG, "loadBitmap: listOfKeysSize = " + listOfKeys.size());
+        private void loadBitmap (int position, ImageView imageView) {
+            Log.d(TAG, "loadBitmap: called!");
 
-        glide.load(bitmapCache.get(listOfKeys.get(position)))
-                .into(imageView);
+            glide.load(dataRepository.getBitmap(
+                    internalStorage,
+                    imagesDir,
+                    realEstate.getListOfImagesIds().get(position)))
+                    .into(imageView);
+        }
     }
 }

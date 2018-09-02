@@ -1,7 +1,6 @@
 package com.diegomfv.android.realestatemanager.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,11 +12,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.data.DataRepository;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.util.Utils;
+import com.snatik.storage.Storage;
 
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,9 +33,13 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
     private Context context;
 
-    private List<RealEstate> listRealEstates;
+    private DataRepository dataRepository;
 
-    private Map<String,Bitmap> mapOfBitmaps;
+    private Storage internalStorage;
+
+    private String imagesDir;
+
+    private List<RealEstate> listRealEstates;
 
     private RequestManager glide;
 
@@ -43,14 +47,17 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
     //////////////////////
 
-    public RVAdapterListings(Context context, List<RealEstate> listRealEstates,
-                             Map<String,Bitmap> mapOfBitmaps,
+    public RVAdapterListings(Context context, DataRepository dataRepository,
+                             Storage storage, String imageDir,
+                             List<RealEstate> listRealEstates,
                              RequestManager glide, int currency) {
 
         Log.d(TAG, "RVAdapterListings: called!");
         this.context = context;
+        this.dataRepository = dataRepository;
+        this.internalStorage = storage;
+        this.imagesDir = imageDir;
         this.listRealEstates = listRealEstates;
-        this.mapOfBitmaps = mapOfBitmaps;
         this.glide = glide;
         this.currency = currency;
     }
@@ -96,12 +103,6 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
     public void setData(List<RealEstate> newData) {
         Log.d(TAG, "setDataKeys: called!");
         this.listRealEstates = newData;
-        notifyDataSetChanged();
-    }
-
-    public void setDataBitmaps(Map<String,Bitmap> newData) {
-        Log.d(TAG, "setDataBitmaps: called!");
-        this.mapOfBitmaps = newData;
         notifyDataSetChanged();
     }
 
@@ -160,11 +161,12 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
         private void loadImage (int position) {
             Log.d(TAG, "loadImage: called!");
 
-            for (Map.Entry<String, Bitmap> entry : mapOfBitmaps.entrySet())
-            {
-                Log.i(TAG, "loadImage: entry --->" + entry);
-            }
-            glide.load(mapOfBitmaps.get(listRealEstates.get(position).getId())).into(imageView);
+            glide.load(dataRepository.getBitmap(
+                    internalStorage,
+                    imagesDir,
+                    listRealEstates.get(position).getListOfImagesIds().get(0)))
+                    .into(imageView);
+
         }
 
         private String getType(int position) {

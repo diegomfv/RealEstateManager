@@ -186,7 +186,7 @@ public class FragmentTabletListListings extends BaseFragment {
                             listingsCounter--;
 
                             if (listingsCounter == 0) {
-                                adapter.setDataBitmaps(getMapOfBitmaps());
+                                //adapter.setDataBitmaps(getMapOfBitmaps());
                             }
                         }
 
@@ -201,48 +201,48 @@ public class FragmentTabletListListings extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureRecyclerView() {
-        Log.d(TAG, "configureRecyclerView: called!");
-
-        if (getActivity() != null) {
-
-            this.recyclerView.setHasFixedSize(true);
-            this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            this.adapter = new RVAdapterListings(
-                    getActivity(),
-                    getListOfRealEstates(),
-                    getMapOfBitmaps(),
-                    glide,
-                    currency);
-            this.recyclerView.setAdapter(this.adapter);
-
-        }
-        this.configureOnClickRecyclerView();
-    }
-
-    /**
-     * Method that configures onClick for recyclerView items
-     */
-    private void configureOnClickRecyclerView() {
-        Log.d(TAG, "configureOnClickRecyclerView: called!");
-
-        ItemClickSupport.addTo(recyclerView)
-                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
-
-                        if (getActivity() != null) {
-
-                            /** This does not modify the item but triggers the listener
-                             * for the other fragment, which is listening (because we set
-                             * a MutableLiveData with the value of the real estate)
-                             * */
-                            if (adapter.getRealEstate(position) != null) {
-                                listingsSharedViewModel.selectItem(adapter.getRealEstate(position));
-                            }
-                        }
-                    }
-                });
-    }
+//    private void configureRecyclerView() {
+//        Log.d(TAG, "configureRecyclerView: called!");
+//
+//        if (getActivity() != null) {
+//
+//            this.recyclerView.setHasFixedSize(true);
+//            this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//            this.adapter = new RVAdapterListings(
+//                    getActivity(),
+//                    getListOfRealEstates(),
+//                    getMapOfBitmaps(),
+//                    glide,
+//                    currency);
+//            this.recyclerView.setAdapter(this.adapter);
+//
+//        }
+//        this.configureOnClickRecyclerView();
+//    }
+//
+//    /**
+//     * Method that configures onClick for recyclerView items
+//     */
+//    private void configureOnClickRecyclerView() {
+//        Log.d(TAG, "configureOnClickRecyclerView: called!");
+//
+//        ItemClickSupport.addTo(recyclerView)
+//                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+//                        Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
+//
+//                        if (getActivity() != null) {
+//
+//                            /** This does not modify the item but triggers the listener
+//                             * for the other fragment, which is listening (because we set
+//                             * a MutableLiveData with the value of the real estate)
+//                             * */
+//                            if (adapter.getRealEstate(position) != null) {
+//                                listingsSharedViewModel.selectItem(adapter.getRealEstate(position));
+//                            }
+//                        }
+//                    }
+//                });
+//    }
 }

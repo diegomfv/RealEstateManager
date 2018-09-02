@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.data.DataRepository;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 
 import java.util.List;
@@ -25,18 +26,25 @@ public class ItemDescriptionViewModel extends AndroidViewModel {
 
     private final LiveData<List<PlaceRealEstate>> observablePlacesRealEstate;
 
+    private final LiveData<List<ImageRealEstate>> observableImagesRealEstate;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public ItemDescriptionViewModel(@NonNull Application application, DataRepository dataRepository) {
         super(application);
         Log.d(TAG, "ListingsSharedViewModel: called!");
         observablePlacesRealEstate = dataRepository.getObservableAllPlacesRealEstate();
+        observableImagesRealEstate = dataRepository.getObservableAllImagesRealEstate();
     }
 
     /** Expose the LiveData so the UI can observe it
      * */
     public LiveData<List<PlaceRealEstate>> getObservablePlacesRealEstate() {
         return observablePlacesRealEstate;
+    }
+
+    public LiveData<List<ImageRealEstate>> getObservableImagesRealEstate() {
+        return observableImagesRealEstate;
     }
 
     ////////////////////////////////////

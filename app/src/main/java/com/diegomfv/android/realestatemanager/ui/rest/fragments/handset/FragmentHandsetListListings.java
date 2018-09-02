@@ -71,12 +71,6 @@ public class FragmentHandsetListListings extends BaseFragment {
 
     private List<RealEstate> listOfRealEstates;
 
-    private Map<String, Bitmap> mapOfBitmaps;
-
-    private String listingId;
-
-    int listingsCounter;
-
     int currency;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,8 +97,6 @@ public class FragmentHandsetListListings extends BaseFragment {
         if (getActivity() != null) {
             this.currency = Utils.readCurrentCurrencyShPref(getActivity());
         }
-
-        this.listingsCounter = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         View view = inflater.inflate(R.layout.fragment_list_listings, container, false);
@@ -164,71 +156,11 @@ public class FragmentHandsetListListings extends BaseFragment {
                     Log.d(TAG, "onChanged: called!");
                     if (realEstates != null) {
                         listOfRealEstates = realEstates;
-                        fillMapOfBitmaps(realEstates);
                         adapter.setData(realEstates);
                     }
                 }
             });
         }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private Map<String, Bitmap> getMapOfBitmaps () {
-        Log.d(TAG, "getMapOfBitmaps: called!");
-        if (mapOfBitmaps == null) {
-            return mapOfBitmaps = new HashMap<>();
-        }
-        return mapOfBitmaps;
-    }
-
-    private void fillMapOfBitmaps(List<RealEstate> realEstates) {
-        Log.d(TAG, "fillMapOfBitmaps: called!");
-
-        listingsCounter = realEstates.size();
-        Log.i(TAG, "fillMapOfBitmaps: realEstates.size() = " + realEstates.size());
-
-        for (int i = 0; i < realEstates.size(); i++) {
-
-            listingId = realEstates.get(i).getId();
-            Log.i(TAG, "fillMapOfBitmaps: listingId = " + listingId);
-
-            getImageFromInternalStorage (realEstates.get(i), listingId);
-
-        }
-    }
-
-    @SuppressLint("CheckResult")
-    private void getImageFromInternalStorage(RealEstate realEstate, final String listingId) {
-        Log.d(TAG, "getImageFromInternalStorage: called!");
-
-        Single.just(getInternalStorage().readFile(getImagesDir() + realEstate.getListOfImagesIds().get(0)))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] data) {
-                        Log.i(TAG, "onSuccess: called!");
-
-                        Log.i(TAG, "onSuccess: listingId = " + listingId);
-
-                        getMapOfBitmaps().put(
-                                listingId,
-                                BitmapFactory.decodeByteArray(data, 0 , data.length));
-                        listingsCounter--;
-
-                        if (listingsCounter == 0) {
-                            adapter.setDataBitmaps(getMapOfBitmaps());
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-
-                    }
-                });
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,8 +174,10 @@ public class FragmentHandsetListListings extends BaseFragment {
             this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             this.adapter = new RVAdapterListings(
                     getActivity(),
+                    getRepository(),
+                    getInternalStorage(),
+                    getImagesDir(),
                     getListOfRealEstates(),
-                    getMapOfBitmaps(),
                     glide,
                     currency);
             this.recyclerView.setAdapter(this.adapter);

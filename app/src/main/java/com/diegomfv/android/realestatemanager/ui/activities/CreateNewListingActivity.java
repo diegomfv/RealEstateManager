@@ -31,7 +31,7 @@ import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
+import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.FakeDataGenerator;
 import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
@@ -149,7 +149,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private ActionBar actionBar;
 
     //RecyclerView Adapter
-    private RVAdapterMediaHorizontal adapter;
+    private RVAdapterMediaHorizontalCreate adapter;
 
     private int counter;
 
@@ -611,6 +611,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         for (Map.Entry<String, Bitmap> entry : getBitmapCache().entrySet()) {
             getRepository().addBitmapToBitmapCacheAndStorage(getInternalStorage(), getImagesDir(), entry.getKey(), entry.getValue());
         }
+        Utils.launchActivity(this, MainActivity.class);
+        createNotification();
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -925,7 +928,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.recyclerView.setHasFixedSize(true);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.HORIZONTAL, false));
-        this.adapter = new RVAdapterMediaHorizontal(
+        this.adapter = new RVAdapterMediaHorizontalCreate(
                 this,
                 getListOfBitmapKeys(),
                 getBitmapCache(),

@@ -17,7 +17,6 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
@@ -34,7 +33,7 @@ import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
+import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.datamodels.RoomsRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
@@ -133,7 +132,7 @@ public class EditListingActivity extends BaseActivity {
     private ActionBar actionBar;
 
     //RecyclerView Adapter
-    private RVAdapterMediaHorizontal adapter;
+    private RVAdapterMediaHorizontalCreate adapter;
 
     private RequestManager glide;
 
@@ -502,7 +501,7 @@ public class EditListingActivity extends BaseActivity {
 //        this.recyclerView.setHasFixedSize(true);
 //        this.recyclerView.setLayoutManager(new LinearLayoutManager(
 //                this, LinearLayoutManager.HORIZONTAL, false));
-//        this.adapter = new RVAdapterMediaHorizontal(
+//        this.adapter = new RVAdapterMediaHorizontalCreate(
 //                this,
 //                getListOfBitmaps(),
 //                glide);
