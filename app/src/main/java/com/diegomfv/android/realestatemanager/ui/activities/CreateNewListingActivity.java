@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
@@ -39,18 +38,15 @@ import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
 import com.diegomfv.android.realestatemanager.data.datamodels.RoomsRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
-import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.dialogfragments.InsertAddressDialogFragment;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.LatLngForRetrofit;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.PlacesByNearby;
 import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceDetails;
 import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
 import com.diegomfv.android.realestatemanager.network.remote.GoogleServiceStreams;
 import com.diegomfv.android.realestatemanager.receivers.InternetConnectionReceiver;
-import com.diegomfv.android.realestatemanager.ui.dialogfragments.InsertDescriptionDialogFragment;
+import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
+import com.diegomfv.android.realestatemanager.ui.dialogfragments.InsertAddressDialogFragment;
 import com.diegomfv.android.realestatemanager.util.FirebasePushIdGenerator;
-import com.diegomfv.android.realestatemanager.util.GlideApp;
-import com.diegomfv.android.realestatemanager.util.GlideRequests;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
@@ -155,8 +151,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     //RecyclerView Adapter
     private RVAdapterMediaHorizontal adapter;
 
-    private GlideRequests glide;
-
     private int counter;
 
     private Unbinder unbinder;
@@ -179,9 +173,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.isInternetAvailable = false;
 
         this.counter = 0;
-
-        this.glide = GlideApp.with(this);
-
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.insert_information_layout);
         setTitle("Create a New Listing");
@@ -939,7 +930,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 getListOfBitmapKeys(),
                 getBitmapCache(),
                 getImagesDir(),
-                glide);
+                getGlide());
         this.recyclerView.setAdapter(this.adapter);
 
         this.configureOnClickRecyclerView();
@@ -965,7 +956,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "launchAddPhotoActivity: called!");
 
         updateRealEstateCache();
-        Utils.launchActivity(this, AddPhotoActivityTrial.class);
+        Utils.launchActivity(this, AddPhotoActivity.class);
 
     }
 

@@ -1,33 +1,32 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaGrid;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
+import com.diegomfv.android.realestatemanager.ui.dialogfragments.InsertDescriptionDialogFragment;
 import com.diegomfv.android.realestatemanager.util.FirebasePushIdGenerator;
+import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -35,38 +34,31 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by Diego Fajardo on 18/08/2018.
+ * Created by Diego Fajardo on 02/09/2018.
  */
-// TODO: 29/08/2018 Modify the layout: 
-// TODO: 29/08/2018 Photo
-// TODO: 29/08/2018 TextTitle 
-// TODO: 29/08/2018 User can press enter
-public class AddPhotoActivity extends BaseActivity {
+
+// TODO: 02/09/2018 Add Fragment add description!
+// TODO: 02/09/2018 Take care, the user may leave the app and then come back and the
+    //cache might be cleared!
+public class AddPhotoActivity extends BaseActivity implements InsertDescriptionDialogFragment.InsertDescriptionDialogListener {
 
     private static final String TAG = AddPhotoActivity.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @BindView(R.id.image_view_id)
-    ImageView imageView;
+    @BindView(R.id.recyclerView_media_id)
+    RecyclerView recyclerView;
 
-    @BindView(R.id.editText_description_id)
-    EditText editTextDescription;
+    private RVAdapterMediaGrid adapter;
 
-    @BindView(R.id.button_add_edit_photo_id)
+    @BindView(R.id.button_add_photo_id)
     Button buttonAddPhoto;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private ActionBar actionBar;
-
-    private boolean accessInternalStorageGranted;
 
     private Unbinder unbinder;
 
@@ -74,12 +66,12 @@ public class AddPhotoActivity extends BaseActivity {
 
     private RequestManager glide;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
-
-        this.accessInternalStorageGranted = false;
 
         this.glide = Glide.with(this);
 
@@ -89,9 +81,7 @@ public class AddPhotoActivity extends BaseActivity {
 
         this.configureActionBar();
 
-        this.configureImageViewOnClickListener();
-
-        this.checkInternalStoragePermissionGranted();
+        this.configureRecyclerView();
 
     }
 
@@ -99,25 +89,18 @@ public class AddPhotoActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: called!");
-        imageView.setOnClickListener(null);
         unbinder.unbind();
 
     }
 
-    @OnClick({R.id.image_view_id, R.id.button_add_edit_photo_id})
+    @OnClick(R.id.button_add_photo_id)
     public void buttonClicked(View view) {
         Log.d(TAG, "buttonClicked: " + ((Button) view).getText().toString() + " clicked!");
 
         switch (view.getId()) {
 
-            case R.id.button_add_edit_photo_id: {
-                if (editTextDescription.getText().toString().trim().length() < 10) {
-                    ToastHelper.toastShort(this, "The description is too short");
-
-                } else {
-                    addPhoto();
-                }
-
+            case R.id.button_add_photo_id: {
+                launchGallery();
             }
             break;
         }
@@ -137,9 +120,23 @@ public class AddPhotoActivity extends BaseActivity {
                 try {
                     final Uri imageUri = data.getData();
                     if (imageUri != null) {
+
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                        imageView.setImageBitmap(selectedImage);
+
+                        String key = FirebasePushIdGenerator.generate();
+
+                        getListOfImagesRealEstateCache().add(new ImageRealEstate(key, ""));
+                        getListOfBitmapKeys().add(key);
+                        getRepository().addBitmapToBitmapCache(key, Utils.getResizedBitmap(selectedImage, 840));
+
+                        // TODO: 02/09/2018 Resize the bitmap according to ImageView size!
+
+                        Log.i(TAG, "onActivityResult: " + getRepository().getCurrentSizeOfBitmapCache());
+                        Log.i(TAG, "onActivityResult: " + getBitmapCache().size());
+
+                        updateAdapterData();
+
                     }
 
                 } catch (FileNotFoundException e) {
@@ -154,38 +151,32 @@ public class AddPhotoActivity extends BaseActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.d(TAG, "onRequestPermissionsResult: called!");
-
-        switch (requestCode) {
-
-            case Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE: {
-
-                if (grantResults.length > 0 && grantResults[0] != -1) {
-                    accessInternalStorageGranted = true;
-                    launchGallery();
-                }
-            }
-            break;
-        }
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d(TAG, "onOptionsItemSelected: called!");
 
         switch (item.getItemId()) {
 
             case android.R.id.home: {
-                ToastHelper.toastShort(this, "No picture added");
-                Utils.launchActivity(this, CreateNewListingActivity.class);
+                Intent intent = new Intent(this, CreateNewListingActivity.class);
+                intent.putExtra(Constants.INTENT_FROM_ADD_PHOTO, Constants.STRING_FROM_ADD_PHOTO);
+                Utils.launchActivityWithIntent(this, intent);
             }
             break;
-
-
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDialogPositiveClick(ImageRealEstate imageRealEstate) {
+        Log.d(TAG, "onDialogPositiveClick: called!");
+        ToastHelper.toastLong(this, imageRealEstate.getDescription());
+
+    }
+
+    @Override
+    public void onDialogNegativeClick() {
+        Log.d(TAG, "onDialogNegativeClick: called!");
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,34 +195,53 @@ public class AddPhotoActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void checkInternalStoragePermissionGranted() {
-        Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
+    private void configureRecyclerView() {
+        Log.d(TAG, "configureRecyclerView: called!");
 
-        if (Utils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            accessInternalStorageGranted = true;
-            launchGallery();
+        this.recyclerView.setHasFixedSize(true);
+        this.recyclerView.setLayoutManager(new GridLayoutManager(
+                this, 2));
+        this.adapter = new RVAdapterMediaGrid(
+                this,
+                getListOfBitmapKeys(),
+                getRepository().getBitmapCache(),
+                getImagesDir(),
+                glide);
+        this.recyclerView.setAdapter(this.adapter);
 
-        } else {
-            Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
-        }
+        this.configureOnClickRecyclerView();
+
+    }
+
+    private void configureOnClickRecyclerView() {
+        Log.d(TAG, "configureOnClickRecyclerView: called!");
+
+        ItemClickSupport.addTo(recyclerView)
+                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
+
+                        String key = getListOfBitmapKeys().get(position);
+
+                        for (int i = 0; i < getListOfImagesRealEstateCache().size(); i++) {
+
+                            if (getListOfImagesRealEstateCache().get(i).getId().equals(key)) {
+                                launchAddDescriptionDialog(getListOfImagesRealEstateCache().get(i));
+                                break;
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void updateAdapterData () {
+        Log.d(TAG, "updateAdapterData: called!");
+        adapter.setDataKeys(getListOfBitmapKeys());
+        adapter.setDataBitmapCache(getBitmapCache());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private void configureImageViewOnClickListener() {
-        Log.d(TAG, "configureImageViewOnClickListener: called!");
-        imageView.setOnClickListener(imageViewOnClickListener);
-
-    }
-
-    private View.OnClickListener imageViewOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Log.d(TAG, "onClick: called!");
-            launchGallery();
-
-        }
-    };
 
     private void launchGallery() {
         Log.d(TAG, "launchGallery: called!");
@@ -241,109 +251,20 @@ public class AddPhotoActivity extends BaseActivity {
         startActivityForResult(intent, Constants.REQUEST_CODE_GALLERY);
 
     }
-
-    private void addPhoto() {
-        Log.d(TAG, "addPhoto: called!");
-
-        /* Generate push key and add to the image
-         * */
-        imageRealEstateCache = new ImageRealEstate(
-                FirebasePushIdGenerator.generate(),
-                editTextDescription.getText().toString().trim());
-
-        /* Insert the image in the temporary folder linked to the key.
-         * At the end of this process, launch CreateNewListingActivity
-         * */
-        configureInternalStorage();
-
-    }
-
-    private void configureInternalStorage() {
-        Log.d(TAG, "configureInternalStorage: called!");
-
-        if (accessInternalStorageGranted) {
-
-            String mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
-            String temporaryDir = mainPath + File.separator + Constants.TEMPORARY_DIRECTORY + File.separator;
-
-            if (getInternalStorage().isDirectoryExists(temporaryDir)) {
-                saveImageInInternalStorage(temporaryDir, imageRealEstateCache.getId());
-
-            } else {
-                getInternalStorage().createDirectory(temporaryDir);
-                saveImageInInternalStorage(temporaryDir, imageRealEstateCache.getId());
-            }
-
-        } else {
-            // TODO: 18/08/2018 Create a dialog asking for permissions! It should load configure internal storage again!
-            ToastHelper.toastInternalStorageAccessNotGranted(this);
-
-        }
-    }
-
-    /**
-     * This method saves the fetched image in the internal storage asynchronously
-     */
-    @SuppressLint("CheckResult")
-    private void saveImageInInternalStorage(String temporaryDir, String imageId) {
-        Log.d(TAG, "saveImageInInternalStorage: called!");
-
-        if (getInternalStorage().isDirectoryExists(temporaryDir)) {
-
-            try {
-
-                final String filePath = temporaryDir + imageId;
-
-                imageView.setDrawingCacheEnabled(true);
-                imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-                imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
-                imageView.buildDrawingCache();
-                final Bitmap bitmap = Bitmap.createBitmap(imageView.getDrawingCache());
-
-                if (bitmap != null) {
-                    Single.just(getInternalStorage().createFile(filePath, bitmap))
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeWith(new DisposableSingleObserver<Boolean>() {
-                                @Override
-                                public void onSuccess(Boolean fileIsCreated) {
-                                    Log.i(TAG, "onSuccess: called!");
-                                    addImageToListOfImagesInCache();
-                                    Utils.launchActivity(AddPhotoActivity.this, CreateNewListingActivity.class);
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-                                    Log.i(TAG, "onError: called!");
-                                    ToastHelper.toastThereWasAnError(AddPhotoActivity.this);
-                                }
-                            });
-
-                } else {
-                    ToastHelper.toastShort(this, "Bitmap was not got properly");
-                    Utils.launchActivity(this, CreateNewListingActivity.class);
-
-                }
-
-            } catch (NullPointerException e) {
-                ToastHelper.toastShort(this, "Sorry, that image cannot be added");
-                glide.load(R.drawable.flat_example).into(imageView);
-            }
-
-        } else {
-            Log.i(TAG, "saveImageInInternalStorage: accessInternalStorageGrantes = false");
-            ToastHelper.toastShort(this, "Directory does not exist");
-            Utils.launchActivity(this, CreateNewListingActivity.class);
-        }
-    }
-
     private void addImageToListOfImagesInCache() {
         Log.d(TAG, "addImageToListOfImagesInCache: called!");
         getListOfImagesRealEstateCache().add(imageRealEstateCache);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private void launchAddDescriptionDialog (ImageRealEstate imageRealEstate) {
+        Log.d(TAG, "launchAddDescriptionDialog: called!");
 
+        InsertDescriptionDialogFragment.newInstance(imageRealEstate)
+                .show(getSupportFragmentManager(), "InsertDescriptionDialogFragment");
+
+    }
 
 
 

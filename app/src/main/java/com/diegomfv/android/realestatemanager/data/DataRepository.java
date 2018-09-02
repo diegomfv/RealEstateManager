@@ -11,6 +11,7 @@ import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.snatik.storage.Storage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -53,7 +54,13 @@ public class DataRepository {
     private Map<String,Bitmap> bitmapCache;
     private long bitmapCacheSize; // in MB
 
-    private List<String> listOfBitmapKeys;
+    private List<String> listOfBitmapCacheKeys;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //BITMAPS INTERNAL STORAGE
+
+    private List<String> listOfBitmapKeysInternalStorage;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -151,10 +158,10 @@ public class DataRepository {
 
     //BITMAPS CACHE
 
-    public List<String> getListOfBitmapKeys () {
-        Log.d(TAG, "getListOfBitmapKeys: called!");
-        if (listOfBitmapKeys == null) {
-            listOfBitmapKeys = new ArrayList<>();
+    public List<String> getListOfBitmapCacheKeys() {
+        Log.d(TAG, "getListOfBitmapCacheKeys: called!");
+        if (listOfBitmapCacheKeys == null) {
+            listOfBitmapCacheKeys = new ArrayList<>();
             return updateListOfBitmapKeys();
         }
         return updateListOfBitmapKeys();
@@ -164,11 +171,11 @@ public class DataRepository {
         Log.d(TAG, "updateListOfBitmapKeys: called!");
 
         for (Map.Entry<String, Bitmap> entry : bitmapCache.entrySet()) {
-            if (!listOfBitmapKeys.contains(entry.getKey())) {
-                listOfBitmapKeys.add(entry.getKey());
+            if (!listOfBitmapCacheKeys.contains(entry.getKey())) {
+                listOfBitmapCacheKeys.add(entry.getKey());
             }
         }
-        return listOfBitmapKeys;
+        return listOfBitmapCacheKeys;
     }
 
     public Map<String,Bitmap> getBitmapCache() {
@@ -272,7 +279,23 @@ public class DataRepository {
     public void deleteBitmapCache () {
         Log.d(TAG, "deleteBitmapCache: called!");
         bitmapCache = null;
-        listOfBitmapKeys = null;
+        listOfBitmapCacheKeys = null;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public List<String> getListOfBitmapKeysInternalStorage (String imagesDir) {
+        Log.d(TAG, "getListOfBitmapKeysInternalStorage: called!");
+        listOfBitmapKeysInternalStorage = new ArrayList<>();
+        File[] files = new File(imagesDir).listFiles();
+        if (files != null) {
+            for (File file : files) {
+                listOfBitmapKeysInternalStorage.add(file.getName());
+            }
+            return listOfBitmapKeysInternalStorage;
+        } else {
+            return listOfBitmapKeysInternalStorage;
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

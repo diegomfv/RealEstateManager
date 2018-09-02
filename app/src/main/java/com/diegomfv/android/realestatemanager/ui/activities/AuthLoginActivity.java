@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.amitshekhar.DebugDB;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
@@ -24,7 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-// TODO: 02/09/2018 Check here if
+// TODO: 02/09/2018 Check here if internal storage permissions
 // TODO: 21/08/2018 Clean caches!
 // TODO: 30/08/2018 Remember to put a flag so we cannot come her again after signed in
 // TODO: 02/09/2018 Allow to continue only if InternalStorageAccess is granted!
@@ -84,7 +83,7 @@ public class AuthLoginActivity extends BaseActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.launchActivity(AuthLoginActivity.this, AddPhotoActivityTrial.class);
+                Utils.launchActivity(AuthLoginActivity.this, AddPhotoActivity.class);
             }
         });
 

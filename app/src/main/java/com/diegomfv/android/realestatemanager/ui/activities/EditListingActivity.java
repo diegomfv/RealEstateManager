@@ -578,9 +578,6 @@ public class EditListingActivity extends BaseActivity {
         } else {
             updateRealEstateCache();
 
-            Intent intent = new Intent(this, EditPhotoActivity.class);
-            intent.putExtra(Constants.REAL_ESTATE, realEstate);
-            startActivity(intent);
         }
     }
 

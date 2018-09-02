@@ -3,6 +3,8 @@ package com.diegomfv.android.realestatemanager.ui.base;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppDatabase;
@@ -10,8 +12,6 @@ import com.diegomfv.android.realestatemanager.data.DataRepository;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
-import com.diegomfv.android.realestatemanager.util.GlideApp;
-import com.diegomfv.android.realestatemanager.util.GlideRequests;
 import com.snatik.storage.Storage;
 
 import java.io.File;
@@ -87,9 +87,9 @@ public class BaseFragment extends Fragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected GlideRequests getGlide () {
+    protected RequestManager getGlide () {
         Log.d(TAG, "getGlide: called!");
-        return GlideApp.with(getApp());
+        return Glide.with(getApp());
     }
 
 }

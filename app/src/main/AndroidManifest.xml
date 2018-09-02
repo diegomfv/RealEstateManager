@@ -40,14 +40,12 @@
         <activity android:name=".ui.activities.SearchEngineActivity" />
         <activity android:name=".ui.activities.MainActivity" />
         <activity android:name=".ui.activities.CreateNewListingActivity" />
-        <activity android:name=".ui.activities.AddPhotoActivity" />
         <activity android:name=".ui.activities.EditListingActivity" />
         <activity android:name=".ui.activities.PositionActivity" />
         <activity android:name=".ui.base.BaseActivity" />
-        <activity android:name=".ui.activities.EditPhotoActivity" />
         <activity android:name=".ui.activities.ForgotPasswordActivity" />
         <activity android:name=".ui.activities.SignUpActivity" />
-        <activity android:name=".ui.activities.AddPhotoActivityTrial" />
+        <activity android:name=".ui.activities.AddPhotoActivity" />
 
         <receiver android:name=".receivers.InternetConnectionReceiver"/>
 

@@ -12,7 +12,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.util.GlideRequests;
 
 import java.util.List;
 import java.util.Map;
@@ -33,11 +32,11 @@ public class RVAdapterMediaHorizontal extends RecyclerView.Adapter<RVAdapterMedi
     private List<String> listOfKeys;
     private Map<String,Bitmap> bitmapCache;
     private String imagesDir;
-    private GlideRequests glide;
+    private RequestManager glide;
 
 //////////////////////
 
-    public RVAdapterMediaHorizontal (Context context, List<String> listOfKeys, Map<String,Bitmap> bitmapCache, String imagesDir, GlideRequests glide) {
+    public RVAdapterMediaHorizontal (Context context, List<String> listOfKeys, Map<String,Bitmap> bitmapCache, String imagesDir, RequestManager glide) {
         Log.d(TAG, "RVAdapterListings: called!");
 
         this.context = context;
@@ -134,7 +133,6 @@ public class RVAdapterMediaHorizontal extends RecyclerView.Adapter<RVAdapterMedi
         Log.i(TAG, "loadBitmap: listOfKeysSize = " + listOfKeys.size());
 
         glide.load(bitmapCache.get(listOfKeys.get(position)))
-                .thumbnail()
                 .into(imageView);
     }
 }

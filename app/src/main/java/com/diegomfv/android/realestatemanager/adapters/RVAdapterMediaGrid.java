@@ -5,16 +5,15 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.util.GlideRequests;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -34,11 +33,11 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
     private List<String> listOfKeys;
     private Map<String,Bitmap> bitmapCache;
     private String imagesDir;
-    private GlideRequests glide;
+    private RequestManager glide;
 
 //////////////////////
 
-    public RVAdapterMediaGrid (Context context, List<String> listOfKeys, Map<String,Bitmap> bitmapCache, String imagesDir, GlideRequests glide) {
+    public RVAdapterMediaGrid (Context context, List<String> listOfKeys, Map<String,Bitmap> bitmapCache, String imagesDir, RequestManager glide) {
         Log.d(TAG, "RVAdapterListings: called!");
 
         this.context = context;
@@ -135,7 +134,6 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
         Log.i(TAG, "loadBitmap: listOfKeysSize = " + listOfKeys.size());
 
         glide.load(bitmapCache.get(listOfKeys.get(position)))
-                .thumbnail()
                 .into(imageView);
     }
 }

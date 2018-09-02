@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppDatabase;
@@ -11,8 +13,6 @@ import com.diegomfv.android.realestatemanager.data.DataRepository;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
-import com.diegomfv.android.realestatemanager.util.GlideApp;
-import com.diegomfv.android.realestatemanager.util.GlideRequests;
 import com.snatik.storage.Storage;
 
 import java.io.File;
@@ -72,8 +72,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected List<String> getListOfBitmapKeys () {
-        Log.d(TAG, "getListOfBitmapKeys: called!");
-        return getRepository().getListOfBitmapKeys();
+        Log.d(TAG, "getListOfBitmapCacheKeys: called!");
+        return getRepository().getListOfBitmapCacheKeys();
     }
 
     protected Map<String,Bitmap> getBitmapCache () {
@@ -125,9 +125,9 @@ public class BaseActivity extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected GlideRequests getGlide () {
+    protected RequestManager getGlide () {
         Log.d(TAG, "getGlide: called!");
-        return GlideApp.with(getApp());
+        return Glide.with(getApp());
     }
 
 }
