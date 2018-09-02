@@ -19,6 +19,7 @@ import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaGrid;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
+import com.diegomfv.android.realestatemanager.ui.dialogfragments.InsertDescriptionDialogFragment;
 import com.diegomfv.android.realestatemanager.util.FirebasePushIdGenerator;
 import com.diegomfv.android.realestatemanager.util.GlideApp;
 import com.diegomfv.android.realestatemanager.util.GlideRequests;
@@ -37,7 +38,11 @@ import butterknife.Unbinder;
 /**
  * Created by Diego Fajardo on 02/09/2018.
  */
-public class AddPhotoActivityTrial extends BaseActivity {
+
+// TODO: 02/09/2018 Add Fragment add description!
+// TODO: 02/09/2018 Take care, the user may leave the app and then come back and the
+    //cache might be cleared!
+public class AddPhotoActivityTrial extends BaseActivity implements InsertDescriptionDialogFragment.InsertDescriptionDialogListener {
 
     private static final String TAG = AddPhotoActivityTrial.class.getSimpleName();
 
@@ -112,20 +117,26 @@ public class AddPhotoActivityTrial extends BaseActivity {
         } else {
             if (requestCode == Constants.REQUEST_CODE_GALLERY) {
 
-                // TODO: 02/09/2018 Decode correctly the image!
-
                 try {
                     final Uri imageUri = data.getData();
                     if (imageUri != null) {
+
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+
                         String key = FirebasePushIdGenerator.generate();
+
+                        getListOfImagesRealEstateCache().add(new ImageRealEstate(key, ""));
                         getListOfBitmapKeys().add(key);
                         getRepository().addBitmapToBitmapCache(key, Utils.getResizedBitmap(selectedImage, 840));
-                        Log.w(TAG, "onActivityResult: " + getRepository().getCurrentSizeOfBitmapCache());
-                        Log.w(TAG, "onActivityResult: " + getBitmapCache().size());
-                        adapter.setDataKeys(getListOfBitmapKeys());
-                        adapter.setDataBitmapCache(getBitmapCache());
+
+                        // TODO: 02/09/2018 Resize the bitmap according to ImageView size!
+
+                        Log.i(TAG, "onActivityResult: " + getRepository().getCurrentSizeOfBitmapCache());
+                        Log.i(TAG, "onActivityResult: " + getBitmapCache().size());
+
+                        updateAdapterData();
+
                     }
 
                 } catch (FileNotFoundException e) {
@@ -146,12 +157,26 @@ public class AddPhotoActivityTrial extends BaseActivity {
         switch (item.getItemId()) {
 
             case android.R.id.home: {
-                ToastHelper.toastShort(this, "No picture added");
-                Utils.launchActivity(this, CreateNewListingActivity.class);
+                Intent intent = new Intent(this, CreateNewListingActivity.class);
+                intent.putExtra(Constants.INTENT_FROM_ADD_PHOTO, Constants.STRING_FROM_ADD_PHOTO);
+                Utils.launchActivityWithIntent(this, intent);
             }
             break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDialogPositiveClick(ImageRealEstate imageRealEstate) {
+        Log.d(TAG, "onDialogPositiveClick: called!");
+        ToastHelper.toastLong(this, imageRealEstate.getDescription());
+
+    }
+
+    @Override
+    public void onDialogNegativeClick() {
+        Log.d(TAG, "onDialogNegativeClick: called!");
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -196,10 +221,27 @@ public class AddPhotoActivityTrial extends BaseActivity {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
-                        ToastHelper.toastLong(AddPhotoActivityTrial.this, adapter.getKey(position));
+
+                        String key = getListOfBitmapKeys().get(position);
+
+                        for (int i = 0; i < getListOfImagesRealEstateCache().size(); i++) {
+
+                            if (getListOfImagesRealEstateCache().get(i).getId().equals(key)) {
+                                launchAddDescriptionDialog(getListOfImagesRealEstateCache().get(i));
+                                break;
+                            }
+                        }
                     }
                 });
     }
+
+    private void updateAdapterData () {
+        Log.d(TAG, "updateAdapterData: called!");
+        adapter.setDataKeys(getListOfBitmapKeys());
+        adapter.setDataBitmapCache(getBitmapCache());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void launchGallery() {
         Log.d(TAG, "launchGallery: called!");
@@ -216,68 +258,15 @@ public class AddPhotoActivityTrial extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** This method uses inSampleSize to reduce the size of the image in memory
-     * */
-    private Bitmap decodeSampleBitmapFromInputStream (InputStream stream, int reqHeight, int reqWidth) {
-        Log.d(TAG, "decodeSampleBitmapFromFile: called!");
+    private void launchAddDescriptionDialog (ImageRealEstate imageRealEstate) {
+        Log.d(TAG, "launchAddDescriptionDialog: called!");
 
-        //Height and Width in pixels
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(stream, null, options);
-
-        Log.i(TAG, "readBitmapDimensionsAndType: height = " + options.outHeight);
-        Log.i(TAG, "readBitmapDimensionsAndType: width = " + options.outWidth);
-        Log.i(TAG, "readBitmapDimensionsAndType: memeType= " + options.outMimeType);
-        Log.i(TAG, "readBitmapDimensionsAndType: sizeInMemory = " + options.outHeight * options.outWidth * 4);
-
-        options.inSampleSize = calculateInSampleSize(options, reqHeight, reqWidth);
-
-        options.inJustDecodeBounds = false;
-
-        Bitmap bitmap = BitmapFactory.decodeStream(stream, null, options);
-        Log.i(TAG, "readBitmapDimensionsAndType: height = " + options.outHeight);
-        Log.i(TAG, "readBitmapDimensionsAndType: width = " + options.outWidth);
-        Log.i(TAG, "readBitmapDimensionsAndType: memeType= " + options.outMimeType);
-        Log.i(TAG, "readBitmapDimensionsAndType: sizeInMemory = " + options.outHeight * options.outWidth * 4);
-        Log.i(TAG, "readBitmapDimensionsAndType: bitmap size() = " + bitmap.getByteCount());
-
-        return bitmap;
+        InsertDescriptionDialogFragment.newInstance(imageRealEstate)
+                .show(getSupportFragmentManager(), "InsertDescriptionDialogFragment");
 
     }
 
-    //Can be static
-    /** This method checks the current size of the image and, if the required size is still
-     * higher, it continues reducing the image
-     * */
-    private int calculateInSampleSize(BitmapFactory.Options options, int reqHeight, int reqWidth) {
-        Log.d(TAG, "calculateInSampleSize: called!");
 
-        //Height and Width in pixels
-        int height = options.outHeight;
-        int width = options.outWidth;
-        int inSampleSize = 1;
 
-        Log.d(TAG, "calculateInSampleSize: height = " + height);
-        Log.d(TAG, "calculateInSampleSize: reqHeight = " + reqHeight);
-        Log.d(TAG, "calculateInSampleSize: width = " + width);
-        Log.d(TAG, "calculateInSampleSize: reqWidth = " + reqWidth);
-
-        if (height > reqHeight || width > reqWidth) {
-
-            int halfHeight = height / 2;
-            int halfWidth = width / 2;
-
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-
-                Log.i(TAG, "calculateInSampleSize: in while loop...");
-
-                // 2 --> check inSampleSize docs
-                inSampleSize *= 2;
-            }
-        }
-        return inSampleSize;
-    }
 
 }

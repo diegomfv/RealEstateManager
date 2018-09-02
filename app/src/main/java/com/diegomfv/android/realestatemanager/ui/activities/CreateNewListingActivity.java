@@ -1,6 +1,5 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -8,10 +7,8 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
@@ -31,8 +28,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
@@ -52,6 +47,7 @@ import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceD
 import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
 import com.diegomfv.android.realestatemanager.network.remote.GoogleServiceStreams;
 import com.diegomfv.android.realestatemanager.receivers.InternetConnectionReceiver;
+import com.diegomfv.android.realestatemanager.ui.dialogfragments.InsertDescriptionDialogFragment;
 import com.diegomfv.android.realestatemanager.util.FirebasePushIdGenerator;
 import com.diegomfv.android.realestatemanager.util.GlideApp;
 import com.diegomfv.android.realestatemanager.util.GlideRequests;
@@ -60,9 +56,9 @@ import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -79,7 +75,10 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Diego Fajardo on 18/08/2018.
  */
-// TODO: 23/08/2018 If back button clicked when searching for an image, the app crashes
+
+// TODO: 02/09/2018 Don't check if the external storage is available, it always should be here!
+// TODO: 02/09/2018 Request permission in MainActivity and in AuthLoginActivity
+// TODO: 02/09/2018 If permissions are not granted, don't let the user to continue
 public class CreateNewListingActivity extends BaseActivity implements Observer, InsertAddressDialogFragment.InsertAddressDialogListener {
 
     private static final String TAG = CreateNewListingActivity.class.getSimpleName();
@@ -156,15 +155,11 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     //RecyclerView Adapter
     private RVAdapterMediaHorizontal adapter;
 
-    private RequestManager glide;
-
-    private boolean accessInternalStorageGranted;
+    private GlideRequests glide;
 
     private int counter;
 
     private Unbinder unbinder;
-
-    private List<Bitmap> listOfBitmaps;
 
     //InternetConnectionReceiver variables
     private InternetConnectionReceiver receiver;
@@ -181,20 +176,18 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         this.currency = Utils.readCurrentCurrencyShPref(this);
 
-        this.listOfBitmaps = new ArrayList<>();
-
-        this.accessInternalStorageGranted = false;
         this.isInternetAvailable = false;
 
         this.counter = 0;
 
-
-        this.glide = Glide.with(this);
+        this.glide = GlideApp.with(this);
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.insert_information_layout);
         setTitle("Create a New Listing");
         this.unbinder = ButterKnife.bind(this);
+
+        this.checkIntent();
 
         this.configureActionBar();
 
@@ -204,7 +197,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         this.updateViews();
 
-        this.checkInternalStoragePermissionGranted();
+        this.configureRecyclerView();
 
         // TODO: 26/08/2018 Delete
         generateFakeData();
@@ -252,7 +245,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         // TODO: 19/08/2018 Might need to change this
 
         // TODO: 19/08/2018 Add a fragment saying, would you like to delete the media?
-        // TODO: 19/08/2018 If yes, clean the list and the HashMap 
+        // TODO: 19/08/2018 If yes, clean the list and the HashMap
         //do nothing
     }
 
@@ -293,7 +286,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     public void update(Observable o, Object internetAvailable) {
         Log.d(TAG, "update: called!");
         isInternetAvailable = Utils.setInternetAvailability(internetAvailable);
-        snackbarConfiguration();
+        snackBarConfiguration();
     }
 
     @OnClick({R.id.button_add_edit_address_id, R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id})
@@ -331,21 +324,22 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.d(TAG, "onRequestPermissionsResult: called!");
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
-        switch (requestCode) {
+    private void checkIntent () {
+        Log.d(TAG, "checkIntent: called!");
+        if (getIntent() != null
+                && getIntent().getExtras() != null
+                && getIntent().getExtras().getString(Constants.INTENT_FROM_ADD_PHOTO) != null
+                && getIntent().getExtras().getString(Constants.INTENT_FROM_ADD_PHOTO).equals(Constants.STRING_FROM_ADD_PHOTO)) {
+            /* If we come from ADD PHOTO we do not delete the cache
+             * */
 
-            case Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE: {
-
-                if (grantResults.length > 0 && grantResults[0] != -1) {
-                    accessInternalStorageGranted = true;
-                    getBitmapImagesFromImagesFiles();
-                }
-            }
-            break;
+        } else {
+            /* If we come from other place, we delete the cache
+             * */
+            getRepository().deleteBitmapCache();
+            getRepository().deleteCacheAndSets();
         }
     }
 
@@ -501,20 +495,18 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void launchInsertAddressDialog() {
         Log.d(TAG, "launchInsertAddressDialog: called!");
 
-        DialogFragment dialog = new InsertAddressDialogFragment();
-        dialog.show(getSupportFragmentManager(), "InsertAddressDialogFragment");
-
+        InsertAddressDialogFragment.newInstance(getRealEstateCache().getAddress())
+                .show(getSupportFragmentManager(), "InsertAddressDialogFragment");
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialogFragment, AddressRealEstate addressRealEstate) {
+    public void onDialogPositiveClick(AddressRealEstate addressRealEstate) {
         Log.d(TAG, "onDialogPositiveClick: called!");
-
         checkAddressIsValid(addressRealEstate);
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialogFragment) {
+    public void onDialogNegativeClick() {
         Log.d(TAG, "onDialogNegativeClick: called!");
 
         ToastHelper.toastShort(this, "The address was not added");
@@ -586,7 +578,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                         Log.d(TAG, "onSuccess: called!");
 
                         insertListPlacesRealEstate();
-                        copyAllBitmapsFromTemporaryDirectoryToImageDirectory();
+
+                        // TODO: 02/09/2018 Check this!
+                        insertAllBitmapsInImagesDirectory();
+                        // TODO: 02/09/2018 Check this!
 
                     }
 
@@ -602,7 +597,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     public void insertListPlacesRealEstate() {
         Log.d(TAG, "insertListPlacesRealEstate: called");
 
-        // TODO: 23/08/2018 Could be done just with App Executors
+        // TODO: 02/09/2018 Could be done just with app executors
         Single.just(getAppDatabase().placeRealEstateDao().insertListOfPlaceRealEstate(getListOfPlacesRealEstateCache()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -617,6 +612,14 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                         Log.e(TAG, "onError: " + e.getMessage());
                     }
                 });
+    }
+
+    public void insertAllBitmapsInImagesDirectory () {
+        Log.d(TAG, "insertAllBitmapsInImagesDirectory: called!");
+
+        for (Map.Entry<String, Bitmap> entry : getBitmapCache().entrySet()) {
+            getRepository().addBitmapToBitmapCacheAndStorage(getInternalStorage(), getImagesDir(), entry.getKey(), entry.getValue());
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -698,6 +701,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         }
     }
+
 
     private void updateRealEstateCacheWithAddress(AddressRealEstate addressRealEstate) {
         Log.d(TAG, "updateRealEstateCacheWithAddress: called!");
@@ -897,8 +901,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         snackbar = null;
     }
 
-    private void snackbarConfiguration() {
-        Log.d(TAG, "snackbarConfiguration: called!");
+    private void snackBarConfiguration() {
+        Log.d(TAG, "snackBarConfiguration: called!");
 
         if (isInternetAvailable) {
             if (snackbar != null) {
@@ -920,121 +924,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<Bitmap> getListOfBitmaps () {
-        Log.d(TAG, "getListOfBitmaps: called!");
-        if (listOfBitmaps == null) {
-            return listOfBitmaps = new ArrayList<>();
-        }
-        return listOfBitmaps;
-    }
-
     //INTERNAL STORAGE
-
-    private void checkInternalStoragePermissionGranted() {
-        Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
-
-        if (Utils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            accessInternalStorageGranted = true;
-            getBitmapImagesFromImagesFiles();
-
-        } else {
-            Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
-        }
-    }
-
-    @SuppressLint("CheckResult")
-    private void getBitmapImagesFromImagesFiles() {
-        Log.d(TAG, "getBitmapImagesFromImagesFiles: called!");
-
-        if (accessInternalStorageGranted) {
-
-            counter = getListOfImagesRealEstateCache().size();
-
-            for (int i = 0; i < getListOfImagesRealEstateCache().size(); i++) {
-
-                Single.just(getInternalStorage().readFile(getTemporaryDir() + getListOfImagesRealEstateCache().get(i).getId()))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<byte[]>() {
-                            @Override
-                            public void onSuccess(byte[] data) {
-                                Log.i(TAG, "onSuccess: called!");
-
-                                getListOfBitmaps().add(BitmapFactory.decodeByteArray(data, 0, data.length));
-
-                                counter--;
-                                if (counter == 0) {
-                                    configureRecyclerView();
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e(TAG, "onError: " + e.getMessage());
-
-                            }
-                        });
-            }
-        }
-    }
-
-    @SuppressLint("CheckResult")
-    public void copyAllBitmapsFromTemporaryDirectoryToImageDirectory() {
-        Log.d(TAG, "copyAllBitmapsFromTemporaryDirectoryToImageDirectory: called!");
-
-        if (accessInternalStorageGranted) {
-
-            List<File> listOfTempFiles = getInternalStorage().getFiles(getTemporaryDir());
-
-            byte[] temporaryFileByteArray;
-            String pushKey;
-
-            for (int i = 0; i < listOfTempFiles.size(); i++) {
-
-                pushKey = listOfTempFiles.get(i).getName();
-                temporaryFileByteArray = getInternalStorage().readFile(getTemporaryDir() + pushKey);
-
-                if (getInternalStorage().isDirectoryExists(getImagesDir())) {
-                    createFileInImagesDir(getImagesDir() + pushKey, temporaryFileByteArray);
-
-                } else {
-                    getInternalStorage().createDirectory(getImagesDir());
-                    createFileInImagesDir(getImagesDir() + pushKey, temporaryFileByteArray);
-                }
-            }
-
-            Utils.launchActivity(this, MainActivity.class);
-            createNotification();
-
-        } else {
-            // TODO: 18/08/2018 Create a dialog asking for permissions! It should load configure internal storage again!
-            ToastHelper.toastInternalStorageAccessNotGranted(this);
-
-        }
-
-    }
-
-    @SuppressLint("CheckResult")
-    private void createFileInImagesDir(String filePath, byte[] file) {
-        Log.d(TAG, "createFileInImagesDir: called!");
-
-        Single.just(getInternalStorage().createFile(filePath, file))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean fileIsCreated) {
-                        Log.i(TAG, "onSuccess: called!");
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: called!");
-                        ToastHelper.toastThereWasAnError(CreateNewListingActivity.this);
-                    }
-                });
-    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1046,7 +936,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 this, LinearLayoutManager.HORIZONTAL, false));
         this.adapter = new RVAdapterMediaHorizontal(
                 this,
-                getListOfBitmaps(),
+                getListOfBitmapKeys(),
+                getBitmapCache(),
+                getImagesDir(),
                 glide);
         this.recyclerView.setAdapter(this.adapter);
 
@@ -1072,13 +964,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void launchAddPhotoActivity() {
         Log.d(TAG, "launchAddPhotoActivity: called!");
 
-        if (!accessInternalStorageGranted) {
-            ToastHelper.toastInternalStorageAccessNotGranted(this);
+        updateRealEstateCache();
+        Utils.launchActivity(this, AddPhotoActivityTrial.class);
 
-        } else {
-            updateRealEstateCache();
-            Utils.launchActivity(this, AddPhotoActivity.class);
-        }
     }
 
     private void createNotification() {

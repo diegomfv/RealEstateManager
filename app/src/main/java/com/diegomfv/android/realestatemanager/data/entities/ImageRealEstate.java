@@ -6,10 +6,12 @@ package com.diegomfv.android.realestatemanager.data.entities;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 @Entity(tableName = "image")
-public class ImageRealEstate {
+public class ImageRealEstate implements Parcelable {
 
     @PrimaryKey
     @NonNull
@@ -45,4 +47,32 @@ public class ImageRealEstate {
                 ", description='" + description + '\'' +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.description);
+    }
+
+    protected ImageRealEstate(Parcel in) {
+        this.id = in.readString();
+        this.description = in.readString();
+    }
+
+    public static final Creator<ImageRealEstate> CREATOR = new Creator<ImageRealEstate>() {
+        @Override
+        public ImageRealEstate createFromParcel(Parcel source) {
+            return new ImageRealEstate(source);
+        }
+
+        @Override
+        public ImageRealEstate[] newArray(int size) {
+            return new ImageRealEstate[size];
+        }
+    };
 }

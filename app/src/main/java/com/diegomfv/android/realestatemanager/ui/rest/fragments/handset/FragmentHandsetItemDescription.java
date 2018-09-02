@@ -179,7 +179,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
             Log.i(TAG, "onCreateView: bundle = " + bundle);
         }
 
-        this.configureRecyclerView();
+        //this.configureRecyclerView();
 
         if (realEstate != null) {
             fillLayoutWithRealEstateInfo(realEstate);
@@ -288,7 +288,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                                         BitmapFactory.decodeByteArray(data, 0, data.length));
 
                                 if (imagesCounter == 0) {
-                                    adapter.setData(getListOfBitmaps());
+                                    //adapter.setData(getListOfBitmaps());
                                 }
                             }
 
@@ -339,33 +339,33 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureRecyclerView() {
-        Log.d(TAG, "configureRecyclerView: called!");
-        this.recyclerViewMedia.setHasFixedSize(true);
-        this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
-                getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        this.adapter = new RVAdapterMediaHorizontal(
-                getActivity(),
-                getListOfBitmaps(),
-                glide);
-        this.recyclerViewMedia.setAdapter(this.adapter);
-
-        this.configureOnClickRecyclerView();
-    }
-
-    private void configureOnClickRecyclerView() {
-        Log.d(TAG, "configureOnClickRecyclerView: called!");
-
-        ItemClickSupport.addTo(recyclerViewMedia)
-                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerViewMedia, int position, View v) {
-                        Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
-                        // TODO: 27/08/2018
-                        ToastHelper.toastShort(getActivity(), "Delete this!");
-                    }
-                });
-    }
+//    private void configureRecyclerView() {
+//        Log.d(TAG, "configureRecyclerView: called!");
+//        this.recyclerViewMedia.setHasFixedSize(true);
+//        this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
+//                getActivity(), LinearLayoutManager.HORIZONTAL, false));
+//        this.adapter = new RVAdapterMediaHorizontal(
+//                getActivity(),
+//                getListOfBitmaps(),
+//                glide);
+//        this.recyclerViewMedia.setAdapter(this.adapter);
+//
+//        this.configureOnClickRecyclerView();
+//    }
+//
+//    private void configureOnClickRecyclerView() {
+//        Log.d(TAG, "configureOnClickRecyclerView: called!");
+//
+//        ItemClickSupport.addTo(recyclerViewMedia)
+//                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClicked(RecyclerView recyclerViewMedia, int position, View v) {
+//                        Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
+//                        // TODO: 27/08/2018
+//                        ToastHelper.toastShort(getActivity(), "Delete this!");
+//                    }
+//                });
+//    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 

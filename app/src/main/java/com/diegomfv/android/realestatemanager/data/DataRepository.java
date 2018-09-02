@@ -195,9 +195,13 @@ public class DataRepository {
 
     public void addBitmapToBitmapCache (String key, Bitmap bitmap) {
         Log.d(TAG, "addBitmapToBitmapCache: called!");
-        getBitmapCache().put(key, bitmap);
-        checkBitmapCacheSize();
-
+        if (!getBitmapCache().containsKey(key)) {
+            getBitmapCache().put(key, bitmap);
+            checkBitmapCacheSize();
+        } else {
+            Log.w(TAG, "addBitmapToBitmapCache: key already in Cache");
+            checkBitmapCacheSize();
+        }
     }
 
     private void checkBitmapCacheSize () {

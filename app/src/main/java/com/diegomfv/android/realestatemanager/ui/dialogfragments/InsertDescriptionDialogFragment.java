@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +16,7 @@ import android.widget.Button;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
-import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
@@ -26,77 +25,49 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
- * Created by Diego Fajardo on 19/08/2018.
+ * Created by Diego Fajardo on 02/09/2018.
  */
+public class InsertDescriptionDialogFragment extends android.support.v4.app.DialogFragment {
 
-/**
- * Tássio Auad, Medium
- * DialogFragment/AlertDialog dismiss automatically on click button.
- *
- * What happens with AlertDialog’s setButton() method (and I imagine the same with
- * AlertDialogBuilder’s setPositiveButton() and setNegativeButton()) is that the button
- * you set (e.g. AlertDialog.BUTTON_POSITIVE) with it will actually trigger TWO different
- * OnClickListener objects when pressed. The first being DialogInterface.OnClickListener,
- * which is a parameter to setButton(), setPositiveButton(), and setNegativeButton().
- * The other is View.OnClickListener, which will be set to automatically dismiss your AlertDialog
- * when any of its button is pressed — and is set by AlertDialog itself.
- * That is why we override the View.OnClickListener();
- * */
-
-public class InsertAddressDialogFragment extends DialogFragment {
-
-    private static final String TAG = InsertAddressDialogFragment.class.getSimpleName();
+    private static final String TAG = InsertDescriptionDialogFragment.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @BindView(R.id.card_view_street_id)
-    CardView cardViewStreet;
+    @BindView(R.id.card_view_description_id)
+    CardView cardViewDescription;
 
-    @BindView(R.id.card_view_locality_id)
-    CardView cardViewLocality;
-
-    @BindView(R.id.card_view_address_id)
-    CardView cardViewCity;
-
-    @BindView(R.id.card_view_postcode_id)
-    CardView cardViewPostcode;
-
-    private AutoCompleteTextView tvStreet;
-
-    private AutoCompleteTextView tvLocality;
-
-    private AutoCompleteTextView tvCity;
-
-    private AutoCompleteTextView tvPostcode;
-
-    private AddressRealEstate addressRealEstate;
+    private AutoCompleteTextView tvDescription;
 
     private Button buttonOk;
+
+    private ImageRealEstate imageRealEstate;
 
     private Unbinder unbinder;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public interface InsertAddressDialogListener {
-        void onDialogPositiveClick (AddressRealEstate addressRealEstate);
+    public interface InsertDescriptionDialogListener {
+        void onDialogPositiveClick (ImageRealEstate imageRealEstate);
         void onDialogNegativeClick ();
     }
 
-    private InsertAddressDialogListener onButtonClickedListener;
+    private InsertDescriptionDialogFragment.InsertDescriptionDialogListener onButtonClickedListener;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static InsertAddressDialogFragment newInstance (AddressRealEstate addressRealEstate) {
+    public static InsertDescriptionDialogFragment newInstance (ImageRealEstate imageRealEstate) {
 
-        InsertAddressDialogFragment dialogFragment = new InsertAddressDialogFragment();
+        InsertDescriptionDialogFragment dialogFragment = new InsertDescriptionDialogFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
-        args.putParcelable(Constants.DIALOG_ADDRESS, addressRealEstate);
+        args.putParcelable(Constants.DIALOG_DESCRIPTION, imageRealEstate);
         dialogFragment.setArguments(args);
 
         return dialogFragment;
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NonNull
     @SuppressLint("InflateParams")
@@ -107,11 +78,11 @@ public class InsertAddressDialogFragment extends DialogFragment {
         if (getActivity() != null) {
 
             if (getArguments() != null) {
-                addressRealEstate = getArguments().getParcelable(Constants.DIALOG_ADDRESS);
+                imageRealEstate = getArguments().getParcelable(Constants.DIALOG_DESCRIPTION);
             }
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            View view = View.inflate(getActivity(), R.layout.dialog_insert_address, null);
+            View view = View.inflate(getActivity(), R.layout.dialog_add_description, null);
             unbinder = ButterKnife.bind(this, view);
 
             this.configureLayout();
@@ -152,7 +123,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: called!");
-                checkTextViewsText(alertDialog);
+                setImageRealEstateDescription(alertDialog);
             }
         });
 
@@ -164,7 +135,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
         Log.d(TAG, "onAttach: called!");
 
         try {
-            onButtonClickedListener = (InsertAddressDialogListener) context;
+            onButtonClickedListener = (InsertDescriptionDialogFragment.InsertDescriptionDialogListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement InsertAddressDialogListener");
@@ -193,10 +164,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
     private void getAutocompleteTextViews () {
         Log.d(TAG, "getAutocompleteTextViews: called!");
 
-        this.tvStreet = cardViewStreet.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvLocality = cardViewLocality.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvCity = cardViewCity.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvPostcode = cardViewPostcode.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+        this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
 
     }
 
@@ -204,11 +172,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
         Log.d(TAG, "setAllHints: called!");
 
         // TODO: 23/08/2018 Use Resources instead of hardcode text
-
-        setHint(cardViewStreet, "Street");
-        setHint(cardViewLocality, "Locality");
-        setHint(cardViewCity, "City");
-        setHint(cardViewPostcode, "Postcode");
+        setHint(cardViewDescription, "Description");
 
     }
 
@@ -221,39 +185,17 @@ public class InsertAddressDialogFragment extends DialogFragment {
 
     private void setText () {
         Log.d(TAG, "setText: called!");
-        tvStreet.setText(addressRealEstate.getStreet());
-        tvLocality.setText(addressRealEstate.getLocality());
-        tvCity.setText(addressRealEstate.getCity());
-        tvPostcode.setText(addressRealEstate.getPostcode());
+        tvDescription.setText(imageRealEstate.getDescription());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void checkTextViewsText(AlertDialog dialog) {
-        Log.d(TAG, "checkTextViewsText: called!");
+    private void setImageRealEstateDescription (AlertDialog dialog) {
+        Log.d(TAG, "setImageRealEstateDescription: called!");
+        imageRealEstate.setDescription(Utils.getStringFromTextView(tvDescription));
+        onButtonClickedListener.onDialogPositiveClick(imageRealEstate);
+        dialog.dismiss();
 
-        if (Utils.getStringFromTextView(tvStreet).length() == 0) {
-            ToastHelper.toastShort(getActivity(), "Please, introduce a street");
-
-        } else if (Utils.getStringFromTextView(tvLocality).length() == 0) {
-            ToastHelper.toastShort(getActivity(), "Please, introduce a city");
-
-        } else if (Utils.getStringFromTextView(tvCity).length() == 0) {
-            ToastHelper.toastShort(getActivity(), "Please, introduce a locality");
-
-        } else if (Utils.getStringFromTextView(tvPostcode).length() == 0) {
-            ToastHelper.toastShort(getActivity(), "Please, introduce a postcode");
-
-        } else {
-            onButtonClickedListener.onDialogPositiveClick(
-                    new AddressRealEstate(
-                            Utils.getStringFromTextView(tvStreet),
-                            Utils.getStringFromTextView(tvLocality),
-                            Utils.getStringFromTextView(tvCity),
-                            Utils.getStringFromTextView(tvPostcode)
-                    ));
-
-            dialog.dismiss();
-        }
     }
+
 }

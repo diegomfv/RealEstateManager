@@ -10,21 +10,12 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:layout_gravity="center"
-        android:text="INSERT ADDRESS"
+        android:text="ADD DESCRIPTION"
         android:textStyle="bold"
         android:textSize="30sp"
         android:textColor="@color/colorPrimaryDark"/>
 
     <include layout="@layout/card_view_autocomplete"
-        android:id="@+id/card_view_street_id" />
-
-    <include layout="@layout/card_view_autocomplete"
-        android:id="@+id/card_view_locality_id" />
-
-    <include layout="@layout/card_view_autocomplete"
-        android:id="@+id/card_view_address_id" />
-
-    <include layout="@layout/card_view_autocomplete"
-        android:id="@+id/card_view_postcode_id"/>
+        android:id="@+id/card_view_description_id" />
 
 </LinearLayout>

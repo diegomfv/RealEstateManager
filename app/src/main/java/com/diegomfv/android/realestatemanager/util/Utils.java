@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -33,6 +34,7 @@ import com.diegomfv.android.realestatemanager.network.models.placefindplacefromt
 import com.diegomfv.android.realestatemanager.rx.ObservableObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -489,6 +491,11 @@ public class Utils {
 
     }
 
+    public static void launchActivityWithIntent (Context context, Intent intent) {
+        Log.d(TAG, "launchActivityWithIntent: called!");
+        context.startActivity(intent);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Method that displays the main content
@@ -634,6 +641,70 @@ public class Utils {
         }
 
         return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+    /** This method uses inSampleSize to reduce the size of the image in memory
+     * */
+    public static Bitmap decodeSampleBitmapFromInputStream (InputStream stream, int reqHeight, int reqWidth) {
+        Log.d(TAG, "decodeSampleBitmapFromFile: called!");
+
+        //Height and Width in pixels
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(stream, null, options);
+
+        Log.i(TAG, "readBitmapDimensionsAndType: height = " + options.outHeight);
+        Log.i(TAG, "readBitmapDimensionsAndType: width = " + options.outWidth);
+        Log.i(TAG, "readBitmapDimensionsAndType: memeType= " + options.outMimeType);
+        Log.i(TAG, "readBitmapDimensionsAndType: sizeInMemory = " + options.outHeight * options.outWidth * 4);
+
+        options.inSampleSize = calculateInSampleSize(options, reqHeight, reqWidth);
+
+        options.inJustDecodeBounds = false;
+
+        Bitmap bitmap = BitmapFactory.decodeStream(stream, null, options);
+        Log.i(TAG, "readBitmapDimensionsAndType: height = " + options.outHeight);
+        Log.i(TAG, "readBitmapDimensionsAndType: width = " + options.outWidth);
+        Log.i(TAG, "readBitmapDimensionsAndType: memeType= " + options.outMimeType);
+        Log.i(TAG, "readBitmapDimensionsAndType: sizeInMemory = " + options.outHeight * options.outWidth * 4);
+        Log.i(TAG, "readBitmapDimensionsAndType: bitmap size() = " + bitmap.getByteCount());
+
+        return bitmap;
+
+    }
+
+    //Can be static
+    /** This method checks the current size of the image and, if the required size is still
+     * higher, it continues reducing the image
+     * */
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqHeight, int reqWidth) {
+        Log.d(TAG, "calculateInSampleSize: called!");
+
+        //Height and Width in pixels
+        int height = options.outHeight;
+        int width = options.outWidth;
+        int inSampleSize = 1;
+
+        Log.d(TAG, "calculateInSampleSize: height = " + height);
+        Log.d(TAG, "calculateInSampleSize: reqHeight = " + reqHeight);
+        Log.d(TAG, "calculateInSampleSize: width = " + width);
+        Log.d(TAG, "calculateInSampleSize: reqWidth = " + reqWidth);
+
+        if (height > reqHeight || width > reqWidth) {
+
+            int halfHeight = height / 2;
+            int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+
+                Log.i(TAG, "calculateInSampleSize: in while loop...");
+
+                // 2 --> check inSampleSize docs
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

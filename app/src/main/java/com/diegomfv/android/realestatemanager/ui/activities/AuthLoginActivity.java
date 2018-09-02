@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+// TODO: 02/09/2018 Check here if
 // TODO: 21/08/2018 Clean caches!
 // TODO: 30/08/2018 Remember to put a flag so we cannot come her again after signed in
 // TODO: 02/09/2018 Allow to continue only if InternalStorageAccess is granted!

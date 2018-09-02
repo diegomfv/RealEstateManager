@@ -123,7 +123,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
                 this.glide = Glide.with(getActivity());
             }
 
-            this.configureRecyclerView();
+            //this.configureRecyclerView();
 
             this.listingsSharedViewModel = this.createModel();
 
@@ -235,7 +235,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
                                         BitmapFactory.decodeByteArray(data, 0, data.length));
 
                                 if (imagesCounter == 0) {
-                                    adapter.setData(getListOfBitmaps());
+
                                 }
                             }
 
@@ -253,20 +253,20 @@ public class FragmentTabletItemDescription extends BaseFragment {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private void configureRecyclerView() {
-        Log.d(TAG, "configureRecyclerView: called!");
-        this.recyclerViewMedia.setHasFixedSize(true);
-        this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
-                getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        this.adapter = new RVAdapterMediaHorizontal(
-                getActivity(),
-                getListOfBitmaps(),
-                glide);
-        this.recyclerViewMedia.setAdapter(this.adapter);
-
-        this.configureOnClickRecyclerView();
-    }
+//
+//    private void configureRecyclerView() {
+//        Log.d(TAG, "configureRecyclerView: called!");
+//        this.recyclerViewMedia.setHasFixedSize(true);
+//        this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
+//                getActivity(), LinearLayoutManager.HORIZONTAL, false));
+//        this.adapter = new RVAdapterMediaHorizontal(
+//                getActivity(),
+//                getListOfBitmaps(),
+//                glide);
+//        this.recyclerViewMedia.setAdapter(this.adapter);
+//
+//        this.configureOnClickRecyclerView();
+   // }
 
     private void configureOnClickRecyclerView () {
         Log.d(TAG, "configureOnClickRecyclerView: called!");

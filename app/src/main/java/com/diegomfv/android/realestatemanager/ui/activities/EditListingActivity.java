@@ -480,7 +480,7 @@ public class EditListingActivity extends BaseActivity {
 
                                 imagesCounter--;
                                 if (imagesCounter == 0) {
-                                    configureRecyclerView();
+                                    //configureRecyclerView();
                                 }
                             }
 
@@ -496,21 +496,21 @@ public class EditListingActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureRecyclerView() {
-        Log.d(TAG, "configureRecyclerView: called!");
-
-        this.recyclerView.setHasFixedSize(true);
-        this.recyclerView.setLayoutManager(new LinearLayoutManager(
-                this, LinearLayoutManager.HORIZONTAL, false));
-        this.adapter = new RVAdapterMediaHorizontal(
-                this,
-                getListOfBitmaps(),
-                glide);
-        this.recyclerView.setAdapter(this.adapter);
-
-        this.configureOnClickRecyclerView();
-
-    }
+//    private void configureRecyclerView() {
+//        Log.d(TAG, "configureRecyclerView: called!");
+//
+//        this.recyclerView.setHasFixedSize(true);
+//        this.recyclerView.setLayoutManager(new LinearLayoutManager(
+//                this, LinearLayoutManager.HORIZONTAL, false));
+//        this.adapter = new RVAdapterMediaHorizontal(
+//                this,
+//                getListOfBitmaps(),
+//                glide);
+//        this.recyclerView.setAdapter(this.adapter);
+//
+//        this.configureOnClickRecyclerView();
+//
+//    }
 
     private void configureOnClickRecyclerView() {
         Log.d(TAG, "configureOnClickRecyclerView: called!");

@@ -76,4 +76,12 @@ public interface Constants {
     /* Determines how much memory will be used by the Bitmap Cache
     * */
     int CACHE_PARTITION = 8; // MaxMemory / 8
+
+    String INTENT_FROM_ADD_PHOTO = "intent_from_add_photo";
+    String STRING_FROM_ADD_PHOTO = "string_from_add_photo";
+
+
+    String DIALOG_DESCRIPTION = "dialog_description";
+    String DIALOG_ADDRESS = "dialog_address";
+
 }
