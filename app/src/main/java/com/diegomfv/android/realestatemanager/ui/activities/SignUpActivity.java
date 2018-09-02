@@ -12,9 +12,9 @@ import android.widget.Button;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.utils.TextInputAutoCompleteTextView;
-import com.diegomfv.android.realestatemanager.utils.ToastHelper;
-import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
+import com.diegomfv.android.realestatemanager.util.ToastHelper;
+import com.diegomfv.android.realestatemanager.util.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -23,8 +23,8 @@ import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontal;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.ui.rest.fragments.handset.FragmentHandsetItemDescription;
-import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
-import com.diegomfv.android.realestatemanager.utils.ToastHelper;
+import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
+import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
 import java.util.ArrayList;

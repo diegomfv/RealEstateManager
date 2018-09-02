@@ -1,4 +1,4 @@
-package com.diegomfv.android.realestatemanager.utils;
+package com.diegomfv.android.realestatemanager.util;
 
 /**
  * Created by swftvsn (github)

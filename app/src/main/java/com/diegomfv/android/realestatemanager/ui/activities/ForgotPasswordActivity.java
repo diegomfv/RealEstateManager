@@ -34,53 +34,51 @@ public class ForgotPasswordActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
-        imageView = findViewById(R.id.imageView_id);
-
-        // TODO: 31/08/2018 Probably this way is an easier way to download images
-        bitmap = BitmapFactory.decodeFile(getImagesDir() + )
-
-        Glide.with(this).load(bitmap).into(imageView);
-
-        Glide
+//        imageView = findViewById(R.id.imageView_id);
+//
+//        // TODO: 31/08/2018 Probably this way is an easier way to download images
+//        bitmap = BitmapFactory.decodeFile(getImagesDir() + )
+//
+//        Glide.with(this).load(bitmap).into(imageView);
 
 
     }
 
-    @SuppressLint("CheckResult")
-    private void getBitmapImagesFromImagesFiles() {
-        Log.d(TAG, "getBitmapImagesFromImagesFiles: called!");
-
-        if (accessInternalStorageGranted) {
-
-            counter = getListOfImagesRealEstateCache().size();
-
-            for (int i = 0; i < getListOfImagesRealEstateCache().size(); i++) {
-
-
-                Single.just(getInternalStorage().readFile(getTemporaryDir() + getListOfImagesRealEstateCache().get(i).getId()))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<byte[]>() {
-                            @Override
-                            public void onSuccess(byte[] data) {
-                                Log.i(TAG, "onSuccess: called!");
-
-                                getListOfBitmaps().add(BitmapFactory.decodeByteArray(data, 0, data.length));
-
-                                counter--;
-                                if (counter == 0) {
-                                    configureRecyclerView();
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e(TAG, "onError: " + e.getMessage());
-
-                            }
-                        });
-            }
-        }
-    }
+//    @SuppressLint("CheckResult")
+//    private void getBitmapImagesFromImagesFiles() {
+//        Log.d(TAG, "getBitmapImagesFromImagesFiles: called!");
+//
+//        if (accessInternalStorageGranted) {
+//
+//            counter = getListOfImagesRealEstateCache().size();
+//
+//            for (int i = 0; i < getListOfImagesRealEstateCache().size(); i++) {
+//
+//
+//                Single.just(getInternalStorage().readFile(getTemporaryDir() + getListOfImagesRealEstateCache().get(i).getId()))
+//                        .subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribeWith(new DisposableSingleObserver<byte[]>() {
+//                            @Override
+//                            public void onSuccess(byte[] data) {
+//                                Log.i(TAG, "onSuccess: called!");
+//
+//                                getListOfBitmaps().add(BitmapFactory.decodeByteArray(data, 0, data.length));
+//
+//                                counter--;
+//                                if (counter == 0) {
+//                                    configureRecyclerView();
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onError(Throwable e) {
+//                                Log.e(TAG, "onError: " + e.getMessage());
+//
+//                            }
+//                        });
+//            }
+//        }
+//    }
 
 }

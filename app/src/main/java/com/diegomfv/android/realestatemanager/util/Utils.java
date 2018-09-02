@@ -1,4 +1,4 @@
-package com.diegomfv.android.realestatemanager.utils;
+package com.diegomfv.android.realestatemanager.util;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -234,6 +235,25 @@ public class Utils {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static void getCurrentMemoryStatus () {
+        Log.d(TAG, "getCurrentMemoryStatus: called!");
+
+        final Runtime runtime = Runtime.getRuntime();
+        final long usedMemInMB=(runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
+        final long maxHeapSizeInMB=runtime.maxMemory() / 1048576L;
+        final long availHeapSizeInMB = maxHeapSizeInMB - usedMemInMB;
+
+        Log.i(TAG, "onCreate: " + usedMemInMB);
+        Log.i(TAG, "onCreate: " + maxHeapSizeInMB);
+        Log.i(TAG, "onCreate: " + availHeapSizeInMB);
+
+    }
+
+    public static long getMaxMemory () {
+        Log.d(TAG, "getMaxMemory: called!");
+        return Runtime.getRuntime().maxMemory() / 1024;
+    }
 
     public static boolean checksPlaceFromText (PlaceFromText placeFromText) {
         Log.d(TAG, "checkPlaceFromText: called!");
@@ -552,6 +572,8 @@ public class Utils {
 
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     public static void writeCurrentCurrencyShPref (Context context, int currency) {
         Log.d(TAG, "writeCurrentCurrencyShPref: called!");
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_CURRENCY_SETTINGS, Context.MODE_PRIVATE);
@@ -591,4 +613,29 @@ public class Utils {
                 sharedPreferences.getString(Constants.SH_PREF_AGENT_MEMORABLE_DATA_ANSWER, ""),
         };
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static Bitmap getResizedBitmap(Bitmap image, int bitmapWidth, int bitmapHeight) {
+        return Bitmap.createScaledBitmap(image, bitmapWidth, bitmapHeight, true);
+    }
+
+    public static Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
 }

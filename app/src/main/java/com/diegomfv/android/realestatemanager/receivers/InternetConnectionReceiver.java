@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.diegomfv.android.realestatemanager.rx.ObservableObject;
-import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.diegomfv.android.realestatemanager.util.Utils;
 
 import io.reactivex.observers.DisposableObserver;
 

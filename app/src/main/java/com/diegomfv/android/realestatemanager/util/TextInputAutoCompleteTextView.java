@@ -1,4 +1,4 @@
-package com.diegomfv.android.realestatemanager.utils;
+package com.diegomfv.android.realestatemanager.util;
 
 import android.content.Context;
 import android.support.design.widget.TextInputLayout;

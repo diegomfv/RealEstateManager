@@ -15,9 +15,9 @@ import com.amitshekhar.DebugDB;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.utils.TextInputAutoCompleteTextView;
-import com.diegomfv.android.realestatemanager.utils.ToastHelper;
-import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
+import com.diegomfv.android.realestatemanager.util.ToastHelper;
+import com.diegomfv.android.realestatemanager.util.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,6 +26,7 @@ import butterknife.Unbinder;
 
 // TODO: 21/08/2018 Clean caches!
 // TODO: 30/08/2018 Remember to put a flag so we cannot come her again after signed in
+// TODO: 02/09/2018 Allow to continue only if InternalStorageAccess is granted!
 public class AuthLoginActivity extends BaseActivity {
 
     private static final String TAG = AuthLoginActivity.class.getSimpleName();
@@ -79,18 +80,20 @@ public class AuthLoginActivity extends BaseActivity {
          * */
         Utils.checkAllPermissions(this);
 
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.launchActivity(AuthLoginActivity.this, AddPhotoActivityTrial.class);
+            }
+        });
+
     }
 
-    @OnClick({R.id.logo_image_id, R.id.button_sign_up_password_id, R.id.button_sign_in_password_id})
+    @OnClick({R.id.button_sign_up_password_id, R.id.button_sign_in_password_id})
     public void buttonClicked(View view) {
         Log.d(TAG, "buttonClicked: " + ((Button) view).getText().toString() + " clicked!");
 
         switch (view.getId()) {
-
-            case R.id.logo_image_id: {
-                DebugDB.getAddressLog();
-            }
-            break;
 
             case R.id.button_sign_in_password_id: {
                 if (allChecksPassed()) {

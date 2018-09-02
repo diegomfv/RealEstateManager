@@ -12,7 +12,7 @@
         android:id="@+id/text_input_layout_id"
         style="@style/textInputLayoutStyle">
 
-        <com.diegomfv.android.realestatemanager.utils.TextInputAutoCompleteTextView
+        <com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView
             android:id="@+id/text_input_autocomplete_text_view_id"
             style="@style/textInputEditTextStyle"
             android:inputType="text"

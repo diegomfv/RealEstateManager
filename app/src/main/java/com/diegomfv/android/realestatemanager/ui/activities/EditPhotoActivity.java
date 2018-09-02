@@ -24,9 +24,9 @@ import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.utils.FirebasePushIdGenerator;
-import com.diegomfv.android.realestatemanager.utils.ToastHelper;
-import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.diegomfv.android.realestatemanager.util.FirebasePushIdGenerator;
+import com.diegomfv.android.realestatemanager.util.ToastHelper;
+import com.diegomfv.android.realestatemanager.util.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;

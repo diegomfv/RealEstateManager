@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
-import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.diegomfv.android.realestatemanager.util.Utils;
 
 import java.util.List;
 import java.util.Map;
@@ -94,7 +94,7 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
      * Method to update the data
      */
     public void setData(List<RealEstate> newData) {
-        Log.d(TAG, "setData: called!");
+        Log.d(TAG, "setDataKeys: called!");
         this.listRealEstates = newData;
         notifyDataSetChanged();
     }

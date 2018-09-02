@@ -1,5 +1,6 @@
 package com.diegomfv.android.realestatemanager.ui.base;
 
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -10,10 +11,13 @@ import com.diegomfv.android.realestatemanager.data.DataRepository;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.util.GlideApp;
+import com.diegomfv.android.realestatemanager.util.GlideRequests;
 import com.snatik.storage.Storage;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -67,19 +71,34 @@ public class BaseActivity extends AppCompatActivity {
         return getRepository().getListOfPlacesRealEstateCache();
     }
 
+    protected List<String> getListOfBitmapKeys () {
+        Log.d(TAG, "getListOfBitmapKeys: called!");
+        return getRepository().getListOfBitmapKeys();
+    }
+
+    protected Map<String,Bitmap> getBitmapCache () {
+        Log.d(TAG, "getBitmapCache: called!");
+        return getRepository().getBitmapCache();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     protected String getImagesDir () {
         Log.d(TAG, "getImagesDir: called!");
         //mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
         return getInternalStorage().getInternalFilesDirectory() + File.separator
-                + Constants.TEMPORARY_DIRECTORY + File.separator;
+                + Constants.IMAGES_DIRECTORY + File.separator;
     }
 
     protected String getTemporaryDir () {
         Log.d(TAG, "getTemporaryDir: called!");
         return getInternalStorage().getInternalFilesDirectory() + File.separator
-                + Constants.IMAGES_DIRECTORY + File.separator;
+                + Constants.TEMPORARY_DIRECTORY + File.separator;
+    }
+
+    protected String getCacheDirectory () {
+        Log.d(TAG, "getCacheDir: called!");
+        return getInternalStorage().getInternalCacheDirectory() + File.separator;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,6 +121,13 @@ public class BaseActivity extends AppCompatActivity {
     protected Set<String> getSetOfTypesOfPointsOfInterest() {
         Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
         return getApp().getRepository().getSetOfTypesOfPointsOfInterest();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    protected GlideRequests getGlide () {
+        Log.d(TAG, "getGlide: called!");
+        return GlideApp.with(getApp());
     }
 
 }

@@ -27,8 +27,8 @@ import com.diegomfv.android.realestatemanager.ui.activities.DetailActivity;
 import com.diegomfv.android.realestatemanager.ui.activities.EditListingActivity;
 import com.diegomfv.android.realestatemanager.ui.activities.MainActivity;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
-import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
-import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
+import com.diegomfv.android.realestatemanager.util.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
 import java.util.ArrayList;

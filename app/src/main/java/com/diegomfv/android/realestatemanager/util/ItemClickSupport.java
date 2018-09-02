@@ -1,4 +1,4 @@
-package com.diegomfv.android.realestatemanager.utils;
+package com.diegomfv.android.realestatemanager.util;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

@@ -1,4 +1,4 @@
-package com.diegomfv.android.realestatemanager.utils;
+package com.diegomfv.android.realestatemanager.util;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,8 +8,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.diegomfv.android.realestatemanager.R;
-
-import io.reactivex.observers.DisposableSingleObserver;
 
 /**
  * Created by Diego Fajardo on 13/08/2018.

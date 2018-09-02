@@ -39,10 +39,10 @@ import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.datamodels.RoomsRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
-import com.diegomfv.android.realestatemanager.utils.TextInputAutoCompleteTextView;
-import com.diegomfv.android.realestatemanager.utils.ToastHelper;
-import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
+import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
+import com.diegomfv.android.realestatemanager.util.ToastHelper;
+import com.diegomfv.android.realestatemanager.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

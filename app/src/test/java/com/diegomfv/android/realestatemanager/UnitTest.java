@@ -1,7 +1,6 @@
 package com.diegomfv.android.realestatemanager;
 
-import com.diegomfv.android.realestatemanager.network.models.placedetails.Location;
-import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.diegomfv.android.realestatemanager.util.Utils;
 
 import junit.framework.Assert;
 

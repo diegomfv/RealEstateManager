@@ -52,11 +52,13 @@ import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceD
 import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
 import com.diegomfv.android.realestatemanager.network.remote.GoogleServiceStreams;
 import com.diegomfv.android.realestatemanager.receivers.InternetConnectionReceiver;
-import com.diegomfv.android.realestatemanager.utils.FirebasePushIdGenerator;
-import com.diegomfv.android.realestatemanager.utils.ItemClickSupport;
-import com.diegomfv.android.realestatemanager.utils.TextInputAutoCompleteTextView;
-import com.diegomfv.android.realestatemanager.utils.ToastHelper;
-import com.diegomfv.android.realestatemanager.utils.Utils;
+import com.diegomfv.android.realestatemanager.util.FirebasePushIdGenerator;
+import com.diegomfv.android.realestatemanager.util.GlideApp;
+import com.diegomfv.android.realestatemanager.util.GlideRequests;
+import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
+import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
+import com.diegomfv.android.realestatemanager.util.ToastHelper;
+import com.diegomfv.android.realestatemanager.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -185,6 +187,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.isInternetAvailable = false;
 
         this.counter = 0;
+
 
         this.glide = Glide.with(this);
 

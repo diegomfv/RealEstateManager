@@ -10,6 +10,8 @@ import com.diegomfv.android.realestatemanager.data.DataRepository;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.util.GlideApp;
+import com.diegomfv.android.realestatemanager.util.GlideRequests;
 import com.snatik.storage.Storage;
 
 import java.io.File;
@@ -74,13 +76,20 @@ public class BaseFragment extends Fragment {
         Log.d(TAG, "getImagesDir: called!");
         //mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
         return getInternalStorage().getInternalFilesDirectory() + File.separator
-                + Constants.TEMPORARY_DIRECTORY + File.separator;
+                + Constants.IMAGES_DIRECTORY + File.separator;
     }
 
     protected String getTemporaryDir () {
         Log.d(TAG, "getTemporaryDir: called!");
         return getInternalStorage().getInternalFilesDirectory() + File.separator
-                + Constants.IMAGES_DIRECTORY + File.separator;
+                + Constants.TEMPORARY_DIRECTORY + File.separator;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    protected GlideRequests getGlide () {
+        Log.d(TAG, "getGlide: called!");
+        return GlideApp.with(getApp());
     }
 
 }

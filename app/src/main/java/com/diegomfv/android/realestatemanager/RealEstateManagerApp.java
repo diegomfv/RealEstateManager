@@ -37,6 +37,12 @@ public class RealEstateManagerApp extends Application {
         this.getInternalStorageTemporaryFiles();
         this.getInternalStorageImageFiles();
 
+        int BITMAP_CACHE_SIZE = (int) Runtime.getRuntime().maxMemory() / 1024 / 8;
+        Log.w(TAG, "onCreate: BITMAP_CACHE_SIZE application= " + BITMAP_CACHE_SIZE);
+        Log.w(TAG, "onCreate: MAX_MEMORY application = " + Runtime.getRuntime().maxMemory() / 1048576L);
+        Log.w(TAG, "onCreate: FREE_MEMORY application = " + Runtime.getRuntime().freeMemory() / 1048576L);
+        Log.w(TAG, "onCreate: AVAILABLE application = " + (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().freeMemory()) /  1048576L);
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +59,7 @@ public class RealEstateManagerApp extends Application {
 
     public DataRepository getRepository() {
         Log.d(TAG, "getRepository: called!");
-        return DataRepository.getInstance(getDatabase());
+        return DataRepository.getInstance(getDatabase(), Runtime.getRuntime().maxMemory());
     }
 
     public Storage getInternalStorage() {
@@ -64,6 +70,11 @@ public class RealEstateManagerApp extends Application {
             return internalStorage;
         }
         else return internalStorage;
+    }
+
+    public int getBitmapCacheSize () {
+        Log.d(TAG, "getBitmapCacheSize: called!");
+        return (int) Runtime.getRuntime().maxMemory() / 1024 / Constants.CACHE_PARTITION;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -47,6 +47,7 @@
         <activity android:name=".ui.activities.EditPhotoActivity" />
         <activity android:name=".ui.activities.ForgotPasswordActivity" />
         <activity android:name=".ui.activities.SignUpActivity" />
+        <activity android:name=".ui.activities.AddPhotoActivityTrial" />
 
         <receiver android:name=".receivers.InternetConnectionReceiver"/>
 

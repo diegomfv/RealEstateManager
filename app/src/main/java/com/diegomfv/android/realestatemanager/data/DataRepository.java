@@ -1,25 +1,22 @@
 package com.diegomfv.android.realestatemanager.data;
 
 import android.arch.lifecycle.LiveData;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.snatik.storage.Storage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.Single;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
@@ -50,6 +47,14 @@ public class DataRepository {
 
     private List<PlaceRealEstate> listOfPlacesNearbyCache;
 
+    ///
+    /* Memory cache for loading images in recyclerViews, etc.
+    * */
+    private Map<String,Bitmap> bitmapCache;
+    private long bitmapCacheSize; // in MB
+
+    private List<String> listOfBitmapKeys;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private Set<String> setOfBuildingTypes;
@@ -62,17 +67,19 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private DataRepository(final AppDatabase database) {
+    private DataRepository(final AppDatabase database, long maxMemoryInMB) {
         mDatabase = database;
+        bitmapCacheSize = maxMemoryInMB / 1024 / 1024 / 8;
         listOfListingsLiveData = getAllListingsLiveData();
         listOfPlacesRealEstateLiveData = getAllPlacesRealEstateLiveData();
+        bitmapCache = getBitmapCache();
     }
 
-    public static DataRepository getInstance(final AppDatabase database) {
+    public static DataRepository getInstance(final AppDatabase database, long maxMemoryInMB) {
         if (sInstance == null) {
             synchronized (DataRepository.class) {
                 if (sInstance == null) {
-                    sInstance = new DataRepository(database);
+                    sInstance = new DataRepository(database, maxMemoryInMB);
                 }
             }
         }
@@ -81,7 +88,7 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //CACHE
+    //GENERAL CACHE
 
     /** Cache for Real Estate
      * */
@@ -138,6 +145,130 @@ public class DataRepository {
         setOfLocalities = null;
         setOfCities = null;
         setOfTypesOfPointsOfInterest = null;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //BITMAPS CACHE
+
+    public List<String> getListOfBitmapKeys () {
+        Log.d(TAG, "getListOfBitmapKeys: called!");
+        if (listOfBitmapKeys == null) {
+            listOfBitmapKeys = new ArrayList<>();
+            return updateListOfBitmapKeys();
+        }
+        return updateListOfBitmapKeys();
+    }
+
+    private List<String> updateListOfBitmapKeys () {
+        Log.d(TAG, "updateListOfBitmapKeys: called!");
+
+        for (Map.Entry<String, Bitmap> entry : bitmapCache.entrySet()) {
+            if (!listOfBitmapKeys.contains(entry.getKey())) {
+                listOfBitmapKeys.add(entry.getKey());
+            }
+        }
+        return listOfBitmapKeys;
+    }
+
+    public Map<String,Bitmap> getBitmapCache() {
+        Log.d(TAG, "getBitmapCache: called!");
+        if (bitmapCache == null) {
+            return bitmapCache = new LinkedHashMap<>();
+        }
+        double currentSize = getCurrentSizeOfBitmapCache();
+        Log.i(TAG, "getBitmapCache: getSizeOfBitmapCache = " + currentSize + " MB");
+        return bitmapCache;
+
+    }
+
+    public double getCurrentSizeOfBitmapCache () {
+        Log.d(TAG, "getCurrentSizeOfBitmapCache: called!");
+
+        double size = 0;
+
+        for (Map.Entry<String, Bitmap> entry : bitmapCache.entrySet()) {
+            size += entry.getValue().getByteCount();
+        }
+        return size / 1024 / 1024;
+    }
+
+    public void addBitmapToBitmapCache (String key, Bitmap bitmap) {
+        Log.d(TAG, "addBitmapToBitmapCache: called!");
+        getBitmapCache().put(key, bitmap);
+        checkBitmapCacheSize();
+
+    }
+
+    private void checkBitmapCacheSize () {
+        Log.d(TAG, "checkBitmapCacheSize: called!");
+
+        Log.w(TAG, "checkBitmapCacheSize: bitmapCacheSize = " + bitmapCacheSize);
+        Log.w(TAG, "checkBitmapCacheSize: bitmapCacheUsed = " + getCurrentSizeOfBitmapCache());
+
+        if (getCurrentSizeOfBitmapCache() > bitmapCacheSize) {
+            removeFirstElementFromBitmapCache();
+        }
+    }
+
+
+    private void removeFirstElementFromBitmapCache () {
+        Log.d(TAG, "removeFirstElementFromBitmapCache: called!");
+
+        String key = getBitmapCache().keySet().iterator().next();
+        getBitmapCache().remove(key);
+
+        Log.w(TAG, "removeFirstElementFromBitmapCache: item removed, ky = " + key);
+
+        checkBitmapCacheSize();
+
+    }
+
+    public void addBitmapToBitmapCacheAndStorage (Storage internalStorage, String imagesDir, String key, Bitmap bitmap) {
+        Log.d(TAG, "addBitmapToAllMemories: called!");
+
+        addBitmapToBitmapCache(key, bitmap);
+        addBitmapToInternalStorageInWorkerThread(internalStorage, imagesDir,key,bitmap);
+
+    }
+
+    public void addBitmapToInternalStorageInWorkerThread(final Storage internalStorage, final String imagesDir, final String key, final Bitmap bitmap) {
+        Log.d(TAG, "addBitmapToInternalStorageInWorkerThread: called!");
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "run: called!");
+
+                if (internalStorage.isDirectoryExists(imagesDir)) {
+                    internalStorage.createFile(imagesDir + key, bitmap);
+
+                } else {
+                    internalStorage.createDirectory(imagesDir);
+                    internalStorage.createFile(imagesDir + key, bitmap);
+                }
+            }
+        });
+
+    }
+
+    /** Only can be used by Glide. (Background Thread) !!!!
+     * */
+    public Bitmap getBitmap (Storage storage, String imagesDir, String key) {
+        Log.d(TAG, "getBitmap: called!");
+
+        if (getBitmapCache().get(key) != null) {
+            return getBitmapCache().get(key);
+        }
+
+        byte[] bytes = storage.readFile(imagesDir + key);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+    }
+
+    public void deleteBitmapCache () {
+        Log.d(TAG, "deleteBitmapCache: called!");
+        bitmapCache = null;
+        listOfBitmapKeys = null;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

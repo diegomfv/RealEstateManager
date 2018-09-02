@@ -20,6 +20,7 @@ public interface Constants {
     * */
     String IMAGES_DIRECTORY = "images_directory";
     String TEMPORARY_DIRECTORY = "temporary_directory";
+    String CACHE_DIRECTORY = "cache_directory";
 
     /* Requests
     * */
@@ -72,5 +73,7 @@ public interface Constants {
     String SH_PREF_AGENT_MEMORABLE_DATA_QUESTION = "memorable_data_question";
     String SH_PREF_AGENT_MEMORABLE_DATA_ANSWER = "memorable_data_answer";
 
-
+    /* Determines how much memory will be used by the Bitmap Cache
+    * */
+    int CACHE_PARTITION = 8; // MaxMemory / 8
 }

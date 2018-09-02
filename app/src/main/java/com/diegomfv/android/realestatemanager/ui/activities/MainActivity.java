@@ -1,17 +1,13 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.Manifest;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -21,10 +17,8 @@ import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.rest.fragments.handset.FragmentHandsetListListings;
 import com.diegomfv.android.realestatemanager.ui.rest.fragments.tablet.FragmentTabletItemDescription;
 import com.diegomfv.android.realestatemanager.ui.rest.fragments.tablet.FragmentTabletListListings;
-import com.diegomfv.android.realestatemanager.utils.ToastHelper;
-import com.diegomfv.android.realestatemanager.utils.Utils;
-
-import java.util.ArrayList;
+import com.diegomfv.android.realestatemanager.util.ToastHelper;
+import com.diegomfv.android.realestatemanager.util.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
