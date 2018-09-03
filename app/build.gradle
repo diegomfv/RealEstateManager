@@ -104,10 +104,6 @@ dependencies {
     //Firebase Storage
     implementation 'com.google.firebase:firebase-storage:16.0.1'
 
-    //todo delete!
-    //Range Seek Bar
-    implementation 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
-
     //Range Seek Bar
     implementation 'com.crystal:crystalrangeseekbar:1.1.3'
 

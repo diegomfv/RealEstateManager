@@ -203,9 +203,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         tvTypeOfBuilding.setText(realEstate.getType());
         tvSurfaceArea.setText(String.valueOf(realEstate.getSurfaceArea()));
         tvPrice.setText(String.valueOf(realEstate.getPrice()));
-        seekBarBedrooms.setMinValue(realEstate.getRooms().getBedrooms());
-        seekBarBathrooms.setMinValue(realEstate.getRooms().getBathrooms());
-        seekBarOtherRooms.setMinValue(realEstate.getRooms().getOtherRooms());
         tvDescription.setText(realEstate.getDescription());
     }
 

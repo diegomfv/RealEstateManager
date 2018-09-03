@@ -170,9 +170,11 @@ public class DataRepository {
     private List<String> updateListOfBitmapKeys () {
         Log.d(TAG, "updateListOfBitmapKeys: called!");
 
-        for (Map.Entry<String, Bitmap> entry : bitmapCache.entrySet()) {
-            if (!listOfBitmapCacheKeys.contains(entry.getKey())) {
-                listOfBitmapCacheKeys.add(entry.getKey());
+        if (bitmapCache != null) {
+            for (Map.Entry<String, Bitmap> entry : bitmapCache.entrySet()) {
+                if (!listOfBitmapCacheKeys.contains(entry.getKey())) {
+                    listOfBitmapCacheKeys.add(entry.getKey());
+                }
             }
         }
         return listOfBitmapCacheKeys;
