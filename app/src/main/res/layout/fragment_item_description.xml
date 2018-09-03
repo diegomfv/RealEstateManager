@@ -83,7 +83,7 @@
                     android:text="Number of Rooms" />
 
                 <TextView
-                    android:id="@+id/textView_numberOfRooms_id"
+                    android:id="@+id/textView_numberOfBedrooms_id"
                     style="@style/textViewInfoStyle"
                     android:text="@string/information_not_available" />
 
@@ -93,7 +93,7 @@
                     android:text="@string/information_not_available" />
 
                 <TextView
-                    android:id="@+id/textView_numberOfBedrooms_id"
+                    android:id="@+id/textView_numberOfRooms_id"
                     style="@style/textViewInfoStyle"
                     android:text="@string/information_not_available" />
 

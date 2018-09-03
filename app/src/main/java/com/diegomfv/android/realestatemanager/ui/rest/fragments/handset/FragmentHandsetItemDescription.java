@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalDescr;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
@@ -55,10 +53,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
@@ -81,7 +75,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
     TextView tvSurfaceArea;
 
     @BindView(R.id.textView_numberOfRooms_id)
-    TextView tvNumberRooms;
+    TextView tvNumberOtherRooms;
 
     @BindView(R.id.textView_numberOfBathrooms_id)
     TextView tvNumberBathrooms;
@@ -144,6 +138,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
     private List<Marker> listOfMarkers;
 
     private boolean deviceLocationPermissionGranted;
+    private RealEstate rooms;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -211,6 +206,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         Log.d(TAG, "fillLayoutWithRealEstateInfo: called!");
         setDescription(realEstate);
         setSurfaceArea(realEstate);
+        setRooms(realEstate);
         setAddress(realEstate);
         setPrice(realEstate);
         setSoldState(realEstate);
@@ -224,6 +220,12 @@ public class FragmentHandsetItemDescription extends BaseFragment {
     private void setSurfaceArea(RealEstate realEstate) {
         Log.d(TAG, "setSurfaceArea: called!");
         tvSurfaceArea.setText(String.valueOf(realEstate.getSurfaceArea()));
+    }
+
+    public void setRooms(RealEstate rooms) {
+        tvNumberBedrooms.setText(String.valueOf("Bedrooms -- " + realEstate.getRooms().getBedrooms()));
+        tvNumberBathrooms.setText(String.valueOf("Bathrooms -- " + realEstate.getRooms().getBathrooms()));
+        tvNumberOtherRooms.setText(String.valueOf("Other Rooms -- " + realEstate.getRooms().getOtherRooms()));
     }
 
     private void setAddress(RealEstate realEstate) {
