@@ -108,6 +108,24 @@ public class RealEstate implements Parcelable {
 
     }
 
+    @Ignore
+    //Copy Constructor
+    public RealEstate (RealEstate other) {
+        this.id = other.id;
+        this.type = other.type;
+        this.surfaceArea = other.surfaceArea;
+        this.price = other.price;
+        this.rooms = other.rooms;
+        this.description = other.description;
+        this.listOfImagesIds = other.listOfImagesIds;
+        this.address = other.address;
+        this.listOfNearbyPointsOfInterestIds = other.listOfNearbyPointsOfInterestIds;
+        this.status = other.status;
+        this.datePut = other.datePut;
+        this.dateSale = other.dateSale;
+        this.agent = other.agent;
+    }
+
     public String getId() {
         return id;
     }

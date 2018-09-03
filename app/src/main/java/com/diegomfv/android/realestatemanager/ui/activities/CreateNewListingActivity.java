@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -290,7 +291,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
             break;
 
             case R.id.button_add_edit_photo_id: {
-                launchAddPhotoActivity();
+                launchPhotoGridActivity();
 
             }
             break;
@@ -318,13 +319,13 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "checkIntent: called!");
         if (getIntent() != null
                 && getIntent().getExtras() != null
-                && getIntent().getExtras().getString(Constants.INTENT_FROM_ADD_PHOTO) != null
-                && getIntent().getExtras().getString(Constants.INTENT_FROM_ADD_PHOTO).equals(Constants.STRING_FROM_ADD_PHOTO)) {
-            /* If we come from ADD PHOTO we do not delete the cache
+                && getIntent().getExtras().getString(Constants.INTENT_FROM_PHOTO_GRID_ACTIVITY) != null
+                && getIntent().getExtras().getString(Constants.INTENT_FROM_PHOTO_GRID_ACTIVITY).equals(Constants.STRING_FROM_PHOTO_GRID_ACTIVITY)) {
+            /* If we come from PhotoGridActivity we do not delete the cache
              * */
 
         } else {
-            /* If we come from other place, we delete the cache
+            /* If we come from another place, we delete the cache
              * */
             getRepository().deleteBitmapCache();
             getRepository().deleteCacheAndSets();
@@ -658,7 +659,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private void updateRealEstateCacheId() {
         Log.d(TAG, "updateRealEstateCacheId: called!");
-        getRealEstateCache().setId(FirebasePushIdGenerator.generate());
+        this.getRealEstateCache().setId(FirebasePushIdGenerator.generate());
     }
 
     private void updateImagesIdRealEstateCache() {
@@ -669,12 +670,12 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         for (int i = 0; i < getListOfImagesRealEstateCache().size(); i++) {
             listOfImagesIds.add(getListOfImagesRealEstateCache().get(i).getId());
         }
-        getRealEstateCache().setListOfImagesIds(listOfImagesIds);
+        this.getRealEstateCache().setListOfImagesIds(listOfImagesIds);
     }
 
     private void updateDatePutRealEstateCacheCache() {
         Log.d(TAG, "updateDatePutRealEstateCacheCache: called!");
-        getRealEstateCache().setDatePut(Utils.getTodayDate());
+        this.getRealEstateCache().setDatePut(Utils.getTodayDate());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -692,7 +693,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         }
     }
-
 
     private void updateRealEstateCacheWithAddress(AddressRealEstate addressRealEstate) {
         Log.d(TAG, "updateRealEstateCacheWithAddress: called!");
@@ -915,10 +915,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //INTERNAL STORAGE
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
@@ -952,11 +948,14 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void launchAddPhotoActivity() {
-        Log.d(TAG, "launchAddPhotoActivity: called!");
+    private void launchPhotoGridActivity() {
+        Log.d(TAG, "launchPhotoGridActivity: called!");
 
         updateRealEstateCache();
-        Utils.launchActivity(this, AddPhotoActivity.class);
+
+        Intent intent = new Intent(this, PhotoGridActivity.class);
+        intent.putExtra(Constants.INTENT_FROM_ACTIVITY, Constants.INTENT_FROM_CREATE);
+        startActivity(intent);
 
     }
 

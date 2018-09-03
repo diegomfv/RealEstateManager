@@ -45,7 +45,7 @@
         <activity android:name=".ui.base.BaseActivity" />
         <activity android:name=".ui.activities.ForgotPasswordActivity" />
         <activity android:name=".ui.activities.SignUpActivity" />
-        <activity android:name=".ui.activities.AddPhotoActivity" />
+        <activity android:name=".ui.activities.PhotoGridActivity" />
 
         <receiver android:name=".receivers.InternetConnectionReceiver"/>
 

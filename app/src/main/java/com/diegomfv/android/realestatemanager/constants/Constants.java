@@ -77,9 +77,12 @@ public interface Constants {
     * */
     int CACHE_PARTITION = 8; // MaxMemory / 8
 
-    String INTENT_FROM_ADD_PHOTO = "intent_from_add_photo";
-    String STRING_FROM_ADD_PHOTO = "string_from_add_photo";
+    String INTENT_FROM_PHOTO_GRID_ACTIVITY = "intent_from_add_photo";
+    String STRING_FROM_PHOTO_GRID_ACTIVITY = "string_from_add_photo";
 
+    String INTENT_FROM_ACTIVITY = "intent_from_activity";
+    String INTENT_FROM_CREATE = "intent_from_create";
+    String INTENT_FROM_EDIT = "intent_from_edit";
 
     String DIALOG_DESCRIPTION = "dialog_description";
     String DIALOG_ADDRESS = "dialog_address";

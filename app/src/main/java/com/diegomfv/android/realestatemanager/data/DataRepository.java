@@ -40,30 +40,27 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //CACHE
-
+    //TEMPORARY CACHE (cache available for when creating or editing listings)
     private RealEstate realEstateCache;
 
     private List<ImageRealEstate> listOfImagesRealEstateCache;
 
     private List<PlaceRealEstate> listOfPlacesNearbyCache;
 
-    ///
-    /* Memory cache for loading images in recyclerViews, etc.
-    * */
+    //BITMAP RELATED CACHES (memory cache for loading images in recyclerViews, etc.)
     private Map<String,Bitmap> bitmapCache;
+
     private long bitmapCacheSize; // in MB
 
     private List<String> listOfBitmapCacheKeys;
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //BITMAPS INTERNAL STORAGE
-
-    private List<String> listOfBitmapKeysInternalStorage;
+    private List<String> listOfBitmapKeysInternalStorage; //keeps ids (keys) of internal storage
+    //to retrieve the bitmaps (name of the files)
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    //SEARCH CACHE (keeps track of different information to help displaying it in Search Activity:
+    //checkboxes, autoCompleteTextViews...)
     private Set<String> setOfBuildingTypes;
 
     private Set<String> setOfLocalities;
@@ -107,12 +104,31 @@ public class DataRepository {
         return realEstateCache;
     }
 
+    public void cloneRealEstate (RealEstate realEstate) {
+        Log.d(TAG, "cloneRealEstate: called!");
+        this.realEstateCache = new RealEstate(realEstate);
+    }
+
     public List<ImageRealEstate> getListOfImagesRealEstateCache() {
         Log.d(TAG, "getRealEstateCache: called!");
         if (listOfImagesRealEstateCache == null) {
             return listOfImagesRealEstateCache = new ArrayList<>();
         }
         return listOfImagesRealEstateCache;
+    }
+
+    public void fillCacheWithImagesRealEstateFromRealEstateCache() {
+        Log.d(TAG, "fillListOfImagesRealEstateAccordingToRealEstateCache: called!");
+
+        if (listOfImagesRealEstateCache != null) {
+            listOfImagesRealEstateCache.clear();
+        }
+
+        for (int i = 0; i < getRealEstateCache().getListOfImagesIds().size(); i++) {
+            if (getRealEstateCache().getListOfImagesIds().contains(getAllImagesRealEstate().get(i).getId())){
+                getListOfImagesRealEstateCache().add(getAllImagesRealEstate().get(i));
+            }
+        }
     }
 
     public List<PlaceRealEstate> getListOfPlacesRealEstateCache() {
@@ -133,15 +149,7 @@ public class DataRepository {
 
         realEstateCache = null;
 
-        if (listOfImagesRealEstateCache != null) {
-            listOfImagesRealEstateCache.clear();
-        }
-
         listOfImagesRealEstateCache = null;
-
-        if (listOfPlacesNearbyCache != null) {
-            listOfPlacesNearbyCache.clear();
-        }
 
         listOfPlacesNearbyCache = null;
     }
@@ -224,7 +232,6 @@ public class DataRepository {
         }
     }
 
-
     private void removeFirstElementFromBitmapCache () {
         Log.d(TAG, "removeFirstElementFromBitmapCache: called!");
 
@@ -264,7 +271,8 @@ public class DataRepository {
 
     }
 
-    /** Only can be used by Glide. (Background Thread) !!!!
+    /** Gets a bitmap from the immediate cache
+     * or from the internal storage
      * */
     public Bitmap getBitmap (Storage storage, String imagesDir, String key) {
         Log.d(TAG, "getBitmap: called!");
@@ -278,13 +286,21 @@ public class DataRepository {
 
     }
 
+    public void deleteAndFillBitmapCache (List<String> listOfKeys, Storage internalStorage, String imagesDir) {
+        Log.d(TAG, "fillBitmapCache: called!");
+
+        deleteBitmapCache();
+
+        for (int i = 0; i < listOfKeys.size(); i++) {
+            getBitmapCache().put(listOfKeys.get(i), getBitmap(internalStorage, imagesDir, listOfKeys.get(i)));
+        }
+    }
+
     public void deleteBitmapCache () {
         Log.d(TAG, "deleteBitmapCache: called!");
         bitmapCache = null;
         listOfBitmapCacheKeys = null;
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public List<String> getListOfBitmapKeysInternalStorage (String imagesDir) {
         Log.d(TAG, "getListOfBitmapKeysInternalStorage: called!");
@@ -337,6 +353,11 @@ public class DataRepository {
     private List<RealEstate> getAllListings() {
         Log.d(TAG, "getAllListingsLiveData: called!");
         return mDatabase.realStateDao().getAllListingsOrderedByType();
+    }
+
+    private List<ImageRealEstate> getAllImagesRealEstate () {
+        Log.d(TAG, "getAllImagesRealEstate: called!");
+        return mDatabase.imageRealEstateDao().getAllImagesRealEstate();
     }
 
     private List<PlaceRealEstate> getAllPlacesRealEstate () {

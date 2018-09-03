@@ -23,6 +23,9 @@ public interface ImageRealEstateDao {
     @Query("SELECT * FROM image")
     LiveData<List<ImageRealEstate>> getAllImagesRealEstateLiveData();
 
+    @Query("SELECT * FROM image")
+    List<ImageRealEstate> getAllImagesRealEstate();
+
     // -------------------
     // INSERT
     @Insert
@@ -30,6 +33,8 @@ public interface ImageRealEstateDao {
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     long[] insertListOfImagesRealEstate (List<ImageRealEstate> listOfImagesRealEstate);
+
+
 
     // -------------------
     // UPDATE

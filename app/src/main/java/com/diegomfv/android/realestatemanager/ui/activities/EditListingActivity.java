@@ -17,6 +17,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
@@ -134,15 +135,7 @@ public class EditListingActivity extends BaseActivity {
     //RecyclerView Adapter
     private RVAdapterMediaHorizontalCreate adapter;
 
-    private RequestManager glide;
-
     private RealEstate realEstate;
-
-    private int imagesCounter;
-
-    private List<Bitmap> listOfBitmaps;
-
-    private boolean accessInternalStorageGranted;
 
     private int currency;
 
@@ -155,11 +148,7 @@ public class EditListingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
 
-        this.imagesCounter = 0;
-
         this.currency = Utils.readCurrentCurrencyShPref(this);
-
-        this.accessInternalStorageGranted = false;
 
         Intent intent = getIntent();
         Bundle bundle = new Bundle();
@@ -168,11 +157,14 @@ public class EditListingActivity extends BaseActivity {
             bundle.putParcelable(Constants.GET_PARCELABLE, intent.getExtras().getParcelable(Constants.SEND_PARCELABLE));
             realEstate = bundle.getParcelable(Constants.GET_PARCELABLE);
             Log.i(TAG, "onCreateView: bundle = " + bundle);
+
+            /* Here, we clone the realEstate object and from that moment on, we use the cache
+             * */
+            this.prepareCache();
+
         } else {
             realEstate = getRealEstateCache();
         }
-
-        this.glide = Glide.with(this);
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.insert_information_layout);
@@ -185,7 +177,7 @@ public class EditListingActivity extends BaseActivity {
 
         Utils.showMainContent(progressBarContent, mainLayout);
 
-        this.checkInternalStoragePermissionGranted();
+        this.configureRecyclerView();
 
         Log.i(TAG, "onCreate: " + getImagesDir());
 
@@ -227,24 +219,6 @@ public class EditListingActivity extends BaseActivity {
 
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.d(TAG, "onRequestPermissionsResult: called!");
-
-        switch (requestCode) {
-
-            case Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE: {
-
-                if (grantResults.length > 0 && grantResults[0] != -1) {
-                    accessInternalStorageGranted = true;
-                    getBitmapImagesFromImagesFiles();
-                }
-            }
-            break;
-        }
     }
 
     @OnClick ({R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id})
@@ -301,6 +275,26 @@ public class EditListingActivity extends BaseActivity {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void prepareCache () {
+        Log.d(TAG, "prepareCache: called!");
+
+        getRepository().deleteCacheAndSets();
+
+        /* We firstly clone the real estate object in the RealEstateCache
+        * */
+        getRepository().cloneRealEstate(realEstate);
+
+        /* We delete the bitmapCache and fill it with the bitmaps related to the
+        * real estate that is loaded
+        * */
+        getRepository().deleteAndFillBitmapCache(getRealEstateCache().getListOfImagesIds(), getInternalStorage(), getImagesDir());
+
+        /* We also load the imageRealEstate objects in the corresponding cache to keep track
+        * of them. This is needed to if the user decided to update the information */
+        getRepository().fillCacheWithImagesRealEstateFromRealEstateCache();
+
+    }
 
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
@@ -423,93 +417,35 @@ public class EditListingActivity extends BaseActivity {
 
     private void setAllInformation() {
         Log.d(TAG, "setAllInformation: called!");
-        tvTypeOfBuilding.setText(realEstate.getType());
-        tvPrice.setText(String.valueOf((int)Utils.getPriceAccordingToCurrency(currency, realEstate.getPrice())));
-        tvSurfaceArea.setText(String.valueOf(realEstate.getSurfaceArea()));
-        tvNumberOfBedrooms.setText("Bedrooms (" + realEstate.getRooms().getBedrooms() + ")");
-        tvNumberOfBathrooms.setText("Bathrooms (" + realEstate.getRooms().getBedrooms() + ")");
-        tvNumberOfOtherRooms.setText("Other Rooms (" + realEstate.getRooms().getBedrooms() + ")");
-        tvDescription.setText(realEstate.getDescription());
-        tvAddress.setText(Utils.getAddressAsString(realEstate));
+        tvTypeOfBuilding.setText(getRealEstateCache().getType());
+        tvPrice.setText(String.valueOf((int)Utils.getPriceAccordingToCurrency(currency, getRealEstateCache().getPrice())));
+        tvSurfaceArea.setText(String.valueOf(getRealEstateCache().getSurfaceArea()));
+        tvNumberOfBedrooms.setText("Bedrooms (" + getRealEstateCache().getRooms().getBedrooms() + ")");
+        tvNumberOfBathrooms.setText("Bathrooms (" + getRealEstateCache().getRooms().getBedrooms() + ")");
+        tvNumberOfOtherRooms.setText("Other Rooms (" + getRealEstateCache().getRooms().getBedrooms() + ")");
+        tvDescription.setText(getRealEstateCache().getDescription());
+        tvAddress.setText(Utils.getAddressAsString(getRealEstateCache()));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //INTERNAL STORAGE
+    private void configureRecyclerView() {
+        Log.d(TAG, "configureRecyclerView: called!");
 
-    private List<Bitmap> getListOfBitmaps () {
-        Log.d(TAG, "getListOfBitmaps: called!");
-        if (listOfBitmaps == null) {
-            return listOfBitmaps = new ArrayList<>();
-        }
-        return listOfBitmaps;
+        this.recyclerView.setHasFixedSize(true);
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(
+                this, LinearLayoutManager.HORIZONTAL, false));
+        this.adapter = new RVAdapterMediaHorizontalCreate(
+                this,
+                getListOfBitmapKeys(),
+                getBitmapCache(),
+                getImagesDir(),
+                getGlide());
+        this.recyclerView.setAdapter(this.adapter);
+
+        this.configureOnClickRecyclerView();
+
     }
-
-    private void checkInternalStoragePermissionGranted() {
-        Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
-
-        if (Utils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            accessInternalStorageGranted = true;
-            getBitmapImagesFromImagesFiles();
-
-        } else {
-            Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
-        }
-    }
-
-    @SuppressLint("CheckResult")
-    private void getBitmapImagesFromImagesFiles() {
-        Log.d(TAG, "getBitmapImagesFromImagesFiles: called!");
-
-        if (accessInternalStorageGranted) {
-
-            imagesCounter = realEstate.getListOfImagesIds().size();
-
-            for (int i = 0; i < getListOfImagesRealEstateCache().size(); i++) {
-
-                Single.just(getInternalStorage().readFile(getTemporaryDir() + getListOfImagesRealEstateCache().get(i).getId()))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<byte[]>() {
-                            @Override
-                            public void onSuccess(byte[] data) {
-                                Log.i(TAG, "onSuccess: called!");
-
-                                getListOfBitmaps().add(BitmapFactory.decodeByteArray(data, 0, data.length));
-
-                                imagesCounter--;
-                                if (imagesCounter == 0) {
-                                    //configureRecyclerView();
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e(TAG, "onError: " + e.getMessage());
-
-                            }
-                        });
-            }
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-//    private void configureRecyclerView() {
-//        Log.d(TAG, "configureRecyclerView: called!");
-//
-//        this.recyclerView.setHasFixedSize(true);
-//        this.recyclerView.setLayoutManager(new LinearLayoutManager(
-//                this, LinearLayoutManager.HORIZONTAL, false));
-//        this.adapter = new RVAdapterMediaHorizontalCreate(
-//                this,
-//                getListOfBitmaps(),
-//                glide);
-//        this.recyclerView.setAdapter(this.adapter);
-//
-//        this.configureOnClickRecyclerView();
-//
-//    }
 
     private void configureOnClickRecyclerView() {
         Log.d(TAG, "configureOnClickRecyclerView: called!");
@@ -527,7 +463,6 @@ public class EditListingActivity extends BaseActivity {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     //CACHE
-
     private void updateRealEstateCache() {
         Log.d(TAG, "updateRealEstateCache: called!");
         this.updateStringValues();
@@ -555,29 +490,17 @@ public class EditListingActivity extends BaseActivity {
         this.getRealEstateCache().setDescription(Utils.capitalize(tvDescription.getText().toString().trim()));
     }
 
-    private void updateImagesIdRealEstateCache() {
-        Log.d(TAG, "updateImagesIdRealEstateCache: called!");
-
-        List<String> listOfImagesIds = new ArrayList<>();
-
-        for (int i = 0; i < getListOfImagesRealEstateCache().size(); i++) {
-            listOfImagesIds.add(getListOfImagesRealEstateCache().get(i).getId());
-        }
-        getRealEstateCache().setListOfImagesIds(listOfImagesIds);
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void launchEditPhotoActivity() {
         Log.d(TAG, "launchEditPhotoActivity: called!");
 
-        if (!accessInternalStorageGranted) {
-            ToastHelper.toastInternalStorageAccessNotGranted(this);
+        updateRealEstateCache();
 
-        } else {
-            updateRealEstateCache();
+        Intent intent = new Intent(this, PhotoGridActivity.class);
+        intent.putExtra(Constants.INTENT_FROM_ACTIVITY, Constants.INTENT_FROM_EDIT);
+        startActivity(intent);
 
-        }
     }
 
     private void createNotification() {
@@ -624,9 +547,7 @@ public class EditListingActivity extends BaseActivity {
 
     private void editListing () {
         Log.d(TAG, "editListing: called!");
-        ToastHelper.toastShort(this, "Edit listing process executed! No changes yet!");
+        ToastHelper.toastShort(this, "Edit listing process executed! No changes yet! Tehy have to be implemented!");
         createNotification();
     }
-
-
 }

@@ -14,8 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaGrid;
 import com.diegomfv.android.realestatemanager.constants.Constants;
@@ -42,9 +40,9 @@ import butterknife.Unbinder;
 // TODO: 02/09/2018 Add Fragment add description!
 // TODO: 02/09/2018 Take care, the user may leave the app and then come back and the
     //cache might be cleared!
-public class AddPhotoActivity extends BaseActivity implements InsertDescriptionDialogFragment.InsertDescriptionDialogListener {
+public class PhotoGridActivity extends BaseActivity implements InsertDescriptionDialogFragment.InsertDescriptionDialogListener {
 
-    private static final String TAG = AddPhotoActivity.class.getSimpleName();
+    private static final String TAG = PhotoGridActivity.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,8 +62,6 @@ public class AddPhotoActivity extends BaseActivity implements InsertDescriptionD
 
     private ImageRealEstate imageRealEstateCache;
 
-    private RequestManager glide;
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -73,10 +69,8 @@ public class AddPhotoActivity extends BaseActivity implements InsertDescriptionD
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
 
-        this.glide = Glide.with(this);
-
         ////////////////////////////////////////////////////////////////////////////////////////////
-        setContentView(R.layout.activity_add_photo);
+        setContentView(R.layout.activity_photo_grid);
         unbinder = ButterKnife.bind(this);
 
         this.configureActionBar();
@@ -112,7 +106,7 @@ public class AddPhotoActivity extends BaseActivity implements InsertDescriptionD
         Log.d(TAG, "onActivityResult: called!");
 
         if (data == null) {
-            ToastHelper.toastShort(AddPhotoActivity.this, getResources().getString(R.string.no_image_was_picked));
+            ToastHelper.toastShort(PhotoGridActivity.this, getResources().getString(R.string.no_image_was_picked));
 
         } else {
             if (requestCode == Constants.REQUEST_CODE_GALLERY) {
@@ -141,11 +135,11 @@ public class AddPhotoActivity extends BaseActivity implements InsertDescriptionD
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    ToastHelper.toastShort(AddPhotoActivity.this, getResources().getString(R.string.there_was_an_error));
+                    ToastHelper.toastShort(PhotoGridActivity.this, getResources().getString(R.string.there_was_an_error));
                 }
 
             } else {
-                ToastHelper.toastShort(AddPhotoActivity.this, getResources().getString(R.string.no_image_was_picked));
+                ToastHelper.toastShort(PhotoGridActivity.this, getResources().getString(R.string.no_image_was_picked));
             }
         }
     }
@@ -157,9 +151,7 @@ public class AddPhotoActivity extends BaseActivity implements InsertDescriptionD
         switch (item.getItemId()) {
 
             case android.R.id.home: {
-                Intent intent = new Intent(this, CreateNewListingActivity.class);
-                intent.putExtra(Constants.INTENT_FROM_ADD_PHOTO, Constants.STRING_FROM_ADD_PHOTO);
-                Utils.launchActivityWithIntent(this, intent);
+                checkActivityLaunched();
             }
             break;
         }
@@ -195,6 +187,24 @@ public class AddPhotoActivity extends BaseActivity implements InsertDescriptionD
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private void checkActivityLaunched () {
+        Log.d(TAG, "checkActivityLaunched: called!");
+
+        if (getIntent() != null && getIntent().getExtras() != null) {
+
+            String fromIntent = getIntent().getStringExtra(Constants.INTENT_FROM_ACTIVITY);
+
+            if (fromIntent.equals(Constants.INTENT_FROM_CREATE)) {
+                Intent intent = new Intent(this, CreateNewListingActivity.class);
+                intent.putExtra(Constants.INTENT_FROM_PHOTO_GRID_ACTIVITY, Constants.STRING_FROM_PHOTO_GRID_ACTIVITY);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(this, EditListingActivity.class);
+                startActivity(intent);
+            }
+        }
+    }
+
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
@@ -206,7 +216,7 @@ public class AddPhotoActivity extends BaseActivity implements InsertDescriptionD
                 getListOfBitmapKeys(),
                 getRepository().getBitmapCache(),
                 getImagesDir(),
-                glide);
+                getGlide());
         this.recyclerView.setAdapter(this.adapter);
 
         this.configureOnClickRecyclerView();
@@ -265,8 +275,4 @@ public class AddPhotoActivity extends BaseActivity implements InsertDescriptionD
                 .show(getSupportFragmentManager(), "InsertDescriptionDialogFragment");
 
     }
-
-
-
-
 }

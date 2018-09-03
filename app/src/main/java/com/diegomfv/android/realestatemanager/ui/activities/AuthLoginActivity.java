@@ -84,7 +84,7 @@ public class AuthLoginActivity extends BaseActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.launchActivity(AuthLoginActivity.this, AddPhotoActivity.class);
+                Utils.launchActivity(AuthLoginActivity.this, PhotoGridActivity.class);
             }
         });
 

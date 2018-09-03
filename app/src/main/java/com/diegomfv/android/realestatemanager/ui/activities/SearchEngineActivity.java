@@ -133,15 +133,15 @@ public class SearchEngineActivity extends BaseActivity {
         this.seekBarNumberOfRoomsUsed = false;
         this.seekbarAmountOfPhotosUsed = false;
 
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        setContentView(R.layout.activity_search_engine);
-        setTitle("Search");
-        unbinder = ButterKnife.bind(this);
-
         /* We refresh the information in the database
          * We need the sets for displaying information in the UI
          * */
         this.getApp().getRepository().refreshSets();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        setContentView(R.layout.activity_search_engine);
+        setTitle("Search");
+        unbinder = ButterKnife.bind(this);
 
         this.configureActionBar();
 
