@@ -119,6 +119,8 @@ public class RealEstate implements Parcelable {
         this.description = other.description;
         this.listOfImagesIds = other.listOfImagesIds;
         this.address = other.address;
+        this.latitude = other.latitude;
+        this.longitude = other.longitude;
         this.listOfNearbyPointsOfInterestIds = other.listOfNearbyPointsOfInterestIds;
         this.status = other.status;
         this.datePut = other.datePut;

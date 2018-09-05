@@ -415,6 +415,11 @@ public class Utils {
         return true;
     }
 
+    public static boolean isNumeric (String str) {
+        Log.d(TAG, "isNumeric: called!");
+        return str.matches("\\d+(?:\\.\\d+)?");
+    }
+
     public static String getStringFromTextView(TextView textView) {
         Log.d(TAG, "getViewsText: called!");
         return textView.getText().toString().trim();
@@ -713,6 +718,8 @@ public class Utils {
         Log.d(TAG, "dateToString: called!");
         return new SimpleDateFormat("dd/MM/yyyy").format(date);
     }
+
+
 
 
 }

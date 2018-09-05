@@ -3,6 +3,7 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.arch.persistence.room.util.StringUtil;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -39,7 +40,9 @@ import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -221,7 +224,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick ({R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id, R.id.checkbox_sold_id})
+    @OnClick ({R.id.button_add_edit_address_id, R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id, R.id.checkbox_sold_id})
     public void buttonClicked(View view) {
         Log.d(TAG, "buttonClicked: " + ((Button) view).getText().toString() + " clicked!");
 
@@ -238,23 +241,18 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
             break;
 
             case R.id.button_insert_edit_listing_id: {
-                if (allChecksCorrect()) {
-                   editListing();
-                }
+                editListing();
 
-            }
-            break;
+            }break;
 
             case R.id.checkbox_sold_id: {
-
                 if (cbSold.isChecked()) {
                     launchDatePickerDialog();
 
                 } else {
-                    tvSold.setText("");
+                    dateSold = "";
+                    tvSold.setText(dateSold);
                 }
-
-
             } break;
 
         }
@@ -267,12 +265,13 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         if (dateIsValid(date)) {
             dateSold = Utils.dateToString(date);
             cbSold.setChecked(true);
-            tvSold.setText(Utils.dateToString(date));
+            tvSold.setText(getDateSold());
 
         } else {
             ToastHelper.toastShort(this, "The date must be today or before today");
+            dateSold = "";
             cbSold.setChecked(false);
-            tvSold.setText("");
+            tvSold.setText(getDateSold());
         }
     }
 
@@ -329,6 +328,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         /* We firstly clone the real estate object in the RealEstateCache
         * */
         getRepository().cloneRealEstate(realEstate);
+        Log.w(TAG, "prepareCache: clone = " + getRealEstateCache().toString());
 
         /* We delete the bitmapCache and fill it with the bitmaps related to the
         * real estate that is loaded
@@ -551,12 +551,12 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private String getDateSold () {
         Log.d(TAG, "getDateSold: called!");
-        if (dateSold != null) {
-            return dateSold;
-        } else {
+        if (dateSold == null) {
             return "";
-        }
 
+        } else {
+            return dateSold;
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -569,6 +569,14 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         Intent intent = new Intent(this, PhotoGridActivity.class);
         intent.putExtra(Constants.INTENT_FROM_ACTIVITY, Constants.INTENT_FROM_EDIT);
         startActivity(intent);
+
+    }
+
+    private void launchDatePickerDialog () {
+        Log.d(TAG, "launchDatePickerDialog: called!");
+
+        DatePickerFragment.newInstance()
+                .show(getSupportFragmentManager(), "DatePickerDialogFragment");
 
     }
 
@@ -611,27 +619,52 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private boolean allChecksCorrect () {
         Log.d(TAG, "allChecksCorrect: called!");
+
+        /* Left like this for readibility purposes
+        * */
+
+        if (!Utils.isNumeric(Utils.getStringFromTextView(tvPrice))) {
+            return false;
+        }
+
+        if (!Utils.isNumeric(Utils.getStringFromTextView(tvSurfaceArea))) {
+            return false;
+        }
+
         return true;
     }
 
     private void editListing () {
         Log.d(TAG, "editListing: called!");
 
-        Log.w(TAG, "editListing: " + getRealEstateCache().toString());
-        Log.i(TAG, "editListing: " + getListOfImagesRealEstateCache().toString());
+        if (allChecksCorrect()) {
+            Log.w(TAG, "editListing: " + getRealEstateCache().toString());
+            Log.w(TAG, "editListing: " + getListOfImagesRealEstateCache().toString());
 
-        ToastHelper.toastShort(this, "Edit listing process executed! No changes yet! They have to be implemented!");
-        createNotification();
+            updateImagesIdRealEstateCache();
+
+            Log.w(TAG, "editListing: afterUpdate = " + getRealEstateCache().toString());
+            Log.w(TAG, "editListing: afterUpdate = " + getListOfImagesRealEstateCache().toString());
+
+
+            ToastHelper.toastShort(this, "Edit listing process executed! No changes yet! They have to be implemented!");
+            createNotification();
+        } else {
+            ToastHelper.toastShort(this, "Sorry, there is a problem with some data");
+        }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    private void updateImagesIdRealEstateCache() {
+        Log.d(TAG, "updateImagesIdRealEstateCache: called!");
 
-    private void launchDatePickerDialog () {
-        Log.d(TAG, "launchDatePickerDialog: called!");
+        List<String> listOfImagesIds = new ArrayList<>();
 
-        DatePickerFragment.newInstance()
-                .show(getSupportFragmentManager(), "DatePickerDialogFragment");
-
+        for (int i = 0; i < getListOfImagesRealEstateCache().size(); i++) {
+            listOfImagesIds.add(getListOfImagesRealEstateCache().get(i).getId());
+        }
+        this.getRealEstateCache().setListOfImagesIds(listOfImagesIds);
     }
+
+
 
 }
