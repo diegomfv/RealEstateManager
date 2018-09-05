@@ -107,7 +107,7 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<RealEstate> listOfListings;
+    private List<RealEstate> listOfRealEstate;
 
     private List<PlaceRealEstate> listOfPlaceRealEstate;
 
@@ -268,13 +268,13 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<RealEstate> getListOfListings() {
-        Log.d(TAG, "getListOfListings: called!");
+    private List<RealEstate> getListOfRealEstate() {
+        Log.d(TAG, "getListOfRealEstate: called!");
 
-        if (listOfListings == null) {
-            return listOfListings = new ArrayList<>();
+        if (listOfRealEstate == null) {
+            return listOfRealEstate = new ArrayList<>();
         }
-        return listOfListings;
+        return listOfRealEstate;
     }
 
     private List<PlaceRealEstate> getListOfPlaceRealEstate() {
@@ -492,9 +492,9 @@ public class SearchEngineActivity extends BaseActivity {
                 @Override
                 public void onChanged(@Nullable List<RealEstate> realEstates) {
                     Log.d(TAG, "onChanged: called!");
-                    listOfListings = realEstates;
+                    listOfRealEstate = realEstates;
                     configureAllAutocompleteTextViews();
-                    setMinMaxValuesRangeSeekBars(listOfListings);
+                    setMinMaxValuesRangeSeekBars(listOfRealEstate);
                 }
             });
 
@@ -606,25 +606,32 @@ public class SearchEngineActivity extends BaseActivity {
     private void initSearch() {
         Log.d(TAG, "initSearch: called!");
 
+        // TODO: 05/09/2018 Show Progress Bar!
+
         List<RealEstate> listOfFilteredRealEstate = new ArrayList<>();
 
-        for (int i = 0; i < listOfListings.size(); i++) {
+        for (int i = 0; i < listOfRealEstate.size(); i++) {
 
-            if (!allFiltersPassed(listOfListings.get(i))) {
+            if (!allFiltersPassed(listOfRealEstate.get(i))) {
                 continue;
             }
 
-            listOfFilteredRealEstate.add(listOfListings.get(i));
+            listOfFilteredRealEstate.add(listOfRealEstate.get(i));
         }
 
         if (listOfFilteredRealEstate.size() > 0) {
+
+            for (int i = 0; i < listOfFilteredRealEstate.size(); i++) {
+                getRepository().getListOfFoundRealEstates().add(listOfFilteredRealEstate.get(i));
+            }
+
+            Utils.launchActivity(this, ResultsActivity.class);
             ToastHelper.toastLong(this, "One or more results available");
+
+
+        } else {
+            ToastHelper.toastLong(this, "No results were found");
         }
-
-        // TODO: 26/08/2018 Use an intent to send the information
-        // TODO: 26/08/2018 Show the user the system is running the search
-
-        // TODO: 24/08/2018 DELETE ALL OF THIS
 
     }
 

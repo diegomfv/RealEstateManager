@@ -60,7 +60,9 @@ public class DataRepository {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     //SEARCH CACHE (keeps track of different information to help displaying it in Search Activity:
-    //checkboxes, autoCompleteTextViews...)
+    //checkboxes, autoCompleteTextViews...) Also keeps a list with the realEstates found with the
+    //search engine
+
     private Set<String> setOfBuildingTypes;
 
     private Set<String> setOfLocalities;
@@ -68,6 +70,8 @@ public class DataRepository {
     private Set<String> setOfCities;
 
     private Set<String> setOfTypesOfPointsOfInterest;
+
+    private List<RealEstate> listOfFoundRealEstates;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -322,54 +326,15 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Get lists from the database
-     * and get notified when the data changes.
-     */
-    public LiveData<List<RealEstate>> getObservableAllListings() {
-        Log.d(TAG, "getObservableAllListings: called!");
-        return listOfListingsLiveData;
+    //SEARCH CACHE
+
+    public List<RealEstate> getListOfFoundRealEstates () {
+        Log.d(TAG, "getListOfFoundRealEstates: called!");
+        if (listOfFoundRealEstates == null) {
+            return listOfFoundRealEstates = new ArrayList<>();
+        }
+        return listOfFoundRealEstates;
     }
-
-    public LiveData<List<PlaceRealEstate>> getObservableAllPlacesRealEstate() {
-        Log.d(TAG, "getObservableAllPlacesRealEstate: called!");
-        return listOfPlacesRealEstateLiveData;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // TODO: 27/08/2018 Modified to public
-    private LiveData<List<RealEstate>> getAllListingsLiveData() {
-        Log.d(TAG, "getAllListingsLiveData: called!");
-        return mDatabase.realStateDao().getAllListingsOrderedByTypeLiveData();
-    }
-
-    public LiveData<List<ImageRealEstate>> getObservableAllImagesRealEstate() {
-        return mDatabase.imageRealEstateDao().getAllImagesRealEstateLiveData();
-    }
-
-    private LiveData<List<PlaceRealEstate>> getAllPlacesRealEstateLiveData() {
-        Log.d(TAG, "getAllPlacesRealEstateLiveData: called!");
-        return mDatabase.placeRealEstateDao().getAllPlacesRealEstateLiveData();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private List<RealEstate> getAllListings() {
-        Log.d(TAG, "getAllListingsLiveData: called!");
-        return mDatabase.realStateDao().getAllListingsOrderedByType();
-    }
-
-    private List<ImageRealEstate> getAllImagesRealEstate () {
-        Log.d(TAG, "getAllImagesRealEstate: called!");
-        return mDatabase.imageRealEstateDao().getAllImagesRealEstate();
-    }
-
-    private List<PlaceRealEstate> getAllPlacesRealEstate () {
-        Log.d(TAG, "getAllPlacesRealEstate: called!");
-        return mDatabase.placeRealEstateDao().getAllPlacesRealEstate();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public Set<String> getSetOfBuildingTypes () {
         Log.d(TAG, "getSetOfBuildingTypes: called!");
@@ -440,6 +405,60 @@ public class DataRepository {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** Get lists from the database
+     * and get notified when the data changes.
+     */
+    public LiveData<List<RealEstate>> getObservableAllListings() {
+        Log.d(TAG, "getObservableAllListings: called!");
+        return listOfListingsLiveData;
+    }
+
+    public LiveData<List<PlaceRealEstate>> getObservableAllPlacesRealEstate() {
+        Log.d(TAG, "getObservableAllPlacesRealEstate: called!");
+        return listOfPlacesRealEstateLiveData;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // TODO: 27/08/2018 Modified to public
+    private LiveData<List<RealEstate>> getAllListingsLiveData() {
+        Log.d(TAG, "getAllListingsLiveData: called!");
+        return mDatabase.realStateDao().getAllListingsOrderedByTypeLiveData();
+    }
+
+    public LiveData<List<ImageRealEstate>> getObservableAllImagesRealEstate() {
+        return mDatabase.imageRealEstateDao().getAllImagesRealEstateLiveData();
+    }
+
+    private LiveData<List<PlaceRealEstate>> getAllPlacesRealEstateLiveData() {
+        Log.d(TAG, "getAllPlacesRealEstateLiveData: called!");
+        return mDatabase.placeRealEstateDao().getAllPlacesRealEstateLiveData();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private List<RealEstate> getAllListings() {
+        Log.d(TAG, "getAllListingsLiveData: called!");
+        return mDatabase.realStateDao().getAllListingsOrderedByType();
+    }
+
+    private List<ImageRealEstate> getAllImagesRealEstate () {
+        Log.d(TAG, "getAllImagesRealEstate: called!");
+        return mDatabase.imageRealEstateDao().getAllImagesRealEstate();
+    }
+
+    private List<PlaceRealEstate> getAllPlacesRealEstate () {
+        Log.d(TAG, "getAllPlacesRealEstate: called!");
+        return mDatabase.placeRealEstateDao().getAllPlacesRealEstate();
+    }
+
+
 
     // TODO: 22/08/2018 Fetch network data from the repository!
 
