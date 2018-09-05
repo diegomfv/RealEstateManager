@@ -104,7 +104,7 @@ public class AuthLoginActivity extends BaseActivity {
             break;
 
             case R.id.button_sign_up_password_id: {
-               // Utils.launchActivity(this, SignUpActivity.class);
+                Utils.launchActivity(this, SignUpActivity.class);
                 DebugDB.getAddressLog();
             }
             break;

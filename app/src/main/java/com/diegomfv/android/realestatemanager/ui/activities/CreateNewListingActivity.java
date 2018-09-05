@@ -175,7 +175,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         this.counter = 0;
         ////////////////////////////////////////////////////////////////////////////////////////////
-        setContentView(R.layout.insert_information_layout);
+        setContentView(R.layout.activity_edit_listing);
         setTitle("Create a New Listing");
         this.unbinder = ButterKnife.bind(this);
 
@@ -276,6 +276,19 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "update: called!");
         isInternetAvailable = Utils.setInternetAvailability(internetAvailable);
         snackBarConfiguration();
+    }
+
+    @Override
+    public void onDialogPositiveClick(AddressRealEstate addressRealEstate) {
+        Log.d(TAG, "onDialogPositiveClick: called!");
+        checkAddressIsValid(addressRealEstate);
+    }
+
+    @Override
+    public void onDialogNegativeClick() {
+        Log.d(TAG, "onDialogNegativeClick: called!");
+
+        ToastHelper.toastShort(this, "The address was not added");
     }
 
     @OnClick({R.id.button_add_edit_address_id, R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id})
@@ -488,18 +501,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 .show(getSupportFragmentManager(), "InsertAddressDialogFragment");
     }
 
-    @Override
-    public void onDialogPositiveClick(AddressRealEstate addressRealEstate) {
-        Log.d(TAG, "onDialogPositiveClick: called!");
-        checkAddressIsValid(addressRealEstate);
-    }
-
-    @Override
-    public void onDialogNegativeClick() {
-        Log.d(TAG, "onDialogNegativeClick: called!");
-
-        ToastHelper.toastShort(this, "The address was not added");
-    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private boolean allChecksCorrect() {
         Log.d(TAG, "allChecksCorrect: called!");

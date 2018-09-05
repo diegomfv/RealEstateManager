@@ -37,6 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="10dp"
         android:text="Did you forget your password?"
         android:textColor="@color/colorPrimaryDark"
         android:clickable="true"/>
@@ -46,7 +47,7 @@
         style="@style/buttonGeneralStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        android:layout_margin="20dp"
         android:layout_gravity="center"
         android:text="@string/password_sign_up"/>
 

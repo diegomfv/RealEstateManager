@@ -1,17 +1,12 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NotificationCompat;
@@ -28,8 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
@@ -44,17 +37,10 @@ import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Diego Fajardo on 23/08/2018.
@@ -167,7 +153,7 @@ public class EditListingActivity extends BaseActivity {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
-        setContentView(R.layout.insert_information_layout);
+        setContentView(R.layout.activity_create_new_listing);
         setTitle("Edit");
         unbinder = ButterKnife.bind(this);
 
@@ -523,7 +509,7 @@ public class EditListingActivity extends BaseActivity {
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.real_estate_logo)
-                        .setContentTitle(getResources().getString(R.string.notification_title_create))
+                        .setContentTitle(getResources().getString(R.string.notification_title_edit))
                         .setContentText(getResources().getString(R.string.notification_text, Utils.getAddressAsString(getRealEstateCache())))
                         .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                         .setAutoCancel(true);
@@ -547,7 +533,11 @@ public class EditListingActivity extends BaseActivity {
 
     private void editListing () {
         Log.d(TAG, "editListing: called!");
-        ToastHelper.toastShort(this, "Edit listing process executed! No changes yet! Tehy have to be implemented!");
+
+        Log.w(TAG, "editListing: " + getRealEstateCache().toString());
+        Log.i(TAG, "editListing: " + getListOfImagesRealEstateCache().toString());
+
+        ToastHelper.toastShort(this, "Edit listing process executed! No changes yet! They have to be implemented!");
         createNotification();
     }
 }
