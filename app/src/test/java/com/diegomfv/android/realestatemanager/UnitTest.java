@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
@@ -70,6 +72,14 @@ public class UnitTest {
 
     }
 
+    @Test
+    public void dateToString() {
 
+        Date date = new Date();
+        String dateAsString = new SimpleDateFormat("dd/MM/YYYY").format(date);
+
+        System.out.println(dateAsString);
+
+    }
 
 }

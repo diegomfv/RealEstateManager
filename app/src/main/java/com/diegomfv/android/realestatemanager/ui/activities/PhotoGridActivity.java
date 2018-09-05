@@ -160,14 +160,14 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
 
     @Override
     public void onDialogPositiveClick(ImageRealEstate imageRealEstate) {
-        Log.d(TAG, "onDialogPositiveClick: called!");
+        Log.d(TAG, "onDatePickerDialogPositiveClick: called!");
         ToastHelper.toastLong(this, imageRealEstate.getDescription());
 
     }
 
     @Override
     public void onDialogNegativeClick() {
-        Log.d(TAG, "onDialogNegativeClick: called!");
+        Log.d(TAG, "onDatePickerDialogNegativeClick: called!");
 
     }
 

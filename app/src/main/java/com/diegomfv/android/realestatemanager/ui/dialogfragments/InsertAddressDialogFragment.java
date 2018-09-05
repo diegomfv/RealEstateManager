@@ -82,7 +82,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
         void onDialogNegativeClick ();
     }
 
-    private InsertAddressDialogListener onButtonClickedListener;
+    private InsertAddressDialogListener listener;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -128,7 +128,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Log.d(TAG, "onClick: called!");
-                            onButtonClickedListener.onDialogNegativeClick();
+                            listener.onDialogNegativeClick();
                         }
                     });
 
@@ -164,7 +164,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
         Log.d(TAG, "onAttach: called!");
 
         try {
-            onButtonClickedListener = (InsertAddressDialogListener) context;
+            listener = (InsertAddressDialogListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement InsertAddressDialogListener");
@@ -245,7 +245,7 @@ public class InsertAddressDialogFragment extends DialogFragment {
             ToastHelper.toastShort(getActivity(), "Please, introduce a postcode");
 
         } else {
-            onButtonClickedListener.onDialogPositiveClick(
+            listener.onDialogPositiveClick(
                     new AddressRealEstate(
                             Utils.getStringFromTextView(tvStreet),
                             Utils.getStringFromTextView(tvLocality),

@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -32,10 +33,13 @@ import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.datamodels.RoomsRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
+import com.diegomfv.android.realestatemanager.ui.dialogfragments.DatePickerFragment;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,7 +49,7 @@ import butterknife.Unbinder;
 /**
  * Created by Diego Fajardo on 23/08/2018.
  */
-public class EditListingActivity extends BaseActivity {
+public class EditListingActivity extends BaseActivity implements DatePickerFragment.DatePickerFragmentListener {
 
     private static final String TAG = EditListingActivity.class.getSimpleName();
 
@@ -81,6 +85,9 @@ public class EditListingActivity extends BaseActivity {
     @BindView(R.id.card_view_address_id)
     CardView cardViewAddress;
 
+    @BindView(R.id.card_view_sold_id)
+    CardView cardViewSold;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private TextInputAutoCompleteTextView tvTypeOfBuilding;
@@ -101,6 +108,13 @@ public class EditListingActivity extends BaseActivity {
     private TextInputAutoCompleteTextView tvDescription;
 
     private TextInputEditText tvAddress;
+
+    @BindView(R.id.checkbox_sold_id)
+    CheckBox cbSold;
+
+    private TextView tvSold;
+
+    private String dateSold;
 
     @BindView(R.id.button_add_edit_address_id)
     Button buttonEditAddress;
@@ -153,7 +167,7 @@ public class EditListingActivity extends BaseActivity {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
-        setContentView(R.layout.activity_create_new_listing);
+        setContentView(R.layout.activity_edit_listing);
         setTitle("Edit");
         unbinder = ButterKnife.bind(this);
 
@@ -207,7 +221,7 @@ public class EditListingActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick ({R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id})
+    @OnClick ({R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id, R.id.checkbox_sold_id})
     public void buttonClicked(View view) {
         Log.d(TAG, "buttonClicked: " + ((Button) view).getText().toString() + " clicked!");
 
@@ -230,8 +244,53 @@ public class EditListingActivity extends BaseActivity {
 
             }
             break;
+
+            case R.id.checkbox_sold_id: {
+
+                if (cbSold.isChecked()) {
+                    launchDatePickerDialog();
+
+                } else {
+                    tvSold.setText("");
+                }
+
+
+            } break;
+
         }
     }
+
+    @Override
+    public void onDateSet(Date date) {
+        Log.d(TAG, "onDateSet: called!");
+
+        if (dateIsValid(date)) {
+            dateSold = Utils.dateToString(date);
+            cbSold.setChecked(true);
+            tvSold.setText(Utils.dateToString(date));
+
+        } else {
+            ToastHelper.toastShort(this, "The date must be today or before today");
+            cbSold.setChecked(false);
+            tvSold.setText("");
+        }
+    }
+
+    private boolean dateIsValid(Date date) {
+        Log.d(TAG, "dateIsValid: called!");
+        return !date.after(new Date());
+    }
+
+    private View.OnClickListener tvSoldListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.d(TAG, "onClick: called!");
+
+            if (cbSold.isChecked()) {
+                launchDatePickerDialog();
+            }
+        }
+    };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -288,11 +347,13 @@ public class EditListingActivity extends BaseActivity {
         this.getAutocompleteTextViews();
         this.getTextViews();
         this.getSeekBars();
+        this.getCheckbox();
 
         this.setAllHints();
         this.setTextButtons();
         this.setCrystalSeekBarsMinMaxValues();
         this.setCrystalSeekBarsListeners();
+        this.setListeners();
         this.setAllInformation();
     }
 
@@ -310,6 +371,7 @@ public class EditListingActivity extends BaseActivity {
         this.tvNumberOfBedrooms = cardViewNumberOfBedrooms.findViewById(R.id.textView_title_id);
         this.tvNumberOfBathrooms = cardViewNumberOfBathrooms.findViewById(R.id.textView_title_id);
         this.tvNumberOfOtherRooms = cardViewNumberOfOtherRooms.findViewById(R.id.textView_title_id);
+        this.tvSold = cardViewSold.findViewById(R.id.relative_layout_id).findViewById(R.id.textView_date_id);
     }
 
     private void getSeekBars() {
@@ -319,10 +381,15 @@ public class EditListingActivity extends BaseActivity {
         this.seekBarOtherRooms = cardViewNumberOfOtherRooms.findViewById(R.id.single_seek_bar_id);
     }
 
+    private void getCheckbox () {
+        Log.d(TAG, "getCheckbox: called!");
+        this.cbSold = cardViewSold.findViewById(R.id.relative_layout_id).findViewById(R.id.checkbox_sold_id);
+    }
+
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
 
-        // TODO: 23/08/2018 Use Resources instead of hardcoded
+        // TODO: 23/08/2018 Use Resources instead of hardcoded text
 
         setHint(cardViewType, "Type");
         setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
@@ -335,6 +402,11 @@ public class EditListingActivity extends BaseActivity {
         Log.d(TAG, "setHint: called!");
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
+    }
+
+    private void setListeners () {
+        Log.d(TAG, "setListeners: called!");
+        tvSold.setOnClickListener(tvSoldListener);
     }
 
     private void updatePriceHint() {
@@ -474,6 +546,17 @@ public class EditListingActivity extends BaseActivity {
         Log.d(TAG, "updateStringValues: called!");
         this.getRealEstateCache().setType(Utils.capitalize(tvTypeOfBuilding.getText().toString().trim()));
         this.getRealEstateCache().setDescription(Utils.capitalize(tvDescription.getText().toString().trim()));
+        this.getRealEstateCache().setDateSale(getDateSold());
+    }
+
+    private String getDateSold () {
+        Log.d(TAG, "getDateSold: called!");
+        if (dateSold != null) {
+            return dateSold;
+        } else {
+            return "";
+        }
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -540,4 +623,15 @@ public class EditListingActivity extends BaseActivity {
         ToastHelper.toastShort(this, "Edit listing process executed! No changes yet! They have to be implemented!");
         createNotification();
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void launchDatePickerDialog () {
+        Log.d(TAG, "launchDatePickerDialog: called!");
+
+        DatePickerFragment.newInstance()
+                .show(getSupportFragmentManager(), "DatePickerDialogFragment");
+
+    }
+
 }

@@ -709,4 +709,10 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public static String dateToString (Date date) {
+        Log.d(TAG, "dateToString: called!");
+        return new SimpleDateFormat("dd/MM/yyyy").format(date);
+    }
+
+
 }

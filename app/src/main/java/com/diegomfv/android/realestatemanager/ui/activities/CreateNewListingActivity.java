@@ -280,13 +280,13 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     @Override
     public void onDialogPositiveClick(AddressRealEstate addressRealEstate) {
-        Log.d(TAG, "onDialogPositiveClick: called!");
+        Log.d(TAG, "onDatePickerDialogPositiveClick: called!");
         checkAddressIsValid(addressRealEstate);
     }
 
     @Override
     public void onDialogNegativeClick() {
-        Log.d(TAG, "onDialogNegativeClick: called!");
+        Log.d(TAG, "onDatePickerDialogNegativeClick: called!");
 
         ToastHelper.toastShort(this, "The address was not added");
     }

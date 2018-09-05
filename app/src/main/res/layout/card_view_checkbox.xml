@@ -8,10 +8,12 @@
     app:contentPaddingRight="10dp"
     android:layout_marginTop="5dp">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/relative_layout_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp">
 
         <TextView
             android:id="@+id/textView_title_id"
@@ -19,14 +21,38 @@
             android:layout_height="wrap_content"
             android:hint="Sale State"/>
 
+        <TextView
+            android:id="@+id/textView_date_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="../../...."
+            android:layout_toRightOf="@id/checkbox_sold_id"
+            android:layout_alignBaseline="@id/checkbox_sold_id"
+            android:clickable="true"/>
+
         <CheckBox
             android:id="@+id/checkbox_sold_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SOLD"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginRight="30dp"
+            android:layout_below="@+id/textView_title_id"
+            android:text="SOLD" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </android.support.v7.widget.CardView>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
