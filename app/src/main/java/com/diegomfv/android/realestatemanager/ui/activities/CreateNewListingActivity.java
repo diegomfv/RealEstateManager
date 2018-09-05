@@ -175,7 +175,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         this.counter = 0;
         ////////////////////////////////////////////////////////////////////////////////////////////
-        setContentView(R.layout.activity_edit_listing);
+        setContentView(R.layout.activity_create_new_listing);
         setTitle("Create a New Listing");
         this.unbinder = ButterKnife.bind(this);
 
@@ -569,10 +569,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                         Log.d(TAG, "onSuccess: called!");
 
                         insertListPlacesRealEstate();
-
-                        // TODO: 02/09/2018 Check this!
                         insertAllBitmapsInImagesDirectory();
-                        // TODO: 02/09/2018 Check this!
 
                     }
 

@@ -618,7 +618,7 @@ public class SearchEngineActivity extends BaseActivity {
         }
 
         if (listOfFilteredRealEstate.size() > 0) {
-            ToastHelper.toastLong(this, "Filter passed");
+            ToastHelper.toastLong(this, "One or more results available");
         }
 
         // TODO: 26/08/2018 Use an intent to send the information
@@ -676,8 +676,6 @@ public class SearchEngineActivity extends BaseActivity {
 
         return true;
     }
-
-    ///////////////
 
     private boolean typeFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "typeFilterPassed: called!");
