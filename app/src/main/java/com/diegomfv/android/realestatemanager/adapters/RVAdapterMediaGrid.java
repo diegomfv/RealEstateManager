@@ -31,18 +31,16 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
     private Context context;
     private List<String> listOfKeys;
     private Map<String,Bitmap> bitmapCache;
-    private String imagesDir;
     private RequestManager glide;
 
 //////////////////////
 
-    public RVAdapterMediaGrid (Context context, List<String> listOfKeys, Map<String,Bitmap> bitmapCache, String imagesDir, RequestManager glide) {
+    public RVAdapterMediaGrid (Context context, List<String> listOfKeys, Map<String,Bitmap> bitmapCache, RequestManager glide) {
         Log.d(TAG, "RVAdapterListings: called!");
 
         this.context = context;
         this.listOfKeys = listOfKeys;
         this.bitmapCache = bitmapCache;
-        this.imagesDir = imagesDir;
         this.glide = glide;
 
     }
@@ -134,5 +132,6 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
 
         glide.load(bitmapCache.get(listOfKeys.get(position)))
                 .into(imageView);
+
     }
 }

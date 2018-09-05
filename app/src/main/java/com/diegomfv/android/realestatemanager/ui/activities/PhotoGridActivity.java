@@ -118,8 +118,12 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
 
+                        /* We generate an id (key) for the bitmap
+                        * */
                         String key = FirebasePushIdGenerator.generate();
 
+                        /* The Bitmap itself anf its information is added to the cache
+                        * */
                         getListOfImagesRealEstateCache().add(new ImageRealEstate(key, ""));
                         getListOfBitmapKeys().add(key);
                         getRepository().addBitmapToBitmapCache(key, Utils.getResizedBitmap(selectedImage, 840));
@@ -129,6 +133,8 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
                         Log.i(TAG, "onActivityResult: " + getRepository().getCurrentSizeOfBitmapCache());
                         Log.i(TAG, "onActivityResult: " + getBitmapCache().size());
 
+                        /* The recycler view is notified in order to display the new data
+                        * */
                         updateAdapterData();
 
                     }
@@ -215,7 +221,6 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
                 this,
                 getListOfBitmapKeys(),
                 getRepository().getBitmapCache(),
-                getImagesDir(),
                 getGlide());
         this.recyclerView.setAdapter(this.adapter);
 
@@ -260,10 +265,6 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
         intent.setType("image/*");
         startActivityForResult(intent, Constants.REQUEST_CODE_GALLERY);
 
-    }
-    private void addImageToListOfImagesInCache() {
-        Log.d(TAG, "addImageToListOfImagesInCache: called!");
-        getListOfImagesRealEstateCache().add(imageRealEstateCache);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

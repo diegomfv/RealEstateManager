@@ -6,12 +6,17 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -27,13 +32,13 @@ public class UnitTest {
         Random random = new Random();
 
         for (int i = 0; i < 100; i++) {
-            Assert.assertTrue(Utils.isInteger(String.valueOf(random.nextInt())));
+            assertTrue(Utils.isInteger(String.valueOf(random.nextInt())));
         }
 
-        Assert.assertFalse(Utils.isInteger("a"));
-        Assert.assertFalse(Utils.isInteger("aasjhhfwe"));
-        Assert.assertFalse(Utils.isInteger("aasdbfyur   f"));
-        Assert.assertFalse(Utils.isInteger("1237  y4726384"));
+        assertFalse(Utils.isInteger("a"));
+        assertFalse(Utils.isInteger("aasjhhfwe"));
+        assertFalse(Utils.isInteger("aasdbfyur   f"));
+        assertFalse(Utils.isInteger("1237  y4726384"));
 
     }
 
@@ -79,6 +84,31 @@ public class UnitTest {
         String dateAsString = new SimpleDateFormat("dd/MM/YYYY").format(date);
 
         System.out.println(dateAsString);
+
+    }
+
+    @Test
+    public void stringToDateAndComparison () {
+
+        String string1 = "05/09/2018";
+        String string2 = "06/09/2018";
+        String string3 = "07/09/2018";
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+
+        try {
+            Date date1 = format.parse(string1);
+            Date date2 = format.parse(string2);
+            Date date3 = format.parse(string3);
+
+            assertTrue (date3.after(date2));
+            assertTrue (date2.after(date1));
+            assertTrue (date1.before(date2));
+            assertFalse (date1.after(date3));
+
+        } catch (ParseException e) {
+            System.out.println("Parse exception");
+        }
+
 
     }
 

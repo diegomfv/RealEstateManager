@@ -1,11 +1,13 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.arch.persistence.room.util.StringUtil;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -43,11 +45,18 @@ import com.diegomfv.android.realestatemanager.util.Utils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.Completable;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Diego Fajardo on 23/08/2018.
@@ -328,7 +337,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         /* We firstly clone the real estate object in the RealEstateCache
         * */
         getRepository().cloneRealEstate(realEstate);
-        Log.w(TAG, "prepareCache: clone = " + getRealEstateCache().toString());
+        Log.i(TAG, "prepareCache: clone = " + getRealEstateCache().toString());
 
         /* We delete the bitmapCache and fill it with the bitmaps related to the
         * real estate that is loaded
@@ -336,7 +345,8 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         getRepository().deleteAndFillBitmapCache(getRealEstateCache().getListOfImagesIds(), getInternalStorage(), getImagesDir());
 
         /* We also load the imageRealEstate objects in the corresponding cache to keep track
-        * of them. This is needed to if the user decided to update the information */
+        * of them. This is needed to if the user decided to update the information
+        * */
         getRepository().fillCacheWithImagesRealEstateFromRealEstateCache();
 
     }
@@ -631,6 +641,12 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
             return false;
         }
 
+        if (dateSold != null
+            && getRealEstateCache().getDatePut() != null
+            && Utils.stringToDate(dateSold).after(Utils.stringToDate(getRealEstateCache().getDatePut()))) {
+            return true;
+        }
+
         return true;
     }
 
@@ -638,19 +654,50 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         Log.d(TAG, "editListing: called!");
 
         if (allChecksCorrect()) {
+
+            Utils.hideMainContent(progressBarContent, mainLayout);
+
+            priceCorrectionIfNecessary();
+
             Log.w(TAG, "editListing: " + getRealEstateCache().toString());
             Log.w(TAG, "editListing: " + getListOfImagesRealEstateCache().toString());
 
+            /* We update the images the real estate is related to
+            * */
             updateImagesIdRealEstateCache();
 
             Log.w(TAG, "editListing: afterUpdate = " + getRealEstateCache().toString());
             Log.w(TAG, "editListing: afterUpdate = " + getListOfImagesRealEstateCache().toString());
 
+            /* We update the date sold. If the checkbox is not checked, it might be because
+            * the real estate has not been sold yet or because it was sold but now it is
+            * on sale again. We leave this option open
+            * */
+            updateDateSold();
 
-            ToastHelper.toastShort(this, "Edit listing process executed! No changes yet! They have to be implemented!");
-            createNotification();
+            Log.w(TAG, "editListing: bitmapCache = " + getBitmapCache() + " +++++++++++++++");
+            Log.w(TAG, "editListing: listOfBitmapKeys() = " + getListOfBitmapKeys() + " +++++++++++++++");
+
+            /* From now on, we can update the real estate and the imagesRealEstate in the database
+            * and insert the bitmaps in the internal storage
+            * */
+            updateRealEstateInTheDatabase();
+
         } else {
             ToastHelper.toastShort(this, "Sorry, there is a problem with some data");
+        }
+    }
+
+    /** This method updates real estate price info if the currency used is euros (the database
+     * stores the information in dollars)
+     * */
+    private void priceCorrectionIfNecessary () {
+        Log.d(TAG, "priceCorrectionIfNecessary: called!");
+
+        //1: euros
+        if (currency == 1) {
+            float price = Utils.getIntegerFromTextView(tvPrice);
+            getRealEstateCache().setPrice((int)Utils.convertEuroToDollar(price));
         }
     }
 
@@ -665,6 +712,101 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         this.getRealEstateCache().setListOfImagesIds(listOfImagesIds);
     }
 
+    private void updateDateSold () {
+        Log.d(TAG, "updateDateSold: called!");
 
+        if (!cbSold.isChecked()) {
+            getRealEstateCache().setDateSale("");
+
+        } else {
+            if (dateSold != null && !dateSold.equals("") )
+                getRealEstateCache().setDateSale(dateSold);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @SuppressLint("CheckResult")
+    private void updateRealEstateInTheDatabase () {
+        Log.d(TAG, "updateRealEstateInTheDatabase: called!");
+
+        Single.just(getAppDatabase().realStateDao().updateRealEstate(getRealEstateCache()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribeWith(new SingleObserver<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+                    }
+
+                    @Override
+                    public void onSuccess(Integer integer) {
+                        Log.d(TAG, "onSuccess: called!");
+
+                        /* After updating the RealEstate object, we update
+                        * the list of ImagesRealEstate (basically,
+                        * we add new ones to the database if they were entered)
+                        * */
+                        updateImagesRealEstateInTheDatabase();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+                });
+    }
+
+    @SuppressLint("CheckResult")
+    private void updateImagesRealEstateInTheDatabase () {
+        Log.d(TAG, "updateImagesRealEstateInTheDatabase: called!");
+
+        Single.just(getAppDatabase().imageRealEstateDao().insertListOfImagesRealEstate(getListOfImagesRealEstateCache()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new SingleObserver<long[]>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+                    }
+
+                    @Override
+                    public void onSuccess(long[] longs) {
+                        Log.d(TAG, "onSuccess: called!");
+
+                        /* After updating ImageRealEstate objects in the database,
+                        * we insert the related bitmaps in the Images Directory. When this
+                        * process finishes, we create the notification signaling that everything
+                        * has gone correctly, we delete the cache and launch Main Activity
+                        * */
+                        insertAllBitmapsInImagesDirectory();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+                });
+    }
+
+    /** Method that inserts the Bitmaps in the database, creates a notification,
+     * deletes the cache and launches MainActivity
+     * */
+    public void insertAllBitmapsInImagesDirectory () {
+        Log.d(TAG, "insertAllBitmapsInImagesDirectory: called!");
+
+        for (Map.Entry<String, Bitmap> entry : getBitmapCache().entrySet()) {
+            getRepository().addBitmapToBitmapCacheAndStorage(getInternalStorage(), getImagesDir(), entry.getKey(), entry.getValue());
+        }
+
+        createNotification();
+        getRepository().deleteCacheAndSets();
+        Utils.launchActivity(this, MainActivity.class);
+
+    }
 
 }

@@ -117,6 +117,10 @@ public class DataRepository {
         return listOfImagesRealEstateCache;
     }
 
+    /** We fill a cache containing ImageRealEstate objects related to the realEstate object
+     * with objects from the database with the same id as the ids we find in the list
+     * of the real estate object
+     * */
     public void fillCacheWithImagesRealEstateFromRealEstateCache() {
         Log.d(TAG, "fillListOfImagesRealEstateAccordingToRealEstateCache: called!");
 

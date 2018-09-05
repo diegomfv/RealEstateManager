@@ -41,6 +41,7 @@ import java.net.SocketAddress;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -719,7 +720,13 @@ public class Utils {
         return new SimpleDateFormat("dd/MM/yyyy").format(date);
     }
 
-
-
-
+    public static Date stringToDate (String string) {
+        Log.d(TAG, "stringToDate: called!");
+        try {
+            return new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).parse(string);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

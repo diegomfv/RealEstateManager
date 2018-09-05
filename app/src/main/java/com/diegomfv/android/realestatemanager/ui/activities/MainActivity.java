@@ -84,6 +84,8 @@ public class MainActivity extends BaseActivity {
         }
 
         this.checkInternalStoragePermissionGranted();
+
+        Log.w(TAG, "onCreate: getBitmapCache() =  " + getBitmapCache() + "+++++++++++++++");
     }
 
     @Override
