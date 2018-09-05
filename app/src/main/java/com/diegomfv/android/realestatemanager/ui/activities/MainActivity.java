@@ -14,9 +14,9 @@ import android.widget.TextView;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.rest.fragments.handset.FragmentHandsetListListings;
-import com.diegomfv.android.realestatemanager.ui.rest.fragments.tablet.FragmentTabletItemDescription;
-import com.diegomfv.android.realestatemanager.ui.rest.fragments.tablet.FragmentTabletListListings;
+import com.diegomfv.android.realestatemanager.ui.fragments.handset.main.FragmentHandsetListListingsMain;
+import com.diegomfv.android.realestatemanager.ui.fragments.tablet.main.FragmentTabletItemDescription;
+import com.diegomfv.android.realestatemanager.ui.fragments.tablet.main.FragmentTabletListListings;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity {
 
         this.currency = Utils.readCurrentCurrencyShPref(this);
 
-        dataAvailable = !getRepository().getSetOfBuildingTypes().isEmpty();
+        this.dataAvailable = !getRepository().getSetOfBuildingTypes().isEmpty();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_main);
@@ -254,7 +254,7 @@ public class MainActivity extends BaseActivity {
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment1_container_id, FragmentHandsetListListings.newInstance())
+                    .add(R.id.fragment1_container_id, FragmentHandsetListListingsMain.newInstance())
                     .commit();
 
         } else {

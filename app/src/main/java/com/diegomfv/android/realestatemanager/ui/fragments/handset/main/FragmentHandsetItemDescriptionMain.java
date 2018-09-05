@@ -1,4 +1,4 @@
-package com.diegomfv.android.realestatemanager.ui.rest.fragments.handset;
+package com.diegomfv.android.realestatemanager.ui.fragments.handset.main;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -59,9 +59,9 @@ import butterknife.Unbinder;
  */
 
 // TODO: 23/08/2018 Retain the fragment!
-public class FragmentHandsetItemDescription extends BaseFragment {
+public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
-    private static final String TAG = FragmentHandsetItemDescription.class.getSimpleName();
+    private static final String TAG = FragmentHandsetItemDescriptionMain.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -142,9 +142,9 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static FragmentHandsetItemDescription newInstance() {
+    public static FragmentHandsetItemDescriptionMain newInstance() {
         Log.d(TAG, "newInstance: called!");
-        return new FragmentHandsetItemDescription();
+        return new FragmentHandsetItemDescriptionMain();
     }
 
     @Nullable

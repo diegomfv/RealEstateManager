@@ -1,4 +1,4 @@
-package com.diegomfv.android.realestatemanager.ui.rest.fragments.tablet;
+package com.diegomfv.android.realestatemanager.ui.fragments.tablet.main;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
@@ -20,8 +20,8 @@ import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.fragments.handset.main.FragmentHandsetItemDescriptionMain;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
-import com.diegomfv.android.realestatemanager.ui.rest.fragments.handset.FragmentHandsetItemDescription;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
@@ -101,9 +101,9 @@ public class FragmentTabletItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static FragmentHandsetItemDescription newInstance() {
+    public static FragmentHandsetItemDescriptionMain newInstance() {
         Log.d(TAG, "newInstance: called!");
-        return new FragmentHandsetItemDescription();
+        return new FragmentHandsetItemDescriptionMain();
     }
 
     @Nullable

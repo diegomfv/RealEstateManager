@@ -1,11 +1,8 @@
-package com.diegomfv.android.realestatemanager.ui.rest.fragments.handset;
+package com.diegomfv.android.realestatemanager.ui.fragments.handset.main;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,8 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterListings;
 import com.diegomfv.android.realestatemanager.constants.Constants;
@@ -32,25 +27,19 @@ import com.diegomfv.android.realestatemanager.util.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
  */
 
-public class FragmentHandsetListListings extends BaseFragment {
+public class FragmentHandsetListListingsMain extends BaseFragment {
 
-    private static final String TAG = FragmentHandsetListListings.class.getSimpleName();
+    private static final String TAG = FragmentHandsetListListingsMain.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -63,9 +52,6 @@ public class FragmentHandsetListListings extends BaseFragment {
     //RecyclerView Adapter
     private RVAdapterListings adapter;
 
-    //Glide
-    private RequestManager glide;
-
     //ViewModel
     private ListingsSharedViewModel listingsSharedViewModel;
 
@@ -75,9 +61,9 @@ public class FragmentHandsetListListings extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static FragmentHandsetListListings newInstance() {
+    public static FragmentHandsetListListingsMain newInstance() {
         Log.d(TAG, "newInstance: called!");
-        return new FragmentHandsetListListings();
+        return new FragmentHandsetListListingsMain();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,11 +87,6 @@ public class FragmentHandsetListListings extends BaseFragment {
         ////////////////////////////////////////////////////////////////////////////////////////////
         View view = inflater.inflate(R.layout.fragment_list_listings, container, false);
         this.unbinder = ButterKnife.bind(this, view);
-
-        /* Glide configuration*/
-        if (getActivity() != null) {
-            this.glide = Glide.with(getActivity());
-        }
 
         this.configureRecyclerView();
 
@@ -178,7 +159,7 @@ public class FragmentHandsetListListings extends BaseFragment {
                     getInternalStorage(),
                     getImagesDir(),
                     getListOfRealEstates(),
-                    glide,
+                    getGlide(),
                     currency);
             this.recyclerView.setAdapter(this.adapter);
 

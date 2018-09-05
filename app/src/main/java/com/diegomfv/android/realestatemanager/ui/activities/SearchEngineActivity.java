@@ -40,6 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+// TODO: 05/09/2018 Keep the searching information stored with SharedPreferences
 public class SearchEngineActivity extends BaseActivity {
 
     private static final String TAG = SearchEngineActivity.class.getSimpleName();
@@ -608,7 +609,7 @@ public class SearchEngineActivity extends BaseActivity {
 
         // TODO: 05/09/2018 Show Progress Bar!
 
-        List<RealEstate> listOfFilteredRealEstate = new ArrayList<>();
+        getRepository().getListOfFoundRealEstates().clear();
 
         for (int i = 0; i < listOfRealEstate.size(); i++) {
 
@@ -616,16 +617,14 @@ public class SearchEngineActivity extends BaseActivity {
                 continue;
             }
 
-            listOfFilteredRealEstate.add(listOfRealEstate.get(i));
+            getRepository().getListOfFoundRealEstates().add(listOfRealEstate.get(i));
         }
 
-        if (listOfFilteredRealEstate.size() > 0) {
+        if (getRepository().getListOfFoundRealEstates().size() > 0) {
 
-            for (int i = 0; i < listOfFilteredRealEstate.size(); i++) {
-                getRepository().getListOfFoundRealEstates().add(listOfFilteredRealEstate.get(i));
-            }
+            Log.w(TAG, "initSearch: list = " + getRepository().getListOfFoundRealEstates());
 
-            Utils.launchActivity(this, ResultsActivity.class);
+            Utils.launchActivity(this, SearchResultsActivity.class);
             ToastHelper.toastLong(this, "One or more results available");
 
 

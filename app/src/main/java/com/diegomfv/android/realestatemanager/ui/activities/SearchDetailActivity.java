@@ -10,16 +10,15 @@ import android.view.MenuItem;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.fragments.handset.main.FragmentHandsetItemDescriptionMain;
+import com.diegomfv.android.realestatemanager.ui.fragments.handset.search.FragmentHandsetItemDescriptionSearch;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
 /**
- * Created by Diego Fajardo on 15/08/2018.
+ * Created by Diego Fajardo on 05/09/2018.
  */
-// TODO: 28/08/2018 Add possibility to change the currency
-public class DetailActivity extends BaseActivity {
+public class SearchDetailActivity extends BaseActivity {
 
-    private static final String TAG = DetailActivity.class.getSimpleName();
+    private static final String TAG = SearchDetailActivity.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +54,7 @@ public class DetailActivity extends BaseActivity {
         switch (item.getItemId()) {
 
             case android.R.id.home: {
-                Utils.launchActivity(this, MainActivity.class);
+                Utils.launchActivity(this, SearchResultsActivity.class);
 
             } break;
 
@@ -79,12 +78,10 @@ public class DetailActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     private void loadFragment(Bundle bundle) {
         Log.d(TAG, "loadFragmentOrFragments: called!");
 
-        FragmentHandsetItemDescriptionMain fragmentItemDescription = FragmentHandsetItemDescriptionMain.newInstance();
+        FragmentHandsetItemDescriptionSearch fragmentItemDescription = FragmentHandsetItemDescriptionSearch.newInstance();
         fragmentItemDescription.setArguments(bundle);
 
         getSupportFragmentManager()
@@ -93,6 +90,5 @@ public class DetailActivity extends BaseActivity {
                 .commit();
 
     }
-
 
 }

@@ -2,7 +2,6 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,12 +10,11 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
-import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.ui.fragments.handset.main.FragmentHandsetListListingsMain;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.rest.fragments.handset.FragmentHandsetListListings;
-import com.diegomfv.android.realestatemanager.ui.rest.fragments.tablet.FragmentTabletItemDescription;
-import com.diegomfv.android.realestatemanager.ui.rest.fragments.tablet.FragmentTabletListListings;
-import com.diegomfv.android.realestatemanager.util.ToastHelper;
+import com.diegomfv.android.realestatemanager.ui.fragments.handset.search.FragmentHandsetListListingsSearch;
+import com.diegomfv.android.realestatemanager.ui.fragments.tablet.main.FragmentTabletItemDescription;
+import com.diegomfv.android.realestatemanager.ui.fragments.tablet.main.FragmentTabletListListings;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
 import butterknife.BindView;
@@ -26,7 +24,7 @@ import butterknife.Unbinder;
 /**
  * Created by Diego Fajardo on 05/09/2018.
  */
-public class ResultsActivity extends BaseActivity {
+public class SearchResultsActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -61,11 +59,10 @@ public class ResultsActivity extends BaseActivity {
 
         this.configureActionBar();
 
-        if (dataAvailable) {
+        if (getRepository().getListOfFoundRealEstates().size() > 0) {
             this.loadFragmentOrFragments();
         }
 
-        Log.w(TAG, "onCreate: getBitmapCache() =  " + getBitmapCache() + "+++++++++++++++");
     }
 
     @Override
@@ -90,7 +87,7 @@ public class ResultsActivity extends BaseActivity {
         switch (item.getItemId()) {
 
             case android.R.id.home: {
-                Utils.launchActivity(this, AuthLoginActivity.class);
+                Utils.launchActivity(this, SearchEngineActivity.class);
 
             }
             break;
@@ -142,13 +139,15 @@ public class ResultsActivity extends BaseActivity {
     private void loadFragmentOrFragments() {
         Log.d(TAG, "loadFragmentOrFragments: called!");
 
+        hideTextViewShowFragments();
+
         if (findViewById(R.id.fragment2_container_id) == null) {
 
             /* Code for handsets
              * */
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment1_container_id, FragmentHandsetListListings.newInstance())
+                    .add(R.id.fragment1_container_id, FragmentHandsetListListingsSearch.newInstance())
                     .commit();
 
         } else {
@@ -165,6 +164,16 @@ public class ResultsActivity extends BaseActivity {
                     .add(R.id.fragment2_container_id, FragmentTabletItemDescription.newInstance())
                     .commit();
         }
+    }
+
+    private void hideTextViewShowFragments() {
+        Log.d(TAG, "hideTextViewData: called!");
+        tvInsertData.setVisibility(View.GONE);
+        fragment1Layout.setVisibility(View.VISIBLE);
+        if (findViewById(R.id.fragment2_container_id) != null) {
+            findViewById(R.id.fragment2_container_id).setVisibility(View.VISIBLE);
+        }
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
