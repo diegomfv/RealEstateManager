@@ -32,4 +32,9 @@
         app:showAsAction="ifRoom"
         android:title="@string/main_search"/>
 
+    <item android:id="@+id/menu_loan_simulator"
+        android:icon="@drawable/ic_equalizer_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/main_loan_simulator"/>
+
 </menu>

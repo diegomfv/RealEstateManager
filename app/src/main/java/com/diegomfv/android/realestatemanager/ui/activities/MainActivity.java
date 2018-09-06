@@ -160,9 +160,16 @@ public class MainActivity extends BaseActivity {
 
                 Utils.launchActivity(this, SearchEngineActivity.class);
 
+            }
+            break;
+
+            case R.id.menu_loan_simulator: {
+
 
             }
             break;
+
+
         }
         return super.onOptionsItemSelected(item);
     }
