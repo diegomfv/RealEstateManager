@@ -63,15 +63,6 @@ dependencies {
     //Android-storage library
     implementation 'com.snatik:storage:2.1.0'
 
-    //Firebase
-    implementation 'com.google.firebase:firebase-core:16.0.1'
-
-    //Firebase Realtime Database
-    implementation 'com.google.firebase:firebase-database:16.0.1'
-
-    //Firebase Storage
-    implementation 'com.google.firebase:firebase-storage:16.0.1'
-
     //RETROFIT
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
@@ -94,15 +85,6 @@ dependencies {
 
     //Google Location
     implementation 'com.google.android.gms:play-services-location:15.0.1'
-
-    //Firebase: enables all services
-    implementation 'com.google.firebase:firebase-core:16.0.1'
-
-    //Firebase Realtime Database
-    implementation 'com.google.firebase:firebase-database:16.0.1'
-
-    //Firebase Storage
-    implementation 'com.google.firebase:firebase-storage:16.0.1'
 
     //Range Seek Bar
     implementation 'com.crystal:crystalrangeseekbar:1.1.3'
