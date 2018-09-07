@@ -48,6 +48,7 @@
         <activity android:name=".ui.activities.PhotoGridActivity" />
         <activity android:name=".ui.activities.SearchResultsActivity" />
         <activity android:name=".ui.activities.SearchDetailActivity" />
+        <activity android:name=".ui.activities.LoanSimulatorActivity" />
 
         <receiver android:name=".receivers.InternetConnectionReceiver"/>
 

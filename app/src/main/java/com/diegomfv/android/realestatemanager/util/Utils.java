@@ -435,6 +435,16 @@ public class Utils {
         return 0;
     }
 
+    public static float getFloatFromTextView(TextView textView) {
+        Log.d(TAG, "getFloatFromTextView: called!");
+
+        if (isNumeric(textView.getText().toString().trim())) {
+            return Float.parseFloat(textView.getText().toString().trim());
+        }
+        return 0f;
+    }
+
+
     public static String getAddressAsString(RealEstate realEstate) {
         Log.d(TAG, "setAddressFromRealEstateCache: called!");
         if (realEstate.getAddress() != null) {

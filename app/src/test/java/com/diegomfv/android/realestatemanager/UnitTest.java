@@ -108,8 +108,56 @@ public class UnitTest {
         } catch (ParseException e) {
             System.out.println("Parse exception");
         }
+    }
 
+    @Test
+    public void calculatePayment () {
+
+        double principal = 100000;
+
+        double i = 0.05f;
+
+        int n = 20;
+
+        double payment2 = principal * i / (1 - Math.pow(1+i, -n));
+
+        System.out.println(payment2 / 12);
+
+    }
+
+    @Test
+    public void calculatePrincipalAndInterests () {
+
+        double remainingCapital = 90000;
+
+        double i = 0.05;
+
+        int n = 12;
+
+        double payment = 670.05;
+
+        double interests = i * remainingCapital / n;
+
+        double principal = payment - interests;
+
+        System.out.println(payment);
+        System.out.println(principal);
+        System.out.println(interests);
 
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

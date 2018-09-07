@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/loan_information_title_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Loan Information"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/loan_summary_title_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Loan Summary"
+            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintHorizontal_bias="0.307"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/loan_information_title_id">
+
+            <TextView
+                style="@style/loanTextViewInfoStyle"
+                android:text="Loan Amount" />
+
+            <TextView
+                style="@style/loanTextViewInfoStyle"
+                android:text="Ann. Interest Rate" />
+
+            <TextView
+                style="@style/loanTextViewInfoStyle"
+                android:text="Loan Period in Years" />
+
+            <TextView
+                style="@style/loanTextViewInfoStyle"
+                android:text="Payment Frequency" />
+
+            <TextView
+                style="@style/loanTextViewInfoStyle"
+                android:text="Start Date" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toBottomOf="@+id/loan_information_title_id">
+
+            <TextView
+                android:id="@+id/tvLoanAmount"
+                style="@style/loanTextViewDataStyle"
+                android:text="100,000.00" />
+
+            <TextView
+                android:id="@+id/tvAnnInterestRate"
+                style="@style/loanTextViewDataStyle"
+                android:text="7%" />
+
+            <TextView
+                android:id="@+id/tvLoanPeriodYears"
+                style="@style/loanTextViewDataStyle"
+                android:text="15" />
+
+            <TextView
+                android:id="@+id/tvPaymentFrequency"
+                style="@style/loanTextViewDataStyle"
+                android:text="Monthly" />
+
+            <TextView
+                android:id="@+id/tvStartDate"
+                style="@style/loanTextViewDataStyle"
+                android:text="01/01/2019" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            app:layout_constraintTop_toBottomOf="@+id/loan_summary_title_id">
+
+            <TextView
+                style="@style/loanTextViewInfoStyle"
+                android:text="--------" />
+
+            <TextView
+                style="@style/loanTextViewInfoStyle"
+                android:text="--------" />
+
+            <TextView
+                style="@style/loanTextViewInfoStyle"
+                android:text="--------" />
+
+            <TextView
+                style="@style/loanTextViewInfoStyle"
+                android:text="--------" />
+
+            <TextView
+                style="@style/loanTextViewInfoStyle"
+                android:text="--------" />
+
+            <TextView
+                style="@style/loanTextViewInfoStyle"
+                android:text="--------" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline5"
+            app:layout_constraintTop_toBottomOf="@+id/loan_summary_title_id">
+
+            <TextView
+                style="@style/loanTextViewDataStyle"
+                android:text="--------" />
+
+            <TextView
+                style="@style/loanTextViewDataStyle"
+                android:text="--------" />
+
+            <TextView
+                style="@style/loanTextViewDataStyle"
+                android:text="--------" />
+
+            <TextView
+                style="@style/loanTextViewDataStyle"
+                android:text="--------" />
+
+            <TextView
+                style="@style/loanTextViewDataStyle"
+                android:text="--------" />
+
+            <TextView
+                style="@style/loanTextViewDataStyle"
+                android:text="--------" />
+
+        </LinearLayout>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.75" />
+
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorPrimaryLighter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            style="@style/textViewLoanRvTitle"
+                            android:text="N." />
+
+                        <TextView
+                            style="@style/textViewLoanRvTitle"
+                            android:text="Paym. Date" />
+
+                        <TextView
+                            style="@style/textViewLoanRvTitle"
+                            android:text="Beg.Balance" />
+
+                        <TextView
+                            style="@style/textViewLoanRvTitle"
+                            android:text="Sch.Payment" />
+
+                        <TextView
+                            style="@style/textViewLoanRvTitle"
+                            android:text="Principal" />
+
+                        <TextView
+                            style="@style/textViewLoanRvTitle"
+                            android:text="Interest" />
+
+                        <TextView
+                            style="@style/textViewLoanRvTitle"
+                            android:text="End.Balance" />
+
+                        <TextView
+                        style="@style/textViewLoanRvTitle"
+                        android:text="Cum.Interest" />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view_loan_simulator_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+
+                </android.support.v7.widget.RecyclerView>
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
