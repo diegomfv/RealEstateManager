@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -210,7 +209,6 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:background="@color/colorPrimaryLighter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
@@ -220,57 +218,12 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            style="@style/textViewLoanRvTitle"
-                            android:text="N." />
-
-                        <TextView
-                            style="@style/textViewLoanRvTitle"
-                            android:text="Paym. Date" />
-
-                        <TextView
-                            style="@style/textViewLoanRvTitle"
-                            android:text="Beg.Balance" />
-
-                        <TextView
-                            style="@style/textViewLoanRvTitle"
-                            android:text="Sch.Payment" />
-
-                        <TextView
-                            style="@style/textViewLoanRvTitle"
-                            android:text="Principal" />
-
-                        <TextView
-                            style="@style/textViewLoanRvTitle"
-                            android:text="Interest" />
-
-                        <TextView
-                            style="@style/textViewLoanRvTitle"
-                            android:text="End.Balance" />
-
-                        <TextView
-                        style="@style/textViewLoanRvTitle"
-                        android:text="Cum.Interest" />
-
-                    </LinearLayout>
-
-                </android.support.v7.widget.CardView>
+                <include layout="@layout/card_view_item_loan"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_view_loan_simulator_id"
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout3">

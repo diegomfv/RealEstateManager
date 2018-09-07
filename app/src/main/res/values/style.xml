@@ -92,12 +92,11 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="textViewLoanRvTitle">
+    <style name="textViewLoanRvData">
         <item name="android:layout_width">100dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">10dp</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

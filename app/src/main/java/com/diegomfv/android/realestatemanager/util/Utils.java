@@ -595,6 +595,14 @@ public class Utils {
 
     }
 
+    public static String floatToString (Number amount) {
+        Log.d(TAG, "floatTwoDecimals: called!");
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
+        return df.format(amount);
+
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static void writeCurrentCurrencyShPref (Context context, int currency) {
