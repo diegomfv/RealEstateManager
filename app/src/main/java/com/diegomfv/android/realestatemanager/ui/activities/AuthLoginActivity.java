@@ -34,9 +34,6 @@ public class AuthLoginActivity extends BaseActivity {
 
     //////////////////////////////////////////////////////
 
-    @BindView(R.id.logo_image_id)
-    ImageView imageView;
-
     @BindView(R.id.card_view_email_id)
     CardView cvEmail;
 
@@ -80,13 +77,6 @@ public class AuthLoginActivity extends BaseActivity {
         /* We check if we have permissions
          * */
         Utils.checkAllPermissions(this);
-
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.launchActivity(AuthLoginActivity.this, PhotoGridActivity.class);
-            }
-        });
 
     }
 
@@ -141,6 +131,12 @@ public class AuthLoginActivity extends BaseActivity {
                 }
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //do nothing
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
