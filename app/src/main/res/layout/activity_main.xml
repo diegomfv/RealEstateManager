@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activities.MainActivity"
-    android:background="@color/colorPrimaryLighter">
+    android:background="@color/colorPrimary">
 
     <TextView
         android:id="@+id/textView_please_insert_data_id"
@@ -16,6 +16,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Please, use the '+' button to insert data"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/fragment1_container_id"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
