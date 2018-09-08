@@ -6,14 +6,16 @@ import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -47,6 +49,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
+
 /**
  * Created by Diego Fajardo on 23/08/2018.
  */
@@ -56,6 +60,9 @@ public class PositionActivity extends BaseActivity {
     private static final String TAG = PositionActivity.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @BindView(R.id.toolbar_id)
+    Toolbar toolbar;
 
     @BindView(R.id.progress_bar_content_id)
     LinearLayout progressBarContent;
@@ -77,8 +84,6 @@ public class PositionActivity extends BaseActivity {
     private boolean deviceLocationPermissionGranted;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private ActionBar actionBar;
 
     private List<RealEstate> listOfListings;
 
@@ -107,7 +112,7 @@ public class PositionActivity extends BaseActivity {
         setContentView(R.layout.activity_position);
         this.unbinder = ButterKnife.bind(this);
 
-        this.configureActionBar();
+        this.configureToolbarBar();
 
         this.checkDeviceLocationPermissionGranted();
 
@@ -160,14 +165,9 @@ public class PositionActivity extends BaseActivity {
 
             case R.id.menu_change_currency_button: {
 
+                changeCurrency();
                 Utils.updateCurrencyIcon(this, currency, item);
-                updateCurrency();
                 updateMapWithPins();
-
-            } break;
-
-            case android.R.id.home: {
-                Utils.launchActivity(this, MainActivity.class);
 
             } break;
 
@@ -193,22 +193,25 @@ public class PositionActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureActionBar() {
-        Log.d(TAG, "configureActionBar: called!");
+    private void configureToolbarBar() {
+        Log.d(TAG, "configureToolbarBar: called!");
 
-        actionBar = getSupportActionBar();
+        setSupportActionBar(toolbar);
+        setOverflowButtonColor(toolbar, Color.WHITE);
 
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+                onBackPressed();
+            }
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void updateCurrency() {
-        Log.d(TAG, "updateCurrency: called!");
+    private void changeCurrency() {
+        Log.d(TAG, "changeCurrency: called!");
 
         if (this.currency == 0) {
             this.currency = 1;

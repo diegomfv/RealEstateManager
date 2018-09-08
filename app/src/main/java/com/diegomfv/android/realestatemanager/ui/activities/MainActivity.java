@@ -1,9 +1,10 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.Manifest;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +25,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
+
 /**
  * How crashes were solved:
  * 1. Modified the id of the view from activity_second_activity_text_view_main
@@ -38,13 +41,18 @@ public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @BindView(R.id.toolbar_id)
+    Toolbar toolbar;
+
     @BindView(R.id.textView_please_insert_data_id)
     TextView tvInsertData;
 
     @BindView(R.id.fragment1_container_id)
     FrameLayout fragment1Layout;
 
-    private ActionBar actionBar;
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private boolean editModeActive;
 
@@ -79,7 +87,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
 
-        this.configureActionBar();
+        this.configureToolbarBar();
 
         if (dataAvailable) {
             this.loadFragmentOrFragments();
@@ -110,12 +118,6 @@ public class MainActivity extends BaseActivity {
         Log.d(TAG, "onOptionsItemSelected: called!");
 
         switch (item.getItemId()) {
-
-            case android.R.id.home: {
-                Utils.launchActivity(this, AuthLoginActivity.class);
-
-            }
-            break;
 
             case R.id.menu_add_listing_button: {
 
@@ -193,16 +195,20 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureActionBar() {
-        Log.d(TAG, "configureActionBar: called!");
+    private void configureToolbarBar() {
+        Log.d(TAG, "configureToolbarBar: called!");
 
-        actionBar = getSupportActionBar();
+        setSupportActionBar(toolbar);
+        setOverflowButtonColor(toolbar, Color.WHITE);
 
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+                // TODO: 08/09/2018 We can create a dialog asking the user if he=she really wants to leave
+                Utils.launchActivity(MainActivity.this, AuthLoginActivity.class);
+            }
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,12 +225,12 @@ public class MainActivity extends BaseActivity {
         Log.d(TAG, "updateMode: called!");
 
         if (!editModeActive) {
-            actionBar.setTitle("Edit mode");
-            actionBar.setSubtitle("Click an element");
+            toolbar.setTitle("Edit mode");
+            toolbar.setSubtitle("Click an element");
             editModeActive = true;
         } else {
-            actionBar.setTitle("Real Estate Manager");
-            actionBar.setSubtitle(null);
+            toolbar.setTitle("Real Estate Manager");
+            toolbar.setSubtitle(null);
             editModeActive = false;
         }
 
@@ -255,25 +261,26 @@ public class MainActivity extends BaseActivity {
         hideTextViewShowFragments();
 
         if (findViewById(R.id.fragment2_container_id) == null) {
+
             /* Code for handsets
              * */
-
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment1_container_id, FragmentHandsetListListingsMain.newInstance())
+                    .replace(R.id.fragment1_container_id, FragmentHandsetListListingsMain.newInstance())
                     .commit();
 
         } else {
+
             /* Code for tablets
              * */
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment1_container_id, FragmentTabletListListings.newInstance())
+                    .replace(R.id.fragment1_container_id, FragmentTabletListListings.newInstance())
                     .commit();
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment2_container_id, FragmentTabletItemDescription.newInstance())
+                    .replace(R.id.fragment2_container_id, FragmentTabletItemDescription.newInstance())
                     .commit();
         }
     }
