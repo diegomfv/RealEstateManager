@@ -29,16 +29,21 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".ui.activities.DetailActivity" />
-        <activity android:name=".ui.activities.AuthLoginActivity">
+        <activity android:name=".ui.activities.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.SearchEngineActivity" />
+
+        <activity android:name=".ui.activities.AuthLoginActivity">
+
+        </activity>
+
         <activity android:name=".ui.activities.MainActivity" />
+        <activity android:name=".ui.activities.DetailActivity" />
+        <activity android:name=".ui.activities.SearchEngineActivity" />
         <activity android:name=".ui.activities.CreateNewListingActivity" />
         <activity android:name=".ui.activities.EditListingActivity" />
         <activity android:name=".ui.activities.PositionActivity" />
@@ -49,6 +54,7 @@
         <activity android:name=".ui.activities.SearchResultsActivity" />
         <activity android:name=".ui.activities.SearchDetailActivity" />
         <activity android:name=".ui.activities.LoanSimulatorActivity" />
+
 
         <receiver android:name=".receivers.InternetConnectionReceiver"/>
 
