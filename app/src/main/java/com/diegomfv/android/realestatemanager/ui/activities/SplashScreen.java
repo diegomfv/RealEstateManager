@@ -3,6 +3,7 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -80,13 +81,12 @@ public class SplashScreen extends AppCompatActivity {
                             public void run() {
                                 Log.d(TAG, "run: called!");
 
-                                // TODO: 08/09/2018 Change the way we do this
-                                try {
-                                    Thread.sleep(1500);
-                                    startActivity(new Intent(SplashScreen.this, AuthLoginActivity.class));
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        startActivity(new Intent(SplashScreen.this, AuthLoginActivity.class));
+                                    }
+                                }, 2000);
                             }
                         }).start();
                     }
