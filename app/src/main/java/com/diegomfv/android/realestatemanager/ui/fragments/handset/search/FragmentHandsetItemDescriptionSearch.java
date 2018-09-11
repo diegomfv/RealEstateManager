@@ -58,7 +58,6 @@ import butterknife.Unbinder;
  * Created by Diego Fajardo on 16/08/2018.
  */
 
-// TODO: 23/08/2018 Retain the fragment!
 public class FragmentHandsetItemDescriptionSearch extends BaseFragment {
 
     private static final String TAG = FragmentHandsetItemDescriptionSearch.class.getSimpleName();
