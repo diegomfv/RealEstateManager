@@ -157,8 +157,5 @@ public class DetailActivity extends BaseActivity {
                 .beginTransaction()
                 .add(R.id.fragment2_container_id, fragmentItemDescription)
                 .commit();
-
     }
-
-
 }
