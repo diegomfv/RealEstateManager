@@ -2,6 +2,7 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.content.Intent;
 import android.graphics.RectF;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -10,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.diegomfv.android.realestatemanager.R;
 
@@ -58,6 +61,8 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
         unbinder = ButterKnife.bind(this);
 
+        this.hideStatusBar();
+
         mainLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -84,7 +89,7 @@ public class SplashScreen extends AppCompatActivity {
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        startActivity(new Intent(SplashScreen.this, AuthLoginActivity.class));
+                                        launchAuthLoginActivity();
                                     }
                                 }, 2000);
                             }
@@ -100,5 +105,22 @@ public class SplashScreen extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy: called!");
         unbinder.unbind();
+    }
+
+    private void hideStatusBar () {
+        Log.d(TAG, "hideStatusBar: called!");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window w = getWindow(); // in Activity's onCreate() for instance
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
+    }
+
+    private void launchAuthLoginActivity() {
+        Log.d(TAG, "launchAuthLoginActivity: called!");
+
+        Intent intent = new Intent(this, AuthLoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }

@@ -448,7 +448,6 @@ public class Utils {
         return 0f;
     }
 
-
     public static String getAddressAsString(RealEstate realEstate) {
         Log.d(TAG, "setAddressFromRealEstateCache: called!");
         if (realEstate.getAddress() != null) {
@@ -477,6 +476,11 @@ public class Utils {
             return false;
         }
         return true;
+    }
+
+    public static boolean textViewIsFilled(TextView textView) {
+        Log.d(TAG, "textViewIsFilled: called!");
+        return Utils.getStringFromTextView(textView).length() > 0;
     }
 
     private static void getRidOfLastComma (StringBuilder stringBuilder) {

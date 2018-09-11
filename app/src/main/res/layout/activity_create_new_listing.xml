@@ -1,72 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true">
 
     <include layout="@layout/progress_bar_content" />
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/main_layout_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_marginBottom="30dp">
 
-        <LinearLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_id"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:elevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+            app:subtitleTextColor="@android:color/white"
+            app:title="@string/app_name"
+            app:titleTextColor="@android:color/white" />
+
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_id">
 
-            <include layout="@layout/card_view_autocomplete"
-                android:id="@+id/card_view_type_id"/>
-
-            <include layout="@layout/card_view_autocomplete"
-                android:id="@+id/card_view_price_id"/>
-
-            <include layout="@layout/card_view_autocomplete"
-                android:id="@+id/card_view_surface_area_id"/>
-
-            <include layout="@layout/card_view_crystal_single_seek_bar"
-                android:id="@+id/card_view_number_bedrooms_id" />
-
-            <include layout="@layout/card_view_crystal_single_seek_bar"
-                android:id="@+id/card_view_number_bathrooms_id" />
-
-            <include layout="@layout/card_view_crystal_single_seek_bar"
-                android:id="@+id/card_view_number_rooms_other_id" />
-
-            <include layout="@layout/card_view_autocomplete"
-                android:id="@+id/card_view_description_id"/>
-
-            <include layout="@layout/card_view_address"
-                android:id="@+id/card_view_address_id"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView_media_id"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"/>
+                android:orientation="vertical">
 
-            <Button
-                android:id="@+id/button_add_edit_photo_id"
-                style="@style/buttonSecondaryStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add Photo"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+                <include
+                    android:id="@+id/card_view_type_id"
+                    layout="@layout/card_view_autocomplete" />
 
-            <Button
-                android:id="@+id/button_insert_edit_listing_id"
-                style="@style/buttonGeneralStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp"
-                android:text="Some Text"/>
+                <include
+                    android:id="@+id/card_view_price_id"
+                    layout="@layout/card_view_autocomplete" />
 
-        </LinearLayout>
+                <include
+                    android:id="@+id/card_view_surface_area_id"
+                    layout="@layout/card_view_autocomplete" />
 
-    </ScrollView>
+                <include
+                    android:id="@+id/card_view_number_bedrooms_id"
+                    layout="@layout/card_view_crystal_single_seek_bar" />
+
+                <include
+                    android:id="@+id/card_view_number_bathrooms_id"
+                    layout="@layout/card_view_crystal_single_seek_bar" />
+
+                <include
+                    android:id="@+id/card_view_number_rooms_other_id"
+                    layout="@layout/card_view_crystal_single_seek_bar" />
+
+                <include
+                    android:id="@+id/card_view_description_id"
+                    layout="@layout/card_view_autocomplete" />
+
+                <include
+                    android:id="@+id/card_view_address_id"
+                    layout="@layout/card_view_address" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView_media_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp" />
+
+                <Button
+                    android:id="@+id/button_add_edit_photo_id"
+                    style="@style/buttonSecondaryStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Add Photo" />
+
+                <Button
+                    android:id="@+id/button_insert_edit_listing_id"
+                    style="@style/buttonGeneralStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="30dp"
+                    android:layout_marginTop="30dp"
+                    android:text="Some Text" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>
+

@@ -87,7 +87,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
 
-        this.configureToolbarBar();
+        this.configureToolBar();
 
         if (dataAvailable) {
             this.loadFragmentOrFragments();
@@ -195,8 +195,8 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureToolbarBar() {
-        Log.d(TAG, "configureToolbarBar: called!");
+    private void configureToolBar() {
+        Log.d(TAG, "configureToolBar: called!");
 
         setSupportActionBar(toolbar);
         setOverflowButtonColor(toolbar, Color.WHITE);

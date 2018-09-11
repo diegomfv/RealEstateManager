@@ -3,12 +3,14 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +35,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
+
 /**
  * Created by Diego Fajardo on 02/09/2018.
  */
@@ -45,6 +49,9 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
     private static final String TAG = PhotoGridActivity.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @BindView(R.id.toolbar_id)
+    Toolbar toolbar;
 
     @BindView(R.id.recyclerView_media_id)
     RecyclerView recyclerView;
@@ -73,7 +80,7 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
         setContentView(R.layout.activity_photo_grid);
         unbinder = ButterKnife.bind(this);
 
-        this.configureActionBar();
+        this.configureToolBar();
 
         this.configureRecyclerView();
 
@@ -179,16 +186,20 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureActionBar() {
-        Log.d(TAG, "configureActionBar: called!");
+    private void configureToolBar() {
+        Log.d(TAG, "configureToolBar: called!");
 
-        actionBar = getSupportActionBar();
+        setSupportActionBar(toolbar);
+        setTitle("Create a New Listing");
+        setOverflowButtonColor(toolbar, Color.WHITE);
 
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+               onBackPressed();
+            }
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

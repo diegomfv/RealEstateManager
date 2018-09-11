@@ -5,9 +5,11 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +21,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,6 +72,8 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
+
 /**
  * Created by Diego Fajardo on 18/08/2018.
  */
@@ -87,6 +92,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     @BindView(R.id.main_layout_id)
     ScrollView mainLayout;
+
+    @BindView(R.id.toolbar_id)
+    Toolbar toolbar;
 
     @BindView(R.id.card_view_type_id)
     CardView cardViewType;
@@ -147,8 +155,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private int currency;
 
-    private ActionBar actionBar;
-
     //RecyclerView Adapter
     private RVAdapterMediaHorizontalCreate adapter;
 
@@ -175,13 +181,14 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         this.counter = 0;
         ////////////////////////////////////////////////////////////////////////////////////////////
-        setContentView(R.layout.activity_create_new_listing);
-        setTitle("Create a New Listing");
+        setContentView(R.layout.activity_trial);
         this.unbinder = ButterKnife.bind(this);
 
+        /* Checks if the users comes from AddPhoto Activity.
+        If that is the case, the cache is not deleted*/
         this.checkIntent();
 
-        this.configureActionBar();
+        this.configureToolbarBar();
 
         this.configureLayout();
 
@@ -192,7 +199,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.configureRecyclerView();
 
         // TODO: 26/08/2018 Delete
-        generateFakeData();
+       // generateFakeData();
     }
 
     // TODO: 26/08/2018 Delete!
@@ -347,16 +354,24 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureActionBar() {
-        Log.d(TAG, "configureActionBar: called!");
+    private void configureToolbarBar() {
+        Log.d(TAG, "configureToolbarBar: called!");
 
-        actionBar = getSupportActionBar();
+        setSupportActionBar(toolbar);
+        setTitle("Create a New Listing");
+        setOverflowButtonColor(toolbar, Color.WHITE);
 
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+                if (informationWasInputted()) {
+                    launchAreYouSureDialog();
+                } else {
+                    Utils.launchActivity(CreateNewListingActivity.this, MainActivity.class);
+                }
+            }
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -488,129 +503,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         } else if (seekBar == seekBarOtherRooms) {
             tvNumberOfOtherRooms.setText("Other Rooms (" + value + ")");
         }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //DIALOG FRAGMENT
-
-    private void launchInsertAddressDialog() {
-        Log.d(TAG, "launchInsertAddressDialog: called!");
-
-        InsertAddressDialogFragment.newInstance(getRealEstateCache().getAddress())
-                .show(getSupportFragmentManager(), "InsertAddressDialogFragment");
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private boolean allChecksCorrect() {
-        Log.d(TAG, "allChecksCorrect: called!");
-
-        // TODO: 24/08/2018 DO THIS!
-
-        return true;
-    }
-
-    private void insertListing() {
-        Log.d(TAG, "insertListing: called!");
-
-        if (Utils.getStringFromTextView(tvAddress).length() > 0
-                && getRealEstateCache().getLatitude() != 0d
-                && getRealEstateCache().getLongitude() != 0d) {
-
-            Utils.hideMainContent(progressBarContent, mainLayout);
-
-            /* Start insertion process
-             * */
-            insertRealEstateObject();
-
-        } else {
-            ToastHelper.toastLong(this, "Please, insert a valid address");
-
-        }
-    }
-
-    @SuppressLint("CheckResult")
-    private void insertRealEstateObject() {
-        Log.d(TAG, "insertRealEstateObject: called!");
-
-        updateRealEstateCacheId();
-        updateRealEstateCache();
-        updateImagesIdRealEstateCache();
-        updateDatePutRealEstateCacheCache();
-
-        Single.just(getAppDatabase().realStateDao().insertRealEstate(getRealEstateCache()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribeWith(new DisposableSingleObserver<Long>() {
-                    @Override
-                    public void onSuccess(Long aLong) {
-                        Log.d(TAG, "onSuccess: called!");
-                        insertListImageRealEstate();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-                    }
-                });
-    }
-
-    @SuppressLint("CheckResult")
-    private void insertListImageRealEstate() {
-        Log.d(TAG, "insertListImageRealEstate: called!");
-
-        Single.just(getAppDatabase().imageRealEstateDao().insertListOfImagesRealEstate(getListOfImagesRealEstateCache()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribeWith(new DisposableSingleObserver<long[]>() {
-                    @Override
-                    public void onSuccess(long[] longs) {
-                        Log.d(TAG, "onSuccess: called!");
-
-                        insertListPlacesRealEstate();
-                        insertAllBitmapsInImagesDirectory();
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-
-                    }
-                });
-    }
-
-    @SuppressLint("CheckResult")
-    public void insertListPlacesRealEstate() {
-        Log.d(TAG, "insertListPlacesRealEstate: called");
-
-        // TODO: 02/09/2018 Could be done just with app executors
-        Single.just(getAppDatabase().placeRealEstateDao().insertListOfPlaceRealEstate(getListOfPlacesRealEstateCache()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSingleObserver<long[]>() {
-                    @Override
-                    public void onSuccess(long[] longs) {
-                        Log.d(TAG, "onSuccess: called!");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-                    }
-                });
-    }
-
-    public void insertAllBitmapsInImagesDirectory () {
-        Log.d(TAG, "insertAllBitmapsInImagesDirectory: called!");
-
-        for (Map.Entry<String, Bitmap> entry : getBitmapCache().entrySet()) {
-            getRepository().addBitmapToBitmapCacheAndStorage(getInternalStorage(), getImagesDir(), entry.getKey(), entry.getValue());
-        }
-        Utils.launchActivity(this, MainActivity.class);
-        createNotification();
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -917,6 +809,13 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
+        Log.w(TAG, "configureRecyclerView: recyclerView = " + recyclerView);
+        Log.w(TAG, "configureRecyclerView: adapter = " + adapter);
+        Log.w(TAG, "configureRecyclerView: getListOfBitmapKeys() = " + getListOfBitmapKeys());
+        Log.w(TAG, "configureRecyclerView: getBitmapCache() = " + getBitmapCache());
+        Log.w(TAG, "configureRecyclerView: getImagesDir() = " + getImagesDir());
+        Log.w(TAG, "configureRecyclerView: getGlide() = " + getGlide());
+
         this.recyclerView.setHasFixedSize(true);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.HORIZONTAL, false));
@@ -947,6 +846,118 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private boolean allChecksCorrect() {
+        Log.d(TAG, "allChecksCorrect: called!");
+
+        // TODO: 24/08/2018 DO THIS!
+
+        return true;
+    }
+
+    private void insertListing() {
+        Log.d(TAG, "insertListing: called!");
+
+        if (Utils.getStringFromTextView(tvAddress).length() > 0
+                && getRealEstateCache().getLatitude() != 0d
+                && getRealEstateCache().getLongitude() != 0d) {
+
+            Utils.hideMainContent(progressBarContent, mainLayout);
+
+            /* Start insertion process
+             * */
+            insertRealEstateObject();
+
+        } else {
+            ToastHelper.toastLong(this, "Please, insert a valid address");
+
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    private void insertRealEstateObject() {
+        Log.d(TAG, "insertRealEstateObject: called!");
+
+        updateRealEstateCacheId();
+        updateRealEstateCache();
+        updateImagesIdRealEstateCache();
+        updateDatePutRealEstateCacheCache();
+
+        Single.just(getAppDatabase().realStateDao().insertRealEstate(getRealEstateCache()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribeWith(new DisposableSingleObserver<Long>() {
+                    @Override
+                    public void onSuccess(Long aLong) {
+                        Log.d(TAG, "onSuccess: called!");
+                        insertListImageRealEstate();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+                    }
+                });
+    }
+
+    @SuppressLint("CheckResult")
+    private void insertListImageRealEstate() {
+        Log.d(TAG, "insertListImageRealEstate: called!");
+
+        Single.just(getAppDatabase().imageRealEstateDao().insertListOfImagesRealEstate(getListOfImagesRealEstateCache()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribeWith(new DisposableSingleObserver<long[]>() {
+                    @Override
+                    public void onSuccess(long[] longs) {
+                        Log.d(TAG, "onSuccess: called!");
+
+                        insertListPlacesRealEstate();
+                        insertAllBitmapsInImagesDirectory();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+                });
+    }
+
+    @SuppressLint("CheckResult")
+    public void insertListPlacesRealEstate() {
+        Log.d(TAG, "insertListPlacesRealEstate: called");
+
+        // TODO: 02/09/2018 Could be done just with app executors
+        Single.just(getAppDatabase().placeRealEstateDao().insertListOfPlaceRealEstate(getListOfPlacesRealEstateCache()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableSingleObserver<long[]>() {
+                    @Override
+                    public void onSuccess(long[] longs) {
+                        Log.d(TAG, "onSuccess: called!");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+                    }
+                });
+    }
+
+    public void insertAllBitmapsInImagesDirectory () {
+        Log.d(TAG, "insertAllBitmapsInImagesDirectory: called!");
+
+        for (Map.Entry<String, Bitmap> entry : getBitmapCache().entrySet()) {
+            getRepository().addBitmapToBitmapCacheAndStorage(getInternalStorage(), getImagesDir(), entry.getKey(), entry.getValue());
+        }
+        Utils.launchActivity(this, MainActivity.class);
+        createNotification();
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private void launchPhotoGridActivity() {
         Log.d(TAG, "launchPhotoGridActivity: called!");
 
@@ -956,6 +967,53 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         intent.putExtra(Constants.INTENT_FROM_ACTIVITY, Constants.INTENT_FROM_CREATE);
         startActivity(intent);
 
+    }
+
+    private void launchInsertAddressDialog() {
+        Log.d(TAG, "launchInsertAddressDialog: called!");
+
+        InsertAddressDialogFragment.newInstance(getRealEstateCache().getAddress())
+                .show(getSupportFragmentManager(), "InsertAddressDialogFragment");
+    }
+
+    private boolean informationWasInputted() {
+        Log.d(TAG, "informationWasInputted: called!");
+
+        /* Utils.textViewIsFilled returns true if the textView IS NOT EMPTY
+        * */
+        if (Utils.textViewIsFilled(tvTypeOfBuilding)
+                || Utils.textViewIsFilled(tvPrice)
+                || Utils.textViewIsFilled(tvSurfaceArea)
+                || Utils.textViewIsFilled(tvDescription)
+                || Utils.textViewIsFilled(tvAddress)){
+            return true;
+        }
+        return false;
+    }
+
+    private void launchAreYouSureDialog () {
+        Log.d(TAG, "launchAreYouSureDialog: called!");
+
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(CreateNewListingActivity.this);
+        builder.setMessage("The changes will not be saved")
+                .setTitle("Are you sure you want to proceed?")
+                .setPositiveButton("Yes, I am sure", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "onClick: yes button clicked!");
+                        Utils.launchActivity(CreateNewListingActivity.this, MainActivity.class);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "onClick: no button clicked!");
+                        //Nothing happens
+                    }
+                });
+
+        android.support.v7.app.AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void createNotification() {
