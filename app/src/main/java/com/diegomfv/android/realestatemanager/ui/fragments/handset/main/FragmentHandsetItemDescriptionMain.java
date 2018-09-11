@@ -112,15 +112,10 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     private int currency;
 
-    private List<Bitmap> listOfBitmaps;
-
     private int imagesCounter;
 
     //RecyclerView Adapter
     private RVAdapterMediaHorizontalDescr adapter;
-
-    //Glide
-    private RequestManager glide;
 
     private RealEstate realEstate;
 
@@ -137,15 +132,11 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     private GoogleMap mMap;
 
-    private double myLatitude;
-    private double myLongitude;
-
     private List<PlaceRealEstate> listOfPlacesRealEstate;
 
     private List<Marker> listOfMarkers;
 
     private boolean deviceLocationPermissionGranted;
-    private RealEstate rooms;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -161,9 +152,6 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
         this.deviceLocationPermissionGranted = false;
 
-        this.myLatitude = 0d;
-        this.myLongitude = 0d;
-
         if (getActivity() != null) {
             this.currency = Utils.readCurrentCurrencyShPref(getActivity());
         }
@@ -173,11 +161,6 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
         ////////////////////////////////////////////////////////////////////////////////////////////
         View view = inflater.inflate(R.layout.fragment_item_description, container, false);
         this.unbinder = ButterKnife.bind(this, view);
-
-        /* Glide configuration*/
-        if (getActivity() != null) {
-            this.glide = Glide.with(getActivity());
-        }
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -328,7 +311,7 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
                     getInternalStorage(),
                     getImagesDir(),
                     realEstate,
-                    glide,
+                    getGlide(),
                     currency);
             this.recyclerViewMedia.setAdapter(this.adapter);
 
@@ -494,9 +477,6 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
                         Location currentLocation = (Location) task.getResult();
 
                         Log.d(TAG, "onComplete: current location: getLatitude(), getLongitude() " + (currentLocation.getLatitude()) + ", " + (currentLocation.getLongitude()));
-
-                        myLatitude = currentLocation.getLatitude();
-                        myLongitude = currentLocation.getLongitude();
 
                         mMap.setMyLocationEnabled(false); //displays the blue marker at your location
                         mMap.getUiSettings().setMyLocationButtonEnabled(false); //displays the button that allows you to center your position
