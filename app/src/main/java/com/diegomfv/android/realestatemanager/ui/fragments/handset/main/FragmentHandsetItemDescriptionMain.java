@@ -112,8 +112,6 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     private int currency;
 
-    private int imagesCounter;
-
     //RecyclerView Adapter
     private RVAdapterMediaHorizontalDescr adapter;
 
@@ -155,8 +153,6 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
         if (getActivity() != null) {
             this.currency = Utils.readCurrentCurrencyShPref(getActivity());
         }
-
-        this.imagesCounter = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         View view = inflater.inflate(R.layout.fragment_item_description, container, false);
