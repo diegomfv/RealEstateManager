@@ -17,7 +17,6 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -135,7 +134,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private TextView tvNumberOfOtherRooms;
     private CrystalSeekbar seekBarOtherRooms;
 
-    private TextInputAutoCompleteTextView tvDescription;
+    private TextInputEditText tvDescription;
 
     private TextInputEditText tvAddress;
 
@@ -236,12 +235,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     }
 
     @Override
-    public void onBackPressed() {
-        Log.d(TAG, "onBackPressed: called!");
-        launchAreYouSureDialogIfNecessary();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu: called!");
         getMenuInflater().inflate(R.menu.currency_menu, menu);
@@ -256,16 +249,20 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         switch (item.getItemId()) {
 
             case R.id.menu_change_currency_button: {
-
                 changeCurrency();
                 Utils.updateCurrencyIcon(this, currency, item);
                 updatePriceHint();
-
             }
             break;
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: called!");
+        launchAreYouSureDialogIfNecessary();
     }
 
     @Override
@@ -379,6 +376,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "configureLayout: called!");
 
         this.getAutocompleteTextViews();
+        this.getEditTexts();
         this.getTextViews();
         this.getSeekBars();
 
@@ -393,9 +391,15 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.tvTypeOfBuilding = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+
+    }
+
+    private void getEditTexts () {
+        Log.d(TAG, "getEditTexts: called!");
+        this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
         this.tvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
     }
+
 
     private void getTextViews() {
         Log.d(TAG, "getTextViews: called!");
@@ -428,16 +432,16 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
 
-        // TODO: 23/08/2018 Use Resources instead of hardcoded
-        setAcTvHint(cardViewType, "Type");
-        setAcTvHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
-        setAcTvHint(cardViewSurfaceArea, "Surface Area (sqm)");
-        setAcTvHint(cardViewDescription, "Description");
-        setAcTvHint(cardViewAddress, "Address");
+        // TODO: 23/08/2018 Use Resources instead of hardcoded strings
+        setHint(cardViewType, "Type");
+        setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
+        setHint(cardViewSurfaceArea, "Surface Area (sqm)");
+        setHint(cardViewDescription, "Description");
+        setHint(cardViewAddress, "Address");
     }
 
-    private void setAcTvHint(CardView cardView, String hint) {
-        Log.d(TAG, "setAcTvHint: called!");
+    private void setHint(CardView cardView, String hint) {
+        Log.d(TAG, "setHint: called!");
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
     }
@@ -825,6 +829,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
+                        Log.w(TAG, "onItemClicked: " + getListOfImagesRealEstateCache().get(position).getDescription());
                         ToastHelper.toastShort(CreateNewListingActivity.this, getListOfImagesRealEstateCache().get(position).getDescription());
                     }
                 });

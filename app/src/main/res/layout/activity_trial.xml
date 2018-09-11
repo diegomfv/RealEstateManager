@@ -86,7 +86,7 @@
                     <include layout="@layout/card_view_crystal_single_seek_bar"
                         android:id="@+id/card_view_number_rooms_other_id" />
 
-                    <include layout="@layout/card_view_autocomplete"
+                    <include layout="@layout/card_view_edit_text"
                         android:id="@+id/card_view_description_id"/>
 
                     <include layout="@layout/card_view_address"
@@ -100,7 +100,7 @@
 
                     <Button
                         android:id="@+id/button_add_edit_photo_id"
-                        style="@style/buttonSecondaryStyle"
+                        style="@style/buttonGeneralStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Add Photo"
@@ -110,7 +110,7 @@
 
                     <Button
                         android:id="@+id/button_insert_edit_listing_id"
-                        style="@style/buttonGeneralStyle"
+                        style="@style/buttonSecondaryStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"

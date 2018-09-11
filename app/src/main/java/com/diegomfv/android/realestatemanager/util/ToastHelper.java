@@ -43,6 +43,12 @@ public class ToastHelper {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public static void toastNoDescriptionAvailable (Context context) {
+        Log.d(TAG, "toastNoDescriptionAvailable: called!");
+        Toast.makeText(context, context.getResources().getString(R.string.no_description_available), Toast.LENGTH_SHORT).show();
+    }
+
+
     public static void toastInternalStorageAccessNotGranted (Context context) {
         Log.d(TAG, "toastInternalStorageAccessNotGranted: called!");
         Toast.makeText(context, context.getResources().getString(R.string.access_internal_storage_not_granted), Toast.LENGTH_SHORT).show();

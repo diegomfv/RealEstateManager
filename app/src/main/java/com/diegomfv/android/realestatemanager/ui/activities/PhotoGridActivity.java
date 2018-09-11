@@ -172,6 +172,12 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
     }
 
     @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: called!");
+        checkActivityLaunched();
+    }
+
+    @Override
     public void onDialogPositiveClick(ImageRealEstate imageRealEstate) {
         Log.d(TAG, "onDatePickerDialogPositiveClick: called!");
         ToastHelper.toastLong(this, imageRealEstate.getDescription());
@@ -197,7 +203,7 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: called!");
-               onBackPressed();
+                onBackPressed();
             }
         });
     }
