@@ -95,7 +95,6 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
         Log.d(TAG, "buttonClicked: " + ((Button) view).getText().toString() + " clicked!");
 
         switch (view.getId()) {
-
             case R.id.button_add_photo_id: {
                 launchGallery();
             }

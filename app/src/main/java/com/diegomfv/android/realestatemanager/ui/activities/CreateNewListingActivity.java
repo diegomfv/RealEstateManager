@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
@@ -36,6 +37,7 @@ import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.AppExecutors;
 import com.diegomfv.android.realestatemanager.data.FakeDataGenerator;
 import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
 import com.diegomfv.android.realestatemanager.data.datamodels.RoomsRealEstate;
@@ -304,17 +306,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
             break;
 
             case R.id.button_insert_edit_listing_id: {
-
-                // TODO: 24/08/2018 Check that we have all the necessary information!
-                // TODO: 24/08/2018 If there was no internet, we might not have all!
-                // TODO: 24/08/2018 Use the broadcastreceiver to check the repository caches
-                // TODO: 24/08/2018 If they are empty, cache information with request
-                // TODO: 24/08/2018 Check also that types are correct
-                // TODO: 24/08/2018 NOTIFY the user in ALLCHECKSARECORRECT()
                 if (allChecksCorrect()) {
                     insertListing();
                 }
-
             }
             break;
         }
@@ -840,28 +834,26 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private boolean allChecksCorrect() {
         Log.d(TAG, "allChecksCorrect: called!");
 
-        // TODO: 24/08/2018 DO THIS!
+        if (Utils.textViewIsFilled(tvAddress)
+                && getRealEstateCache().getLatitude() != 0d
+                && getRealEstateCache().getLongitude() != 0d) {
+            return true;
 
-        return true;
+        } else {
+            ToastHelper.toastLong(this,"Please, insert a valid address");
+            return false;
+        }
     }
 
     private void insertListing() {
         Log.d(TAG, "insertListing: called!");
 
-        if (Utils.getStringFromTextView(tvAddress).length() > 0
-                && getRealEstateCache().getLatitude() != 0d
-                && getRealEstateCache().getLongitude() != 0d) {
+        Utils.hideMainContent(progressBarContent, mainLayout);
 
-            Utils.hideMainContent(progressBarContent, mainLayout);
+        /* Start insertion process
+         * */
+        insertRealEstateObject();
 
-            /* Start insertion process
-             * */
-            insertRealEstateObject();
-
-        } else {
-            ToastHelper.toastLong(this, "Please, insert a valid address");
-
-        }
     }
 
     @SuppressLint("CheckResult")
@@ -901,10 +893,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                     @Override
                     public void onSuccess(long[] longs) {
                         Log.d(TAG, "onSuccess: called!");
-
                         insertListPlacesRealEstate();
                         insertAllBitmapsInImagesDirectory();
-
                     }
 
                     @Override
@@ -918,22 +908,15 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     @SuppressLint("CheckResult")
     public void insertListPlacesRealEstate() {
         Log.d(TAG, "insertListPlacesRealEstate: called");
-
-        // TODO: 02/09/2018 Could be done just with app executors
-        Single.just(getAppDatabase().placeRealEstateDao().insertListOfPlaceRealEstate(getListOfPlacesRealEstateCache()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSingleObserver<long[]>() {
-                    @Override
-                    public void onSuccess(long[] longs) {
-                        Log.d(TAG, "onSuccess: called!");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-                    }
-                });
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "run: called!");
+                getAppDatabase()
+                        .placeRealEstateDao()
+                        .insertListOfPlaceRealEstate(getListOfPlacesRealEstateCache());
+            }
+        });
     }
 
     public void insertAllBitmapsInImagesDirectory () {
@@ -962,7 +945,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private void launchInsertAddressDialog() {
         Log.d(TAG, "launchInsertAddressDialog: called!");
-
         InsertAddressDialogFragment.newInstance(getRealEstateCache().getAddress())
                 .show(getSupportFragmentManager(), "InsertAddressDialogFragment");
     }
@@ -973,10 +955,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         /* Utils.textViewIsFilled returns true if the textView IS NOT EMPTY
         * */
         if (Utils.textViewIsFilled(tvTypeOfBuilding)
-                || Utils.textViewIsFilled(tvPrice)
-                || Utils.textViewIsFilled(tvSurfaceArea)
                 || Utils.textViewIsFilled(tvDescription)
-                || Utils.textViewIsFilled(tvAddress)){
+                || Utils.textViewIsFilled(tvAddress)
+                || Utils.getFloatFromTextView(tvPrice) != 0.0f
+                || Utils.getFloatFromTextView(tvSurfaceArea) != 0.0f){
             return true;
         }
         return false;

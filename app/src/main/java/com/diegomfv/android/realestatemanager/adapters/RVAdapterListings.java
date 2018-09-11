@@ -161,27 +161,42 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
         private void loadImage (int position) {
             Log.d(TAG, "loadImage: called!");
 
-            glide.load(dataRepository.getBitmap(
-                    internalStorage,
-                    imagesDir,
-                    listRealEstates.get(position).getListOfImagesIds().get(0)))
-                    .into(imageView);
+            if (listRealEstates.get(position).getListOfImagesIds() != null
+                    && listRealEstates.get(position).getListOfImagesIds().size() > 0) {
+                glide.load(dataRepository.getBitmap(
+                        internalStorage,
+                        imagesDir,
+                        listRealEstates.get(position).getListOfImagesIds().get(0)))
+                        .into(imageView);
 
+            } else {
+                glide.load(R.drawable.image_not_available)
+                        .into(imageView);
+            }
         }
 
         private String getType(int position) {
             Log.d(TAG, "getType: called!");
+            if (Utils.capitalize(listRealEstates.get(position).getType()).isEmpty()) {
+                return "Type not Available";
+            }
             return Utils.capitalize(listRealEstates.get(position).getType());
         }
 
         private String getSurfaceArea(int position) {
             Log.d(TAG, "getSurfaceArea: called!");
+            if (listRealEstates.get(position).getSurfaceArea() == 0.0f) {
+                return "Sqm not available";
+            }
             return String.valueOf(listRealEstates.get(position).getSurfaceArea()) + " sqm";
         }
 
         private String getPriceOfBuilding(int position) {
             Log.d(TAG, "getPriceOfBuilding: called!");
             int price = (int) Utils.getPriceAccordingToCurrency(currency, listRealEstates.get(position).getPrice());
+            if (price == 0.0f) {
+                return "Price not available";
+            }
             return Utils.getCurrencySymbol(currency) + " " + Utils.formatToDecimals(price, currency);
         }
 

@@ -172,13 +172,9 @@ public class RealEstate implements Parcelable {
         this.description = description;
     }
 
-    public List<String> getListOfImagesIds() {
-        return listOfImagesIds;
-    }
+    public List<String> getListOfImagesIds() { return listOfImagesIds; }
 
-    public void setListOfImagesIds(List<String> listOfImagesIds) {
-        this.listOfImagesIds = listOfImagesIds;
-    }
+    public void setListOfImagesIds(List<String> listOfImagesIds) { this.listOfImagesIds = listOfImagesIds; }
 
     public AddressRealEstate getAddress() {
         return address;
