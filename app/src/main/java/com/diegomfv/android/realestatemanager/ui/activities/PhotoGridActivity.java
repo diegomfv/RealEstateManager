@@ -41,9 +41,9 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  * Created by Diego Fajardo on 02/09/2018.
  */
 
-// TODO: 02/09/2018 Add Fragment add description!
 // TODO: 02/09/2018 Take care, the user may leave the app and then come back and the
     //cache might be cleared!
+// TODO: 11/09/2018 Add RecyclerView decorator!
 public class PhotoGridActivity extends BaseActivity implements InsertDescriptionDialogFragment.InsertDescriptionDialogListener {
 
     private static final String TAG = PhotoGridActivity.class.getSimpleName();
