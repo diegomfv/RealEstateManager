@@ -192,6 +192,7 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // TODO: 11/09/2018 Add "NOT AVAILABLES"
     private void fillLayoutWithRealEstateInfo(RealEstate realEstate) {
         Log.d(TAG, "fillLayoutWithRealEstateInfo: called!");
         setDescription(realEstate);
