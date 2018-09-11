@@ -29,7 +29,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
@@ -68,7 +67,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -189,7 +187,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         If that is the case, the cache is not deleted*/
         this.checkIntent();
 
-        this.configureToolbarBar();
+        this.configureToolBar();
 
         this.configureLayout();
 
@@ -335,8 +333,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureToolbarBar() {
-        Log.d(TAG, "configureToolbarBar: called!");
+    private void configureToolBar() {
+        Log.d(TAG, "configureToolBar: called!");
 
         setSupportActionBar(toolbar);
         setTitle("Create a New Listing");

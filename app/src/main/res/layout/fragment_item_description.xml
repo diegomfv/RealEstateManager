@@ -10,32 +10,33 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.CardView
+            android:id="@+id/card_view_recycler_view_media_id"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp">
+            android:layout_marginTop="8dp">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView_media_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp" />
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp">
+            android:layout_marginTop="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_margin="15dp">
+                android:layout_margin="15dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textView_description_title_id"
@@ -45,8 +46,7 @@
                 <TextView
                     android:id="@+id/textView_description_id"
                     style="@style/textViewInfoStyle"
-                    android:text="@string/lorem_ipsum"
-                    />
+                    android:text="@string/lorem_ipsum" />
 
             </LinearLayout>
 
@@ -55,15 +55,15 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp">
+            android:layout_marginTop="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_margin="15dp">
+                android:layout_margin="15dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textView_title_surfaceArea_id"
@@ -78,8 +78,8 @@
 
                 <TextView
                     android:id="@+id/textView_NumberOfRooms_title_id"
-                    android:layout_marginTop="15dp"
                     style="@style/textViewTitleStyle"
+                    android:layout_marginTop="15dp"
                     android:text="Number of Rooms" />
 
                 <TextView
@@ -99,8 +99,8 @@
 
                 <TextView
                     android:id="@+id/textView_address_title_id"
-                    android:layout_marginTop="15dp"
                     style="@style/textViewTitleStyle"
+                    android:layout_marginTop="15dp"
                     android:text="Address" />
 
                 <TextView
@@ -125,22 +125,21 @@
 
                 <TextView
                     android:id="@+id/textView_price_title_id"
-                    android:layout_marginTop="15dp"
                     style="@style/textViewTitleStyle"
+                    android:layout_marginTop="15dp"
                     android:text="Price" />
 
                 <TextView
                     android:id="@+id/textView_price_id"
                     style="@style/textViewInfoStyle"
                     android:text="@string/information_not_available" />
-                
+
                 <TextView
                     android:id="@+id/textView_sold_id"
-                    android:layout_marginTop="15dp"
                     style="@style/textViewTitleStyle"
-                    android:textStyle="bold"
+                    android:layout_marginTop="15dp"
                     android:text="@string/information_not_available"
-                    />
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -149,21 +148,20 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp">
+            android:layout_marginTop="8dp">
 
-            <fragment
-                android:id="@+id/map"
-                xmlns:android="http://schemas.android.com/apk/res/android"
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:map="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
-                tools:context=".MapsActivity"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                map:liteMode="true" />
+                map:liteMode="true"
+                tools:context=".MapsActivity" />
 
         </android.support.v7.widget.CardView>
 

@@ -1,17 +1,29 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.fragments.handset.main.FragmentHandsetItemDescriptionMain;
+import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
 /**
  * Created by Diego Fajardo on 15/08/2018.
@@ -23,7 +35,18 @@ public class DetailActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private ActionBar actionBar;
+    @BindView(R.id.toolbar_id)
+    Toolbar toolbar;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private Intent intent;
+
+    private Bundle bundle;
+
+    private int currency;
+
+    private Unbinder unbinder;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,20 +55,33 @@ public class DetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
 
-        Intent intent = getIntent();
-        Bundle bundle = new Bundle();
+        this.getInfoFromIntent();
 
-        if (intent.getExtras() != null) {
-            bundle.putParcelable(Constants.GET_PARCELABLE, intent.getExtras().getParcelable(Constants.SEND_PARCELABLE));
-        }
+        this.currency = Utils.readCurrentCurrencyShPref(this);
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_detail);
+        unbinder = ButterKnife.bind(this);
 
-        this.configureActionBar();
+        this.configureToolbar();
 
         loadFragment(bundle);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: called!");
+        unbinder.unbind();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu: called!");
+        getMenuInflater().inflate(R.menu.currency_menu, menu);
+        Utils.updateCurrencyIconWhenMenuCreated(this, currency, menu, R.id.menu_change_currency_button);
+        return true;
     }
 
     @Override
@@ -54,10 +90,11 @@ public class DetailActivity extends BaseActivity {
 
         switch (item.getItemId()) {
 
-            case android.R.id.home: {
-                Utils.launchActivity(this, MainActivity.class);
-
-            } break;
+            case R.id.menu_change_currency_button: {
+                changeCurrency();
+                Utils.updateCurrencyIcon(this, currency, item);
+            }
+            break;
 
         }
         return super.onOptionsItemSelected(item);
@@ -65,19 +102,48 @@ public class DetailActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureActionBar() {
-        Log.d(TAG, "configureActionBar: called!");
+    private void configureToolbar() {
+        Log.d(TAG, "configureToolbar: called!");
 
-        actionBar = getSupportActionBar();
+        setSupportActionBar(toolbar);
+        setTitle("Create a New Listing");
+        setOverflowButtonColor(toolbar, Color.WHITE);
 
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+                onBackPressed();
+            }
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void changeCurrency() {
+        Log.d(TAG, "changeCurrency: called!");
+
+        if (this.currency == 0) {
+            this.currency = 1;
+        } else {
+            this.currency = 0;
+        }
+        Utils.writeCurrentCurrencyShPref(this, currency);
+        loadFragment(bundle);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void getInfoFromIntent () {
+        Log.d(TAG, "getInfoFromIntent: called!");
+
+        intent = getIntent();
+        bundle = new Bundle();
+
+        if (intent.getExtras() != null) {
+            bundle.putParcelable(Constants.GET_PARCELABLE, intent.getExtras().getParcelable(Constants.SEND_PARCELABLE));
+        }
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
