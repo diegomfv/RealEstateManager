@@ -238,11 +238,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed: called!");
-        // TODO: 19/08/2018 Might need to change this
-
-        // TODO: 19/08/2018 Add a fragment saying, would you like to delete the media?
-        // TODO: 19/08/2018 If yes, clean the list and the HashMap
-        //do nothing
+        launchAreYouSureDialogIfNecessary();
     }
 
     @Override
@@ -258,12 +254,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "onOptionsItemSelected: called!");
 
         switch (item.getItemId()) {
-
-            case android.R.id.home: {
-                Utils.launchActivity(this, MainActivity.class);
-
-            }
-            break;
 
             case R.id.menu_change_currency_button: {
 
@@ -365,11 +355,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: called!");
-                if (informationWasInputted()) {
-                    launchAreYouSureDialog();
-                } else {
-                    Utils.launchActivity(CreateNewListingActivity.this, MainActivity.class);
-                }
+                onBackPressed();
             }
         });
     }
@@ -1014,6 +1000,15 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         android.support.v7.app.AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void launchAreYouSureDialogIfNecessary () {
+        Log.d(TAG, "launchAreYouSureDialogIfNecessary: called!");
+        if (informationWasInputted()) {
+            launchAreYouSureDialog();
+        } else {
+            Utils.launchActivity(CreateNewListingActivity.this, MainActivity.class);
+        }
     }
 
     private void createNotification() {
