@@ -53,9 +53,6 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
     //RecyclerView Adapter
     private RVAdapterListings adapter;
 
-    //ViewModel
-    private ListingsSharedViewModel listingsSharedViewModel;
-
     private List<RealEstate> listOfRealEstates;
 
     int currency;
@@ -91,10 +88,6 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
 
         this.configureRecyclerView();
 
-        this.createModel();
-
-        this.subscribeToModel(listingsSharedViewModel);
-
         return view;
     }
 
@@ -109,40 +102,13 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
 
     private List<RealEstate> getListOfRealEstates () {
         Log.d(TAG, "getListOfRealEstates: called");
-        if (listOfRealEstates == null) {
-            return listOfRealEstates = new ArrayList<>();
-        }
-        return listOfRealEstates;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private void createModel() {
-        Log.d(TAG, "createModel: called!");
-
         if (getActivity() != null) {
-            ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
-            this.listingsSharedViewModel = ViewModelProviders
-                    .of(getActivity(), factory)
-                    .get(ListingsSharedViewModel.class);
+            if (listOfRealEstates == null) {
+                return listOfRealEstates = ((MainActivity) getActivity()).getListOfRealEstates();
+            }
+            return listOfRealEstates;
         }
-    }
-
-    private void subscribeToModel(ListingsSharedViewModel listingsViewModel) {
-        Log.d(TAG, "subscribeToModel: called!");
-
-        if (listingsViewModel != null) {
-            this.listingsSharedViewModel.getObservableListOfListings().observe(this, new Observer<List<RealEstate>>() {
-                @Override
-                public void onChanged(@Nullable List<RealEstate> realEstates) {
-                    Log.d(TAG, "onChanged: called!");
-                    if (realEstates != null) {
-                        listOfRealEstates = realEstates;
-                        adapter.setData(realEstates);
-                    }
-                }
-            });
-        }
+        return listOfRealEstates = new ArrayList<>();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

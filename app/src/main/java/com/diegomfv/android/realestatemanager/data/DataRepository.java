@@ -427,7 +427,7 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // TODO: 27/08/2018 Modified to public
+    // TODO: 27/08/2018 Modified to public  (?????)
     private LiveData<List<RealEstate>> getAllListingsLiveData() {
         Log.d(TAG, "getAllListingsLiveData: called!");
         return mDatabase.realStateDao().getAllListingsOrderedByTypeLiveData();

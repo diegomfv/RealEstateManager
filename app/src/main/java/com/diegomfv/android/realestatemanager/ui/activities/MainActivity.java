@@ -2,10 +2,13 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -16,12 +19,17 @@ import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.fragments.handset.main.FragmentHandsetListListingsMain;
 import com.diegomfv.android.realestatemanager.ui.fragments.tablet.main.FragmentTabletItemDescription;
 import com.diegomfv.android.realestatemanager.ui.fragments.tablet.main.FragmentTabletListListings;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
+import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,11 +65,13 @@ public class MainActivity extends BaseActivity {
 
     private boolean editModeActive;
 
-    private boolean dataAvailable;
-
     private boolean accessInternalStorageGranted;
 
     private int currency;
+
+    private List<RealEstate> listOfRealEstates;
+
+    private ListingsSharedViewModel listingsSharedViewModel;
 
     private Unbinder unbinder;
 
@@ -82,21 +92,18 @@ public class MainActivity extends BaseActivity {
 
         this.currency = Utils.readCurrentCurrencyShPref(this);
 
-        this.dataAvailable = !getRepository().getSetOfBuildingTypes().isEmpty();
-
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
 
         this.configureToolBar();
 
-        if (dataAvailable) {
-            this.loadFragmentOrFragments();
-        }
-
         this.checkInternalStoragePermissionGranted();
 
-        Log.w(TAG, "onCreate: getBitmapCache() =  " + getBitmapCache() + "+++++++++++++++");
+        this.createModel();
+
+        this.subscribeToModel();
+
     }
 
     @Override
@@ -158,9 +165,11 @@ public class MainActivity extends BaseActivity {
             break;
 
             case R.id.menu_search_button: {
-                // TODO: 26/08/2018 If there are no listings, do not launch the activity
-                Utils.launchActivity(this, SearchEngineActivity.class);
-
+                if (!getRepository().getSetOfBuildingTypes().isEmpty()) {
+                    Utils.launchActivity(this, SearchEngineActivity.class);
+                } else {
+                    ToastHelper.toastShort(this, "There are no listing to search for...");
+                }
             }
             break;
 
@@ -198,6 +207,19 @@ public class MainActivity extends BaseActivity {
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed: called!");
         launchAreYouSureDialog();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** Method that returns the list of Real Estates in the database.
+     * It is accessible for the fragment
+     * */
+    public List<RealEstate> getListOfRealEstates () {
+        Log.d(TAG, "getListOfRealEstates: called!");
+        if (listOfRealEstates == null) {
+            return listOfRealEstates = new ArrayList<>();
+        }
+        return listOfRealEstates;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -254,6 +276,35 @@ public class MainActivity extends BaseActivity {
         }
         Utils.writeCurrentCurrencyShPref(this, currency);
         loadFragmentOrFragments();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void createModel() {
+        Log.d(TAG, "createModel: called!");
+
+            ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
+            this.listingsSharedViewModel = ViewModelProviders
+                    .of(this, factory)
+                    .get(ListingsSharedViewModel.class);
+
+    }
+
+    private void subscribeToModel() {
+        Log.d(TAG, "subscribeToModel: called!");
+
+        if (listingsSharedViewModel != null) {
+            this.listingsSharedViewModel.getObservableListOfListings().observe(this, new Observer<List<RealEstate>>() {
+                @Override
+                public void onChanged(@Nullable List<RealEstate> realEstates) {
+                    Log.d(TAG, "onChanged: called!");
+                    if (realEstates != null) {
+                        listOfRealEstates = realEstates;
+                        loadFragmentOrFragments();
+                    }
+                }
+            });
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
