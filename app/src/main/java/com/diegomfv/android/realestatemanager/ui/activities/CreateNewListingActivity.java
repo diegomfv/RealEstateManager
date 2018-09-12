@@ -78,7 +78,8 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 /**
  * Created by Diego Fajardo on 18/08/2018.
  */
-// TODO: 05/09/2018 Prices could be formatted with a price watcher
+// TODO: 05/09/2018 Change Address to a TextView
+// TODO: 12/09/2018 When address is clicked, show a Toast saying address has to be inputted via the button
 public class CreateNewListingActivity extends BaseActivity implements Observer, InsertAddressDialogFragment.InsertAddressDialogListener {
 
     private static final String TAG = CreateNewListingActivity.class.getSimpleName();
