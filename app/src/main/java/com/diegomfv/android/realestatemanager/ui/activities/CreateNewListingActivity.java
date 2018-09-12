@@ -80,6 +80,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  */
 // TODO: 05/09/2018 Change Address to a TextView
 // TODO: 12/09/2018 When address is clicked, show a Toast saying address has to be inputted via the button
+// TODO: 12/09/2018 Add RecyclerView Decorator! Necessary to do it differently depending on the device size
 public class CreateNewListingActivity extends BaseActivity implements Observer, InsertAddressDialogFragment.InsertAddressDialogListener {
 
     private static final String TAG = CreateNewListingActivity.class.getSimpleName();
