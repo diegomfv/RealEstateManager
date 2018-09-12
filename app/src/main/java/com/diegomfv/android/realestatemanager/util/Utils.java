@@ -546,7 +546,7 @@ public class Utils {
 
     }
 
-    public static String formatToDecimals(int number, int currency) {
+    public static String formatToDecimals(Number number, int currency) {
         Log.d(TAG, "formatToDecimalsWithComma: called!");
 
         //CURRENCY

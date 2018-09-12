@@ -35,7 +35,6 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  */
 
 // TODO: 05/09/2018 Check dynamic query for room (query than varies depending on user's input)
-// TODO: 05/09/2018 Prices could be formatted with a price watcher
 // TODO: 28/08/2018 Add a listener for when changing CURRENCY
 public class MainActivity extends BaseActivity {
 

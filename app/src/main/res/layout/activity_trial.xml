@@ -71,10 +71,10 @@
                     <include layout="@layout/card_view_autocomplete"
                         android:id="@+id/card_view_type_id"/>
 
-                    <include layout="@layout/card_view_autocomplete"
+                    <include layout="@layout/card_view_edit_text"
                         android:id="@+id/card_view_price_id"/>
 
-                    <include layout="@layout/card_view_autocomplete"
+                    <include layout="@layout/card_view_edit_text"
                         android:id="@+id/card_view_surface_area_id"/>
 
                     <include layout="@layout/card_view_crystal_single_seek_bar"

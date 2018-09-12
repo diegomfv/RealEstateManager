@@ -55,6 +55,8 @@ import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
+import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.jakewharton.rxbinding2.widget.TextViewTextChangeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +69,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -76,10 +81,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 /**
  * Created by Diego Fajardo on 18/08/2018.
  */
-
-// TODO: 02/09/2018 Don't check if the external storage is available, it always should be here!
-// TODO: 02/09/2018 Request permission in MainActivity and in AuthLoginActivity
-// TODO: 02/09/2018 If permissions are not granted, don't let the user to continue
+// TODO: 05/09/2018 Prices could be formatted with a price watcher
 public class CreateNewListingActivity extends BaseActivity implements Observer, InsertAddressDialogFragment.InsertAddressDialogListener {
 
     private static final String TAG = CreateNewListingActivity.class.getSimpleName();
@@ -121,9 +123,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private TextInputAutoCompleteTextView tvTypeOfBuilding;
 
-    private TextInputAutoCompleteTextView tvPrice;
+    private TextInputEditText tvPrice;
 
-    private TextInputAutoCompleteTextView tvSurfaceArea;
+    private TextInputEditText tvSurfaceArea;
 
     private TextView tvNumberOfBedrooms;
     private CrystalSeekbar seekBarBedrooms;
@@ -376,18 +378,18 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.setCrystalSeekBarsListeners();
         this.setAllHints();
         this.setTextLastButton();
+        //this.configurePriceEditText();
     }
 
     private void getAutocompleteTextViews() {
         Log.d(TAG, "getAutocompleteTextViews: called!");
         this.tvTypeOfBuilding = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-
     }
 
     private void getEditTexts () {
         Log.d(TAG, "getEditTexts: called!");
+        this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
+        this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
         this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
         this.tvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
     }
@@ -485,6 +487,55 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         } else if (seekBar == seekBarOtherRooms) {
             tvNumberOfOtherRooms.setText("Other Rooms (" + value + ")");
         }
+    }
+
+    @SuppressLint("CheckResult")
+    private void configurePriceEditText() {
+        Log.d(TAG, "configurePriceEditText: called!");
+
+        RxTextView.textChangeEvents(tvTypeOfBuilding)
+                .map(new Function<TextViewTextChangeEvent, String>() {
+                    @Override
+                    public String apply(TextViewTextChangeEvent textViewTextChangeEvent) throws Exception {
+                        Log.d(TAG, "apply: called!");
+
+                        String text = textViewTextChangeEvent.text().toString();
+
+                        if (Utils.isNumeric(text)) {
+                            text = Utils.formatToDecimals(Float.parseFloat(text), currency);
+                            return text;
+                        }
+
+                        return text;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new io.reactivex.Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+
+                    }
+
+                    @Override
+                    public void onNext(String string) {
+                        Log.d(TAG, "onNext: called!");
+                        tvPrice.setText(string);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+
+                    }
+                });
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
