@@ -964,33 +964,27 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private void launchAreYouSureDialog() {
         Log.d(TAG, "launchAreYouSureDialog: called!");
-
-        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(CreateNewListingActivity.this);
-        builder.setMessage("The changes will not be saved")
-                .setTitle("Are you sure you want to proceed?")
-                .setPositiveButton("Yes, I am sure", new DialogInterface.OnClickListener() {
+        Utils.launchSimpleDialog(
+                this,
+                "The changes will not be saved",
+                "Are you sure you want to proceed?",
+                "Yes, I am sure",
+                "No",
+                new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG, "onClick: yes button clicked!");
+                        Log.d(TAG, "onClick: called!");
                         Utils.launchActivity(CreateNewListingActivity.this, MainActivity.class);
                     }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG, "onClick: no button clicked!");
-                        //Nothing happens
-                    }
-                });
-
-        android.support.v7.app.AlertDialog dialog = builder.create();
-        dialog.show();
+                }
+        );
     }
 
     private void launchAreYouSureDialogIfNecessary() {
         Log.d(TAG, "launchAreYouSureDialogIfNecessary: called!");
         if (informationWasInputted()) {
             launchAreYouSureDialog();
+
         } else {
             Utils.launchActivity(CreateNewListingActivity.this, MainActivity.class);
         }

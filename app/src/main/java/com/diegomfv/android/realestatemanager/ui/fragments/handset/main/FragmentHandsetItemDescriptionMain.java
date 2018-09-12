@@ -215,7 +215,12 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     private void setSurfaceArea(RealEstate realEstate) {
         Log.d(TAG, "setSurfaceArea: called!");
-        tvSurfaceArea.setText(String.valueOf(realEstate.getSurfaceArea()));
+        if (realEstate.getSurfaceArea() == 0) {
+            tvSurfaceArea.setText(R.string.information_not_available);
+
+        } else {
+            tvSurfaceArea.setText(String.valueOf(realEstate.getSurfaceArea()));
+        }
     }
 
     public void setRooms(RealEstate rooms) {
@@ -236,11 +241,16 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
     @SuppressLint("SetTextI18n")
     private void setPrice(RealEstate realEstate) {
         Log.d(TAG, "setPrice: called!");
-        tvPrice.setText(
-                Utils.getCurrencySymbol(currency)
-                        + " "
-                        + (Utils.formatToDecimals((int) Utils.getPriceAccordingToCurrency(
-                        currency, realEstate.getPrice()), currency)));
+        if (realEstate.getPrice() == 0.0f) {
+            tvPrice.setText(R.string.information_not_available);
+
+        } else {
+            tvPrice.setText(
+                    Utils.getCurrencySymbol(currency)
+                            + " "
+                            + (Utils.formatToDecimals((int) Utils.getPriceAccordingToCurrency(
+                            currency, realEstate.getPrice()), currency)));
+        }
     }
 
     private void setSoldState (RealEstate realEstate) {

@@ -37,6 +37,7 @@ import butterknife.Unbinder;
  * Created by Diego Fajardo on 16/08/2018.
  */
 
+// TODO: 12/09/2018 SOLD label touches price label
 public class FragmentHandsetListListingsMain extends BaseFragment {
 
     private static final String TAG = FragmentHandsetListListingsMain.class.getSimpleName();

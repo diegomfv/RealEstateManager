@@ -493,6 +493,21 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         tvNumberOfOtherRooms.setText("Other Rooms (" + getRealEstateCache().getRooms().getBedrooms() + ")");
         tvDescription.setText(getRealEstateCache().getDescription());
         tvAddress.setText(Utils.getAddressAsString(getRealEstateCache()));
+        setSoldInfo();
+    }
+
+    private void setSoldInfo () {
+        Log.d(TAG, "setSoldInfo: called!");
+        if(realEstate.getDateSale() == null || realEstate.getDateSale().isEmpty()) {
+            dateSold = "";
+            tvSold.setText(dateSold);
+            cbSold.setChecked(false);
+
+        } else {
+            dateSold = realEstate.getDateSale();
+            tvSold.setText(realEstate.getDateSale());
+            cbSold.setChecked(true);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

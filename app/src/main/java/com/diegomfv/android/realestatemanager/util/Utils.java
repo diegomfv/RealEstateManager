@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -17,6 +18,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -60,9 +62,10 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Diego on 21/02/2018.
  */
 
-/** This class is kept to show the mentor Utils modifications
+/**
+ * This class is kept to show the mentor Utils modifications
  * when the project was started
- * */
+ */
 
 public class Utils {
 
@@ -70,37 +73,46 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Price Conversion (Dollars to Euros):
+    /**
+     * Price Conversion (Dollars to Euros):
      */
-    public static float convertDollarToEuro(float dollars){
+    public static float convertDollarToEuro(float dollars) {
         Log.d(TAG, "convertDollarToEuro: called!");
         return Math.round(dollars * 0.86);
     }
 
-    /** Price Conversion (Euros to Dollars):
+    /**
+     * Price Conversion (Euros to Dollars):
      */
-    public static float convertEuroToDollar(float euros){
+    public static float convertEuroToDollar(float euros) {
         return Math.round(euros * 1.16);
     }
 
-    /** Date Conversion:
+    /**
+     * Date Conversion:
      */
-    public static String getTodayDate(){
+    public static String getTodayDate() {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         return dateFormat.format(new Date());
     }
 
-    public static String getCurrencySymbol (int currency) {
+    public static String getCurrencySymbol(int currency) {
         Log.d(TAG, "getCurrencySymbol: called!");
 
         switch (currency) {
-            case 0: { return " $"; }
-            case 1: { return " €"; }
-            default: { return " $"; }
+            case 0: {
+                return " $";
+            }
+            case 1: {
+                return " €";
+            }
+            default: {
+                return " $";
+            }
         }
     }
 
-    public static float getPriceAccordingToCurrency (int currency, float price) {
+    public static float getPriceAccordingToCurrency(int currency, float price) {
         Log.d(TAG, "getPriceAccordingToCurrency: called!");
 
         if (currency == 0) {
@@ -108,7 +120,7 @@ public class Utils {
         } else if (currency == 1) {
             return Utils.convertDollarToEuro(price);
         } else {
-             return price;
+            return price;
         }
     }
 
@@ -135,7 +147,8 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Internet Connectivity
+    /**
+     * Internet Connectivity
      */
     // Background thread!!
     // TCP/HTTP/DNS (depending on the port, 53=DNS, 80=HTTP, etc.)
@@ -153,12 +166,14 @@ public class Utils {
             return true;
         } catch (IOException e) {
             Log.d(TAG, "isInternetAvailable: false");
-            return false; }
+            return false;
+        }
     }
 
-    /** Internet Connectivity
+    /**
+     * Internet Connectivity
      */
-    public static void checkInternetInBackgroundThread (final DisposableObserver disposableObserver) {
+    public static void checkInternetInBackgroundThread(final DisposableObserver disposableObserver) {
         Log.d(TAG, "checkInternetInBackgroundThread: called! ");
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
@@ -184,11 +199,12 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Method used to connect
+    /**
+     * Method used to connect
      * the broadcast receiver with
      * the activity
-     * */
-    public static void connectReceiver (Context context, BroadcastReceiver receiver, IntentFilter intentFilter, Observer observer){
+     */
+    public static void connectReceiver(Context context, BroadcastReceiver receiver, IntentFilter intentFilter, Observer observer) {
         Log.d(TAG, "connectReceiver: called!");
 
         context.registerReceiver(receiver, intentFilter);
@@ -196,10 +212,11 @@ public class Utils {
 
     }
 
-    /** Method used to disconnect
+    /**
+     * Method used to disconnect
      * the broadcast receiver from the activity
-     * */
-    public static void disconnectReceiver (Context context, BroadcastReceiver receiver, Observer observer) {
+     */
+    public static void disconnectReceiver(Context context, BroadcastReceiver receiver, Observer observer) {
         Log.d(TAG, "disconnectReceiver: called!");
 
         context.unregisterReceiver(receiver);
@@ -209,10 +226,11 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Method to create a Snackbar
+    /**
+     * Method to create a Snackbar
      * displaying that there is no internet
-     * */
-    public static Snackbar createSnackbar (Context context, View mainLayout, String message) {
+     */
+    public static Snackbar createSnackbar(Context context, View mainLayout, String message) {
 
         final Snackbar snackbar = Snackbar.make(
                 mainLayout,
@@ -243,12 +261,12 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static void getCurrentMemoryStatus () {
+    public static void getCurrentMemoryStatus() {
         Log.d(TAG, "getCurrentMemoryStatus: called!");
 
         final Runtime runtime = Runtime.getRuntime();
-        final long usedMemInMB=(runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
-        final long maxHeapSizeInMB=runtime.maxMemory() / 1048576L;
+        final long usedMemInMB = (runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
+        final long maxHeapSizeInMB = runtime.maxMemory() / 1048576L;
         final long availHeapSizeInMB = maxHeapSizeInMB - usedMemInMB;
 
         Log.i(TAG, "onCreate: " + usedMemInMB);
@@ -257,12 +275,12 @@ public class Utils {
 
     }
 
-    public static long getMaxMemory () {
+    public static long getMaxMemory() {
         Log.d(TAG, "getMaxMemory: called!");
         return Runtime.getRuntime().maxMemory() / 1024;
     }
 
-    public static boolean checksPlaceFromText (PlaceFromText placeFromText) {
+    public static boolean checksPlaceFromText(PlaceFromText placeFromText) {
         Log.d(TAG, "checkPlaceFromText: called!");
 
         if (placeFromText != null) {
@@ -281,7 +299,7 @@ public class Utils {
         return false;
     }
 
-    public static boolean checksPlaceDetails (PlaceDetails placeDetails) {
+    public static boolean checksPlaceDetails(PlaceDetails placeDetails) {
         Log.d(TAG, "checksPlaceDetails: called!");
 
         if (placeDetails != null) {
@@ -300,7 +318,7 @@ public class Utils {
         return false;
     }
 
-    public static boolean checkPlacesByNearbyResults (PlacesByNearby placesByNearby) {
+    public static boolean checkPlacesByNearbyResults(PlacesByNearby placesByNearby) {
         Log.d(TAG, "checkPlacesByNearby: called!");
 
         if (placesByNearby != null) {
@@ -313,7 +331,7 @@ public class Utils {
         return false;
     }
 
-    public static boolean checkResultPlacesByNearby (Result result) {
+    public static boolean checkResultPlacesByNearby(Result result) {
         Log.d(TAG, "checkResultPlacesByNearby: called!");
 
         if (result != null) {
@@ -325,7 +343,7 @@ public class Utils {
                                 if (result.getGeometry() != null) {
                                     if (result.getGeometry().getLocation() != null) {
                                         if (result.getGeometry().getLocation().getLat() != null) {
-                                            if (result.getGeometry().getLocation().getLng() != null){
+                                            if (result.getGeometry().getLocation().getLng() != null) {
                                                 return true;
                                             }
                                         }
@@ -359,17 +377,17 @@ public class Utils {
         }
     }
 
-    public static boolean checkPermission (Context context, String permission) {
+    public static boolean checkPermission(Context context, String permission) {
         Log.d(TAG, "checkPermissions: called!");
 
-        if (ContextCompat.checkSelfPermission (context.getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context.getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
             return false;
         }
     }
 
-    public static void requestPermission (AppCompatActivity app, String[] permissions, int requestCode) {
+    public static void requestPermission(AppCompatActivity app, String[] permissions, int requestCode) {
         Log.d(TAG, "requestPermission: called!");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -380,10 +398,11 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Method that
+    /**
+     * Method that
      * capitalizes a string
-     * */
-    public static String capitalize (String str) {
+     */
+    public static String capitalize(String str) {
         if (str.equals("")) {
             return "";
         }
@@ -394,9 +413,10 @@ public class Utils {
         return str.replace("_", " ");
     }
 
-    /** Method that checks if a string
+    /**
+     * Method that checks if a string
      * can be parsed to Integer
-     * */
+     */
     public static boolean isInteger(String str) {
         if (str == null) {
             return false;
@@ -420,7 +440,7 @@ public class Utils {
         return true;
     }
 
-    public static boolean isNumeric (String str) {
+    public static boolean isNumeric(String str) {
         Log.d(TAG, "isNumeric: called!");
         return str.matches("\\d+(?:\\.\\d+)?");
     }
@@ -462,14 +482,14 @@ public class Utils {
         return "";
     }
 
-    private static void appendIfNotNullOrEmpty (StringBuilder stringBuilder, String addressField) {
+    private static void appendIfNotNullOrEmpty(StringBuilder stringBuilder, String addressField) {
         Log.d(TAG, "appendIfNotNullOrEmpty: called!");
         if (checkStringIsNotEmptyOrNull(addressField)) {
             stringBuilder.append(addressField).append(", ");
         }
     }
 
-    private static boolean checkStringIsNotEmptyOrNull (String string) {
+    private static boolean checkStringIsNotEmptyOrNull(String string) {
         Log.d(TAG, "checkStringIsNotEmptyOrNull: called!");
 
         if (string == null || string.equals("")) {
@@ -483,7 +503,7 @@ public class Utils {
         return Utils.getStringFromTextView(textView).length() > 0;
     }
 
-    private static void getRidOfLastComma (StringBuilder stringBuilder) {
+    private static void getRidOfLastComma(StringBuilder stringBuilder) {
         Log.d(TAG, "getRidOfLastComma: called!");
         if (stringBuilder.length() > 2) {
             stringBuilder.setLength(stringBuilder.length() - 2);
@@ -505,28 +525,30 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Method that launches an activity
-     * */
-    public static void launchActivity(Context context, Class <? extends AppCompatActivity> activity) {
+    /**
+     * Method that launches an activity
+     */
+    public static void launchActivity(Context context, Class<? extends AppCompatActivity> activity) {
         Log.d(TAG, "launchActivity: called!");
-
-        Intent intent = new Intent(context, activity);
-        context.startActivity(intent);
+        context.startActivity(new Intent(context, activity));
 
     }
 
-    public static void launchActivityWithIntent (Context context, Intent intent) {
-        Log.d(TAG, "launchActivityWithIntent: called!");
+    public static void launchActivityClearStack(Context context, Class<? extends AppCompatActivity> activity) {
+        Log.d(TAG, "launchActivityClearStack: called!");
+        Intent intent = new Intent(context, activity);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Method that displays the main content
+    /**
+     * Method that displays the main content
      * and hides de progress bar that occupies
      * all the screen
-     * */
-    public static void showMainContent (View progressBarContent, View mainContent) {
+     */
+    public static void showMainContent(View progressBarContent, View mainContent) {
         Log.d(TAG, "showMainContent: called!");
 
         progressBarContent.setVisibility(View.GONE);
@@ -534,11 +556,12 @@ public class Utils {
 
     }
 
-    /** Method that hides the main content
+    /**
+     * Method that hides the main content
      * and displays de progress bar that occupies
      * all the screen
-     * */
-    public static void hideMainContent (View progressBarContent, View mainContent) {
+     */
+    public static void hideMainContent(View progressBarContent, View mainContent) {
         Log.d(TAG, "hideMainContent: called!");
 
         progressBarContent.setVisibility(View.VISIBLE);
@@ -603,7 +626,7 @@ public class Utils {
 
     }
 
-    public static String floatToString (Number amount) {
+    public static String floatToString(Number amount) {
         Log.d(TAG, "floatTwoDecimals: called!");
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
@@ -613,7 +636,7 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static void writeCurrentCurrencyShPref (Context context, int currency) {
+    public static void writeCurrentCurrencyShPref(Context context, int currency) {
         Log.d(TAG, "writeCurrentCurrencyShPref: called!");
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_CURRENCY_SETTINGS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -621,13 +644,13 @@ public class Utils {
         editor.apply();
     }
 
-    public static int readCurrentCurrencyShPref (Context context) {
+    public static int readCurrentCurrencyShPref(Context context) {
         Log.d(TAG, "saveCurrentCurrency: called!");
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_CURRENCY_SETTINGS, Context.MODE_PRIVATE);
         return sharedPreferences.getInt(Constants.CURRENCY, 0);
     }
 
-    public static void writeAgentDataShPref (Context context, String firstName, String lastName, String email, String password, String memDataQ, String memDataA) {
+    public static void writeAgentDataShPref(Context context, String firstName, String lastName, String email, String password, String memDataQ, String memDataA) {
         Log.d(TAG, "writeAgentDataShPref: called!");
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_AGENT_SETTINGS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -640,7 +663,7 @@ public class Utils {
         editor.apply();
     }
 
-    public static String[] readCurrentAgentData (Context context) {
+    public static String[] readCurrentAgentData(Context context) {
         Log.d(TAG, "saveCurrentCurrency: called!");
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_AGENT_SETTINGS, Context.MODE_PRIVATE);
         return new String[]{
@@ -675,9 +698,10 @@ public class Utils {
         return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
-    /** This method uses inSampleSize to reduce the size of the image in memory
-     * */
-    public static Bitmap decodeSampleBitmapFromInputStream (InputStream stream, int reqHeight, int reqWidth) {
+    /**
+     * This method uses inSampleSize to reduce the size of the image in memory
+     */
+    public static Bitmap decodeSampleBitmapFromInputStream(InputStream stream, int reqHeight, int reqWidth) {
         Log.d(TAG, "decodeSampleBitmapFromFile: called!");
 
         //Height and Width in pixels
@@ -706,9 +730,11 @@ public class Utils {
     }
 
     //Can be static
-    /** This method checks the current size of the image and, if the required size is still
+
+    /**
+     * This method checks the current size of the image and, if the required size is still
      * higher, it continues reducing the image
-     * */
+     */
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqHeight, int reqWidth) {
         Log.d(TAG, "calculateInSampleSize: called!");
 
@@ -741,12 +767,12 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static String dateToString (Date date) {
+    public static String dateToString(Date date) {
         Log.d(TAG, "dateToString: called!");
         return new SimpleDateFormat("dd/MM/yyyy").format(date);
     }
 
-    public static Date stringToDate (String string) {
+    public static Date stringToDate(String string) {
         Log.d(TAG, "stringToDate: called!");
         try {
             return new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).parse(string);
@@ -766,14 +792,57 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Changes the color of the Toolbar Overflow Button to white
-     * */
+    /**
+     * Changes the color of the Toolbar Overflow Button to white
+     */
     public static void setOverflowButtonColor(final Toolbar toolbar, final int color) {
         Drawable drawable = toolbar.getOverflowIcon();
-        if(drawable != null) {
+        if (drawable != null) {
             drawable = DrawableCompat.wrap(drawable);
             DrawableCompat.setTint(drawable.mutate(), color);
             toolbar.setOverflowIcon(drawable);
         }
     }
+
+    public static void launchSimpleDialog(Context context, String mainMessage, String title,
+                                          String okButtonText, String cancelButtonText,
+                                          DialogInterface.OnClickListener positiveListener,
+                                          DialogInterface.OnClickListener negativeListener) {
+        Log.d(TAG, "launchSimpleDialog: called!");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(mainMessage)
+                .setTitle(title)
+                .setPositiveButton(okButtonText, positiveListener)
+                .setNegativeButton(cancelButtonText, negativeListener);
+
+        android.support.v7.app.AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    /**
+     * Overloaded method
+     */
+    public static void launchSimpleDialog(Context context, String mainMessage, String title,
+                                          String okButtonText, String cancelButtonText,
+                                          DialogInterface.OnClickListener positiveListener) {
+        Log.d(TAG, "launchSimpleDialog: called!");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title)
+                .setMessage(mainMessage)
+                .setPositiveButton(okButtonText, positiveListener)
+                .setNegativeButton(cancelButtonText, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "onClick: called!");
+                        //do nothing
+                    }
+                });
+
+        android.support.v7.app.AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
 }

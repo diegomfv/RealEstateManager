@@ -1,6 +1,8 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -192,6 +194,12 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: called!");
+        launchAreYouSureDialog();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void configureToolBar() {
@@ -204,8 +212,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: called!");
-                // TODO: 08/09/2018 We can create a dialog asking the user if he=she really wants to leave
-                Utils.launchActivity(MainActivity.this, AuthLoginActivity.class);
+                onBackPressed();
             }
         });
     }
@@ -320,5 +327,21 @@ public class MainActivity extends BaseActivity {
             findViewById(R.id.fragment2_container_id).setVisibility(View.VISIBLE);
         }
 
+    }
+
+    private void launchAreYouSureDialog () {
+        Log.d(TAG, "launchAreYouSureDialog: called!");
+        Utils.launchSimpleDialog(this,
+                "Are you sure you want to leave?",
+                "Closing the session",
+                "YES, I AM SURE",
+                "NO",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "onClick: called!");
+                        Utils.launchActivityClearStack(MainActivity.this, AuthLoginActivity.class);
+                    }
+                });
     }
 }
