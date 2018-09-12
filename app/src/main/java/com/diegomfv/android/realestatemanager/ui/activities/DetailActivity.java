@@ -29,7 +29,6 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 /**
  * Created by Diego Fajardo on 15/08/2018.
  */
-// TODO: 28/08/2018 Add possibility to change the currency
 public class DetailActivity extends BaseActivity {
 
     private static final String TAG = DetailActivity.class.getSimpleName();
