@@ -1,6 +1,7 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
