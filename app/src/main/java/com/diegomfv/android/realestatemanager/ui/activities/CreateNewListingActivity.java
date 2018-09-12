@@ -21,6 +21,8 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,8 +57,6 @@ import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
-import com.jakewharton.rxbinding2.widget.RxTextView;
-import com.jakewharton.rxbinding2.widget.TextViewTextChangeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,9 +69,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -200,7 +197,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.configureRecyclerView();
 
         // TODO: 26/08/2018 Delete
-       // generateFakeData();
+        // generateFakeData();
     }
 
     // TODO: 26/08/2018 Delete!
@@ -316,7 +313,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void checkIntent () {
+    private void checkIntent() {
         Log.d(TAG, "checkIntent: called!");
         if (getIntent() != null
                 && getIntent().getExtras() != null
@@ -378,7 +375,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.setCrystalSeekBarsListeners();
         this.setAllHints();
         this.setTextLastButton();
-        //this.configurePriceEditText();
     }
 
     private void getAutocompleteTextViews() {
@@ -386,7 +382,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.tvTypeOfBuilding = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
     }
 
-    private void getEditTexts () {
+    private void getEditTexts() {
         Log.d(TAG, "getEditTexts: called!");
         this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
         this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
@@ -487,55 +483,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         } else if (seekBar == seekBarOtherRooms) {
             tvNumberOfOtherRooms.setText("Other Rooms (" + value + ")");
         }
-    }
-
-    @SuppressLint("CheckResult")
-    private void configurePriceEditText() {
-        Log.d(TAG, "configurePriceEditText: called!");
-
-        RxTextView.textChangeEvents(tvTypeOfBuilding)
-                .map(new Function<TextViewTextChangeEvent, String>() {
-                    @Override
-                    public String apply(TextViewTextChangeEvent textViewTextChangeEvent) throws Exception {
-                        Log.d(TAG, "apply: called!");
-
-                        String text = textViewTextChangeEvent.text().toString();
-
-                        if (Utils.isNumeric(text)) {
-                            text = Utils.formatToDecimals(Float.parseFloat(text), currency);
-                            return text;
-                        }
-
-                        return text;
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new io.reactivex.Observer<String>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe: called!");
-
-                    }
-
-                    @Override
-                    public void onNext(String string) {
-                        Log.d(TAG, "onNext: called!");
-                        tvPrice.setText(string);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: called!");
-
-                    }
-                });
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -889,7 +836,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
             return true;
 
         } else {
-            ToastHelper.toastLong(this,"Please, insert a valid address");
+            ToastHelper.toastLong(this, "Please, insert a valid address");
             return false;
         }
     }
@@ -968,7 +915,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         });
     }
 
-    public void insertAllBitmapsInImagesDirectory () {
+    public void insertAllBitmapsInImagesDirectory() {
         Log.d(TAG, "insertAllBitmapsInImagesDirectory: called!");
 
         for (Map.Entry<String, Bitmap> entry : getBitmapCache().entrySet()) {
@@ -1002,18 +949,18 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "informationWasInputted: called!");
 
         /* Utils.textViewIsFilled returns true if the textView IS NOT EMPTY
-        * */
+         * */
         if (Utils.textViewIsFilled(tvTypeOfBuilding)
                 || Utils.textViewIsFilled(tvDescription)
                 || Utils.textViewIsFilled(tvAddress)
                 || Utils.getFloatFromTextView(tvPrice) != 0.0f
-                || Utils.getFloatFromTextView(tvSurfaceArea) != 0.0f){
+                || Utils.getFloatFromTextView(tvSurfaceArea) != 0.0f) {
             return true;
         }
         return false;
     }
 
-    private void launchAreYouSureDialog () {
+    private void launchAreYouSureDialog() {
         Log.d(TAG, "launchAreYouSureDialog: called!");
 
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(CreateNewListingActivity.this);
@@ -1038,7 +985,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         dialog.show();
     }
 
-    private void launchAreYouSureDialogIfNecessary () {
+    private void launchAreYouSureDialogIfNecessary() {
         Log.d(TAG, "launchAreYouSureDialogIfNecessary: called!");
         if (informationWasInputted()) {
             launchAreYouSureDialog();
