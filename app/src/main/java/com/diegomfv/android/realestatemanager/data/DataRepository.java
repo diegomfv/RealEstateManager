@@ -22,6 +22,7 @@ import java.util.Set;
 /**
  * Created by Diego Fajardo on 16/08/2018.
  */
+// TODO: 22/08/2018 Fetch network data from the repository!
 public class DataRepository {
 
     private static final String TAG = DataRepository.class.getSimpleName();
@@ -457,9 +458,5 @@ public class DataRepository {
         Log.d(TAG, "getAllPlacesRealEstate: called!");
         return mDatabase.placeRealEstateDao().getAllPlacesRealEstate();
     }
-
-
-
-    // TODO: 22/08/2018 Fetch network data from the repository!
 
 }

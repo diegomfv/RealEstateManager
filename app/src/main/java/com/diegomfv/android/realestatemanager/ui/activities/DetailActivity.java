@@ -40,8 +40,6 @@ public class DetailActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private Intent intent;
-
     private Bundle bundle;
 
     private int currency;
@@ -137,7 +135,7 @@ public class DetailActivity extends BaseActivity {
     private void getInfoFromIntent () {
         Log.d(TAG, "getInfoFromIntent: called!");
 
-        intent = getIntent();
+        Intent intent = getIntent();
         bundle = new Bundle();
 
         if (intent.getExtras() != null) {
