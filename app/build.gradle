@@ -1,11 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
     defaultConfig {
         applicationId "com.diegomfv.android.realestatemanager"
-        minSdkVersion 19
-        targetSdkVersion 27
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -28,21 +30,21 @@ ext {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.android.support:appcompat-v7:$sup"
+    implementation "com.android.support:appcompat-v7:$rootProject.sup"
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     //Design Support Library
-    implementation "com.android.support:design:$sup"
+    implementation "com.android.support:design:$rootProject.sup"
 
-    //Cardview
-    implementation "com.android.support:cardview-v7:$sup"
+    //CardView
+    implementation "com.android.support:cardview-v7:$rootProject.sup"
 
     //Glide
-    implementation "com.github.bumptech.glide:glide:$gli"
-    annotationProcessor "com.github.bumptech.glide:compiler:$gli"
+    implementation "com.github.bumptech.glide:glide:$rootProject.gli"
+    annotationProcessor "com.github.bumptech.glide:compiler:$rootProject.gli"
 
     //CircleView
     implementation 'de.hdodenhof:circleimageview:2.2.0'
@@ -51,12 +53,12 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
 
     //Room
-    implementation "android.arch.persistence.room:runtime:$arch"
-    annotationProcessor "android.arch.persistence.room:compiler:$arch"
+    implementation "android.arch.persistence.room:runtime:$rootProject.arch"
+    annotationProcessor "android.arch.persistence.room:compiler:$rootProject.arch"
 
     //ViewModel and LiveData
-    implementation "android.arch.lifecycle:extensions:$arch"
-    annotationProcessor "android.arch.lifecycle:compiler:$arch"
+    implementation "android.arch.lifecycle:extensions:$rootProject.arch"
+    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.arch"
 
     //ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
@@ -69,8 +71,8 @@ dependencies {
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
 
     //RETROFIT
-    implementation "com.squareup.retrofit2:retrofit:$ret"
-    implementation "com.squareup.retrofit2:converter-gson:$ret"
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.ret"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.ret"
 
     //RxJava, RxAndroid
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
@@ -83,13 +85,13 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
     //Google maps
-    implementation "com.google.android.gms:play-services-maps:$gplay"
+    implementation "com.google.android.gms:play-services-maps:$rootProject.gplay"
 
     //Google Places
-    implementation "com.google.android.gms:play-services-places:$gplay"
+    implementation "com.google.android.gms:play-services-places:$rootProject.gplay"
 
     //Google Location
-    implementation "com.google.android.gms:play-services-location:$gplay"
+    implementation "com.google.android.gms:play-services-location:$rootProject.gplay"
 
     //Range Seek Bar
     implementation 'com.crystal:crystalrangeseekbar:1.1.3'
