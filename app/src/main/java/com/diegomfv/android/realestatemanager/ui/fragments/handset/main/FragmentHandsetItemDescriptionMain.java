@@ -75,6 +75,9 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
     @BindView(R.id.recyclerView_media_id)
     RecyclerView recyclerViewMedia;
 
+    @BindView(R.id.card_view_description_id)
+    CardView cardViewDescription;
+
     @BindView(R.id.textView_description_id)
     TextView tvDescription;
 
@@ -201,7 +204,13 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     private void setDescription(RealEstate realEstate) {
         Log.d(TAG, "setDescription: called!");
-        tvDescription.setText(realEstate.getDescription());
+
+        if (realEstate.getDescription().isEmpty()) {
+            cardViewDescription.setVisibility(View.GONE);
+
+        } else {
+            tvDescription.setText(realEstate.getDescription());
+        }
     }
 
     private void setSurfaceArea(RealEstate realEstate) {
