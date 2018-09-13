@@ -9,7 +9,7 @@ It uses Android Architecture Components.
 
 UI under development.
 
-<img src="./screenshots/sign_in.png" width="30%" height="30%">&ensp;<img src="./screenshots/main.png" width="30%" height="30%">&ensp
+<img src="./screenshots/sign_in.png" width="30%" height="30%">&ensp;<img src="./screenshots/main.png" width="30%" height="30%">
 
 ## Libraries
 
