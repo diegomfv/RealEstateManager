@@ -6,14 +6,20 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Stack;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -145,6 +151,40 @@ public class UnitTest {
         System.out.println(interests);
 
     }
+
+//    @Test
+//    private static String readFile(String path, Charset charset) throws IOException {
+//
+//
+//
+//        byte[] arrayOfBytes = Files.readAllBytes(Paths.get(path));
+//        return new String (arrayOfBytes, charset);
+//    }
+
+    @Test
+    public void encrypt () {
+
+        String string = "HELLO;";
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < string.length() ; i++) {
+
+            char ch = string.charAt(i);
+
+            if (ch >= 'a' && ch <= 'm' ) { ch += 13; }
+            else if (ch >= 'A' && ch <= 'M' ) { ch += 13; }
+            else if (ch >= 'n' && ch <= 'z' ) { ch -= 13; }
+            else if (ch >= 'N' && ch <= 'Z' ) { ch -= 13; }
+
+            stringBuilder.append(ch);
+
+        }
+
+        System.out.println(stringBuilder.toString());
+
+    }
+
 
 }
 

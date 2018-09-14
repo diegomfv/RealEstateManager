@@ -101,13 +101,13 @@ public class Utils {
 
         switch (currency) {
             case 0: {
-                return " $";
+                return "$";
             }
             case 1: {
-                return " €";
+                return "€";
             }
             default: {
-                return " $";
+                return "$";
             }
         }
     }
