@@ -11,6 +11,8 @@ import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
+
 /**
  * Created by Diego Fajardo on 05/08/2018.
  */

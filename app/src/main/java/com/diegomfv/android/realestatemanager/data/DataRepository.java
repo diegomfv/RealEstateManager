@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.reactivex.Maybe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 /**
  * Created by Diego Fajardo on 16/08/2018.
  */
@@ -458,5 +462,7 @@ public class DataRepository {
         Log.d(TAG, "getAllPlacesRealEstate: called!");
         return mDatabase.placeRealEstateDao().getAllPlacesRealEstate();
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
 }

@@ -10,6 +10,9 @@ import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
+import io.reactivex.MaybeObserver;
+
 /**
  * Created by Diego Fajardo on 05/08/2018.
  */

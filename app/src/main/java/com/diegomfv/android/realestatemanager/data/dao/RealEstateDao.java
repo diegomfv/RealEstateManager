@@ -28,6 +28,7 @@ import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 
 /** A method, annotated with @Insert can return a long.
