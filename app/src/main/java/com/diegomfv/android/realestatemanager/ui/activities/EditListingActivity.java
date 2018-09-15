@@ -5,23 +5,26 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
-import android.arch.persistence.room.util.StringUtil;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,7 +51,6 @@ import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.EditViewModel;
-import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,12 +61,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
 /**
  * Created by Diego Fajardo on 23/08/2018.
@@ -75,11 +78,17 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    @BindView(R.id.collapsing_toolbar_id)
+    CollapsingToolbarLayout collapsingToolbar;
+
     @BindView(R.id.progress_bar_content_id)
     LinearLayout progressBarContent;
 
     @BindView(R.id.main_layout_id)
     ScrollView mainLayout;
+
+    @BindView(R.id.toolbar_id)
+    Toolbar toolbar;
 
     @BindView(R.id.card_view_type_id)
     CardView cardViewType;
@@ -150,8 +159,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private ActionBar actionBar;
-
     //RecyclerView Adapter
     private RVAdapterMediaHorizontalCreate adapter;
 
@@ -202,8 +209,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         setTitle("Edit");
         unbinder = ButterKnife.bind(this);
 
-        this.configureActionBar();
-
         this.configureLayout();
 
         Utils.showMainContent(progressBarContent, mainLayout);
@@ -222,6 +227,12 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     }
 
     @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: called!");
+        launchAreYouSureDialog();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu: called!");
         getMenuInflater().inflate(R.menu.currency_menu, menu);
@@ -234,11 +245,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         Log.d(TAG, "onOptionsItemSelected: called!");
 
         switch (item.getItemId()) {
-
-            case android.R.id.home: {
-                Utils.launchActivity(this, MainActivity.class);
-
-            } break;
 
             case R.id.menu_change_currency_button: {
 
@@ -321,16 +327,26 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureActionBar() {
-        Log.d(TAG, "configureActionBar: called!");
+    private void configureToolBar() {
+        Log.d(TAG, "configureToolBar: called!");
 
-        actionBar = getSupportActionBar();
+        setSupportActionBar(toolbar);
+        setOverflowButtonColor(toolbar, Color.WHITE);
 
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+                onBackPressed();
+            }
+        });
+
+        /* Changing the font of the toolbar
+         * */
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.arima_madurai);
+        collapsingToolbar.setCollapsedTitleTypeface(typeface);
+        collapsingToolbar.setExpandedTitleTypeface(typeface);
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -398,6 +414,8 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
+
+        this.configureToolBar();
 
         this.getAutocompleteTextViews();
         this.getTextViews();
@@ -867,6 +885,26 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         getRepository().deleteCacheAndSets();
         Utils.launchActivity(this, MainActivity.class);
 
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void launchAreYouSureDialog() {
+        Log.d(TAG, "launchAreYouSureDialog: called!");
+        Utils.launchSimpleDialog(
+                this,
+                "The changes will not be saved",
+                "Are you sure you want to proceed?",
+                "Yes, I am sure",
+                "No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "onClick: called!");
+                        Utils.launchActivity(EditListingActivity.this, MainActivity.class);
+                    }
+                }
+        );
     }
 
 }

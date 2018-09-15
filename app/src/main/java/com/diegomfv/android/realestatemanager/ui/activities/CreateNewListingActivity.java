@@ -194,8 +194,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         If that is the case, the cache is not deleted*/
         this.checkIntent();
 
-        this.configureToolBar();
-
         this.configureLayout();
 
         Utils.showMainContent(progressBarContent, mainLayout);
@@ -242,6 +240,12 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     }
 
     @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: called!");
+        launchAreYouSureDialogIfNecessary();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu: called!");
         getMenuInflater().inflate(R.menu.currency_menu, menu);
@@ -264,12 +268,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        Log.d(TAG, "onBackPressed: called!");
-        launchAreYouSureDialogIfNecessary();
     }
 
     @Override
@@ -344,7 +342,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "configureToolBar: called!");
 
         setSupportActionBar(toolbar);
-        setTitle("Create a New Listing");
+        //setTitle("Create a New Listing");
         setOverflowButtonColor(toolbar, Color.WHITE);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -380,6 +378,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
+
+        this.configureToolBar();
 
         this.getAutocompleteTextViews();
         this.getEditTexts();
