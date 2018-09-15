@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -318,20 +319,26 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
 
         } else {
-            this.recyclerViewMedia.setHasFixedSize(true);
-            this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
-                    getActivity(), LinearLayoutManager.HORIZONTAL, false));
-            this.adapter = new RVAdapterMediaHorizontalDescr(
-                    getActivity(),
-                    getRepository(),
-                    getInternalStorage(),
-                    getImagesDir(),
-                    realEstate,
-                    getGlide(),
-                    currency);
-            this.recyclerViewMedia.setAdapter(this.adapter);
 
-            this.configureOnClickRecyclerView();
+            if (getActivity() != null) {
+
+                this.recyclerViewMedia.setHasFixedSize(true);
+                this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
+                        getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                this.adapter = new RVAdapterMediaHorizontalDescr(
+                        getActivity(),
+                        getRepository(),
+                        getInternalStorage(),
+                        getImagesDir(),
+                        realEstate,
+                        getGlide(),
+                        currency);
+
+                this.recyclerViewMedia.setAdapter(this.adapter);
+
+                this.configureOnClickRecyclerView();
+
+            }
         }
     }
 

@@ -22,6 +22,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -587,6 +588,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
                 getBitmapCache(),
                 getImagesDir(),
                 getGlide());
+
         this.recyclerView.setAdapter(this.adapter);
 
         this.configureOnClickRecyclerView();
