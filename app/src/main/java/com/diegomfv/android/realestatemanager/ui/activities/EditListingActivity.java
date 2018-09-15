@@ -4,12 +4,17 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.util.StringUtil;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NotificationCompat;
@@ -34,6 +39,7 @@ import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.datamodels.RoomsRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.dialogfragments.DatePickerFragment;
@@ -41,6 +47,8 @@ import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
+import com.diegomfv.android.realestatemanager.viewmodel.EditViewModel;
+import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -151,6 +159,8 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private int currency;
 
+    private EditViewModel editViewModel;
+
     private Unbinder unbinder;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -170,11 +180,20 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
             realEstate = bundle.getParcelable(Constants.GET_PARCELABLE);
             Log.i(TAG, "onCreateView: bundle = " + bundle);
 
-            /* Here, we clone the realEstate object and from that moment on, we use the cache
+            /* We only delete the cache when we come from MainActivity (we do not do it when we come
+             * from PhotoGridActivity
              * */
+
+            /* Here, we clone the realEstate object in the cache and from that moment on, we use
+            * the cache object. We also use the model to access real estate images. We fill the cache
+            * of images with those that are related to the real estate object
+            * */
             this.prepareCache();
+            this.createModel();
 
         } else {
+            /* When we come from PhotoGridActivity, we keep using the object in the cache
+            * */
             realEstate = getRealEstateCache();
         }
 
@@ -332,6 +351,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     private void prepareCache () {
         Log.d(TAG, "prepareCache: called!");
 
+        /* Firts*/
         getRepository().deleteCacheAndSets();
 
         /* We firstly clone the real estate object in the RealEstateCache
@@ -344,12 +364,37 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         * */
         getRepository().deleteAndFillBitmapCache(getRealEstateCache().getListOfImagesIds(), getInternalStorage(), getImagesDir());
 
-        /* We also load the imageRealEstate objects in the corresponding cache to keep track
-        * of them. This is needed to if the user decided to update the information
-        * */
-        getRepository().fillCacheWithImagesRealEstateFromRealEstateCache();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void createModel() {
+        Log.d(TAG, "createModel: called!");
+
+        EditViewModel.Factory factory = new EditViewModel.Factory(getApp());
+        this.editViewModel = ViewModelProviders
+                .of(this, factory)
+                .get(EditViewModel.class);
+
+        this.subscribeToModel();
 
     }
+
+    private void subscribeToModel() {
+        Log.d(TAG, "subscribeToModel: called!");
+
+        if (editViewModel != null) {
+            this.editViewModel.getObservableListOfImagesRealEstate().observe(this, new Observer<List<ImageRealEstate>>() {
+                @Override
+                public void onChanged(@Nullable List<ImageRealEstate> listOfImagesRealEstate) {
+                    Log.d(TAG, "onChanged: called!");
+                    getRepository().fillCacheWithImagesRelatedToRealEstate(listOfImagesRealEstate);
+                }
+            });
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");

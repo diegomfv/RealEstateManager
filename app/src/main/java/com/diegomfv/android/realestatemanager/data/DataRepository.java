@@ -130,17 +130,17 @@ public class DataRepository {
      * with objects from the database with the same id as the ids we find in the list
      * of the real estate object
      * */
-    public void fillCacheWithImagesRealEstateFromRealEstateCache() {
-        Log.d(TAG, "fillListOfImagesRealEstateAccordingToRealEstateCache: called!");
-
-        if (listOfImagesRealEstateCache != null) {
-            listOfImagesRealEstateCache.clear();
-        }
-
-        for (int i = 0; i < getRealEstateCache().getListOfImagesIds().size(); i++) {
-            if (getRealEstateCache().getListOfImagesIds().contains(getAllImagesRealEstate().get(i).getId())){
-                getListOfImagesRealEstateCache().add(getAllImagesRealEstate().get(i));
+    public void fillCacheWithImagesRelatedToRealEstate (List<ImageRealEstate> listOfImagesRealEstate) {
+        Log.d(TAG, "fillCacheWithImagesRelatedToRealEstate: called!");
+        if (listOfImagesRealEstate != null) {
+            for (int i = 0; i < listOfImagesRealEstate.size(); i++) {
+                if (getRealEstateCache().getListOfImagesIds().contains(listOfImagesRealEstate.get(i).getId())) {
+                    getListOfImagesRealEstateCache().add(listOfImagesRealEstate.get(i));
+                }
             }
+
+        } else {
+            Log.w(TAG, "fillCacheWithImagesRelatedToRealEstate: " + "the list is NULL");
         }
     }
 
@@ -161,9 +161,7 @@ public class DataRepository {
         Log.d(TAG, "deleteCache: called!");
 
         realEstateCache = null;
-
         listOfImagesRealEstateCache = null;
-
         listOfPlacesNearbyCache = null;
     }
 

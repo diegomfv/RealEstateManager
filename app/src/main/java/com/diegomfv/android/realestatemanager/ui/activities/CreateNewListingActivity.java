@@ -10,13 +10,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -86,6 +89,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private static final String TAG = CreateNewListingActivity.class.getSimpleName();
 
     /////////////////////////////////
+
+    @BindView(R.id.collapsing_toolbar_id)
+    CollapsingToolbarLayout collapsingToolbar;
 
     @BindView(R.id.progress_bar_content_id)
     LinearLayout progressBarContent;
@@ -348,6 +354,13 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 onBackPressed();
             }
         });
+
+        /* Changing the font of the toolbar
+        * */
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.arima_madurai);
+        collapsingToolbar.setCollapsedTitleTypeface(typeface);
+        collapsingToolbar.setExpandedTitleTypeface(typeface);
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
