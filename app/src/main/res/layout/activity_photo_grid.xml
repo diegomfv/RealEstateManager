@@ -35,7 +35,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.v7.widget.RecyclerView
+            <com.diegomfv.android.realestatemanager.util.GridRecyclerView
                 android:id="@+id/recyclerView_media_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

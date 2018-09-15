@@ -7,13 +7,14 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 
 import com.diegomfv.android.realestatemanager.R;
@@ -137,6 +138,8 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
 
                         /* The recycler view is notified in order to display the new data
                         * */
+                        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, R.anim.grid_layout_animation_from_bottom);
+                        recyclerView.setLayoutAnimation(animation);
                         updateAdapterData();
 
                     }
@@ -226,6 +229,8 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
+        /* We are using a GridRecyclerView (custom view). See layout
+        * */
         this.recyclerView.setHasFixedSize(true);
         this.recyclerView.setLayoutManager(new GridLayoutManager(
                 this, 2));
@@ -234,6 +239,10 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
                 getListOfBitmapKeys(),
                 getRepository().getBitmapCache(),
                 getGlide());
+
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, R.anim.grid_layout_animation_from_bottom);
+        recyclerView.setLayoutAnimation(animation);
+
         this.recyclerView.setAdapter(this.adapter);
 
         this.configureOnClickRecyclerView();

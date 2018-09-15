@@ -22,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -842,6 +843,14 @@ public class Utils {
 
         android.support.v7.app.AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static int calculateGridsNumberOfColumns(Context context, int gridItemWidth){
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        return (int) (dpWidth / gridItemWidth);
     }
 
 

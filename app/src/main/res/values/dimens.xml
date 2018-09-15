@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="card_view_side_margin">10dp</dimen>
-    <dimen name="card_view_padding">10dp</dimen>
+    <dimen name="card_view_side_margin_10dp">10dp</dimen>
+    <dimen name="card_view_padding_10dp">10dp</dimen>
 </resources>
