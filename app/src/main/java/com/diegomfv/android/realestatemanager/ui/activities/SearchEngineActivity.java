@@ -1,27 +1,21 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
@@ -33,7 +27,6 @@ import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
-import com.diegomfv.android.realestatemanager.viewmodel.SearchEngineViewModel;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,6 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -59,8 +53,17 @@ public class SearchEngineActivity extends BaseActivity {
     @BindView(R.id.collapsing_toolbar_id)
     CollapsingToolbarLayout collapsingToolbar;
 
+    @BindView(R.id.progress_bar_content_id)
+    LinearLayout progressBarContent;
+
+    @BindView(R.id.main_layout_id)
+    ScrollView mainLayout;
+
     @BindView(R.id.toolbar_id)
     Toolbar toolbar;
+
+    @BindView(R.id.card_view_type_id)
+    CardView cardViewType;
 
     @BindView(R.id.card_view_price_id)
     CardView cardViewPrice;
@@ -68,14 +71,14 @@ public class SearchEngineActivity extends BaseActivity {
     @BindView(R.id.card_view_surface_area_id)
     CardView cardViewSurfaceArea;
 
+    @BindView(R.id.card_view_cities_id)
+    CardView cardViewCities;
+
+    @BindView(R.id.card_view_localities_id)
+    CardView cardViewLocalities;
+
     @BindView(R.id.card_view_number_rooms_id)
     CardView cardViewNumberOfRooms;
-
-    @BindView(R.id.card_view_locality_id)
-    CardView cardViewLocality;
-
-    @BindView(R.id.card_view_address_id)
-    CardView cardViewCity;
 
     @BindView(R.id.card_view_amount_photos_id)
     CardView cardViewAmountPhotos;
@@ -86,20 +89,29 @@ public class SearchEngineActivity extends BaseActivity {
     @BindView(R.id.checkbox_sold_id)
     CheckBox checkBoxSold;
 
+    @BindView(R.id.card_view_points_of_interest_id)
+    CardView cardViewPointsOfInterest;
+
     @BindView(R.id.button_search_id)
     Button buttonSearch;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @BindView(R.id.linear_layout_checkboxes_type_id)
-    LinearLayout typeCheckBoxesLinearLayout;
+    private LinearLayout linearLayoutTypes;
+    private LinearLayout linearLayoutLocalities;
+    private LinearLayout linearLayoutCities;
+    private LinearLayout linearLayoutTypesPointsOfInterestNearby;
 
-    @BindView(R.id.linear_layout_checkboxes_points_of_interest_id)
-    LinearLayout pointsOfInterestCheckBoxesLinearLayout;
+    private TextView tvTypes;
+    private TextView tvCities;
+    private TextView tvLocalities;
+    private TextView tvPointsOfInterest;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private List<CheckBox> listOfBuildingTypeCheckboxes;
+    private List<CheckBox> listOfCityCheckboxes;
+    private List<CheckBox> listOfLocalityCheckboxes;
     private List<CheckBox> listOfPointOfInterestCheckboxes;
 
     private TextView tvPrice;
@@ -113,9 +125,6 @@ public class SearchEngineActivity extends BaseActivity {
     private TextView tvNumberOfRooms;
     private CrystalRangeSeekbar seekBarNumberOfRooms;
     private boolean seekBarNumberOfRoomsUsed;
-
-    private AutoCompleteTextView actvLocality;
-    private AutoCompleteTextView actvCity;
 
     private TextView tvAmountOfPhotos;
     private CrystalRangeSeekbar seekBarAmountOfPhotos;
@@ -143,8 +152,6 @@ public class SearchEngineActivity extends BaseActivity {
 
     private int currency;
 
-    private SearchEngineViewModel searchEngineViewModel;
-
     private Unbinder unbinder;
 
     @Override
@@ -159,23 +166,14 @@ public class SearchEngineActivity extends BaseActivity {
         this.seekBarNumberOfRoomsUsed = false;
         this.seekbarAmountOfPhotosUsed = false;
 
-        /* We refresh the information in the database
-         * We need the sets for displaying information in the UI
-         * */
-        this.prepareSets();
-
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_search_engine);
-        setTitle("Search");
         unbinder = ButterKnife.bind(this);
 
         this.configureLayout();
 
-        this.createModel();
+        Utils.showMainContent(progressBarContent, mainLayout);
 
-        this.subscribeToModel(searchEngineViewModel);
-
-        // TODO: 24/08/2018 Delete!
     }
 
     @Override
@@ -200,7 +198,6 @@ public class SearchEngineActivity extends BaseActivity {
         switch (item.getItemId()) {
 
             case R.id.menu_change_currency_button: {
-
                 updateCurrency();
                 Utils.updateCurrencyIcon(this, currency, item);
                 updatePriceTextView();
@@ -225,9 +222,7 @@ public class SearchEngineActivity extends BaseActivity {
         switch (view.getId()) {
 
             case R.id.button_search_id: {
-
                 initSearch();
-
             }
             break;
         }
@@ -235,200 +230,20 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void prepareSets() {
-        Log.d(TAG, "prepareSets: called!");
-        setOfBuildingTypes = null;
-        setOfLocalities = null;
-        setOfCities = null;
-        setOfTypesOfPointsOfInterest = null;
-        fillSets();
-    }
+    private void updateCurrency() {
+        Log.d(TAG, "updateCurrency: called!");
 
-    private Set<String> getSetOfBuildingTypes(){
-        Log.d(TAG, "getSetOfBuildingTypes: called!");
-        if(setOfBuildingTypes == null) {
-            return setOfBuildingTypes = new HashSet<>();
+        if (this.currency == 0) {
+            this.currency = 1;
+        } else {
+            this.currency = 0;
         }
-        return setOfBuildingTypes = new HashSet<>();
-
+        Utils.writeCurrentCurrencyShPref(this, currency);
     }
 
-    private Set<String> getSetOfLocalities(){
-        Log.d(TAG, "getSetOfLocalities: called!");
-        if (setOfLocalities == null) {
-            return setOfLocalities = new HashSet<>();
-        }
-        return setOfLocalities;
-    }
-
-    private Set<String> getSetOfCities() {
-        Log.d(TAG, "getSetOfCities: called!");
-        if (setOfCities == null) {
-            return setOfCities = new HashSet<>();
-        }
-        return setOfCities;
-    }
-
-    private Set<String> getSetOfTypesOfPointsOfInterest() {
-        Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
-        if (setOfTypesOfPointsOfInterest == null) {
-            return setOfTypesOfPointsOfInterest = new HashSet<>();
-        }
-        return setOfTypesOfPointsOfInterest;
-    }
-
-    @SuppressLint("CheckResult")
-    private void fillSets() {
-        Log.d(TAG, "fillSets: called!");
-        getRepository().getAllListingsRealEstateObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribeWith(new io.reactivex.Observer<List<RealEstate>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe: called!");
-
-                    }
-
-                    @Override
-                    public void onNext(List<RealEstate> realEstates) {
-                        Log.d(TAG, "onNext: called!");
-                        fillSetOfBuildingTypes(realEstates);
-                        fillSetOfLocalities(realEstates);
-                        fillSetOfCities(realEstates);
-                        fillSetOfTypesOfPointsOfInterest();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: called!");
-
-                    }
-                });
-    }
-
-    private void fillSetOfBuildingTypes(List<RealEstate> list) {
-        Log.d(TAG, "fillSetOfBuildingTypes: called!");
-        if (list != null) {
-            for (int i = 0; i < list.size(); i++) {
-                getSetOfBuildingTypes().add(list.get(i).getType());
-            }
-        }
-    }
-
-    private void fillSetOfLocalities(List<RealEstate> list) {
-        Log.d(TAG, "fillSetOfLocalities: called!");
-        if (list != null) {
-            for (int i = 0; i < list.size(); i++) {
-                getSetOfLocalities().add(list.get(i).getAddress().getLocality());
-            }
-        }
-    }
-
-    private void fillSetOfCities(List<RealEstate> list) {
-        Log.d(TAG, "fillSetOfCities: called!");
-        if (list != null) {
-            for (int i = 0; i < list.size(); i++) {
-                getSetOfCities().add(list.get(i).getAddress().getCity());
-            }
-        }
-    }
-
-    @SuppressLint("CheckResult")
-    private void fillSetOfTypesOfPointsOfInterest() {
-        Log.d(TAG, "fillSetOfTypesOfPointsOfInterest: called!");
-        getRepository().getAllPlacesRealEstateObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribeWith(new io.reactivex.Observer<List<PlaceRealEstate>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe: called!");
-                    }
-
-                    @Override
-                    public void onNext(List<PlaceRealEstate> list) {
-                        Log.d(TAG, "onNext: called!");
-                        if (list != null) {
-                            for (int i = 0; i < list.size(); i++) {
-                                getSetOfTypesOfPointsOfInterest().addAll(list.get(i).getTypesList());
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: called!");
-                    }
-                });
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private void addCheckboxesToLayout() {
-        Log.d(TAG, "addCheckboxesToLayout: called!");
-
-        for (String buildingType : getSetOfBuildingTypes()) {
-            fillWithCheckboxes(
-                    typeCheckBoxesLinearLayout,
-                    buildingType,
-                    getListOfBuildingTypeCheckboxes());
-        }
-
-        for (String typeOfPointOfInterest : getSetOfTypesOfPointsOfInterest()) {
-            fillWithCheckboxes(
-                    pointsOfInterestCheckBoxesLinearLayout,
-                    typeOfPointOfInterest,
-                    getListOfPointOfInterestCheckboxes());
-        }
-    }
-
-    private void fillWithCheckboxes(LinearLayout linearLayout, String type, List<CheckBox> listOfCheckboxes) {
-        Log.d(TAG, "addPointsOfInterestCheckboxesToLayout: called!");
-
-        CheckBox checkBox = new CheckBox(this);
-        linearLayout.addView(checkBox);
-
-        // TODO: 26/08/2018 LayoutParams does not work!
-
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        layoutParams.setMarginStart(8);
-        layoutParams.setMargins(8, 8, 0, 0);
-
-        checkBox.setLayoutParams(layoutParams);
-        checkBox.setText(Utils.capitalize(Utils.replaceUnderscore(type)));
-        checkBox.setTag(type);
-
-        listOfCheckboxes.add(checkBox);
-    }
-
-    public List<CheckBox> getListOfBuildingTypeCheckboxes() {
-        Log.d(TAG, "getListOfBuildingTypeCheckboxes: called!");
-        if (listOfBuildingTypeCheckboxes == null) {
-            return listOfBuildingTypeCheckboxes = new ArrayList<>();
-        }
-        return listOfBuildingTypeCheckboxes;
-    }
-
-    public List<CheckBox> getListOfPointOfInterestCheckboxes() {
-        Log.d(TAG, "getListOfPointOfInterestCheckboxes: called!");
-        if (listOfPointOfInterestCheckboxes == null) {
-            return listOfPointOfInterestCheckboxes = new ArrayList<>();
-        }
-        return listOfPointOfInterestCheckboxes;
+    private void updatePriceTextView() {
+        Log.d(TAG, "updatePriceTextView: called!");
+        tvPrice.setText("Price (thousands, " + Utils.getCurrencySymbol(currency) + ")");
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -483,29 +298,42 @@ public class SearchEngineActivity extends BaseActivity {
 
         this.configureToolBar();
 
+        this.getViewGroups();
         this.getTextViews();
         this.getSeekBars();
-        this.setAllHints();
         this.setAllTexts();
         this.setCrystalSeekBarListeners();
 
+        this.setMinMaxValuesRangeSeekBars(getListOfRealEstate());
+        this.prepareSets();
+
+    }
+
+    private void getViewGroups() {
+        Log.d(TAG, "getViewGroups: called!");
+        this.linearLayoutTypes = cardViewType.findViewById(R.id.linear_layout_checkboxes_id);
+        this.linearLayoutCities = cardViewCities.findViewById(R.id.linear_layout_checkboxes_id);
+        this.linearLayoutLocalities = cardViewLocalities.findViewById(R.id.linear_layout_checkboxes_id);
+        this.linearLayoutTypesPointsOfInterestNearby = cardViewPointsOfInterest.findViewById(R.id.linear_layout_checkboxes_id);
     }
 
     private void getTextViews() {
         Log.d(TAG, "getTextViews: called!");
 
-        this.actvLocality = cardViewLocality.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.actvCity = cardViewCity.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-
         this.tvPrice = cardViewPrice.findViewById(R.id.textView_title_id);
         this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.textView_title_id);
         this.tvNumberOfRooms = cardViewNumberOfRooms.findViewById(R.id.textView_title_id);
         this.tvAmountOfPhotos = cardViewAmountPhotos.findViewById(R.id.textView_title_id);
+
+        this.tvTypes = linearLayoutTypes.findViewById(R.id.textView_add_checkboxes);
+        this.tvCities = linearLayoutCities.findViewById(R.id.textView_add_checkboxes);
+        this.tvLocalities = linearLayoutLocalities.findViewById(R.id.textView_add_checkboxes);
+        this.tvPointsOfInterest = linearLayoutTypesPointsOfInterestNearby.findViewById(R.id.textView_add_checkboxes);
+
     }
 
     private void getSeekBars() {
         Log.d(TAG, "getSeekBars: called!");
-
         this.seekBarPrice = cardViewPrice.findViewById(R.id.single_seek_bar_id);
         this.seekBarSurfaceArea = cardViewSurfaceArea.findViewById(R.id.single_seek_bar_id);
         this.seekBarNumberOfRooms = cardViewNumberOfRooms.findViewById(R.id.single_seek_bar_id);
@@ -513,35 +341,21 @@ public class SearchEngineActivity extends BaseActivity {
 
     }
 
-    private void setAllHints() {
-        Log.d(TAG, "setAllHints: called!");
-
-        // TODO: 23/08/2018 Use Resources instead of hardcoded text
-
-        setHint(cardViewLocality, "Locality");
-        setHint(cardViewCity, "City");
-
-    }
-
-    private void setHint(CardView cardView, String hint) {
-        Log.d(TAG, "setHint: called!");
-
-        TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
-        textInputLayout.setHint(hint);
-    }
-
     private void setAllTexts() {
         Log.d(TAG, "setAllTexts: called!");
-
         tvPrice.setText("Price (thousands, $)");
         tvSurfaceArea.setText("Surface area (sqm)");
         tvNumberOfRooms.setText("Number of Rooms");
         tvAmountOfPhotos.setText("Amount of Photos");
+
+        tvTypes.setText("Types of Building");
+        tvCities.setText("Cities");
+        tvLocalities.setText("Localities");
+        tvPointsOfInterest.setText("Types of Points of Interest");
     }
 
     private void setMinMaxValuesRangeSeekBars(List<RealEstate> listOfRealEstates) {
         Log.d(TAG, "setMinMaxValuesRangeSeekBars: called!");
-
         int maxPrice = 0;
         int maxSurfaceArea = 0;
         int maxNumberOfRooms = 0;
@@ -602,7 +416,7 @@ public class SearchEngineActivity extends BaseActivity {
             @Override
             public void valueChanged(Number minValue, Number maxValue) {
                 Log.d(TAG, "valueChanged: min = " + minValue + " - " + "maxValue = " + maxValue);
-                setTextDependingOnSeekBar(seekBar,minValue,maxValue);
+                setTextDependingOnSeekBar(seekBar, minValue, maxValue);
                 setUsedStateAccordingToSeekBar(seekBar);
             }
         });
@@ -611,7 +425,7 @@ public class SearchEngineActivity extends BaseActivity {
             @Override
             public void finalValue(Number minValue, Number maxValue) {
                 Log.d(TAG, "finalValue: called1");
-                setTextDependingOnSeekBar(seekBar,minValue,maxValue);
+                setTextDependingOnSeekBar(seekBar, minValue, maxValue);
                 setUsedStateAccordingToSeekBar(seekBar);
             }
         });
@@ -634,7 +448,7 @@ public class SearchEngineActivity extends BaseActivity {
         }
     }
 
-    private void setUsedStateAccordingToSeekBar (CrystalRangeSeekbar seekBar) {
+    private void setUsedStateAccordingToSeekBar(CrystalRangeSeekbar seekBar) {
         Log.d(TAG, "setUsedStateAccordingToSeekBar: called!");
         if (seekBar == seekBarPrice) {
             this.seekBarPriceUsed = true;
@@ -647,87 +461,238 @@ public class SearchEngineActivity extends BaseActivity {
         }
     }
 
-
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void createModel() {
-        Log.d(TAG, "createModel: called!");
-
-        SearchEngineViewModel.Factory factory = new SearchEngineViewModel.Factory(getApp());
-        this.searchEngineViewModel = ViewModelProviders
-                .of(this, factory)
-                .get(SearchEngineViewModel.class);
-
+    private void prepareSets() {
+        Log.d(TAG, "prepareSets: called!");
+        setOfBuildingTypes = null;
+        setOfLocalities = null;
+        setOfCities = null;
+        setOfTypesOfPointsOfInterest = null;
+        fillSets();
     }
 
-    private void subscribeToModel(SearchEngineViewModel searchEngineViewModel) {
-        Log.d(TAG, "subscribeToModel: called!");
-
-        if (searchEngineViewModel != null) {
-
-            this.searchEngineViewModel.getObservableListOfListings().observe(this, new Observer<List<RealEstate>>() {
-                @Override
-                public void onChanged(@Nullable List<RealEstate> realEstates) {
-                    Log.d(TAG, "onChanged: called!");
-                    listOfRealEstate = realEstates;
-                    configureAllAutocompleteTextViews();
-                    setMinMaxValuesRangeSeekBars(listOfRealEstate);
-                }
-            });
-
-            this.searchEngineViewModel.getObservableAllPlacesRealEstate().observe(this, new Observer<List<PlaceRealEstate>>() {
-                @Override
-                public void onChanged(@Nullable List<PlaceRealEstate> placeRealEstates) {
-                    Log.d(TAG, "onChanged: called!");
-                    listOfPlaceRealEstate = placeRealEstates;
-                    addCheckboxesToLayout();
-                }
-            });
+    private Set<String> getSetOfBuildingTypes() {
+        Log.d(TAG, "getSetOfBuildingTypes: called!");
+        if (setOfBuildingTypes == null) {
+            return setOfBuildingTypes = new HashSet<>();
         }
+        return setOfBuildingTypes;
+
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private void updateCurrency() {
-        Log.d(TAG, "updateCurrency: called!");
-
-        if (this.currency == 0) {
-            this.currency = 1;
-        } else {
-            this.currency = 0;
+    private Set<String> getSetOfLocalities() {
+        Log.d(TAG, "getSetOfLocalities: called!");
+        if (setOfLocalities == null) {
+            return setOfLocalities = new HashSet<>();
         }
-        Utils.writeCurrentCurrencyShPref(this, currency);
+        return setOfLocalities;
     }
 
-    private void updatePriceTextView() {
-        Log.d(TAG, "updatePriceTextView: called!");
-        tvPrice.setText("Price (thousands, " + Utils.getCurrencySymbol(currency) + ")");
+    private Set<String> getSetOfCities() {
+        Log.d(TAG, "getSetOfCities: called!");
+        if (setOfCities == null) {
+            return setOfCities = new HashSet<>();
+        }
+        return setOfCities;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private void configureAllAutocompleteTextViews() {
-        Log.d(TAG, "configureAutocompleteTextViews: called!");
-
-        this.configureAutocompleteTextView(actvLocality, getSetOfLocalities().toArray(new String[getSetOfLocalities().size()]));
-        this.configureAutocompleteTextView(actvCity, getSetOfCities().toArray(new String[getSetOfCities().size()]));
-
+    private Set<String> getSetOfTypesOfPointsOfInterest() {
+        Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
+        if (setOfTypesOfPointsOfInterest == null) {
+            return setOfTypesOfPointsOfInterest = new HashSet<>();
+        }
+        return setOfTypesOfPointsOfInterest;
     }
 
     @SuppressLint("CheckResult")
-    private void configureAutocompleteTextView(AutoCompleteTextView autoCompleteTextView,
-                                               String[] arrayOfStrings) {
-        Log.d(TAG, "configureAutcompleteTextView: called!");
+    private void fillSets() {
+        Log.d(TAG, "fillSets: called!");
+        getRepository().getAllListingsRealEstateObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribeWith(new io.reactivex.Observer<List<RealEstate>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
 
-        ArrayAdapter<String> autocompleteAdapter = new ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_list_item_1, //This layout has to be a textview
-                arrayOfStrings
-        );
+                    }
 
-        autoCompleteTextView.setAdapter(autocompleteAdapter);
+                    @Override
+                    public void onNext(List<RealEstate> list) {
+                        Log.d(TAG, "onNext: called!");
+                        listOfRealEstate = list;
+                        fillSetOfBuildingTypes(list);
+                        fillSetOfLocalities(list);
+                        fillSetOfCities(list);
+                        fillSetOfTypesOfPointsOfInterest();
+                    }
 
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+
+                    }
+                });
+    }
+
+    private void fillSetOfBuildingTypes(List<RealEstate> list) {
+        Log.d(TAG, "fillSetOfBuildingTypes: called!");
+        Log.w(TAG, "fillSetOfBuildingTypes: " + list);
+        if (list != null) {
+            for (int i = 0; i < list.size(); i++) {
+                getSetOfBuildingTypes().add(list.get(i).getType());
+            }
+        }
+    }
+
+    private void fillSetOfLocalities(List<RealEstate> list) {
+        Log.d(TAG, "fillSetOfLocalities: called!");
+        if (list != null) {
+            for (int i = 0; i < list.size(); i++) {
+                getSetOfLocalities().add(list.get(i).getAddress().getLocality());
+            }
+        }
+    }
+
+    private void fillSetOfCities(List<RealEstate> list) {
+        Log.d(TAG, "fillSetOfCities: called!");
+        if (list != null) {
+            for (int i = 0; i < list.size(); i++) {
+                getSetOfCities().add(list.get(i).getAddress().getCity());
+            }
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    private void fillSetOfTypesOfPointsOfInterest() {
+        Log.d(TAG, "fillSetOfTypesOfPointsOfInterest: called!");
+        getRepository().getAllPlacesRealEstateObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new io.reactivex.Observer<List<PlaceRealEstate>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+                    }
+
+                    @Override
+                    public void onNext(List<PlaceRealEstate> list) {
+                        listOfPlaceRealEstate = list;
+                        Log.d(TAG, "onNext: called!");
+                        if (list != null) {
+                            for (int i = 0; i < list.size(); i++) {
+                                getSetOfTypesOfPointsOfInterest().addAll(list.get(i).getTypesList());
+                            }
+                        }
+                        addCheckboxesToLayout();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+                    }
+                });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void addCheckboxesToLayout() {
+        Log.d(TAG, "addCheckboxesToLayout: called!");
+
+        Log.w(TAG, "addCheckboxesToLayout: " + getSetOfTypesOfPointsOfInterest());
+
+        for (String buildingType : getSetOfBuildingTypes()) {
+            fillWithCheckboxes(
+                    linearLayoutTypes,
+                    buildingType,
+                    getListOfBuildingTypeCheckboxes());
+        }
+
+        for (String city : getSetOfCities()) {
+            fillWithCheckboxes(
+                    linearLayoutCities,
+                    city,
+                    getListOfCityCheckboxes());
+        }
+
+        for (String locality : getSetOfLocalities()) {
+            fillWithCheckboxes(
+                    linearLayoutLocalities,
+                    locality,
+                    getListOfLocalityCheckboxes());
+        }
+
+        for (String typeOfPointOfInterest : getSetOfTypesOfPointsOfInterest()) {
+            fillWithCheckboxes(
+                    linearLayoutTypesPointsOfInterestNearby,
+                    typeOfPointOfInterest,
+                    getListOfPointOfInterestCheckboxes());
+        }
+    }
+
+    private void fillWithCheckboxes(LinearLayout linearLayout, String type, List<CheckBox> listOfCheckboxes) {
+        Log.d(TAG, "addPointsOfInterestCheckboxesToLayout: called!");
+
+        CheckBox checkBox = new CheckBox(this);
+        linearLayout.addView(checkBox);
+
+        // TODO: 26/08/2018 LayoutParams does not work!
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        layoutParams.setMarginStart(8);
+        layoutParams.setMargins(8, 8, 0, 0);
+
+        checkBox.setLayoutParams(layoutParams);
+        checkBox.setText(Utils.capitalize(Utils.replaceUnderscore(type)));
+        checkBox.setTag(type);
+
+        listOfCheckboxes.add(checkBox);
+    }
+
+    public List<CheckBox> getListOfBuildingTypeCheckboxes() {
+        Log.d(TAG, "getListOfBuildingTypeCheckboxes: called!");
+        if (listOfBuildingTypeCheckboxes == null) {
+            return listOfBuildingTypeCheckboxes = new ArrayList<>();
+        }
+        return listOfBuildingTypeCheckboxes;
+    }
+
+    public List<CheckBox> getListOfCityCheckboxes() {
+        Log.d(TAG, "getListOfCityCheckboxes: called!");
+        if (listOfCityCheckboxes == null) {
+            return listOfCityCheckboxes = new ArrayList<>();
+        }
+        return listOfCityCheckboxes;
+    }
+
+    public List<CheckBox> getListOfLocalityCheckboxes() {
+        Log.d(TAG, "getListOfBuildingTypeCheckboxes: called!");
+        if (listOfLocalityCheckboxes == null) {
+            return listOfLocalityCheckboxes = new ArrayList<>();
+        }
+        return listOfLocalityCheckboxes;
+    }
+
+    public List<CheckBox> getListOfPointOfInterestCheckboxes() {
+        Log.d(TAG, "getListOfPointOfInterestCheckboxes: called!");
+        if (listOfPointOfInterestCheckboxes == null) {
+            return listOfPointOfInterestCheckboxes = new ArrayList<>();
+        }
+        return listOfPointOfInterestCheckboxes;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -753,9 +718,9 @@ public class SearchEngineActivity extends BaseActivity {
         if (seekBar == seekBarPrice) {
             return seekBarPriceUsed;
         } else if (seekBar == seekBarSurfaceArea) {
-           return seekBarSurfaceAreaUsed;
+            return seekBarSurfaceAreaUsed;
         } else if (seekBar == seekBarNumberOfRooms) {
-           return seekBarNumberOfRoomsUsed;
+            return seekBarNumberOfRoomsUsed;
         } else if (seekBar == seekBarAmountOfPhotos) {
             return seekbarAmountOfPhotosUsed;
         } else {
@@ -837,13 +802,13 @@ public class SearchEngineActivity extends BaseActivity {
             return false;
         }
 
-        if (!cityFilterPassed(realEstate)) {
-            return false;
-        }
-
-        if (!localityFilterPassed(realEstate)) {
-            return false;
-        }
+//        if (!cityFilterPassed(realEstate)) {
+//            return false;
+//        }
+//
+//        if (!localityFilterPassed(realEstate)) {
+//            return false;
+//        }
 
         if (!amountOfPhotosFilterPassed(realEstate)) {
             return false;
@@ -941,32 +906,32 @@ public class SearchEngineActivity extends BaseActivity {
         return false;
     }
 
-    private boolean localityFilterPassed(RealEstate realEstate) {
-        Log.d(TAG, "cityFilterPassed: called!");
-
-        if (textViewNotUsed(actvLocality)) {
-            return true;
-        }
-
-        if (realEstate.getAddress().getLocality().equalsIgnoreCase(getTextFromView(actvLocality))) {
-            return true;
-        }
-        return false;
-    }
-
-
-    private boolean cityFilterPassed(RealEstate realEstate) {
-        Log.d(TAG, "cityFilterPassed: called!");
-
-        if (textViewNotUsed(actvCity)) {
-            return true;
-        }
-
-        if (realEstate.getAddress().getCity().equalsIgnoreCase(getTextFromView(actvCity))) {
-            return true;
-        }
-        return false;
-    }
+//    private boolean localityFilterPassed(RealEstate realEstate) {
+//        Log.d(TAG, "cityFilterPassed: called!");
+//
+//        if (textViewNotUsed(actvLocality)) {
+//            return true;
+//        }
+//
+//        if (realEstate.getAddress().getLocality().equalsIgnoreCase(getTextFromView(actvLocality))) {
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//
+//    private boolean cityFilterPassed(RealEstate realEstate) {
+//        Log.d(TAG, "cityFilterPassed: called!");
+//
+//        if (textViewNotUsed(actvCity)) {
+//            return true;
+//        }
+//
+//        if (realEstate.getAddress().getCity().equalsIgnoreCase(getTextFromView(actvCity))) {
+//            return true;
+//        }
+//        return false;
+//    }
 
     private boolean amountOfPhotosFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "amountOfPhotosFilterPassed: called!");
