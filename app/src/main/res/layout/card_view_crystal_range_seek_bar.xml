@@ -3,10 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/cardViewGeneralStyle"
-    app:contentPaddingTop="10dp"
-    app:contentPaddingLeft="10dp"
-    app:contentPaddingRight="10dp"
-    android:layout_marginTop="5dp">
+    app:contentPaddingTop="@dimen/padding_10dp"
+    app:contentPaddingLeft="@dimen/padding_10dp"
+    app:contentPaddingRight="@dimen/padding_10dp">
 
     <TextView
         android:id="@+id/textView_title_id"

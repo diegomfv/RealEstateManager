@@ -19,7 +19,7 @@
             android:id="@+id/collapsing_toolbar_id"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            app:title="Add a Listing"
+            app:title="CREATE"
             app:expandedTitleMarginBottom="94dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:expandedTitleTextAppearance="@android:color/white"
