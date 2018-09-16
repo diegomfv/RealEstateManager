@@ -3,11 +3,16 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,12 +47,20 @@ import butterknife.Unbinder;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
+
 // TODO: 05/09/2018 Keep the searching information stored with SharedPreferences
 public class SearchEngineActivity extends BaseActivity {
 
     private static final String TAG = SearchEngineActivity.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @BindView(R.id.collapsing_toolbar_id)
+    CollapsingToolbarLayout collapsingToolbar;
+
+    @BindView(R.id.toolbar_id)
+    Toolbar toolbar;
 
     @BindView(R.id.card_view_price_id)
     CardView cardViewPrice;
@@ -130,8 +143,6 @@ public class SearchEngineActivity extends BaseActivity {
 
     private int currency;
 
-    private ActionBar actionBar;
-
     private SearchEngineViewModel searchEngineViewModel;
 
     private Unbinder unbinder;
@@ -157,8 +168,6 @@ public class SearchEngineActivity extends BaseActivity {
         setContentView(R.layout.activity_search_engine);
         setTitle("Search");
         unbinder = ButterKnife.bind(this);
-
-        this.configureActionBar();
 
         this.configureLayout();
 
@@ -308,7 +317,7 @@ public class SearchEngineActivity extends BaseActivity {
         Log.d(TAG, "fillSetOfBuildingTypes: called!");
         if (list != null) {
             for (int i = 0; i < list.size(); i++) {
-                setOfBuildingTypes.add(list.get(i).getType());
+                getSetOfBuildingTypes().add(list.get(i).getType());
             }
         }
     }
@@ -317,7 +326,7 @@ public class SearchEngineActivity extends BaseActivity {
         Log.d(TAG, "fillSetOfLocalities: called!");
         if (list != null) {
             for (int i = 0; i < list.size(); i++) {
-                setOfLocalities.add(list.get(i).getAddress().getLocality());
+                getSetOfLocalities().add(list.get(i).getAddress().getLocality());
             }
         }
     }
@@ -326,7 +335,7 @@ public class SearchEngineActivity extends BaseActivity {
         Log.d(TAG, "fillSetOfCities: called!");
         if (list != null) {
             for (int i = 0; i < list.size(); i++) {
-                setOfCities.add(list.get(i).getAddress().getCity());
+                getSetOfCities().add(list.get(i).getAddress().getCity());
             }
         }
     }
@@ -341,7 +350,6 @@ public class SearchEngineActivity extends BaseActivity {
                     @Override
                     public void onSubscribe(Disposable d) {
                         Log.d(TAG, "onSubscribe: called!");
-
                     }
 
                     @Override
@@ -349,7 +357,7 @@ public class SearchEngineActivity extends BaseActivity {
                         Log.d(TAG, "onNext: called!");
                         if (list != null) {
                             for (int i = 0; i < list.size(); i++) {
-                                setOfTypesOfPointsOfInterest.addAll(list.get(i).getTypesList());
+                                getSetOfTypesOfPointsOfInterest().addAll(list.get(i).getTypesList());
                             }
                         }
                     }
@@ -357,13 +365,11 @@ public class SearchEngineActivity extends BaseActivity {
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError: " + e.getMessage());
-
                     }
 
                     @Override
                     public void onComplete() {
                         Log.d(TAG, "onComplete: called!");
-
                     }
                 });
     }
@@ -447,22 +453,35 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureActionBar() {
-        Log.d(TAG, "configureActionBar: called!");
+    private void configureToolBar() {
+        Log.d(TAG, "configureToolBar: called!");
 
-        actionBar = getSupportActionBar();
+        setSupportActionBar(toolbar);
+        //setTitle("Create a New Listing");
+        setOverflowButtonColor(toolbar, Color.WHITE);
 
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+                onBackPressed();
+            }
+        });
+
+        /* Changing the font of the toolbar
+         * */
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.arima_madurai);
+        collapsingToolbar.setCollapsedTitleTypeface(typeface);
+        collapsingToolbar.setExpandedTitleTypeface(typeface);
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
+
+        this.configureToolBar();
 
         this.getTextViews();
         this.getSeekBars();
