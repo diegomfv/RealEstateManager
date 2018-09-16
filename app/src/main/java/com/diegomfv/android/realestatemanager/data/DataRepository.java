@@ -71,17 +71,8 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //SEARCH CACHE (keeps track of different information to help displaying it in Search Activity:
-    //checkboxes, autoCompleteTextViews...) Also keeps a list with the realEstates found with the
-    //search engine
-
-    private Set<String> setOfBuildingTypes;
-
-    private Set<String> setOfLocalities;
-
-    private Set<String> setOfCities;
-
-    private Set<String> setOfTypesOfPointsOfInterest;
+    //SEARCH CACHE
+    //keeps a list with the realEstates found with the search engine
 
     private List<RealEstate> listOfFoundRealEstates;
 
@@ -185,26 +176,12 @@ public class DataRepository {
         return listOfPlacesNearbyCache;
     }
 
-    public void deleteCacheAndSets() {
-        Log.d(TAG, "nullifyCache: called!");
-        deleteCache();
-        deleteSets();
-    }
-
     private void deleteCache() {
         Log.d(TAG, "deleteCache: called!");
 
         realEstateCache = null;
         listOfImagesRealEstateCache = null;
         listOfPlacesNearbyCache = null;
-    }
-
-    private void deleteSets() {
-        Log.d(TAG, "deleteSets: called!");
-        setOfBuildingTypes = null;
-        setOfLocalities = null;
-        setOfCities = null;
-        setOfTypesOfPointsOfInterest = null;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -374,74 +351,6 @@ public class DataRepository {
         return listOfFoundRealEstates;
     }
 
-    public Set<String> getSetOfBuildingTypes() {
-        Log.d(TAG, "getSetOfBuildingTypes: called!");
-        if (setOfBuildingTypes == null) {
-            setOfBuildingTypes = new HashSet<>();
-            List<RealEstate> temporaryList = getAllListings();
-            for (int i = 0; i < temporaryList.size(); i++) {
-                setOfBuildingTypes.add(temporaryList.get(i).getType());
-            }
-            return setOfBuildingTypes;
-        }
-        return setOfBuildingTypes;
-    }
-
-    public Set<String> getSetOfLocalities() {
-        Log.d(TAG, "getSetOfLocalities: called");
-        if (setOfLocalities == null) {
-            setOfLocalities = new HashSet<>();
-            List<RealEstate> temporaryList = getAllListings();
-            for (int i = 0; i < temporaryList.size(); i++) {
-                setOfLocalities.add(temporaryList.get(i).getAddress().getLocality());
-            }
-            return setOfLocalities;
-        }
-        return setOfLocalities;
-    }
-
-    public Set<String> getSetOfCities() {
-        Log.d(TAG, "getSetOfCities: called!");
-        if (setOfCities == null) {
-            setOfCities = new HashSet<>();
-            List<RealEstate> temporaryList = getAllListings();
-            if (temporaryList != null) {
-                for (int i = 0; i < getAllListings().size(); i++) {
-                    setOfCities.add(temporaryList.get(i).getAddress().getCity());
-                }
-            }
-            return setOfCities;
-        }
-        return setOfCities;
-    }
-
-    public Set<String> getSetOfTypesOfPointsOfInterest() {
-        Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
-        if (setOfTypesOfPointsOfInterest == null) {
-            setOfTypesOfPointsOfInterest = new HashSet<>();
-            List<PlaceRealEstate> temporaryList = getAllPlacesRealEstate();
-            if (temporaryList != null) {
-                for (int i = 0; i < temporaryList.size(); i++) {
-                    setOfTypesOfPointsOfInterest.addAll(temporaryList.get(i).getTypesList());
-                }
-            }
-            return setOfTypesOfPointsOfInterest;
-        }
-        return setOfTypesOfPointsOfInterest;
-    }
-
-    public void refreshSets() {
-        Log.d(TAG, "refreshSets: called!");
-        setOfBuildingTypes = null;
-        setOfLocalities = null;
-        setOfCities = null;
-        setOfTypesOfPointsOfInterest = null;
-        getSetOfBuildingTypes();
-        getSetOfLocalities();
-        getSetOfCities();
-        getSetOfTypesOfPointsOfInterest();
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -481,39 +390,12 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<RealEstate> getAllListings() {
-        Log.d(TAG, "getAllListingsLiveData: called!");
-        return mDatabase.realStateDao().getAllListingsOrderedByType();
-    }
-
-    private List<ImageRealEstate> getAllImagesRealEstate() {
-        Log.d(TAG, "getAllImagesRealEstate: called!");
-        return mDatabase.imageRealEstateDao().getAllImagesRealEstate();
-    }
-
-    private List<PlaceRealEstate> getAllPlacesRealEstate() {
-        Log.d(TAG, "getAllPlacesRealEstate: called!");
-        return mDatabase.placeRealEstateDao().getAllPlacesRealEstate();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public Completable getAllListingsRealEstateCompletable() {
-        Log.d(TAG, "getAllListingsRealEstateCompletable: called!");
-        return Completable.fromCallable(new Callable<List<RealEstate>>() {
+    public io.reactivex.Observable<List<RealEstate>> getAllListingsRealEstateObservable() {
+        Log.d(TAG, "getAllListingsRealEstateObservable: called!");
+        return io.reactivex.Observable.fromCallable(new Callable<List<RealEstate>>() {
             @Override
             public List<RealEstate> call() throws Exception {
                 return mDatabase.realStateDao().getAllListingsOrderedByType();
-            }
-        });
-    }
-
-    public Completable getAllImagesRealEstateCompletable() {
-        Log.d(TAG, "getAllImagesRealEstateCompletable: called!");
-        return Completable.fromCallable(new Callable<List<ImageRealEstate>>() {
-            @Override
-            public List<ImageRealEstate> call() throws Exception {
-                return mDatabase.imageRealEstateDao().getAllImagesRealEstate();
             }
         });
     }
@@ -528,9 +410,9 @@ public class DataRepository {
         });
     }
 
-    public Completable getAllPlacesRealEstateCompletable() {
-        Log.d(TAG, "getAllPlacesRealEstateCompletable: called!");
-        return Completable.fromCallable(new Callable<List<PlaceRealEstate>>() {
+    public io.reactivex.Observable<List<PlaceRealEstate>> getAllPlacesRealEstateObservable() {
+        Log.d(TAG, "getAllPlacesRealEstateObservable: called!");
+        return io.reactivex.Observable.fromCallable(new Callable<List<PlaceRealEstate>>() {
             @Override
             public List<PlaceRealEstate> call() throws Exception {
                 return mDatabase.placeRealEstateDao().getAllPlacesRealEstate();

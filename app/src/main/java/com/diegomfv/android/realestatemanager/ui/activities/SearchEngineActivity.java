@@ -39,6 +39,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 // TODO: 05/09/2018 Keep the searching information stored with SharedPreferences
 public class SearchEngineActivity extends BaseActivity {
@@ -114,6 +116,18 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    //SETs used for adapters of the autocompleteTextView
+
+    private Set<String> setOfBuildingTypes;
+
+    private Set<String> setOfLocalities;
+
+    private Set<String> setOfCities;
+
+    private Set<String> setOfTypesOfPointsOfInterest;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private int currency;
 
     private ActionBar actionBar;
@@ -137,7 +151,7 @@ public class SearchEngineActivity extends BaseActivity {
         /* We refresh the information in the database
          * We need the sets for displaying information in the UI
          * */
-        this.getApp().getRepository().refreshSets();
+        this.prepareSets();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_search_engine);
@@ -208,6 +222,151 @@ public class SearchEngineActivity extends BaseActivity {
             }
             break;
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void prepareSets() {
+        Log.d(TAG, "prepareSets: called!");
+        setOfBuildingTypes = null;
+        setOfLocalities = null;
+        setOfCities = null;
+        setOfTypesOfPointsOfInterest = null;
+        getRepository().clearSets();
+        fillSets();
+    }
+
+    private Set<String> getSetOfBuildingTypes(){
+        Log.d(TAG, "getSetOfBuildingTypes: called!");
+        if(setOfBuildingTypes == null) {
+            return setOfBuildingTypes = new HashSet<>();
+        }
+        return setOfBuildingTypes = new HashSet<>();
+
+    }
+
+    private Set<String> getSetOfLocalities(){
+        Log.d(TAG, "getSetOfLocalities: called!");
+        if (setOfLocalities == null) {
+            return setOfLocalities = new HashSet<>();
+        }
+        return setOfLocalities;
+    }
+
+    private Set<String> getSetOfCities() {
+        Log.d(TAG, "getSetOfCities: called!");
+        if (setOfCities == null) {
+            return setOfCities = new HashSet<>();
+        }
+        return setOfCities;
+    }
+
+    private Set<String> getSetOfTypesOfPointsOfInterest() {
+        Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
+        if (setOfTypesOfPointsOfInterest == null) {
+            return setOfTypesOfPointsOfInterest = new HashSet<>();
+        }
+        return setOfTypesOfPointsOfInterest;
+    }
+
+    @SuppressLint("CheckResult")
+    private void fillSets() {
+        Log.d(TAG, "fillSets: called!");
+        getRepository().getAllListingsRealEstateObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribeWith(new io.reactivex.Observer<List<RealEstate>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+
+                    }
+
+                    @Override
+                    public void onNext(List<RealEstate> realEstates) {
+                        Log.d(TAG, "onNext: called!");
+                        fillSetOfBuildingTypes(realEstates);
+                        fillSetOfLocalities(realEstates);
+                        fillSetOfCities(realEstates);
+                        fillSetOfTypesOfPointsOfInterest();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+
+                    }
+                });
+    }
+
+    private void fillSetOfBuildingTypes(List<RealEstate> list) {
+        Log.d(TAG, "fillSetOfBuildingTypes: called!");
+        if (list != null) {
+            for (int i = 0; i < list.size(); i++) {
+                setOfBuildingTypes.add(list.get(i).getType());
+            }
+        }
+    }
+
+    private void fillSetOfLocalities(List<RealEstate> list) {
+        Log.d(TAG, "fillSetOfLocalities: called!");
+        if (list != null) {
+            for (int i = 0; i < list.size(); i++) {
+                setOfLocalities.add(list.get(i).getAddress().getLocality());
+            }
+        }
+    }
+
+    private void fillSetOfCities(List<RealEstate> list) {
+        Log.d(TAG, "fillSetOfCities: called!");
+        if (list != null) {
+            for (int i = 0; i < list.size(); i++) {
+                setOfCities.add(list.get(i).getAddress().getCity());
+            }
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    private void fillSetOfTypesOfPointsOfInterest() {
+        Log.d(TAG, "fillSetOfTypesOfPointsOfInterest: called!");
+        getRepository().getAllPlacesRealEstateObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribeWith(new io.reactivex.Observer<List<PlaceRealEstate>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+
+                    }
+
+                    @Override
+                    public void onNext(List<PlaceRealEstate> list) {
+                        Log.d(TAG, "onNext: called!");
+                        if (list != null) {
+                            for (int i = 0; i < list.size(); i++) {
+                                setOfTypesOfPointsOfInterest.addAll(list.get(i).getTypesList());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+
+                    }
+                });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

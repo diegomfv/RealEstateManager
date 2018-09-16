@@ -103,28 +103,6 @@ public class BaseActivity extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected Set<String> getSetOfBuildingTypes() {
-        Log.d(TAG, "getSetOfBuildingTypes: called!");
-        return getApp().getRepository().getSetOfBuildingTypes();
-    }
-
-    protected Set<String> getSetOfLocalities() {
-        Log.d(TAG, "getSetOfLocalities: called!");
-        return getApp().getRepository().getSetOfLocalities();
-    }
-
-    protected Set<String> getSetOfCities() {
-        Log.d(TAG, "getSetOfCities: called!");
-        return getApp().getRepository().getSetOfCities();
-    }
-
-    protected Set<String> getSetOfTypesOfPointsOfInterest() {
-        Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
-        return getApp().getRepository().getSetOfTypesOfPointsOfInterest();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     protected RequestManager getGlide () {
         Log.d(TAG, "getGlide: called!");
         return Glide.with(getApp());
