@@ -232,7 +232,6 @@ public class SearchEngineActivity extends BaseActivity {
         setOfLocalities = null;
         setOfCities = null;
         setOfTypesOfPointsOfInterest = null;
-        getRepository().clearSets();
         fillSets();
     }
 

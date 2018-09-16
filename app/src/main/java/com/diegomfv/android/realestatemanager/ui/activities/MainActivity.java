@@ -1,6 +1,7 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -36,6 +37,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
@@ -49,7 +52,6 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 // TODO: 16/08/2018 Remove .allowMainThreadQueries()
 // TODO: 05/09/2018 Check dynamic query for room (query than varies depending on user's input)
 // TODO: 28/08/2018 Add a listener for when changing CURRENCY
-// TODO: 16/09/2018 Change toolbar typeFace!
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -90,7 +92,7 @@ public class MainActivity extends BaseActivity {
 
         /* We delete the cache in MainActivity
          * */
-        getRepository().deleteCacheAndSets();
+        getRepository().deleteCache();
 
         this.accessInternalStorageGranted = false;
 
@@ -149,7 +151,6 @@ public class MainActivity extends BaseActivity {
             break;
 
             case R.id.menu_change_currency_button: {
-
                 changeCurrency();
                 Utils.updateCurrencyIcon(this, currency, item);
 
@@ -157,7 +158,6 @@ public class MainActivity extends BaseActivity {
             break;
 
             case R.id.menu_edit_listing_button: {
-
                 if (accessInternalStorageGranted) {
                     updateMode();
 
@@ -169,8 +169,9 @@ public class MainActivity extends BaseActivity {
             break;
 
             case R.id.menu_search_button: {
-                if (!getRepository().getSetOfBuildingTypes().isEmpty()) {
+                if (!getRepository().getDatabaseIsEmpty()) {
                     Utils.launchActivity(this, SearchEngineActivity.class);
+
                 } else {
                     ToastHelper.toastShort(this, "There are no listing to search for...");
                 }
@@ -179,12 +180,8 @@ public class MainActivity extends BaseActivity {
 
             case R.id.menu_loan_simulator: {
                 Utils.launchActivity(this, LoanSimulatorActivity.class);
-
-
             }
             break;
-
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -215,10 +212,11 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Method that returns the list of Real Estates in the database.
+    /**
+     * Method that returns the list of Real Estates in the database.
      * It is accessible for the fragment
-     * */
-    public List<RealEstate> getListOfRealEstates () {
+     */
+    public List<RealEstate> getListOfRealEstates() {
         Log.d(TAG, "getListOfRealEstates: called!");
         if (listOfRealEstates == null) {
             return listOfRealEstates = new ArrayList<>();
@@ -287,10 +285,10 @@ public class MainActivity extends BaseActivity {
     private void createModel() {
         Log.d(TAG, "createModel: called!");
 
-            ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
-            this.listingsSharedViewModel = ViewModelProviders
-                    .of(this, factory)
-                    .get(ListingsSharedViewModel.class);
+        ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
+        this.listingsSharedViewModel = ViewModelProviders
+                .of(this, factory)
+                .get(ListingsSharedViewModel.class);
 
     }
 
@@ -384,7 +382,7 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    private void launchAreYouSureDialog () {
+    private void launchAreYouSureDialog() {
         Log.d(TAG, "launchAreYouSureDialog: called!");
         Utils.launchSimpleDialog(this,
                 "Are you sure you want to leave?",

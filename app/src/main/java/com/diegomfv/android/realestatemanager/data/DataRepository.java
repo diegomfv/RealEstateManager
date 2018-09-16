@@ -42,6 +42,8 @@ public class DataRepository {
 
     private final AppDatabase mDatabase;
 
+    private boolean databaseIsEmpty;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private LiveData<List<RealEstate>> listOfListingsLiveData;
@@ -85,6 +87,7 @@ public class DataRepository {
         listOfImagesRealEstateLiveData = getAllImagesRealEstateLiveData();
         listOfPlacesRealEstateLiveData = getAllPlacesRealEstateLiveData();
         bitmapCache = getBitmapCache();
+        checkIfDatabaseIsEmpty();
     }
 
     public static DataRepository getInstance(final AppDatabase database, long maxMemoryInMB) {
@@ -176,7 +179,7 @@ public class DataRepository {
         return listOfPlacesNearbyCache;
     }
 
-    private void deleteCache() {
+    public void deleteCache() {
         Log.d(TAG, "deleteCache: called!");
 
         realEstateCache = null;
@@ -460,6 +463,41 @@ public class DataRepository {
                 return mDatabase.realStateDao().updateRealEstate(realEstate);
             }
         });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public boolean getDatabaseIsEmpty(){
+        Log.d(TAG, "getDatabaseIsEmpty: called!");
+        return databaseIsEmpty;
+    }
+
+    @SuppressLint("CheckResult")
+    public void checkIfDatabaseIsEmpty() {
+        Log.d(TAG, "checkIfDatabaseIsEmpty: called!");
+        getAllListingsRealEstateObservable()
+                .subscribeWith(new Observer<List<RealEstate>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+                    }
+
+                    @Override
+                    public void onNext(List<RealEstate> realEstates) {
+                        Log.d(TAG, "onNext: called!");
+                        databaseIsEmpty = realEstates == null || realEstates.size() <= 0;
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+                    }
+                });
     }
 
 }

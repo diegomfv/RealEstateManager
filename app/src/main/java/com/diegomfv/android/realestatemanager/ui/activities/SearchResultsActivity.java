@@ -51,7 +51,7 @@ public class SearchResultsActivity extends BaseActivity {
 
         this.currency = Utils.readCurrentCurrencyShPref(this);
 
-        dataAvailable = !getRepository().getSetOfBuildingTypes().isEmpty();
+        dataAvailable = !getRepository().getDatabaseIsEmpty();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_main);

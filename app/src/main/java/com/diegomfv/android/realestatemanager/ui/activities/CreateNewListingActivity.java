@@ -21,12 +21,9 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,20 +64,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.Completable;
-import io.reactivex.CompletableEmitter;
 import io.reactivex.CompletableObserver;
-import io.reactivex.CompletableOnSubscribe;
-import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
-import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
@@ -171,8 +162,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     //RecyclerView Adapter
     private RVAdapterMediaHorizontalCreate adapter;
 
-    private int counter;
-
     private Unbinder unbinder;
 
     //InternetConnectionReceiver variables
@@ -192,9 +181,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         this.isInternetAvailable = false;
 
-        this.counter = 0;
         ////////////////////////////////////////////////////////////////////////////////////////////
-        setContentView(R.layout.activity_trial);
+        setContentView(R.layout.activity_create_new_listing);
         this.unbinder = ButterKnife.bind(this);
 
         /* Checks if the users comes from AddPhoto Activity.
@@ -270,7 +258,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 changeCurrency();
                 Utils.updateCurrencyIcon(this, currency, item);
                 updatePriceHint();
-                
+
             }
             break;
 
@@ -340,7 +328,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
             /* If we come from another place, we delete the cache
              * */
             getRepository().deleteBitmapCache();
-            getRepository().deleteCacheAndSets();
         }
     }
 

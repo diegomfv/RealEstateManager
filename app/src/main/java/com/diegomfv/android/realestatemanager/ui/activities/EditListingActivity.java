@@ -380,7 +380,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         Log.d(TAG, "prepareCache: called!");
 
         /* Firts*/
-        getRepository().deleteCacheAndSets();
+        getRepository().deleteCache();
 
         /* We firstly clone the real estate object in the RealEstateCache
         * */
@@ -875,7 +875,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         }
 
         createNotification();
-        getRepository().deleteCacheAndSets();
         Utils.launchActivity(this, MainActivity.class);
 
     }
