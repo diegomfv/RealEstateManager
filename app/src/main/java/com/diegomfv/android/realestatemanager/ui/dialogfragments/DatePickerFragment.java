@@ -11,8 +11,6 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.widget.DatePicker;
 
-import com.diegomfv.android.realestatemanager.util.ToastHelper;
-
 import java.util.Calendar;
 import java.util.Date;
 
@@ -27,6 +25,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     public interface DatePickerFragmentListener {
         void onDateSet(Date date);
+        void onNegativeButtonClicked();
     }
 
     private DatePickerFragment.DatePickerFragmentListener listener;
@@ -59,10 +58,21 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        DatePickerDialog datePickerDialog = new DatePickerDialog (getActivity(), this, year, month, day);
+
+        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                "Cancel",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "onClick: negative button clicked!");
+                        notifyDatePickerListenerNegativeButtonClicked();
+                    }
+                });
+
+        return datePickerDialog;
 
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -86,13 +96,19 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
         // Here we call the listener and pass the date back to it.
         if (listener != null) {
-            notifyDatePickerListener(date);
+            notifyDatePickerListenerDateIsSet(date);
         }
     }
 
-    protected void notifyDatePickerListener(Date date) {
+    protected void notifyDatePickerListenerDateIsSet(Date date) {
         if(this.listener != null) {
             this.listener.onDateSet(date);
+        }
+    }
+
+    protected void notifyDatePickerListenerNegativeButtonClicked() {
+        if(this.listener != null) {
+            this.listener.onNegativeButtonClicked();
         }
     }
 }

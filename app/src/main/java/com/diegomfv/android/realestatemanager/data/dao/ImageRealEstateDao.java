@@ -35,7 +35,7 @@ public interface ImageRealEstateDao {
     long insertImageRealEstate (ImageRealEstate imageRealEstate);
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
-    long[] insertListOfImagesRealEstate (List<ImageRealEstate> listOfImagesRealEstate);
+    List<Long> insertListOfImagesRealEstate (List<ImageRealEstate> listOfImagesRealEstate);
 
 
 

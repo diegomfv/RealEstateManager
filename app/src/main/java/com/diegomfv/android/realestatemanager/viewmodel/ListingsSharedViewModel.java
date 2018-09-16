@@ -37,8 +37,8 @@ public class ListingsSharedViewModel extends AndroidViewModel {
         super(application);
         Log.d(TAG, "ListingsSharedViewModel: called!");
 
-        observableListOfListings = dataRepository.getObservableAllListings();
-        observableListOfImagesRealEstate = dataRepository.getObservableAllImagesRealEstate();
+        observableListOfListings = dataRepository.getLiveDataAllListings();
+        observableListOfImagesRealEstate = dataRepository.getLiveDataAllImagesRealEstate();
     }
 
     /** This method fills the MutableLiveData with the information from

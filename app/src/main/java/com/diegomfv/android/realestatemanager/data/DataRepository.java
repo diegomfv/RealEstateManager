@@ -18,7 +18,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -41,6 +43,8 @@ public class DataRepository {
 
     private LiveData<List<RealEstate>> listOfListingsLiveData;
 
+    private LiveData<List<ImageRealEstate>> listOfImagesRealEstateLiveData;
+
     private LiveData<List<PlaceRealEstate>> listOfPlacesRealEstateLiveData;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +57,7 @@ public class DataRepository {
     private List<PlaceRealEstate> listOfPlacesNearbyCache;
 
     //BITMAP RELATED CACHES (memory cache for loading images in recyclerViews, etc.)
-    private Map<String,Bitmap> bitmapCache;
+    private Map<String, Bitmap> bitmapCache;
 
     private long bitmapCacheSize; // in MB
 
@@ -84,6 +88,7 @@ public class DataRepository {
         mDatabase = database;
         bitmapCacheSize = maxMemoryInMB / 1024 / 1024 / 8;
         listOfListingsLiveData = getAllListingsLiveData();
+        listOfImagesRealEstateLiveData = getAllImagesRealEstateLiveData();
         listOfPlacesRealEstateLiveData = getAllPlacesRealEstateLiveData();
         bitmapCache = getBitmapCache();
     }
@@ -103,8 +108,9 @@ public class DataRepository {
 
     //GENERAL CACHE
 
-    /** Cache for Real Estate
-     * */
+    /**
+     * Cache for Real Estate
+     */
     public RealEstate getRealEstateCache() {
         Log.d(TAG, "getRealEstateCache: called!");
         if (realEstateCache == null) {
@@ -113,7 +119,7 @@ public class DataRepository {
         return realEstateCache;
     }
 
-    public void cloneRealEstate (RealEstate realEstate) {
+    public void cloneRealEstate(RealEstate realEstate) {
         Log.d(TAG, "cloneRealEstate: called!");
         this.realEstateCache = new RealEstate(realEstate);
     }
@@ -126,11 +132,12 @@ public class DataRepository {
         return listOfImagesRealEstateCache;
     }
 
-    /** We fill a cache containing ImageRealEstate objects related to the realEstate object
+    /**
+     * We fill a cache containing ImageRealEstate objects related to the realEstate object
      * with objects from the database with the same id as the ids we find in the list
      * of the real estate object
-     * */
-    public void fillCacheWithImagesRelatedToRealEstate (List<ImageRealEstate> listOfImagesRealEstate) {
+     */
+    public void fillCacheWithImagesRelatedToRealEstate(List<ImageRealEstate> listOfImagesRealEstate) {
         Log.d(TAG, "fillCacheWithImagesRelatedToRealEstate: called!");
         if (listOfImagesRealEstate != null) {
             for (int i = 0; i < listOfImagesRealEstate.size(); i++) {
@@ -157,7 +164,7 @@ public class DataRepository {
         deleteSets();
     }
 
-    private void deleteCache () {
+    private void deleteCache() {
         Log.d(TAG, "deleteCache: called!");
 
         realEstateCache = null;
@@ -165,7 +172,7 @@ public class DataRepository {
         listOfPlacesNearbyCache = null;
     }
 
-    private void deleteSets () {
+    private void deleteSets() {
         Log.d(TAG, "deleteSets: called!");
         setOfBuildingTypes = null;
         setOfLocalities = null;
@@ -186,7 +193,7 @@ public class DataRepository {
         return updateListOfBitmapKeys();
     }
 
-    private List<String> updateListOfBitmapKeys () {
+    private List<String> updateListOfBitmapKeys() {
         Log.d(TAG, "updateListOfBitmapKeys: called!");
 
         if (bitmapCache != null) {
@@ -199,7 +206,7 @@ public class DataRepository {
         return listOfBitmapCacheKeys;
     }
 
-    public Map<String,Bitmap> getBitmapCache() {
+    public Map<String, Bitmap> getBitmapCache() {
         Log.d(TAG, "getBitmapCache: called!");
         if (bitmapCache == null) {
             return bitmapCache = new LinkedHashMap<>();
@@ -210,7 +217,7 @@ public class DataRepository {
 
     }
 
-    public double getCurrentSizeOfBitmapCache () {
+    public double getCurrentSizeOfBitmapCache() {
         Log.d(TAG, "getCurrentSizeOfBitmapCache: called!");
 
         double size = 0;
@@ -221,7 +228,7 @@ public class DataRepository {
         return size / 1024 / 1024;
     }
 
-    public void addBitmapToBitmapCache (String key, Bitmap bitmap) {
+    public void addBitmapToBitmapCache(String key, Bitmap bitmap) {
         Log.d(TAG, "addBitmapToBitmapCache: called!");
         if (!getBitmapCache().containsKey(key)) {
             getBitmapCache().put(key, bitmap);
@@ -232,7 +239,7 @@ public class DataRepository {
         }
     }
 
-    private void checkBitmapCacheSize () {
+    private void checkBitmapCacheSize() {
         Log.d(TAG, "checkBitmapCacheSize: called!");
 
         Log.w(TAG, "checkBitmapCacheSize: bitmapCacheSize = " + bitmapCacheSize);
@@ -243,7 +250,7 @@ public class DataRepository {
         }
     }
 
-    private void removeFirstElementFromBitmapCache () {
+    private void removeFirstElementFromBitmapCache() {
         Log.d(TAG, "removeFirstElementFromBitmapCache: called!");
 
         String key = getBitmapCache().keySet().iterator().next();
@@ -255,11 +262,11 @@ public class DataRepository {
 
     }
 
-    public void addBitmapToBitmapCacheAndStorage (Storage internalStorage, String imagesDir, String key, Bitmap bitmap) {
+    public void addBitmapToBitmapCacheAndStorage(Storage internalStorage, String imagesDir, String key, Bitmap bitmap) {
         Log.d(TAG, "addBitmapToAllMemories: called!");
 
         addBitmapToBitmapCache(key, bitmap);
-        addBitmapToInternalStorageInWorkerThread(internalStorage, imagesDir,key,bitmap);
+        addBitmapToInternalStorageInWorkerThread(internalStorage, imagesDir, key, bitmap);
 
     }
 
@@ -282,10 +289,11 @@ public class DataRepository {
 
     }
 
-    /** Gets a bitmap from the immediate cache
+    /**
+     * Gets a bitmap from the immediate cache
      * or from the internal storage
-     * */
-    public Bitmap getBitmap (Storage storage, String imagesDir, String key) {
+     */
+    public Bitmap getBitmap(Storage storage, String imagesDir, String key) {
         Log.d(TAG, "getBitmap: called!");
 
         if (getBitmapCache().get(key) != null) {
@@ -297,7 +305,7 @@ public class DataRepository {
 
     }
 
-    public void deleteAndFillBitmapCache (List<String> listOfKeys, Storage internalStorage, String imagesDir) {
+    public void deleteAndFillBitmapCache(List<String> listOfKeys, Storage internalStorage, String imagesDir) {
         Log.d(TAG, "fillBitmapCache: called!");
 
         deleteBitmapCache();
@@ -307,13 +315,13 @@ public class DataRepository {
         }
     }
 
-    public void deleteBitmapCache () {
+    public void deleteBitmapCache() {
         Log.d(TAG, "deleteBitmapCache: called!");
         bitmapCache = null;
         listOfBitmapCacheKeys = null;
     }
 
-    public List<String> getListOfBitmapKeysInternalStorage (String imagesDir) {
+    public List<String> getListOfBitmapKeysInternalStorage(String imagesDir) {
         Log.d(TAG, "getListOfBitmapKeysInternalStorage: called!");
         listOfBitmapKeysInternalStorage = new ArrayList<>();
         File[] files = new File(imagesDir).listFiles();
@@ -331,7 +339,7 @@ public class DataRepository {
 
     //SEARCH CACHE
 
-    public List<RealEstate> getListOfFoundRealEstates () {
+    public List<RealEstate> getListOfFoundRealEstates() {
         Log.d(TAG, "getListOfFoundRealEstates: called!");
         if (listOfFoundRealEstates == null) {
             return listOfFoundRealEstates = new ArrayList<>();
@@ -339,7 +347,7 @@ public class DataRepository {
         return listOfFoundRealEstates;
     }
 
-    public Set<String> getSetOfBuildingTypes () {
+    public Set<String> getSetOfBuildingTypes() {
         Log.d(TAG, "getSetOfBuildingTypes: called!");
         if (setOfBuildingTypes == null) {
             setOfBuildingTypes = new HashSet<>();
@@ -352,7 +360,7 @@ public class DataRepository {
         return setOfBuildingTypes;
     }
 
-    public Set<String> getSetOfLocalities () {
+    public Set<String> getSetOfLocalities() {
         Log.d(TAG, "getSetOfLocalities: called");
         if (setOfLocalities == null) {
             setOfLocalities = new HashSet<>();
@@ -365,7 +373,7 @@ public class DataRepository {
         return setOfLocalities;
     }
 
-    public Set<String> getSetOfCities () {
+    public Set<String> getSetOfCities() {
         Log.d(TAG, "getSetOfCities: called!");
         if (setOfCities == null) {
             setOfCities = new HashSet<>();
@@ -380,13 +388,13 @@ public class DataRepository {
         return setOfCities;
     }
 
-    public Set<String> getSetOfTypesOfPointsOfInterest () {
+    public Set<String> getSetOfTypesOfPointsOfInterest() {
         Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
         if (setOfTypesOfPointsOfInterest == null) {
             setOfTypesOfPointsOfInterest = new HashSet<>();
             List<PlaceRealEstate> temporaryList = getAllPlacesRealEstate();
             if (temporaryList != null) {
-                for (int i = 0; i < temporaryList.size() ; i++) {
+                for (int i = 0; i < temporaryList.size(); i++) {
                     setOfTypesOfPointsOfInterest.addAll(temporaryList.get(i).getTypesList());
                 }
             }
@@ -395,7 +403,7 @@ public class DataRepository {
         return setOfTypesOfPointsOfInterest;
     }
 
-    public void refreshSets () {
+    public void refreshSets() {
         Log.d(TAG, "refreshSets: called!");
         setOfBuildingTypes = null;
         setOfLocalities = null;
@@ -409,33 +417,33 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /** Get lists from the database
+    /**
+     * Get lists from the database
      * and get notified when the data changes.
      */
-    public LiveData<List<RealEstate>> getObservableAllListings() {
-        Log.d(TAG, "getObservableAllListings: called!");
+    public LiveData<List<RealEstate>> getLiveDataAllListings() {
+        Log.d(TAG, "getLiveDataAllListings: called!");
         return listOfListingsLiveData;
     }
 
-    public LiveData<List<PlaceRealEstate>> getObservableAllPlacesRealEstate() {
-        Log.d(TAG, "getObservableAllPlacesRealEstate: called!");
+    public LiveData<List<ImageRealEstate>> getLiveDataAllImagesRealEstate() {
+        Log.d(TAG, "getLiveDataAllImagesRealEstate: called!");
+        return listOfImagesRealEstateLiveData;
+    }
+
+    public LiveData<List<PlaceRealEstate>> getLiveDataAllPlacesRealEstate() {
+        Log.d(TAG, "getLiveDataAllPlacesRealEstate: called!");
         return listOfPlacesRealEstateLiveData;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // TODO: 27/08/2018 Modified to public  (?????)
     private LiveData<List<RealEstate>> getAllListingsLiveData() {
         Log.d(TAG, "getAllListingsLiveData: called!");
         return mDatabase.realStateDao().getAllListingsOrderedByTypeLiveData();
     }
 
-    public LiveData<List<ImageRealEstate>> getObservableAllImagesRealEstate() {
+    private LiveData<List<ImageRealEstate>> getAllImagesRealEstateLiveData() {
         return mDatabase.imageRealEstateDao().getAllImagesRealEstateLiveData();
     }
 
@@ -451,16 +459,88 @@ public class DataRepository {
         return mDatabase.realStateDao().getAllListingsOrderedByType();
     }
 
-    private List<ImageRealEstate> getAllImagesRealEstate () {
+    private List<ImageRealEstate> getAllImagesRealEstate() {
         Log.d(TAG, "getAllImagesRealEstate: called!");
         return mDatabase.imageRealEstateDao().getAllImagesRealEstate();
     }
 
-    private List<PlaceRealEstate> getAllPlacesRealEstate () {
+    private List<PlaceRealEstate> getAllPlacesRealEstate() {
         Log.d(TAG, "getAllPlacesRealEstate: called!");
         return mDatabase.placeRealEstateDao().getAllPlacesRealEstate();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public Completable getAllListingsRealEstateCompletable() {
+        Log.d(TAG, "getAllListingsRealEstateCompletable: called!");
+        return Completable.fromCallable(new Callable<List<RealEstate>>() {
+            @Override
+            public List<RealEstate> call() throws Exception {
+                return mDatabase.realStateDao().getAllListingsOrderedByType();
+            }
+        });
+    }
+
+    public Completable getAllImagesRealEstateCompletable() {
+        Log.d(TAG, "getAllImagesRealEstateCompletable: called!");
+        return Completable.fromCallable(new Callable<List<ImageRealEstate>>() {
+            @Override
+            public List<ImageRealEstate> call() throws Exception {
+                return mDatabase.imageRealEstateDao().getAllImagesRealEstate();
+            }
+        });
+    }
+
+    public Completable getAllPlacesRealEstateCompletable() {
+        Log.d(TAG, "getAllPlacesRealEstateCompletable: called!");
+        return Completable.fromCallable(new Callable<List<PlaceRealEstate>>() {
+            @Override
+            public List<PlaceRealEstate> call() throws Exception {
+                return mDatabase.placeRealEstateDao().getAllPlacesRealEstate();
+            }
+        });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public Completable insertRealEstate(final RealEstate realEstate) {
+        Log.d(TAG, "insertRealEstate: called!");
+        return Completable.fromCallable(new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                return mDatabase.realStateDao().insertRealEstate(realEstate);
+            }
+        });
+    }
+
+    public Completable insertListImagesRealEstate(final List<ImageRealEstate> list) {
+        Log.d(TAG, "insertImageRealEstate: called!");
+        return Completable.fromCallable(new Callable<List<Long>>() {
+            @Override
+            public List<Long> call() throws Exception {
+                return mDatabase.imageRealEstateDao().insertListOfImagesRealEstate(list);
+            }
+        });
+    }
+
+    public Completable insertListPlacesRealEstate(final List<PlaceRealEstate> list) {
+        Log.d(TAG, "insertListPlacesRealEstate: called!");
+        return Completable.fromCallable(new Callable<List<Long>>() {
+            @Override
+            public List<Long> call() throws Exception {
+                return mDatabase.placeRealEstateDao().insertListOfPlaceRealEstate(list);
+            }
+        });
+    }
+    
+    public Completable updateRealEstate (final RealEstate realEstate) {
+        Log.d(TAG, "updateRealEstate: called!");
+        return Completable.fromCallable(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                return mDatabase.realStateDao().updateRealEstate(realEstate);
+            }
+        });
+    }
+    
 }

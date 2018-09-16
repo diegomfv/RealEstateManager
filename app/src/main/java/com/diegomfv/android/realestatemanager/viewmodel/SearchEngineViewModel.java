@@ -3,7 +3,6 @@ package com.diegomfv.android.realestatemanager.viewmodel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
@@ -14,9 +13,7 @@ import com.diegomfv.android.realestatemanager.data.DataRepository;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Diego Fajardo on 24/08/2018.
@@ -37,8 +34,8 @@ public class SearchEngineViewModel extends AndroidViewModel {
         super(application);
         Log.d(TAG, "SearchEngineViewModel: called!");
 
-        observableListOfListings = dataRepository.getObservableAllListings();
-        observableListOfPlacesRealEstate = dataRepository.getObservableAllPlacesRealEstate();
+        observableListOfListings = dataRepository.getLiveDataAllListings();
+        observableListOfPlacesRealEstate = dataRepository.getLiveDataAllPlacesRealEstate();
     }
 
     /** Expose the LiveData so the UI can observe it

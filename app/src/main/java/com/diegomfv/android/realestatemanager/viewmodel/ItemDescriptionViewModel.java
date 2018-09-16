@@ -33,8 +33,8 @@ public class ItemDescriptionViewModel extends AndroidViewModel {
     public ItemDescriptionViewModel(@NonNull Application application, DataRepository dataRepository) {
         super(application);
         Log.d(TAG, "ListingsSharedViewModel: called!");
-        observablePlacesRealEstate = dataRepository.getObservableAllPlacesRealEstate();
-        observableImagesRealEstate = dataRepository.getObservableAllImagesRealEstate();
+        observablePlacesRealEstate = dataRepository.getLiveDataAllPlacesRealEstate();
+        observableImagesRealEstate = dataRepository.getLiveDataAllImagesRealEstate();
     }
 
     /** Expose the LiveData so the UI can observe it

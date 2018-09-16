@@ -82,10 +82,10 @@
     <style name="cardViewGeneralStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">@dimen/card_view_side_margin_10dp</item>
-        <item name="android:layout_marginBottom">@dimen/card_view_side_margin_10dp</item>
-        <item name="android:layout_marginStart">@dimen/card_view_side_margin_10dp</item>
-        <item name="android:layout_marginEnd">@dimen/card_view_side_margin_10dp</item>
+        <item name="android:layout_marginTop">@dimen/side_margin_10dp</item>
+        <item name="android:layout_marginBottom">@dimen/side_margin_10dp</item>
+        <item name="android:layout_marginStart">@dimen/side_margin_10dp</item>
+        <item name="android:layout_marginEnd">@dimen/side_margin_10dp</item>
     </style>
 
     <style name="loanTextViewInfoStyle">

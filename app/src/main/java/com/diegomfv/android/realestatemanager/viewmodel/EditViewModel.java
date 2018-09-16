@@ -32,7 +32,7 @@ public class EditViewModel extends AndroidViewModel {
     public EditViewModel(@NonNull Application application, DataRepository dataRepository) {
         super(application);
         Log.d(TAG, "EditViewModel: called!");
-        observableListOfImagesRealEstate = dataRepository.getObservableAllImagesRealEstate();
+        observableListOfImagesRealEstate = dataRepository.getLiveDataAllImagesRealEstate();
     }
 
     /** Expose the LiveData so the UI can observe it.

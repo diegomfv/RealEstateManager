@@ -38,7 +38,7 @@ public class PositionViewModel extends AndroidViewModel {
         super(application);
         Log.d(TAG, "ListingsSharedViewModel: called!");
 
-        observableListOfListings = dataRepository.getObservableAllListings();
+        observableListOfListings = dataRepository.getLiveDataAllListings();
     }
 
     /** This method fills the MutableLiveData with the information from

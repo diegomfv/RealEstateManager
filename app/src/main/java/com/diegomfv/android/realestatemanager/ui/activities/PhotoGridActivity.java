@@ -24,6 +24,7 @@ import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.dialogfragments.InsertDescriptionDialogFragment;
 import com.diegomfv.android.realestatemanager.util.FirebasePushIdGenerator;
+import com.diegomfv.android.realestatemanager.util.GridSpaceItemDecoration;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
@@ -138,8 +139,6 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
 
                         /* The recycler view is notified in order to display the new data
                         * */
-                        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, R.anim.grid_layout_animation_from_bottom);
-                        recyclerView.setLayoutAnimation(animation);
                         updateAdapterData();
 
                     }
@@ -229,11 +228,15 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
+        int spanCount = 2; // 2 columns
+        int spacing = 50; // 50px
+        boolean includeEdge = true; //Includes spaces on the sides
+
         /* We are using a GridRecyclerView (custom view). See layout
         * */
         this.recyclerView.setHasFixedSize(true);
         this.recyclerView.setLayoutManager(new GridLayoutManager(
-                this, 2));
+                this, spanCount));
         this.adapter = new RVAdapterMediaGrid(
                 this,
                 getListOfBitmapKeys(),
@@ -242,6 +245,8 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
 
         LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, R.anim.grid_layout_animation_from_bottom);
         recyclerView.setLayoutAnimation(animation);
+
+        recyclerView.addItemDecoration(new GridSpaceItemDecoration(spanCount, spacing, includeEdge));
 
         this.recyclerView.setAdapter(this.adapter);
 

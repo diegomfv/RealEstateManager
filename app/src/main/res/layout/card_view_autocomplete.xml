@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/cardViewGeneralStyle"
-    app:contentPaddingTop="@dimen/card_view_padding_10dp"
-    app:contentPaddingLeft="@dimen/card_view_padding_10dp"
-    app:contentPaddingRight="@dimen/card_view_padding_10dp">
+    app:contentPaddingTop="@dimen/padding_10dp"
+    app:contentPaddingLeft="@dimen/padding_10dp"
+    app:contentPaddingRight="@dimen/padding_10dp">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_input_layout_id"

@@ -67,12 +67,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.CompletableObserver;
+import io.reactivex.CompletableOnSubscribe;
 import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -204,7 +210,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.configureRecyclerView();
 
         // TODO: 26/08/2018 Delete
-        // generateFakeData();
+        generateFakeData();
     }
 
     // TODO: 26/08/2018 Delete!
@@ -310,6 +316,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
             break;
 
             case R.id.button_insert_edit_listing_id: {
+
                 if (allChecksCorrect()) {
                     insertListing();
                 }
@@ -355,7 +362,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         });
 
         /* Changing the font of the toolbar
-        * */
+         * */
         Typeface typeface = ResourcesCompat.getFont(this, R.font.arima_madurai);
         collapsingToolbar.setCollapsedTitleTypeface(typeface);
         collapsingToolbar.setExpandedTitleTypeface(typeface);
@@ -878,19 +885,28 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         updateImagesIdRealEstateCache();
         updateDatePutRealEstateCacheCache();
 
-        Single.just(getAppDatabase().realStateDao().insertRealEstate(getRealEstateCache()))
+        /* We use RxJava to insert the real estate object
+         * */
+        getRepository().insertRealEstate(getRealEstateCache())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribeWith(new DisposableSingleObserver<Long>() {
+                .subscribeWith(new CompletableObserver() {
                     @Override
-                    public void onSuccess(Long aLong) {
-                        Log.d(TAG, "onSuccess: called!");
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
                         insertListImageRealEstate();
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError: " + e.getMessage());
+
                     }
                 });
     }
@@ -899,21 +915,24 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void insertListImageRealEstate() {
         Log.d(TAG, "insertListImageRealEstate: called!");
 
-        Single.just(getAppDatabase().imageRealEstateDao().insertListOfImagesRealEstate(getListOfImagesRealEstateCache()))
+        getRepository().insertListImagesRealEstate(getListOfImagesRealEstateCache())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribeWith(new DisposableSingleObserver<long[]>() {
+                .subscribeWith(new CompletableObserver() {
                     @Override
-                    public void onSuccess(long[] longs) {
-                        Log.d(TAG, "onSuccess: called!");
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
                         insertListPlacesRealEstate();
-                        insertAllBitmapsInImagesDirectory();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError: " + e.getMessage());
-
                     }
                 });
     }
@@ -921,6 +940,29 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     @SuppressLint("CheckResult")
     public void insertListPlacesRealEstate() {
         Log.d(TAG, "insertListPlacesRealEstate: called");
+
+        getRepository().insertListPlacesRealEstate(getListOfPlacesRealEstateCache())
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribeWith(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+                        insertAllBitmapsInImagesDirectory();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+                    }
+                });
+
+
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -935,9 +977,12 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     public void insertAllBitmapsInImagesDirectory() {
         Log.d(TAG, "insertAllBitmapsInImagesDirectory: called!");
 
+        /* This is already done in a worker thread
+        */
         for (Map.Entry<String, Bitmap> entry : getBitmapCache().entrySet()) {
             getRepository().addBitmapToBitmapCacheAndStorage(getInternalStorage(), getImagesDir(), entry.getKey(), entry.getValue());
         }
+
         Utils.launchActivity(this, MainActivity.class);
         createNotification();
 

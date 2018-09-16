@@ -62,6 +62,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.CompletableObserver;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -293,6 +294,8 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         }
     }
 
+    // TODO: 16/09/2018 Should block the DatePickerDialog and dont let to choose a wrong date instead
+    // TODO: of leaving the dialog and set all to false and not chosen
     @Override
     public void onDateSet(Date date) {
         Log.d(TAG, "onDateSet: called!");
@@ -308,6 +311,14 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
             cbSold.setChecked(false);
             tvSold.setText(getDateSold());
         }
+    }
+
+    @Override
+    public void onNegativeButtonClicked() {
+        Log.d(TAG, "onNegativeButtonClicked: called!");
+        dateSold = "";
+        cbSold.setChecked(false);
+        tvSold.setText(getDateSold());
     }
 
     private boolean dateIsValid(Date date) {
@@ -721,10 +732,14 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
             return false;
         }
 
-        if (dateSold != null
-            && getRealEstateCache().getDatePut() != null
-            && Utils.stringToDate(dateSold).after(Utils.stringToDate(getRealEstateCache().getDatePut()))) {
-            return true;
+        /* If dateSold is different than null
+        * and dateSold (which is a String) is parcelable to Date...
+        * */
+        if (dateSold != null && Utils.stringToDate(dateSold) != null) {
+            if (getRealEstateCache().getDatePut() != null
+                    && Utils.stringToDate(dateSold).after(Utils.stringToDate(getRealEstateCache().getDatePut()))) {
+                return true;
+            }
         }
 
         return true;
@@ -796,11 +811,13 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         Log.d(TAG, "updateDateSold: called!");
 
         if (!cbSold.isChecked()) {
-            getRealEstateCache().setDateSale("");
+            getRealEstateCache().setDateSale(null);
+
+        } else if (dateSold != null && dateSold.equals("")) {
+            getRealEstateCache().setDateSale(null);
 
         } else {
-            if (dateSold != null && !dateSold.equals("") )
-                getRealEstateCache().setDateSale(dateSold);
+            getRealEstateCache().setDateSale(dateSold);
         }
     }
 
@@ -809,32 +826,29 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     @SuppressLint("CheckResult")
     private void updateRealEstateInTheDatabase () {
         Log.d(TAG, "updateRealEstateInTheDatabase: called!");
-
-        Single.just(getAppDatabase().realStateDao().updateRealEstate(getRealEstateCache()))
+        getRepository().updateRealEstate(getRealEstateCache())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribeWith(new SingleObserver<Integer>() {
+                .subscribeWith(new CompletableObserver() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         Log.d(TAG, "onSubscribe: called!");
                     }
 
                     @Override
-                    public void onSuccess(Integer integer) {
-                        Log.d(TAG, "onSuccess: called!");
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
 
                         /* After updating the RealEstate object, we update
-                        * the list of ImagesRealEstate (basically,
-                        * we add new ones to the database if they were entered)
-                        * */
+                         * the list of ImagesRealEstate (basically,
+                         * we add new ones to the database if they were entered)
+                         * */
                         updateImagesRealEstateInTheDatabase();
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError: " + e.getMessage());
-
                     }
                 });
     }
@@ -843,32 +857,30 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     private void updateImagesRealEstateInTheDatabase () {
         Log.d(TAG, "updateImagesRealEstateInTheDatabase: called!");
 
-        Single.just(getAppDatabase().imageRealEstateDao().insertListOfImagesRealEstate(getListOfImagesRealEstateCache()))
+        getRepository().insertListImagesRealEstate(getListOfImagesRealEstateCache())
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new SingleObserver<long[]>() {
+                .observeOn(Schedulers.io())
+                .subscribeWith(new CompletableObserver() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         Log.d(TAG, "onSubscribe: called!");
                     }
 
                     @Override
-                    public void onSuccess(long[] longs) {
-                        Log.d(TAG, "onSuccess: called!");
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
 
                         /* After updating ImageRealEstate objects in the database,
-                        * we insert the related bitmaps in the Images Directory. When this
-                        * process finishes, we create the notification signaling that everything
-                        * has gone correctly, we delete the cache and launch Main Activity
-                        * */
+                         * we insert the related bitmaps in the Images Directory. When this
+                         * process finishes, we create the notification signaling that everything
+                         * has gone correctly, we delete the cache and launch Main Activity
+                         * */
                         insertAllBitmapsInImagesDirectory();
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError: " + e.getMessage());
-
                     }
                 });
     }
@@ -879,6 +891,8 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     public void insertAllBitmapsInImagesDirectory () {
         Log.d(TAG, "insertAllBitmapsInImagesDirectory: called!");
 
+        /* Already done in a background thread
+        * */
         for (Map.Entry<String, Bitmap> entry : getBitmapCache().entrySet()) {
             getRepository().addBitmapToBitmapCacheAndStorage(getInternalStorage(), getImagesDir(), entry.getKey(), entry.getValue());
         }

@@ -32,7 +32,7 @@ public interface PlaceRealEstateDao {
     // -------------------
     // INSERT
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insertListOfPlaceRealEstate (List<PlaceRealEstate> listOfImagesRealEstate);
+    List<Long> insertListOfPlaceRealEstate (List<PlaceRealEstate> listOfImagesRealEstate);
 
     ;
 
