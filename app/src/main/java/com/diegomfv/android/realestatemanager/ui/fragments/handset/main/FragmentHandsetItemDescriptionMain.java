@@ -66,6 +66,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  * Created by Diego Fajardo on 16/08/2018.
  */
 
+// TODO: 16/09/2018 Does not show Rooms correctly
 public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     private static final String TAG = FragmentHandsetItemDescriptionMain.class.getSimpleName();

@@ -49,6 +49,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 // TODO: 16/08/2018 Remove .allowMainThreadQueries()
 // TODO: 05/09/2018 Check dynamic query for room (query than varies depending on user's input)
 // TODO: 28/08/2018 Add a listener for when changing CURRENCY
+// TODO: 16/09/2018 Change toolbar typeFace!
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();

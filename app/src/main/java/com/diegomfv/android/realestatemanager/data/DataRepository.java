@@ -1,5 +1,6 @@
 package com.diegomfv.android.realestatemanager.data;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,12 +18,14 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Completable;
-import io.reactivex.Maybe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.CompletableObserver;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -133,22 +136,46 @@ public class DataRepository {
     }
 
     /**
-     * We fill a cache containing ImageRealEstate objects related to the realEstate object
-     * with objects from the database with the same id as the ids we find in the list
-     * of the real estate object
+     * We fill a cache containing ImageRealEstate objects
+     * related to the realEstate cache object
      */
-    public void fillCacheWithImagesRelatedToRealEstate(List<ImageRealEstate> listOfImagesRealEstate) {
-        Log.d(TAG, "fillCacheWithImagesRelatedToRealEstate: called!");
-        if (listOfImagesRealEstate != null) {
-            for (int i = 0; i < listOfImagesRealEstate.size(); i++) {
-                if (getRealEstateCache().getListOfImagesIds().contains(listOfImagesRealEstate.get(i).getId())) {
-                    getListOfImagesRealEstateCache().add(listOfImagesRealEstate.get(i));
-                }
-            }
+    @SuppressLint("CheckResult")
+    public void fillCacheWithImagesRelatedToRealEstateCache() {
+        Log.d(TAG, "fillCacheWithImagesRelatedToRealEstateCache: called!");
+        getAllImagesRealEstateObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribeWith(new Observer<List<ImageRealEstate>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+                    }
 
-        } else {
-            Log.w(TAG, "fillCacheWithImagesRelatedToRealEstate: " + "the list is NULL");
-        }
+                    @Override
+                    public void onNext(List<ImageRealEstate> listOfImagesRealEstate) {
+                        Log.d(TAG, "onNext: called!");
+                        if (listOfImagesRealEstate != null) {
+                            for (int i = 0; i < listOfImagesRealEstate.size(); i++) {
+                                if (getRealEstateCache().getListOfImagesIds().contains(listOfImagesRealEstate.get(i).getId())) {
+                                    getListOfImagesRealEstateCache().add(listOfImagesRealEstate.get(i));
+                                }
+                            }
+
+                        } else {
+                            Log.w(TAG, "fillCacheWithImagesRelatedToRealEstate: " + "the list is NULL");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+                    }
+                });
     }
 
     public List<PlaceRealEstate> getListOfPlacesRealEstateCache() {
@@ -491,6 +518,16 @@ public class DataRepository {
         });
     }
 
+    public io.reactivex.Observable<List<ImageRealEstate>> getAllImagesRealEstateObservable() {
+        Log.d(TAG, "getAllImagesRealEstateObservable: called!");
+        return io.reactivex.Observable.fromCallable(new Callable<List<ImageRealEstate>>() {
+            @Override
+            public List<ImageRealEstate> call() throws Exception {
+                return mDatabase.imageRealEstateDao().getAllImagesRealEstate();
+            }
+        });
+    }
+
     public Completable getAllPlacesRealEstateCompletable() {
         Log.d(TAG, "getAllPlacesRealEstateCompletable: called!");
         return Completable.fromCallable(new Callable<List<PlaceRealEstate>>() {
@@ -532,8 +569,8 @@ public class DataRepository {
             }
         });
     }
-    
-    public Completable updateRealEstate (final RealEstate realEstate) {
+
+    public Completable updateRealEstate(final RealEstate realEstate) {
         Log.d(TAG, "updateRealEstate: called!");
         return Completable.fromCallable(new Callable<Integer>() {
             @Override
@@ -542,5 +579,5 @@ public class DataRepository {
             }
         });
     }
-    
+
 }

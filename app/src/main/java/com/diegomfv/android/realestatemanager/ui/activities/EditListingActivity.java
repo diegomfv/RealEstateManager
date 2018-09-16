@@ -74,6 +74,8 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 /**
  * Created by Diego Fajardo on 23/08/2018.
  */
+// TODO: 16/09/2018 Eliminate the model. Use RxJava
+// TODO: 16/09/2018 The progress bar is not shown properly when an Item is added
 public class EditListingActivity extends BaseActivity implements DatePickerFragment.DatePickerFragmentListener {
 
     private static final String TAG = EditListingActivity.class.getSimpleName();
@@ -198,7 +200,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
             * of images with those that are related to the real estate object
             * */
             this.prepareCache();
-            this.createModel();
 
         } else {
             /* When we come from PhotoGridActivity, we keep using the object in the cache
@@ -385,41 +386,18 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         /* We firstly clone the real estate object in the RealEstateCache
         * */
         getRepository().cloneRealEstate(realEstate);
-        Log.i(TAG, "prepareCache: clone = " + getRealEstateCache().toString());
+        Log.w(TAG, "prepareCache: clone = " + getRealEstateCache().toString());
 
         /* We delete the bitmapCache and fill it with the bitmaps related to the
         * real estate that is loaded
         * */
         getRepository().deleteAndFillBitmapCache(getRealEstateCache().getListOfImagesIds(), getInternalStorage(), getImagesDir());
 
-    }
+        /* We fill the cache of Images Real Estate
+        with those images related to the Real Estate Cache object
+        * */
+        getRepository().fillCacheWithImagesRelatedToRealEstateCache();
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private void createModel() {
-        Log.d(TAG, "createModel: called!");
-
-        EditViewModel.Factory factory = new EditViewModel.Factory(getApp());
-        this.editViewModel = ViewModelProviders
-                .of(this, factory)
-                .get(EditViewModel.class);
-
-        this.subscribeToModel();
-
-    }
-
-    private void subscribeToModel() {
-        Log.d(TAG, "subscribeToModel: called!");
-
-        if (editViewModel != null) {
-            this.editViewModel.getObservableListOfImagesRealEstate().observe(this, new Observer<List<ImageRealEstate>>() {
-                @Override
-                public void onChanged(@Nullable List<ImageRealEstate> listOfImagesRealEstate) {
-                    Log.d(TAG, "onChanged: called!");
-                    getRepository().fillCacheWithImagesRelatedToRealEstate(listOfImagesRealEstate);
-                }
-            });
-        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
