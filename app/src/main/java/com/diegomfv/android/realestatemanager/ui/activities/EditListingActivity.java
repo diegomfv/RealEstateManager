@@ -454,7 +454,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         // TODO: 23/08/2018 Use Resources instead of hardcoded text
 
         setHint(cardViewType, "Type");
-        setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
+        setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency) + ")");
         setHint(cardViewSurfaceArea, "Surface Area (sqm)");
         setHint(cardViewDescription, "Description");
         setHint(cardViewAddress, "Address");
@@ -474,7 +474,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     private void updatePriceHint() {
         Log.d(TAG, "updatePriceHint: called!");
         TextInputLayout textInputLayout = cardViewPrice.findViewById(R.id.text_input_layout_id);
-        textInputLayout.setHint("Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
+        textInputLayout.setHint("Price (" + Utils.getCurrencySymbol(currency) + ")");
     }
 
     private void setTextButtons() {

@@ -67,6 +67,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  */
 
 // TODO: 16/09/2018 Does not show Rooms correctly
+// TODO: 16/09/2018 Does not display the map correctly
 public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     private static final String TAG = FragmentHandsetItemDescriptionMain.class.getSimpleName();
@@ -228,10 +229,12 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
         }
     }
 
-    public void setRooms(RealEstate rooms) {
-        tvNumberBedrooms.setText(String.valueOf("Bedrooms -- " + realEstate.getRooms().getBedrooms()));
-        tvNumberBathrooms.setText(String.valueOf("Bathrooms -- " + realEstate.getRooms().getBathrooms()));
-        tvNumberOtherRooms.setText(String.valueOf("Other Rooms -- " + realEstate.getRooms().getOtherRooms()));
+    public void setRooms(RealEstate realEstate) {
+        Log.d(TAG, "setRooms: called!");
+        Log.w(TAG, "setRooms: " + realEstate.getRooms().getBedrooms());
+        tvNumberBedrooms.setText(String.valueOf("Bedrooms -- " + String.valueOf(realEstate.getRooms().getBedrooms())));
+        tvNumberBathrooms.setText(String.valueOf("Bathrooms -- " + String.valueOf(realEstate.getRooms().getBathrooms())));
+        tvNumberOtherRooms.setText(String.valueOf("Other Rooms -- " + String.valueOf(realEstate.getRooms().getOtherRooms())));
     }
 
     private void setAddress(RealEstate realEstate) {
@@ -553,17 +556,22 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
                 * */
                 addMarkerToMapRealEstate(realEstate);
 
-                /* We get all those places that are related to the real estate
+                /* We get all those places that are related to the real estate (if there are any)
                  * */
-                List<String> listOfPlacesKeys = realEstate.getListOfNearbyPointsOfInterestIds();
+                if (realEstate.getListOfNearbyPointsOfInterestIds() != null
+                        && realEstate.getListOfNearbyPointsOfInterestIds().size() > 0) {
 
-                for (int i = 0; i < listOfPlacesKeys.size(); i++) {
-                    for (int j = 0; j < getListOfPlacesRealEstate().size(); j++) {
-                        if (listOfPlacesKeys.get(i).equals(getListOfPlacesRealEstate().get(j).getId())) {
-                            addMarkerToMapPlaceRealEstate(getListOfPlacesRealEstate().get(j));
+                    List<String> listOfPlacesKeys = realEstate.getListOfNearbyPointsOfInterestIds();
+
+                    for (int i = 0; i < listOfPlacesKeys.size(); i++) {
+                        for (int j = 0; j < getListOfPlacesRealEstate().size(); j++) {
+                            if (listOfPlacesKeys.get(i).equals(getListOfPlacesRealEstate().get(j).getId())) {
+                                addMarkerToMapPlaceRealEstate(getListOfPlacesRealEstate().get(j));
+                            }
                         }
                     }
                 }
+
 
             } else {
                 Log.d(TAG, "updateMapWithPins: list is EMPTY");

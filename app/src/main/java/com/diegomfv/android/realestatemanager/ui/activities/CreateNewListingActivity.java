@@ -270,6 +270,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 changeCurrency();
                 Utils.updateCurrencyIcon(this, currency, item);
                 updatePriceHint();
+                
             }
             break;
 
@@ -293,7 +294,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     @Override
     public void onDialogNegativeClick() {
         Log.d(TAG, "onDatePickerDialogNegativeClick: called!");
-
         ToastHelper.toastShort(this, "The address was not added");
     }
 
@@ -447,7 +447,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
         // TODO: 23/08/2018 Use Resources instead of hardcoded strings
         setHint(cardViewType, "Type");
-        setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
+        setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency) + ")");
         setHint(cardViewSurfaceArea, "Surface Area (sqm)");
         setHint(cardViewDescription, "Description");
         setHint(cardViewAddress, "Address");
@@ -462,7 +462,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void updatePriceHint() {
         Log.d(TAG, "updatePriceHint: called!");
         TextInputLayout textInputLayout = cardViewPrice.findViewById(R.id.text_input_layout_id);
-        textInputLayout.setHint("Price (" + Utils.getCurrencySymbol(currency).substring(1) + ")");
+        textInputLayout.setHint("Price (" + Utils.getCurrencySymbol(currency) + ")");
     }
 
     private void setTextLastButton() {
@@ -534,12 +534,12 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "updateIntegerValues: called!");
         this.getRealEstateCache().setPrice((int) Utils.getPriceAccordingToCurrency(currency, Utils.getIntegerFromTextView(tvPrice)));
         this.getRealEstateCache().setSurfaceArea(Utils.getIntegerFromTextView(tvSurfaceArea));
-        this.setRooms(this.getRealEstateCache());
+        this.setRooms();
     }
 
-    private void setRooms(RealEstate realEstate) {
+    private void setRooms() {
         Log.d(TAG, "setRooms: called!");
-        realEstate.setRooms(new RoomsRealEstate(
+        getRealEstateCache().setRooms(new RoomsRealEstate(
                 seekBarBedrooms.getSelectedMinValue().intValue(),
                 seekBarBathrooms.getSelectedMinValue().intValue(),
                 seekBarOtherRooms.getSelectedMinValue().intValue()));
