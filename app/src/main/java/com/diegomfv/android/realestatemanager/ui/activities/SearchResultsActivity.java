@@ -93,7 +93,6 @@ public class SearchResultsActivity extends BaseActivity {
             break;
 
             case R.id.menu_change_currency_button: {
-
                 changeCurrency();
                 Utils.updateCurrencyIcon(this, currency, item);
 

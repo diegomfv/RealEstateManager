@@ -802,13 +802,13 @@ public class SearchEngineActivity extends BaseActivity {
             return false;
         }
 
-//        if (!cityFilterPassed(realEstate)) {
-//            return false;
-//        }
-//
-//        if (!localityFilterPassed(realEstate)) {
-//            return false;
-//        }
+        if (!cityFilterPassed(realEstate)) {
+            return false;
+        }
+
+        if (!localityFilterPassed(realEstate)) {
+            return false;
+        }
 
         if (!amountOfPhotosFilterPassed(realEstate)) {
             return false;
@@ -830,6 +830,8 @@ public class SearchEngineActivity extends BaseActivity {
 
         List<String> listOfCheckedTypes = new ArrayList<>();
 
+        /* A list is filled with all the texts of the related checked checkboxes
+         * */
         for (int i = 0; i < getListOfBuildingTypeCheckboxes().size(); i++) {
             if (getListOfBuildingTypeCheckboxes().get(i).isChecked()) {
                 listOfCheckedTypes.add(Utils.getStringFromTextView(getListOfBuildingTypeCheckboxes().get(i)));
@@ -842,6 +844,8 @@ public class SearchEngineActivity extends BaseActivity {
             return true;
         }
 
+        /* The user checked at least one checkbox
+         * */
         for (int i = 0; i < getListOfBuildingTypeCheckboxes().size(); i++) {
             if (realEstate.getType().equalsIgnoreCase(listOfCheckedTypes.get(i))) {
                 return true;
@@ -906,32 +910,64 @@ public class SearchEngineActivity extends BaseActivity {
         return false;
     }
 
-//    private boolean localityFilterPassed(RealEstate realEstate) {
-//        Log.d(TAG, "cityFilterPassed: called!");
-//
-//        if (textViewNotUsed(actvLocality)) {
-//            return true;
-//        }
-//
-//        if (realEstate.getAddress().getLocality().equalsIgnoreCase(getTextFromView(actvLocality))) {
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//
-//    private boolean cityFilterPassed(RealEstate realEstate) {
-//        Log.d(TAG, "cityFilterPassed: called!");
-//
-//        if (textViewNotUsed(actvCity)) {
-//            return true;
-//        }
-//
-//        if (realEstate.getAddress().getCity().equalsIgnoreCase(getTextFromView(actvCity))) {
-//            return true;
-//        }
-//        return false;
-//    }
+    private boolean localityFilterPassed(RealEstate realEstate) {
+        Log.d(TAG, "localityFilterPassed: called!");
+
+        List<String> listOfCheckedTypes = new ArrayList<>();
+
+        /* A list is filled with all the texts of the related checked checkboxes
+        * */
+        for (int i = 0; i < getListOfLocalityCheckboxes().size(); i++) {
+            if (getListOfLocalityCheckboxes().get(i).isChecked()) {
+                listOfCheckedTypes.add(Utils.getStringFromTextView(getListOfLocalityCheckboxes().get(i)));
+            }
+        }
+
+        /* Means the user did not check any checkbox
+         * */
+        if (listOfCheckedTypes.size() == 0) {
+            return true;
+        }
+
+        /* The user checked at least one checkbox
+        * */
+        for (int i = 0; i < getListOfLocalityCheckboxes().size(); i++) {
+            if (realEstate.getAddress().getLocality().equalsIgnoreCase(listOfCheckedTypes.get(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private boolean cityFilterPassed(RealEstate realEstate) {
+        Log.d(TAG, "cityFilterPassed: called!");
+
+        List<String> listOfCheckedTypes = new ArrayList<>();
+
+        /* A list is filled with all the texts of the related checked checkboxes
+         * */
+        for (int i = 0; i < getListOfCityCheckboxes().size(); i++) {
+            if (getListOfCityCheckboxes().get(i).isChecked()) {
+                listOfCheckedTypes.add(Utils.getStringFromTextView(getListOfCityCheckboxes().get(i)));
+            }
+        }
+
+        /* Means the user did not check any checkbox
+         * */
+        if (listOfCheckedTypes.size() == 0) {
+            return true;
+        }
+
+        /* The user checked at least one checkbox
+         * */
+        for (int i = 0; i < getListOfCityCheckboxes().size(); i++) {
+            if (realEstate.getAddress().getCity().equalsIgnoreCase(listOfCheckedTypes.get(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private boolean amountOfPhotosFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "amountOfPhotosFilterPassed: called!");
