@@ -37,6 +37,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.diegomfv.android.realestatemanager.util.Utils.launchActivity;
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
 /**
@@ -45,6 +46,17 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  * to activity_main_activity_text_view_quantity
  * 2. Add String.valueOf() to convert int to String
  */
+
+/** MainActivity displays a different layout depending on the size of the screen (handsets or
+ * tablets). Additionally, it behaves different according to what activity launched it. If the activity
+ * was launched from AuthLoginActivity, it will display all the listings in the database and
+ * will behaves as "a main menu" with practically all the functionality available. If the activity
+ * was launched from SearchEngineActivity, it will display the found articles (using the engine) and
+ * almost all the functionality (except "change currency") will be off. The variable "mainMenu"
+ * is responsible for carrying this information:
+ * mainMenu = true --> AuthLoginActivity launched the activity (behave as MAIN MENU)
+ * mainMenu = false --> SearchEngineActivity launched the activity (do not behave as MAIN MENU).
+ * */
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -85,11 +97,13 @@ public class MainActivity extends BaseActivity {
 
         this.editModeActive = false;
 
-        updateMainMenu();
+        this.updateMainMenu();
 
-        /* We delete the cache in MainActivity
+        /* We delete the cache if mainMenu = true
          * */
-        getRepository().deleteCache();
+        if (mainMenu) {
+            getRepository().deleteCache();
+        }
 
         this.accessInternalStorageGranted = false;
 
@@ -209,18 +223,35 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Depending on mainMenu, on Back pressed behaves one way or another. With mainMenu = true,
+     * user can return to AuthLoginAtivity via a dialog that will pop-up. With mainMenu = false,
+     * the user will go to SearchEngineActivity
+     */
     @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed: called!");
-        launchAreYouSureDialog();
+
+        if (mainMenu) {
+            launchAreYouSureDialog();
+
+        } else {
+            Utils.launchActivity(this, SearchEngineActivity.class);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public boolean getMainMenu () {
+    /**
+     * Getter for mainMenu.
+     * It will be used by the fragment that displays a list of items.
+     */
+    public boolean getMainMenu() {
         Log.d(TAG, "getMainMenu: called!");
         return mainMenu;
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Method to update mainMenu field. If we come from SearchEngineActivity, mainMenu will be
@@ -246,7 +277,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
+    /**
+     * Method to configure the toolbar.
+     */
     private void configureToolBar() {
         Log.d(TAG, "configureToolBar: called!");
 
