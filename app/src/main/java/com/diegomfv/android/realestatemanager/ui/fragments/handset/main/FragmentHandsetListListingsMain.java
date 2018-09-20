@@ -24,6 +24,7 @@ import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.activities.DetailActivity;
 import com.diegomfv.android.realestatemanager.ui.activities.EditListingActivity;
 import com.diegomfv.android.realestatemanager.ui.activities.MainActivity;
+import com.diegomfv.android.realestatemanager.ui.activities.SearchResultsActivity;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.Utils;
@@ -60,6 +61,8 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
 
     int currency;
 
+    private ListingsSharedViewModel listingsSharedViewModel;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static FragmentHandsetListListingsMain newInstance() {
@@ -82,7 +85,7 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_list_listings, container, false);
         this.unbinder = ButterKnife.bind(this, view);
 
-        this.configureRecyclerView();
+        this.createModel();
 
         return view;
     }
@@ -96,15 +99,17 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<RealEstate> getListOfRealEstates () {
+    private List<RealEstate> getListOfRealEstates() {
         Log.d(TAG, "getListOfRealEstates: called");
-        if (getActivity() != null) {
-            if (listOfRealEstates == null) {
-                return listOfRealEstates = ((MainActivity) getActivity()).getListOfRealEstates();
-            }
-            return listOfRealEstates;
+        if (listOfRealEstates == null) {
+            return listOfRealEstates = new ArrayList<>();
         }
-        return listOfRealEstates = new ArrayList<>();
+        return listOfRealEstates;
+    }
+
+    private void setListOfRealEstates(List<RealEstate> list) {
+        Log.d(TAG, "setListOfRealEstates: called!");
+        this.listOfRealEstates = list;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +157,7 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
                          * */
                         if (getActivity() != null) {
 
-                            if (((MainActivity)getActivity()).getEditModeActive()) {
+                            if (((MainActivity) getActivity()).getEditModeActive()) {
                                 launchActivityWithRealEstate(adapter.getRealEstate(position), EditListingActivity.class);
 
                             } else {
@@ -163,11 +168,65 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
                 });
     }
 
+    private void createModel() {
+        Log.d(TAG, "createModel: called!");
+
+        if (getActivity() != null) {
+
+            ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
+            this.listingsSharedViewModel = ViewModelProviders
+                    .of(getActivity(), factory)
+                    .get(ListingsSharedViewModel.class);
+
+            subscribeToModel();
+        }
+    }
+
+    /** Method to subscribe to model. Depending on mainMenu variable (see MainActivity) we show
+     * some information or another ("mainMenu = true" displays all the listings in the database
+     * whereas "mainMenu = false" displays all the found articles).
+     * */
+    private void subscribeToModel() {
+        Log.d(TAG, "subscribeToModel: called!");
+
+        if (listingsSharedViewModel != null) {
+
+            if (((MainActivity)getActivity()).getMainMenu()) {
+                Log.w(TAG, "subscribeToModel: mainMenu = true");
+
+                this.listingsSharedViewModel.getObservableListOfListings().observe(this, new Observer<List<RealEstate>>() {
+                    @Override
+                    public void onChanged(@Nullable List<RealEstate> realEstates) {
+                        Log.d(TAG, "onChanged: called!");
+                        if (realEstates != null && realEstates.size() > 0) {
+                            setListOfRealEstates(realEstates);
+                            adapter.setData(getListOfRealEstates());
+                        }
+                    }
+                });
+
+            } else {
+                Log.w(TAG, "subscribeToModel: mainMenu = false");
+                this.listingsSharedViewModel.getObservableListOfFoundArticles().observe(this, new Observer<List<RealEstate>>() {
+                    @Override
+                    public void onChanged(@Nullable List<RealEstate> realEstates) {
+                        Log.d(TAG, "onChanged: called!");
+                        if (realEstates != null && realEstates.size() > 0) {
+                            setListOfRealEstates(realEstates);
+                            adapter.setData(getListOfRealEstates());
+                        }
+                    }
+                });
+            }
+            this.configureRecyclerView();
+        }
+    }
+
     /**
      * Launches an activity
      * with a Parcelable (item clicked) carried by the intent
      */
-    private void launchActivityWithRealEstate(RealEstate realEstate, Class <? extends AppCompatActivity> activity) {
+    private void launchActivityWithRealEstate(RealEstate realEstate, Class<? extends AppCompatActivity> activity) {
         Intent intent = new Intent(getActivity(), activity);
         intent.putExtra(Constants.SEND_PARCELABLE, realEstate);
         startActivity(intent);

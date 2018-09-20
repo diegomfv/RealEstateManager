@@ -1,5 +1,6 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -196,4 +197,5 @@ public class AuthLoginActivity extends BaseActivity {
             return false;
         }
     }
+
 }

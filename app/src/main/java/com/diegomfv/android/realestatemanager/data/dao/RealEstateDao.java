@@ -56,6 +56,9 @@ public interface RealEstateDao {
     @Query("SELECT * FROM realestate ORDER BY type")
     LiveData<List<RealEstate>> getAllListingsOrderedByTypeLiveData();
 
+    @Query("SELECT * FROM realestate WHERE found=:found ORDER BY type")
+    LiveData<List<RealEstate>> getAllFoundListingsLiveData(boolean found);
+
     @Query("SELECT * FROM realestate ORDER BY type")
     List<RealEstate> getAllListingsOrderedByType();
 

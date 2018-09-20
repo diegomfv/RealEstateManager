@@ -777,7 +777,6 @@ public class SearchEngineActivity extends BaseActivity {
             /* If the real estate passes the filter, we set the found field to true and add
             * it to the list
             * */
-
             listOfRealEstate.get(i).setFound(true);
             listOfFoundRealEstates.add(listOfRealEstate.get(i));
         }
@@ -1096,8 +1095,8 @@ public class SearchEngineActivity extends BaseActivity {
                                 * has finished and we can launch next activity
                                 * */
                                 updateCounter++;
-                                if (list.size() - 1 == updateCounter) {
-                                    launchActivityWithCustomIntent();
+                                if (list.size() == updateCounter) {
+                                    launchActivityWithIntent();
                                 }
                             }
 
@@ -1111,10 +1110,10 @@ public class SearchEngineActivity extends BaseActivity {
         }
     }
 
-    private void launchActivityWithCustomIntent(){
-        Log.d(TAG, "launchActivityWithCustomIntent: called!");
+    private void launchActivityWithIntent () {
+        Log.d(TAG, "launchActivityWithIntent: called!");
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(Constants.INTENT_FROM_SEARCH_ENGINE, true);
+        intent.putExtra(Constants.INTENT_FROM_SEARCH_ENGINE, Constants.STRING_FROM_SEARCH_ENGINE);
         startActivity(intent);
     }
 }

@@ -1,5 +1,6 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -12,6 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.fragments.handset.main.FragmentHandsetListListingsMain;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.fragments.handset.search.FragmentHandsetListListingsSearch;
@@ -19,9 +21,15 @@ import com.diegomfv.android.realestatemanager.ui.fragments.tablet.main.FragmentT
 import com.diegomfv.android.realestatemanager.ui.fragments.tablet.main.FragmentTabletListListings;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
@@ -34,9 +42,6 @@ public class SearchResultsActivity extends BaseActivity {
 
     @BindView(R.id.toolbar_id)
     Toolbar toolbar;
-
-    @BindView(R.id.textView_please_insert_data_id)
-    TextView tvInsertData;
 
     @BindView(R.id.fragment1_container_id)
     FrameLayout fragment1Layout;
@@ -60,9 +65,7 @@ public class SearchResultsActivity extends BaseActivity {
 
         this.configureToolBar();
 
-        if (getRepository().getListOfFoundRealEstates().size() > 0) {
-            this.loadFragmentOrFragments();
-        }
+        this.loadFragmentOrFragments();
 
     }
 
@@ -134,15 +137,11 @@ public class SearchResultsActivity extends BaseActivity {
         loadFragmentOrFragments();
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     /**
      * Method that loads one or two fragments depending on the device
      */
     private void loadFragmentOrFragments() {
         Log.d(TAG, "loadFragmentOrFragments: called!");
-
-        hideTextViewShowFragments();
 
         if (findViewById(R.id.fragment2_container_id) == null) {
 
@@ -150,7 +149,7 @@ public class SearchResultsActivity extends BaseActivity {
              * */
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment1_container_id, FragmentHandsetListListingsSearch.newInstance())
+                    .replace(R.id.fragment1_container_id, FragmentHandsetListListingsMain.newInstance())
                     .commit();
 
         } else {
@@ -159,24 +158,14 @@ public class SearchResultsActivity extends BaseActivity {
              * */
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment1_container_id, FragmentTabletListListings.newInstance())
+                    .replace(R.id.fragment1_container_id, FragmentTabletListListings.newInstance())
                     .commit();
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment2_container_id, FragmentTabletItemDescription.newInstance())
+                    .replace(R.id.fragment2_container_id, FragmentTabletItemDescription.newInstance())
                     .commit();
         }
-    }
-
-    private void hideTextViewShowFragments() {
-        Log.d(TAG, "hideTextViewData: called!");
-        tvInsertData.setVisibility(View.GONE);
-        fragment1Layout.setVisibility(View.VISIBLE);
-        if (findViewById(R.id.fragment2_container_id) != null) {
-            findViewById(R.id.fragment2_container_id).setVisibility(View.VISIBLE);
-        }
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

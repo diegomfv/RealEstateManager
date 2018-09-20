@@ -83,7 +83,9 @@ public interface Constants {
     String INTENT_FROM_ACTIVITY = "intent_from_activity";
     String INTENT_FROM_CREATE = "intent_from_create";
     String INTENT_FROM_EDIT = "intent_from_edit";
+
     String INTENT_FROM_SEARCH_ENGINE = "intent_from_search_engine";
+    String STRING_FROM_SEARCH_ENGINE = "string_from_search_engine";
 
     String DIALOG_DESCRIPTION = "dialog_description";
     String DIALOG_ADDRESS = "dialog_address";

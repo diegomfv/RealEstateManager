@@ -45,7 +45,6 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  * to activity_main_activity_text_view_quantity
  * 2. Add String.valueOf() to convert int to String
  */
-
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -65,11 +64,15 @@ public class MainActivity extends BaseActivity {
 
     private boolean editModeActive;
 
+    /* Variable to differentiate when we are in the normal menu
+    and when we come from SearchEngineActivity (true: main menu).
+    * This is done for code reuse
+    */
+    private boolean mainMenu;
+
     private boolean accessInternalStorageGranted;
 
     private int currency;
-
-    private List<RealEstate> listOfRealEstates;
 
     private Unbinder unbinder;
 
@@ -81,6 +84,8 @@ public class MainActivity extends BaseActivity {
         Log.d(TAG, "onCreate: called!");
 
         this.editModeActive = false;
+
+        updateMainMenu();
 
         /* We delete the cache in MainActivity
          * */
@@ -98,15 +103,8 @@ public class MainActivity extends BaseActivity {
 
         this.checkInternalStoragePermissionGranted();
 
-        // TODO: 17/09/2018 Differentiate here if
-        // we come from any activity or SearchEngineActivity
+        this.loadFragmentOrFragments();
 
-        // TODO: 17/09/2018 Create a method for this
-        if (searchEngineActivityLaunchedThisActivity()) {
-            this.getAllFoundArticlesAndLoadFragmentOrFragments();
-        } else {
-            this.getAllListingsAndLoadFragmentOrFragments();
-        }
     }
 
     @Override
@@ -119,7 +117,17 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu: called!");
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        /* Depending on when we come from, we load a menu with all different
+         * options or just a menu where you can change the currency only
+         * */
+        if (mainMenu) {
+            getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        } else {
+            getMenuInflater().inflate(R.menu.currency_menu, menu);
+        }
+
         Utils.updateCurrencyIconWhenMenuCreated(this, currency, menu, R.id.menu_change_currency_button);
         return true;
     }
@@ -209,34 +217,35 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private boolean searchEngineActivityLaunchedThisActivity() {
-        Log.d(TAG, "searchEngineActivityLaunchedThisActivity: called!");
-        if (getIntent() != null
-                && getIntent().getExtras() != null) {
-            return getIntent().getExtras().getBoolean(Constants.INTENT_FROM_SEARCH_ENGINE);
-        }
-        return false;
+    public boolean getMainMenu () {
+        Log.d(TAG, "getMainMenu: called!");
+        return mainMenu;
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Method that returns the list of Real Estates in the database.
-     * It is accessible for the fragment
+     * Method to update mainMenu field. If we come from SearchEngineActivity, mainMenu will be
+     * false. Otherwise, it will be true
      */
-    public List<RealEstate> getListOfRealEstates() {
-        Log.d(TAG, "getListOfRealEstates: called!");
-        if (listOfRealEstates == null) {
-            return listOfRealEstates = new ArrayList<>();
+    private void updateMainMenu() {
+        Log.d(TAG, "updateMainMenu: called!");
+
+        if (getIntent() != null) {
+
+            if (getIntent().getExtras() != null) {
+
+                if (getIntent().getExtras().getString(Constants.INTENT_FROM_SEARCH_ENGINE, "")
+                        .equals(Constants.STRING_FROM_SEARCH_ENGINE)) {
+                    mainMenu = false;
+
+                } else {
+                    mainMenu = true;
+                }
+            }
+        } else {
+            mainMenu = true;
         }
-        return listOfRealEstates;
     }
 
-    private void setListOfRealEstates(List<RealEstate> list) {
-        Log.d(TAG, "setListOfRealEstates: called!");
-        listOfRealEstates = list;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void configureToolBar() {
         Log.d(TAG, "configureToolBar: called!");
@@ -290,77 +299,6 @@ public class MainActivity extends BaseActivity {
         }
         Utils.writeCurrentCurrencyShPref(this, currency);
         loadFragmentOrFragments();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    @SuppressLint("CheckResult")
-    private void getAllFoundArticlesAndLoadFragmentOrFragments() {
-        Log.d(TAG, "getAllFoundArticlesAndLoadFragmentOrFragments: called!");
-        getRepository().getAllFoundListingsRealEstateObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new Observer<List<RealEstate>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe: called!");
-
-                    }
-
-                    @Override
-                    public void onNext(List<RealEstate> realEstates) {
-                        Log.d(TAG, "onNext: " + realEstates);
-                        setListOfRealEstates(realEstates);
-                        loadFragmentOrFragments();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: called!");
-
-                    }
-                });
-    }
-
-
-    @SuppressLint("CheckResult")
-    private void getAllListingsAndLoadFragmentOrFragments() {
-        Log.d(TAG, "getAllListingsAndLoadFragmentOrFragments: called!");
-        getRepository().getAllListingsRealEstateObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new io.reactivex.Observer<List<RealEstate>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe: called!");
-
-                    }
-
-                    @Override
-                    public void onNext(List<RealEstate> realEstates) {
-                        Log.d(TAG, "onNext: " + realEstates);
-                        setListOfRealEstates(realEstates);
-                        loadFragmentOrFragments();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: called!");
-
-                    }
-                });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

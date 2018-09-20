@@ -48,6 +48,8 @@ public class DataRepository {
 
     private LiveData<List<RealEstate>> listOfListingsLiveData;
 
+    private LiveData<List<RealEstate>> listOfFoundListingsLiveData;
+
     private LiveData<List<ImageRealEstate>> listOfImagesRealEstateLiveData;
 
     private LiveData<List<PlaceRealEstate>> listOfPlacesRealEstateLiveData;
@@ -84,6 +86,7 @@ public class DataRepository {
         mDatabase = database;
         bitmapCacheSize = maxMemoryInMB / 1024 / 1024 / 8;
         listOfListingsLiveData = getAllListingsLiveData();
+        listOfFoundListingsLiveData = getAllFoundListingsLiveData();
         listOfImagesRealEstateLiveData = getAllImagesRealEstateLiveData();
         listOfPlacesRealEstateLiveData = getAllPlacesRealEstateLiveData();
         bitmapCache = getBitmapCache();
@@ -368,6 +371,11 @@ public class DataRepository {
         return listOfListingsLiveData;
     }
 
+    public LiveData<List<RealEstate>> getLiveDataAllFoundListings() {
+        Log.d(TAG, "getLiveDataAllFoundListings: called!");
+        return listOfFoundListingsLiveData;
+    }
+
     public LiveData<List<ImageRealEstate>> getLiveDataAllImagesRealEstate() {
         Log.d(TAG, "getLiveDataAllImagesRealEstate: called!");
         return listOfImagesRealEstateLiveData;
@@ -383,6 +391,11 @@ public class DataRepository {
     private LiveData<List<RealEstate>> getAllListingsLiveData() {
         Log.d(TAG, "getAllListingsLiveData: called!");
         return mDatabase.realStateDao().getAllListingsOrderedByTypeLiveData();
+    }
+
+    private LiveData<List<RealEstate>> getAllFoundListingsLiveData() {
+        Log.d(TAG, "getAllFoundListingsLiveData: called!");
+        return mDatabase.realStateDao().getAllFoundListingsLiveData(true);
     }
 
     private LiveData<List<ImageRealEstate>> getAllImagesRealEstateLiveData() {

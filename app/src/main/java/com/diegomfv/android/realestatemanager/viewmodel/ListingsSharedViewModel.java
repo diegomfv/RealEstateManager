@@ -27,6 +27,8 @@ public class ListingsSharedViewModel extends AndroidViewModel {
 
     private final LiveData<List<RealEstate>> observableListOfListings;
 
+    private final LiveData<List<RealEstate>> observableListOfFoundArticles;
+
     private final LiveData<List<ImageRealEstate>> observableListOfImagesRealEstate;
 
     private final MutableLiveData<RealEstate> itemSelected = new MutableLiveData<>();
@@ -36,8 +38,8 @@ public class ListingsSharedViewModel extends AndroidViewModel {
     public ListingsSharedViewModel(@NonNull Application application, DataRepository dataRepository) {
         super(application);
         Log.d(TAG, "ListingsSharedViewModel: called!");
-
         observableListOfListings = dataRepository.getLiveDataAllListings();
+        observableListOfFoundArticles = dataRepository.getLiveDataAllFoundListings();
         observableListOfImagesRealEstate = dataRepository.getLiveDataAllImagesRealEstate();
     }
 
@@ -60,6 +62,10 @@ public class ListingsSharedViewModel extends AndroidViewModel {
      * */
     public LiveData<List<RealEstate>> getObservableListOfListings() {
         return observableListOfListings;
+    }
+
+    public LiveData<List<RealEstate>> getObservableListOfFoundArticles() {
+        return observableListOfFoundArticles;
     }
 
     public LiveData<List<ImageRealEstate>> getObservableListOfImagesRealEstate () {
