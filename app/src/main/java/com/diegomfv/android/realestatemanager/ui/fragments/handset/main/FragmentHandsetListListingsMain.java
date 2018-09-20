@@ -99,6 +99,9 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Getter for listOfRealEstates
+     */
     private List<RealEstate> getListOfRealEstates() {
         Log.d(TAG, "getListOfRealEstates: called");
         if (listOfRealEstates == null) {
@@ -107,6 +110,9 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
         return listOfRealEstates;
     }
 
+    /**
+     * Setter for listOfRealEstates
+     */
     private void setListOfRealEstates(List<RealEstate> list) {
         Log.d(TAG, "setListOfRealEstates: called!");
         this.listOfRealEstates = list;
@@ -114,6 +120,9 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that configures the RecyclerView
+     */
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
