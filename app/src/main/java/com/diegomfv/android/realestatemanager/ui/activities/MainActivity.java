@@ -41,13 +41,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.launchActivity;
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
 /**
- * How crashes were solved:
- * 1. Modified the id of the view from activity_second_activity_text_view_main
- * to activity_main_activity_text_view_quantity
- * 2. Add String.valueOf() to convert int to String
- */
-
-/** MainActivity displays a different layout depending on the size of the screen (handsets or
+ * MainActivity displays a different layout depending on the size of the screen (handsets or
  * tablets). Additionally, it behaves different according to what activity launched it. If the activity
  * was launched from AuthLoginActivity, it will display all the listings in the database and
  * will behaves as "a main menu" with practically all the functionality available. If the activity
@@ -56,7 +50,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  * is responsible for carrying this information:
  * mainMenu = true --> AuthLoginActivity launched the activity (behave as MAIN MENU)
  * mainMenu = false --> SearchEngineActivity launched the activity (do not behave as MAIN MENU).
- * */
+ */
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -81,6 +75,12 @@ public class MainActivity extends BaseActivity {
     * This is done for code reuse
     */
     private boolean mainMenu;
+
+    /* Variable to differentiate if the device is a handset or a tablet
+     * true = is a handset
+     * false = is a tablet
+     * */
+    private boolean deviceIsHandset;
 
     private boolean accessInternalStorageGranted;
 
@@ -112,6 +112,8 @@ public class MainActivity extends BaseActivity {
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
+
+        deviceIsHandset = updateDeviceIsHandset();
 
         this.configureToolBar();
 
@@ -243,12 +245,21 @@ public class MainActivity extends BaseActivity {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Getter for mainMenu.
+     * Getter for mainMenu field.
      * It will be used by the fragment that displays a list of items.
      */
     public boolean getMainMenu() {
         Log.d(TAG, "getMainMenu: called!");
         return mainMenu;
+    }
+
+    /**
+     * Getter for deviceIsHandsetField
+     * It will be used by the fragment that displays a list of items.
+     */
+    public boolean getDeviceIsHanset() {
+        Log.d(TAG, "getDeviceIsHanset: called!");
+        return deviceIsHandset;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,6 +286,16 @@ public class MainActivity extends BaseActivity {
         } else {
             mainMenu = true;
         }
+    }
+
+    /**
+     * Method to get if the device is a handset or a tablet.
+     * "deviceIsHandset" variable stores
+     * this information
+     */
+    private boolean updateDeviceIsHandset() {
+        Log.d(TAG, "updateDeviceIsHandset: called!");
+        return findViewById(R.id.fragment2_container_id) == null;
     }
 
     /**

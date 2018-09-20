@@ -12,6 +12,7 @@ import com.diegomfv.android.realestatemanager.data.DataRepository;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
+import com.diegomfv.android.realestatemanager.ui.activities.MainActivity;
 import com.snatik.storage.Storage;
 
 import java.io.File;
@@ -66,11 +67,10 @@ public class BaseFragment extends Fragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected BaseActivity getBaseActivity () {
+    protected MainActivity getRootActivity () {
         Log.d(TAG, "getActivity: called!");
-        return (BaseActivity) getActivity();
+        return (MainActivity)getActivity();
     }
-
 
     protected String getImagesDir () {
         Log.d(TAG, "getImagesDir: called!");
