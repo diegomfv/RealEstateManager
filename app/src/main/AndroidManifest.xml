@@ -51,8 +51,6 @@
         <activity android:name=".ui.activities.ForgotPasswordActivity" />
         <activity android:name=".ui.activities.SignUpActivity" />
         <activity android:name=".ui.activities.PhotoGridActivity" />
-        <activity android:name=".ui.activities.SearchResultsActivity" />
-        <activity android:name=".ui.activities.SearchDetailActivity" />
         <activity android:name=".ui.activities.LoanSimulatorActivity" />
 
 
