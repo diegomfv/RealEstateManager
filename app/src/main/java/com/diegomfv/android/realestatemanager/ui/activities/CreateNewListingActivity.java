@@ -337,7 +337,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "configureToolBar: called!");
 
         setSupportActionBar(toolbar);
-        //setTitle("Create a New Listing");
         setOverflowButtonColor(toolbar, Color.WHITE);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

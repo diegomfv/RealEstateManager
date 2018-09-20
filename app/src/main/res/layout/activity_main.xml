@@ -8,6 +8,7 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_id"
+        android:theme="@style/ToolbarTheme"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
@@ -17,7 +18,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
         app:subtitleTextColor="@android:color/white"
-        app:title="@string/app_name"
         app:titleTextColor="@android:color/white" />
 
     <TextView

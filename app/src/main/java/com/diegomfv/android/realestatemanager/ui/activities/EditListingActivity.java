@@ -196,7 +196,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_edit_listing);
-        setTitle("Edit");
         unbinder = ButterKnife.bind(this);
 
         this.configureLayout();

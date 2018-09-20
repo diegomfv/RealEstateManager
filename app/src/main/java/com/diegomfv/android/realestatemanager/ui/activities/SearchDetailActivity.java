@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.fragments.handset.search.FragmentHandsetItemDescriptionSearch;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
 /**
@@ -43,7 +42,7 @@ public class SearchDetailActivity extends BaseActivity {
 
         this.configureActionBar();
 
-        loadFragment(bundle);
+        //loadFragment(bundle);
 
     }
 
@@ -78,17 +77,17 @@ public class SearchDetailActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void loadFragment(Bundle bundle) {
-        Log.d(TAG, "loadFragmentOrFragments: called!");
-
-        FragmentHandsetItemDescriptionSearch fragmentItemDescription = FragmentHandsetItemDescriptionSearch.newInstance();
-        fragmentItemDescription.setArguments(bundle);
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment2_container_id, fragmentItemDescription)
-                .commit();
-
-    }
+//    private void loadFragment(Bundle bundle) {
+//        Log.d(TAG, "loadFragmentOrFragments: called!");
+//
+//        FragmentHandsetItemDescriptionSearch fragmentItemDescription = FragmentHandsetItemDescriptionSearch.newInstance();
+//        fragmentItemDescription.setArguments(bundle);
+//
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .add(R.id.fragment2_container_id, fragmentItemDescription)
+//                .commit();
+//
+//    }
 
 }

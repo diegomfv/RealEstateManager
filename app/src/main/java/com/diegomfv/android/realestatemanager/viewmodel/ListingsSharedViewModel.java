@@ -12,6 +12,7 @@ import android.util.Log;
 import com.diegomfv.android.realestatemanager.RealEstateManagerApp;
 import com.diegomfv.android.realestatemanager.data.DataRepository;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 
 import java.util.List;
@@ -29,8 +30,6 @@ public class ListingsSharedViewModel extends AndroidViewModel {
 
     private final LiveData<List<RealEstate>> observableListOfFoundArticles;
 
-    private final LiveData<List<ImageRealEstate>> observableListOfImagesRealEstate;
-
     private final MutableLiveData<RealEstate> itemSelected = new MutableLiveData<>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,26 +39,31 @@ public class ListingsSharedViewModel extends AndroidViewModel {
         Log.d(TAG, "ListingsSharedViewModel: called!");
         observableListOfListings = dataRepository.getLiveDataAllListings();
         observableListOfFoundArticles = dataRepository.getLiveDataAllFoundListings();
-        observableListOfImagesRealEstate = dataRepository.getLiveDataAllImagesRealEstate();
     }
 
-    /** This method fills the MutableLiveData with the information from
+    /**
+     * This method fills the MutableLiveData with the information from
      * the item clicked in FragmentTabletItemDescription. When this gets modified,
-     * it automatically triggers the observer via getItemSelected()*/
-    public void selectItem (RealEstate realEstate) {
+     * it automatically triggers the observer via getItemSelected()
+     */
+    public void selectItem(RealEstate realEstate) {
         Log.d(TAG, "selectItem: called!");
         itemSelected.setValue(realEstate);
     }
 
-    /** Returns the MutableLiveDataObject which will be used to display
-     * data in the FragmentHandsetItemDescriptionMain*/
+    /**
+     * Returns the MutableLiveDataObject which will be used to display
+     * data in the FragmentHandsetItemDescription
+     */
     public LiveData<RealEstate> getItemSelected() {
         Log.d(TAG, "getItemSelected: called!");
         return itemSelected;
     }
 
-    /** Expose the LiveData so the UI can observe it.
-     * */
+    /**
+     * Expose the LiveData
+     * so the UI can observe it.
+     */
     public LiveData<List<RealEstate>> getObservableListOfListings() {
         return observableListOfListings;
     }
@@ -68,14 +72,11 @@ public class ListingsSharedViewModel extends AndroidViewModel {
         return observableListOfFoundArticles;
     }
 
-    public LiveData<List<ImageRealEstate>> getObservableListOfImagesRealEstate () {
-        return observableListOfImagesRealEstate;
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Factory to create the ViewModel with the repository available
-     * */
+    /**
+     * Factory to create the ViewModel with the repository available
+     */
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
 
         @NonNull

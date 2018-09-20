@@ -1,4 +1,4 @@
-package com.diegomfv.android.realestatemanager.ui.fragments.handset.main;
+package com.diegomfv.android.realestatemanager.ui.fragments;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,8 +22,6 @@ import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.activities.DetailActivity;
 import com.diegomfv.android.realestatemanager.ui.activities.EditListingActivity;
-import com.diegomfv.android.realestatemanager.ui.activities.MainActivity;
-import com.diegomfv.android.realestatemanager.ui.activities.SearchResultsActivity;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.Utils;
@@ -42,13 +39,11 @@ import butterknife.Unbinder;
  */
 
 // TODO: 12/09/2018 SOLD label touches price label
-public class FragmentHandsetListListingsMain extends BaseFragment {
+public class FragmentListListings extends BaseFragment {
 
-    private static final String TAG = FragmentHandsetListListingsMain.class.getSimpleName();
+    private static final String TAG = FragmentListListings.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private Unbinder unbinder;
 
     //RecyclerView
     @BindView(R.id.recyclerView_listings_id)
@@ -59,15 +54,24 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
 
     private List<RealEstate> listOfRealEstates;
 
-    int currency;
-
     private ListingsSharedViewModel listingsSharedViewModel;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static FragmentHandsetListListingsMain newInstance() {
+    int currency;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private Unbinder unbinder;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** Method that returns
+     * an instance of the Fragment
+     * */
+    public static FragmentListListings newInstance() {
         Log.d(TAG, "newInstance: called!");
-        return new FragmentHandsetListListingsMain();
+        return new FragmentListListings();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,7 +125,8 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Method that configures the RecyclerView
+     * Method that configures
+     * the RecyclerView
      */
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
@@ -150,7 +155,8 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
     }
 
     /**
-     * Method that configures onClick for recyclerView items
+     * Method that configures onClick
+     * for recyclerView items
      */
     private void configureOnClickRecyclerView() {
         Log.d(TAG, "configureOnClickRecyclerView: called!");
@@ -192,7 +198,8 @@ public class FragmentHandsetListListingsMain extends BaseFragment {
     }
 
     /**
-     * Method that creates the model to display the necessary information
+     * Method that creates the model
+     * to display the necessary information
      */
     private void createModel() {
         Log.d(TAG, "createModel: called!");

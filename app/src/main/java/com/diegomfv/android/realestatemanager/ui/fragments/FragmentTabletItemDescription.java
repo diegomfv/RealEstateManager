@@ -1,32 +1,23 @@
-package com.diegomfv.android.realestatemanager.ui.fragments.handset.main;
+package com.diegomfv.android.realestatemanager.ui.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalDescr;
 import com.diegomfv.android.realestatemanager.constants.Constants;
@@ -37,7 +28,7 @@ import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
-import com.diegomfv.android.realestatemanager.viewmodel.ItemDescriptionViewModel;
+import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -59,8 +50,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-
-import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Diego Fajardo on 16/08/2018.
@@ -68,9 +60,15 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 
 // TODO: 16/09/2018 Does not show Rooms correctly
 // TODO: 16/09/2018 Does not display the map correctly
-public class FragmentHandsetItemDescriptionMain extends BaseFragment {
+// TODO: 11/09/2018 Add "NOT AVAILABLE"
 
-    private static final String TAG = FragmentHandsetItemDescriptionMain.class.getSimpleName();
+/**
+ * This fragment is only used in tablets. The ViewModel retrieves the information of
+ * the MutableLiveData object. This information is used to fill the layout.
+ */
+public class FragmentTabletItemDescription extends BaseFragment {
+
+    private static final String TAG = FragmentHandsetItemDescription.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -118,19 +116,22 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private RealEstate realEstate;
+
+    private List<ImageRealEstate> listOfImagesRealEstate;
+
+    private List<PlaceRealEstate> listOfPlacesRealEstate;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private int currency;
 
     //RecyclerView Adapter
     private RVAdapterMediaHorizontalDescr adapter;
 
-    private RealEstate realEstate;
+    private ListingsSharedViewModel listingsSharedViewModel;
 
-    private List<ImageRealEstate> listOfImagesRealEstate;
-
-    //ViewModel
-    private ItemDescriptionViewModel itemDescriptionViewModel;
-
-    private Unbinder unbinder;
+    private boolean deviceLocationPermissionGranted;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -138,17 +139,20 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     private GoogleMap mMap;
 
-    private List<PlaceRealEstate> listOfPlacesRealEstate;
-
     private List<Marker> listOfMarkers;
-
-    private boolean deviceLocationPermissionGranted;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static FragmentHandsetItemDescriptionMain newInstance() {
+    private Unbinder unbinder;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** Method that returns
+     * an instance of the Fragment
+     * */
+    public static FragmentTabletItemDescription newInstance() {
         Log.d(TAG, "newInstance: called!");
-        return new FragmentHandsetItemDescriptionMain();
+        return new FragmentTabletItemDescription();
     }
 
     @Nullable
@@ -158,31 +162,17 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
         this.deviceLocationPermissionGranted = false;
 
-        if (getActivity() != null) {
-            this.currency = Utils.readCurrentCurrencyShPref(getActivity());
+        if (getRootActivity() != null) {
+            this.currency = Utils.readCurrentCurrencyShPref(getRootActivity());
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         View view = inflater.inflate(R.layout.fragment_item_description, container, false);
         this.unbinder = ButterKnife.bind(this, view);
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            realEstate = bundle.getParcelable(Constants.GET_PARCELABLE);
-            Log.i(TAG, "onCreateView: bundle = " + bundle);
-        }
-
-        this.configureRecyclerView();
-
-        if (realEstate != null) {
-            fillLayoutWithRealEstateInfo(realEstate);
-        }
-
-        Log.i(TAG, "onCreateView: tvSurfaceArea = " + tvSurfaceArea);
-
         this.checkDeviceLocationPermissionGranted();
 
-        this.createViewModel();
+        this.createModel();
 
         return view;
     }
@@ -196,58 +186,111 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // TODO: 11/09/2018 Add "NOT AVAILABLES"
-    private void fillLayoutWithRealEstateInfo(RealEstate realEstate) {
-        Log.d(TAG, "fillLayoutWithRealEstateInfo: called!");
-        setDescription(realEstate);
-        setSurfaceArea(realEstate);
-        setRooms(realEstate);
-        setAddress(realEstate);
-        setPrice(realEstate);
-        setSoldState(realEstate);
+    /**
+     * Getter of
+     * the real estate object
+     */
+    private RealEstate getRealEstate() {
+        Log.d(TAG, "getRealEstate: called!");
+        return realEstate;
     }
 
-    private void setDescription(RealEstate realEstate) {
+    /**
+     * Setter of
+     * the real estate object
+     */
+    private void setRealEstate(RealEstate realEstate) {
+        Log.d(TAG, "setRealEstate: called!");
+        this.realEstate = realEstate;
+    }
+
+    /**
+     * Getter for the list
+     * of images of the real estate object
+     */
+    private List<ImageRealEstate> getListOfImagesRealEstate() {
+        Log.d(TAG, "getRelatedImages: called!");
+        if (listOfImagesRealEstate == null) {
+            return listOfImagesRealEstate = new ArrayList<>();
+        }
+        return listOfImagesRealEstate;
+    }
+
+    /**
+     * Getter of
+     * the real estate object
+     */
+    private List<PlaceRealEstate> getListOfPlacesRealEstate() {
+        Log.d(TAG, "getListOfPlacesRealEstate: called!");
+        if (listOfPlacesRealEstate == null) {
+            return listOfPlacesRealEstate = new ArrayList<>();
+        }
+        return listOfPlacesRealEstate;
+    }
+
+    /**
+     * Getter of
+     * the real estate object
+     */
+    public List<Marker> getListOfMarkers() {
+        if (listOfMarkers == null) {
+            return listOfMarkers = new ArrayList<>();
+        }
+        return listOfMarkers;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void fillLayoutWithRealEstateInfo() {
+        Log.d(TAG, "fillLayoutWithRealEstateInfo: called!");
+        setDescription();
+        setSurfaceArea();
+        setRooms();
+        setAddress();
+        setPrice();
+        setSoldState();
+    }
+
+    private void setDescription() {
         Log.d(TAG, "setDescription: called!");
-        if (realEstate.getDescription().isEmpty()) {
+
+        if (getRealEstate().getDescription().isEmpty()) {
             cardViewDescription.setVisibility(View.GONE);
 
         } else {
-            tvDescription.setText(realEstate.getDescription());
+            tvDescription.setText(getRealEstate().getDescription());
         }
     }
 
-    private void setSurfaceArea(RealEstate realEstate) {
+    private void setSurfaceArea() {
         Log.d(TAG, "setSurfaceArea: called!");
-        if (realEstate.getSurfaceArea() == 0) {
+        if (getRealEstate().getSurfaceArea() == 0) {
             tvSurfaceArea.setText(R.string.information_not_available);
 
         } else {
-            tvSurfaceArea.setText(String.valueOf(realEstate.getSurfaceArea()));
+            tvSurfaceArea.setText(String.valueOf(getRealEstate().getSurfaceArea()));
         }
     }
 
-    public void setRooms(RealEstate realEstate) {
-        Log.d(TAG, "setRooms: called!");
-        Log.w(TAG, "setRooms: " + realEstate.getRooms().getBedrooms());
-        tvNumberBedrooms.setText(String.valueOf("Bedrooms -- " + String.valueOf(realEstate.getRooms().getBedrooms())));
-        tvNumberBathrooms.setText(String.valueOf("Bathrooms -- " + String.valueOf(realEstate.getRooms().getBathrooms())));
-        tvNumberOtherRooms.setText(String.valueOf("Other Rooms -- " + String.valueOf(realEstate.getRooms().getOtherRooms())));
+    public void setRooms() {
+        tvNumberBedrooms.setText(String.valueOf("Bedrooms -- " + getRealEstate().getRooms().getBedrooms()));
+        tvNumberBathrooms.setText(String.valueOf("Bathrooms -- " + getRealEstate().getRooms().getBathrooms()));
+        tvNumberOtherRooms.setText(String.valueOf("Other Rooms -- " + getRealEstate().getRooms().getOtherRooms()));
     }
 
-    private void setAddress(RealEstate realEstate) {
+    private void setAddress() {
         Log.d(TAG, "setLocation: called!");
-        tvStreet.setText(realEstate.getAddress().getStreet());
-        tvLocality.setText(realEstate.getAddress().getLocality());
-        tvCity.setText(realEstate.getAddress().getCity());
-        tvPostCode.setText(realEstate.getAddress().getPostcode());
+        tvStreet.setText(getRealEstate().getAddress().getStreet());
+        tvLocality.setText(getRealEstate().getAddress().getLocality());
+        tvCity.setText(getRealEstate().getAddress().getCity());
+        tvPostCode.setText(getRealEstate().getAddress().getPostcode());
     }
 
     // TODO: 28/08/2018 Use Placeholders
     @SuppressLint("SetTextI18n")
-    private void setPrice(RealEstate realEstate) {
+    private void setPrice() {
         Log.d(TAG, "setPrice: called!");
-        if (realEstate.getPrice() == 0.0f) {
+        if (getRealEstate().getPrice() == 0.0f) {
             tvPrice.setText(R.string.information_not_available);
 
         } else {
@@ -255,14 +298,14 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
                     Utils.getCurrencySymbol(currency)
                             + " "
                             + (Utils.formatToDecimals((int) Utils.getPriceAccordingToCurrency(
-                            currency, realEstate.getPrice()), currency)));
+                            currency, getRealEstate().getPrice()), currency)));
         }
     }
 
-    private void setSoldState (RealEstate realEstate) {
+    private void setSoldState () {
         Log.d(TAG, "setSoldState: called!");
-        if (realEstate.getDateSale() != null) {
-            tvSold.setText("SOLD on " + realEstate.getDateSale());
+        if (getRealEstate().getDateSale() != null) {
+            tvSold.setText("SOLD on " + getRealEstate().getDateSale());
             tvSold.setTextColor(getResources().getColor(android.R.color.white));
             tvSold.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         } else {
@@ -274,43 +317,156 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //VIEWMODEL
+    /**
+     * Method that creates the model to display the necessary information
+     */
+    private void createModel() {
+        Log.d(TAG, "createModel: called!");
 
-    private void createViewModel() {
-        Log.d(TAG, "createViewModel: called!");
+        if (getRootActivity() != null) {
 
-        ItemDescriptionViewModel.Factory factory = new ItemDescriptionViewModel.Factory(getApp());
-        this.itemDescriptionViewModel = ViewModelProviders
-                .of(this, factory)
-                .get(ItemDescriptionViewModel.class);
+            ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
+            this.listingsSharedViewModel = ViewModelProviders
+                    .of(getRootActivity(), factory)
+                    .get(ListingsSharedViewModel.class);
 
-        subscribeToModel(itemDescriptionViewModel);
+            subscribeToModel();
+        }
     }
 
-    private void subscribeToModel(ItemDescriptionViewModel itemDescriptionViewModel) {
+    /**
+     * Method to subscribe to model. Depending on mainMenu variable (see MainActivity) we show
+     * some information or another ("mainMenu = true" displays all the listings in the database
+     * whereas "mainMenu = false" displays all the found articles).
+     */
+    private void subscribeToModel() {
         Log.d(TAG, "subscribeToModel: called!");
 
-        if (itemDescriptionViewModel != null) {
+        if (listingsSharedViewModel != null) {
 
-            this.itemDescriptionViewModel.getObservablePlacesRealEstate().observe(this, new Observer<List<PlaceRealEstate>>() {
+            listingsSharedViewModel.getItemSelected().observe(this, new Observer<RealEstate>() {
                 @Override
-                public void onChanged(@Nullable List<PlaceRealEstate> placeRealEstates) {
-                    Log.d(TAG, "onChanged: called!");
-                    listOfPlacesRealEstate = placeRealEstates;
-                    updateMapWithPins();
+                public void onChanged(@Nullable RealEstate realEstate) {
+                    Log.d(TAG, "onChanged: called! --> real estate = " + realEstate);
+                    setRealEstate(realEstate);
 
-                }
-            });
-
-            this.itemDescriptionViewModel.getObservableImagesRealEstate().observe(this, new Observer<List<ImageRealEstate>>() {
-                @Override
-                public void onChanged(@Nullable List<ImageRealEstate> imageRealEstates) {
-                    Log.d(TAG, "onChanged: called!");
-                    listOfImagesRealEstate = imageRealEstates;
-                    Log.w(TAG, "onChanged: imageRealEstates.size(): " + imageRealEstates.size());
+                    /* We get all the related info to the real estate and immediately configure
+                     * the layout with all that information
+                     * */
+                    setInfoRelatedToRealEstate();
                 }
             });
         }
+    }
+
+    /**
+     * Method that uses RxJava to retrieve all the information related to the real estate (already
+     * retrieved by the ViewModel). When all the information is obtained, the layout is filled with
+     * that information.
+     */
+    @SuppressLint("CheckResult")
+    private void setInfoRelatedToRealEstate() {
+        Log.d(TAG, "setInfoRelatedToRealEstate: called!");
+
+        getRepository().getAllImagesRealEstateObservable()
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new io.reactivex.Observer<List<ImageRealEstate>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe images: called!");
+
+                    }
+
+                    @Override
+                    public void onNext(List<ImageRealEstate> imageRealEstates) {
+                        Log.d(TAG, "onNext images: called!");
+
+                        /* Firstly, we clear the listOfImages related to the real estate */
+                        getListOfImagesRealEstate().clear();
+
+                        /* Then we fill the listOfImagesRealEstate with those images
+                         * related to the realEstate
+                         * */
+                        for (int i = 0; i < getRealEstate().getListOfImagesIds().size(); i++) {
+
+                            for (int j = 0; j < imageRealEstates.size(); j++) {
+
+                                if (getRealEstate().getListOfImagesIds().get(i).equals(imageRealEstates.get(j).getId())) {
+                                    getListOfImagesRealEstate().add(imageRealEstates.get(j));
+                                }
+                            }
+                        }
+
+                        /* Once done,
+                        we do the same with the places
+                        * */
+                        getRepository().getAllPlacesRealEstateObservable()
+                                .observeOn(Schedulers.io())
+                                .subscribeOn(AndroidSchedulers.mainThread())
+                                .subscribeWith(new io.reactivex.Observer<List<PlaceRealEstate>>() {
+                                    @Override
+                                    public void onSubscribe(Disposable d) {
+                                        Log.d(TAG, "onSubscribe places: called!");
+
+                                    }
+
+                                    @Override
+                                    public void onNext(List<PlaceRealEstate> placeRealEstates) {
+                                        Log.d(TAG, "onNext places: called!");
+
+                                        /* Firstly, we clear the listOfPlaces related to the real estate */
+                                        getListOfPlacesRealEstate().clear();
+
+                                        /* Then we fill the listOfPlacesRealEstate with those places
+                                         * related to the realEstate
+                                         * */
+                                        for (int i = 0; i < getRealEstate().getListOfNearbyPointsOfInterestIds().size(); i++) {
+
+                                            for (int j = 0; j < placeRealEstates.size(); j++) {
+
+                                                if (getRealEstate().getListOfNearbyPointsOfInterestIds().get(i)
+                                                        .equals(placeRealEstates.get(j).getId())) {
+                                                    getListOfPlacesRealEstate().add(placeRealEstates.get(j));
+                                                }
+                                            }
+                                        }
+
+                                        /* Once done,
+                                         * we can set the layout
+                                         * */
+                                        configureRecyclerView();
+                                        fillLayoutWithRealEstateInfo();
+                                        updateMapWithPins();
+
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        Log.e(TAG, "onError places: " + e.getMessage());
+
+                                    }
+
+                                    @Override
+                                    public void onComplete() {
+                                        Log.d(TAG, "onComplete places: called!");
+
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError places: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete places: called!");
+
+                    }
+                });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,31 +474,33 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
-        if (realEstate.getListOfImagesIds() == null
-            || realEstate.getListOfImagesIds().size() == 0) {
-            cardViewRecyclerView.setVisibility(View.GONE);
+        if (getRealEstate() != null) {
 
+            if (getRealEstate().getListOfImagesIds() == null
+                    || realEstate.getListOfImagesIds().size() == 0) {
+                cardViewRecyclerView.setVisibility(View.GONE);
 
-        } else {
+            } else {
 
-            if (getActivity() != null) {
+                if (getRootActivity() != null) {
 
-                this.recyclerViewMedia.setHasFixedSize(true);
-                this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
-                        getActivity(), LinearLayoutManager.HORIZONTAL, false));
-                this.adapter = new RVAdapterMediaHorizontalDescr(
-                        getActivity(),
-                        getRepository(),
-                        getInternalStorage(),
-                        getImagesDir(),
-                        realEstate,
-                        getGlide(),
-                        currency);
+                    this.recyclerViewMedia.setHasFixedSize(true);
+                    this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
+                            getRootActivity(), LinearLayoutManager.HORIZONTAL, false));
+                    this.adapter = new RVAdapterMediaHorizontalDescr(
+                            getRootActivity(),
+                            getRepository(),
+                            getInternalStorage(),
+                            getImagesDir(),
+                            getRealEstate(),
+                            getGlide(),
+                            currency);
 
-                this.recyclerViewMedia.setAdapter(this.adapter);
+                    this.recyclerViewMedia.setAdapter(this.adapter);
 
-                this.configureOnClickRecyclerView();
+                    this.configureOnClickRecyclerView();
 
+                }
             }
         }
     }
@@ -355,12 +513,12 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
                     @Override
                     public void onItemClicked(RecyclerView recyclerViewMedia, int position, View v) {
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
-                        Log.w(TAG, "onItemClicked: key = " + adapter.getKey(position) );
+                        Log.w(TAG, "onItemClicked: key = " + adapter.getKey(position));
                         String key = adapter.getKey(position);
 
-                        for (int i = 0; i < listOfImagesRealEstate.size(); i++) {
-                            if (listOfImagesRealEstate.get(i).getId().equals(key)){
-                                ToastHelper.toastShort(getActivity(), listOfImagesRealEstate.get(i).getDescription());
+                        for (int i = 0; i < getListOfImagesRealEstate().size(); i++) {
+                            if (getListOfImagesRealEstate().get(i).getId().equals(key)) {
+                                ToastHelper.toastShort(getRootActivity(), getListOfImagesRealEstate().get(i).getDescription());
                             }
                         }
                     }
@@ -372,18 +530,15 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
     private void checkDeviceLocationPermissionGranted() {
         Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
 
-        if (getActivity() != null) {
-            if (Utils.checkPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-                if (Utils.checkPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
+        if (getRootActivity() != null) {
+            if (Utils.checkPermission(getRootActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (Utils.checkPermission(getRootActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
                     deviceLocationPermissionGranted = true;
 
                     if (isGooglePlayServicesOK()) {
                         initMap();
                     }
                 }
-
-            } else {
-                Utils.requestPermission((AppCompatActivity) getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
             }
         }
 
@@ -391,32 +546,15 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public List<PlaceRealEstate> getListOfPlacesRealEstate() {
-        if (listOfPlacesRealEstate == null) {
-            return listOfPlacesRealEstate = new ArrayList<>();
-        }
-        return listOfPlacesRealEstate;
-    }
-
-    public List<Marker> getListOfMarkers() {
-        if (listOfMarkers == null) {
-            return listOfMarkers = new ArrayList<>();
-        }
-        return listOfMarkers;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //MAP
-
     /**
-     * Checks if the user has the correct
-     * Google Play Services Version
+     * Method that checks if the user has the correct
+     * Google Play Services Version in order
+     * to load the map
      */
     public boolean isGooglePlayServicesOK() {
         Log.d(TAG, "isGooglePlayServicesOK: called!");
 
-        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getActivity());
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getRootActivity());
 
         if (available == ConnectionResult.SUCCESS) {
             //Everything is fine and the user can make map requests
@@ -426,23 +564,23 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
         } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
             //There is an error but we can resolve it
             Log.d(TAG, "isGooglePlayServicesOK: an error occurred but we can fix it");
-            if (getActivity() != null) {
+            if (getRootActivity() != null) {
                 Dialog dialog = GoogleApiAvailability.getInstance()
-                        .getErrorDialog(getActivity(), available, Constants.REQUEST_ERROR_DIALOG);
+                        .getErrorDialog(getRootActivity(), available, Constants.REQUEST_ERROR_DIALOG);
                 dialog.show();
             }
 
         } else {
             Log.d(TAG, "isGooglePlayServicesOK: an error occurred; you cannot make map requests");
-            if (getActivity() != null) {
-                ToastHelper.toastLong(getActivity(), this.getResources().getString(R.string.cant_make_map_requests));
+            if (getRootActivity() != null) {
+                ToastHelper.toastLong(getRootActivity(), this.getResources().getString(R.string.cant_make_map_requests));
             }
         }
         return false;
     }
 
     /**
-     * Method used to initialise the map
+     * Method that initialises the map
      */
     private void initMap() {
         Log.d(TAG, "initMap: called!");
@@ -482,13 +620,13 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
     }
 
     /**
-     * Method used to get the user's location
+     * Method that retrieves the user's location
      */
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: called!");
 
-        if (getActivity() != null) {
-            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        if (getRootActivity() != null) {
+            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getRootActivity());
         }
 
         try {
@@ -513,8 +651,6 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
                                 new LatLng(realEstate.getLatitude(), realEstate.getLongitude()),
                                 Constants.MAPS_STATIC_DEFAULT_ZOOM);
 
-                        updateMapWithPins();
-
                     } else {
                         Log.d(TAG, "onComplete: current location is null");
                     }
@@ -537,10 +673,15 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
     }
 
+    /**
+     * Fills the map with pins:
+     * real estate location
+     * nearby points of interest location
+     */
     private void updateMapWithPins() {
         Log.d(TAG, "updateMapWithPins: called!");
 
-        if (mMap != null) {
+        if (mMap != null && getRealEstate() != null) {
 
             if (!getListOfPlacesRealEstate().isEmpty()) {
                 Log.i(TAG, "displayPinsInMap: listOfPlaces is NOT EMPTY");
@@ -551,15 +692,15 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
                 mMap.clear();
 
                 /* We add a pin with the real estate
-                * */
-                addMarkerToMapRealEstate(realEstate);
+                 * */
+                addMarkerToMapRealEstate(getRealEstate());
 
                 /* We get all those places that are related to the real estate (if there are any)
                  * */
-                if (realEstate.getListOfNearbyPointsOfInterestIds() != null
-                        && realEstate.getListOfNearbyPointsOfInterestIds().size() > 0) {
+                if (getRealEstate().getListOfNearbyPointsOfInterestIds() != null
+                        && getRealEstate().getListOfNearbyPointsOfInterestIds().size() > 0) {
 
-                    List<String> listOfPlacesKeys = realEstate.getListOfNearbyPointsOfInterestIds();
+                    List<String> listOfPlacesKeys = getRealEstate().getListOfNearbyPointsOfInterestIds();
 
                     for (int i = 0; i < listOfPlacesKeys.size(); i++) {
                         for (int j = 0; j < getListOfPlacesRealEstate().size(); j++) {
@@ -580,7 +721,10 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
         }
     }
 
-    private void addMarkerToMapRealEstate (RealEstate realEstate) {
+    /**
+     * Adds the real estate pin to the map
+     */
+    private void addMarkerToMapRealEstate(RealEstate realEstate) {
         Log.d(TAG, "addMarketToMapRealEstate: called!");
 
         MarkerOptions options;
@@ -598,10 +742,13 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
         /* We fill the listOfMarkers and the map with the markers
          * */
-        listOfMarkers.add(mMap.addMarker(options));
+        getListOfMarkers().add(mMap.addMarker(options));
 
     }
 
+    /**
+     * Adds the point of interest to the map
+     */
     private void addMarkerToMapPlaceRealEstate(PlaceRealEstate placeRealEstate) {
         Log.d(TAG, "addMarkerToMapPlaceRealEstate: called!");
 
@@ -620,17 +767,18 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
 
         /* We fill the listOfMarkers and the map with the markers
          * */
-        listOfMarkers.add(mMap.addMarker(options));
+        getListOfMarkers().add(mMap.addMarker(options));
     }
 
-    //MAP LISTENERS
-
+    /**
+     * Map Listeners
+     */
     private GoogleMap.OnInfoWindowClickListener onInfoWindowClickListener = new GoogleMap.OnInfoWindowClickListener() {
         @Override
         public void onInfoWindowClick(Marker marker) {
             Log.d(TAG, "onInfoWindowClick: called!");
-            if (getActivity() != null) {
-                ToastHelper.toastNotImplemented(getActivity());
+            if (getRootActivity() != null) {
+                ToastHelper.toastNotImplemented(getRootActivity());
             }
         }
     };
@@ -643,7 +791,4 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
             return true;
         }
     };
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
 }

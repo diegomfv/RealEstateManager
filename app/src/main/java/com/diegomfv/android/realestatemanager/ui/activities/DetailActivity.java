@@ -1,12 +1,9 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -16,8 +13,7 @@ import android.view.View;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.fragments.handset.main.FragmentHandsetItemDescriptionMain;
-import com.diegomfv.android.realestatemanager.util.ToastHelper;
+import com.diegomfv.android.realestatemanager.ui.fragments.FragmentHandsetItemDescription;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
 import butterknife.BindView;
@@ -148,7 +144,7 @@ public class DetailActivity extends BaseActivity {
     private void loadFragment(Bundle bundle) {
         Log.d(TAG, "loadFragmentOrFragments: called!");
 
-        FragmentHandsetItemDescriptionMain fragmentItemDescription = FragmentHandsetItemDescriptionMain.newInstance();
+        FragmentHandsetItemDescription fragmentItemDescription = FragmentHandsetItemDescription.newInstance();
         fragmentItemDescription.setArguments(bundle);
 
         getSupportFragmentManager()

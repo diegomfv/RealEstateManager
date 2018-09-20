@@ -8,12 +8,17 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_id"
+        android:theme="@style/ToolbarTheme"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
-        app:title="@string/app_name"
-        app:titleTextColor="@android:color/white"
-        app:navigationIcon="@drawable/ic_arrow_back_white_24dp"/>
+        android:elevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+        app:subtitleTextColor="@android:color/white"
+        app:titleTextColor="@android:color/white" />
 
     <TextView
         android:id="@+id/textView_please_insert_data_id"

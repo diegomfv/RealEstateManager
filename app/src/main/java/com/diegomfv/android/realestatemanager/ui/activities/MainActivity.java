@@ -1,12 +1,12 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -17,27 +17,16 @@ import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
-import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.fragments.handset.main.FragmentHandsetListListingsMain;
-import com.diegomfv.android.realestatemanager.ui.fragments.tablet.main.FragmentTabletItemDescription;
-import com.diegomfv.android.realestatemanager.ui.fragments.tablet.main.FragmentTabletListListings;
+import com.diegomfv.android.realestatemanager.ui.fragments.FragmentHandsetItemDescription;
+import com.diegomfv.android.realestatemanager.ui.fragments.FragmentListListings;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
-import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
-import static com.diegomfv.android.realestatemanager.util.Utils.launchActivity;
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
 /**
@@ -225,23 +214,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Depending on mainMenu, on Back pressed behaves one way or another. With mainMenu = true,
-     * user can return to AuthLoginAtivity via a dialog that will pop-up. With mainMenu = false,
-     * the user will go to SearchEngineActivity
-     */
-    @Override
-    public void onBackPressed() {
-        Log.d(TAG, "onBackPressed: called!");
-
-        if (mainMenu) {
-            launchAreYouSureDialog();
-
-        } else {
-            Utils.launchActivity(this, SearchEngineActivity.class);
-        }
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -270,22 +242,8 @@ public class MainActivity extends BaseActivity {
      */
     private void updateMainMenu() {
         Log.d(TAG, "updateMainMenu: called!");
-
-        if (getIntent() != null) {
-
-            if (getIntent().getExtras() != null) {
-
-                if (getIntent().getExtras().getString(Constants.INTENT_FROM_SEARCH_ENGINE, "")
-                        .equals(Constants.STRING_FROM_SEARCH_ENGINE)) {
-                    mainMenu = false;
-
-                } else {
-                    mainMenu = true;
-                }
-            }
-        } else {
-            mainMenu = true;
-        }
+        Log.w(TAG, "updateMainMenu: getIntent.getExtras() = " + getIntent().getExtras());
+        mainMenu = getIntent().getExtras() == null;
     }
 
     /**
@@ -300,20 +258,40 @@ public class MainActivity extends BaseActivity {
 
     /**
      * Method to configure the toolbar.
+     * Depending on mainMenu, on the button behaves one way or another. With mainMenu = true,
+     * user can return to AuthLoginAtivity via a dialog that will pop-up. With mainMenu = false,
+     * the user will go to SearchEngineActivity
      */
     private void configureToolBar() {
         Log.d(TAG, "configureToolBar: called!");
-
         setSupportActionBar(toolbar);
         setOverflowButtonColor(toolbar, Color.WHITE);
+
+        setToolbarTitle();
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: called!");
-                onBackPressed();
+                if (mainMenu) {
+                    launchAreYouSureDialog();
+                } else {
+                    Utils.launchActivity(MainActivity.this, SearchEngineActivity.class);
+                }
             }
         });
+    }
+
+    /**
+     * Method to set the toolbar title
+     */
+    private void setToolbarTitle() {
+        Log.d(TAG, "setToolbarTitle: called!");
+        if (mainMenu) {
+            toolbar.setTitle("Main Menu");
+        } else {
+            toolbar.setTitle("Found Listings");
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -338,7 +316,6 @@ public class MainActivity extends BaseActivity {
             toolbar.setSubtitle(null);
             editModeActive = false;
         }
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -365,28 +342,18 @@ public class MainActivity extends BaseActivity {
 
         hideTextViewShowFragments();
 
-        if (findViewById(R.id.fragment2_container_id) == null) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment1_container_id, FragmentListListings.newInstance())
+                .commit();
 
-            /* Code for handsets
-             * */
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment1_container_id, FragmentHandsetListListingsMain.newInstance())
-                    .commit();
-
-        } else {
-
-            /* Code for tablets
-             * */
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment1_container_id, FragmentTabletListListings.newInstance())
-                    .commit();
+        if (!deviceIsHandset) {
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment2_container_id, FragmentTabletItemDescription.newInstance())
+                    .replace(R.id.fragment2_container_id, FragmentHandsetItemDescription.newInstance())
                     .commit();
+
         }
     }
 

@@ -284,7 +284,7 @@ public class SearchEngineActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: called!");
-                onBackPressed();
+                Utils.launchActivity(SearchEngineActivity.this, MainActivity.class);
             }
         });
 
