@@ -466,7 +466,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private void setListeners(final CrystalSeekbar seekBar) {
         Log.d(TAG, "setListeners: called!");
-
         seekBar.setOnSeekbarChangeListener(new OnSeekbarChangeListener() {
             @Override
             public void valueChanged(Number value) {
@@ -515,6 +514,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "updateRealEstateCache: called!");
         this.updateStringValues();
         this.updateIntegerValues();
+        this.updateBooleanValues();
     }
 
     private void updateIntegerValues() {
@@ -557,6 +557,11 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void updateDatePutRealEstateCacheCache() {
         Log.d(TAG, "updateDatePutRealEstateCacheCache: called!");
         this.getRealEstateCache().setDatePut(Utils.getTodayDate());
+    }
+
+    private void updateBooleanValues () {
+        Log.d(TAG, "updateBooleanValues: called!");
+        this.getRealEstateCache().setFound(false);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

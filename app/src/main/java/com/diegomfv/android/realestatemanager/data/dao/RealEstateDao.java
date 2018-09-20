@@ -59,6 +59,9 @@ public interface RealEstateDao {
     @Query("SELECT * FROM realestate ORDER BY type")
     List<RealEstate> getAllListingsOrderedByType();
 
+    @Query("SELECT * FROM realestate WHERE found=:found ORDER BY type")
+    List<RealEstate> getAllFoundListings(boolean found);
+
     // -------------------
     // INSERT
     @Insert

@@ -17,7 +17,7 @@ import java.util.List;
  * Created by Diego Fajardo on 05/08/2018.
  */
 
-@Entity (tableName = "realestate")
+@Entity(tableName = "realestate")
 public class RealEstate implements Parcelable {
 
     @PrimaryKey
@@ -48,9 +48,6 @@ public class RealEstate implements Parcelable {
     @ColumnInfo(name = "nearby_points_of_interest")
     private List<String> listOfNearbyPointsOfInterestIds;
 
-    //true: available; false: sold
-    private boolean status;
-
     @ColumnInfo(name = "date_put")
     private String datePut;
 
@@ -58,18 +55,21 @@ public class RealEstate implements Parcelable {
     @ColumnInfo(name = "date_sale")
     private String dateSale;
 
-    //email of the agent
+    //Email of the agent
     private String agent;
+
+    //Found (true if a field was found using the Search Engine)
+    private boolean found;
 
     //////////////////////////////////////////////////////
 
-    /** Used for when reading from the table
-     * */
+    /**
+     * Used for when reading from the table
+     */
     public RealEstate(@NonNull String id, String type, int surfaceArea, int price, RoomsRealEstate rooms,
                       String description, List<String> listOfImagesIds, AddressRealEstate address,
-                      double latitude, double longitude, boolean status,
-                      List<String> listOfNearbyPointsOfInterestIds, String datePut,
-                      String dateSale, String agent) {
+                      double latitude, double longitude, List<String> listOfNearbyPointsOfInterestIds,
+                      String datePut, String dateSale, String agent, boolean found) {
         this.id = id;
         this.type = type;
         this.surfaceArea = surfaceArea;
@@ -80,15 +80,16 @@ public class RealEstate implements Parcelable {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.status = status;
         this.listOfNearbyPointsOfInterestIds = listOfNearbyPointsOfInterestIds;
         this.datePut = datePut;
         this.dateSale = dateSale;
         this.agent = agent;
+        this.found = found;
     }
 
-    /** Used to insert a new object in the Object Relational Mapping Library
-     * */
+    /**
+     * Used to insert a new object in the Object Relational Mapping Library
+     */
     // Use the Ignore annotation so Room knows that it has to use the other constructor instead
     @Ignore
     private RealEstate(final Builder builder) {
@@ -101,16 +102,16 @@ public class RealEstate implements Parcelable {
         this.listOfImagesIds = builder.listOfImages;
         this.address = builder.address;
         this.listOfNearbyPointsOfInterestIds = builder.listOfNearbyPointsOfInterestIds;
-        this.status = builder.status;
         this.datePut = builder.datePut;
         this.dateSale = builder.dateSale;
         this.agent = builder.agent;
+        this.found = builder.found;
 
     }
 
     @Ignore
     //Copy Constructor
-    public RealEstate (RealEstate other) {
+    public RealEstate(RealEstate other) {
         this.id = other.id;
         this.type = other.type;
         this.surfaceArea = other.surfaceArea;
@@ -122,10 +123,10 @@ public class RealEstate implements Parcelable {
         this.latitude = other.latitude;
         this.longitude = other.longitude;
         this.listOfNearbyPointsOfInterestIds = other.listOfNearbyPointsOfInterestIds;
-        this.status = other.status;
         this.datePut = other.datePut;
         this.dateSale = other.dateSale;
         this.agent = other.agent;
+        this.found = other.found;
     }
 
     public String getId() {
@@ -152,9 +153,13 @@ public class RealEstate implements Parcelable {
         this.surfaceArea = surfaceArea;
     }
 
-    public int getPrice () { return price; }
+    public int getPrice() {
+        return price;
+    }
 
-    public void setPrice (int price) { this.price = price; }
+    public void setPrice(int price) {
+        this.price = price;
+    }
 
     public RoomsRealEstate getRooms() {
         return rooms;
@@ -172,9 +177,13 @@ public class RealEstate implements Parcelable {
         this.description = description;
     }
 
-    public List<String> getListOfImagesIds() { return listOfImagesIds; }
+    public List<String> getListOfImagesIds() {
+        return listOfImagesIds;
+    }
 
-    public void setListOfImagesIds(List<String> listOfImagesIds) { this.listOfImagesIds = listOfImagesIds; }
+    public void setListOfImagesIds(List<String> listOfImagesIds) {
+        this.listOfImagesIds = listOfImagesIds;
+    }
 
     public AddressRealEstate getAddress() {
         return address;
@@ -208,14 +217,6 @@ public class RealEstate implements Parcelable {
         this.listOfNearbyPointsOfInterestIds = listOfNearbyPointsOfInterest;
     }
 
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
     public String getDatePut() {
         return datePut;
     }
@@ -240,6 +241,14 @@ public class RealEstate implements Parcelable {
         this.agent = agent;
     }
 
+    public boolean getFound() {
+        return found;
+    }
+
+    public void setFound(boolean found) {
+        this.found = found;
+    }
+
     public static class Builder {
 
         private String id;
@@ -256,102 +265,101 @@ public class RealEstate implements Parcelable {
         private double latitude;
         private double longitude;
         private List<String> listOfNearbyPointsOfInterestIds;
-        private boolean status;
         private String datePut;
         private String dateSale;
         private String agent;
+        private boolean found;
 
-        public Builder setId (String id) {
+        public Builder setId(String id) {
             this.id = id;
             return this;
         }
 
-        public Builder setType (String type) {
+        public Builder setType(String type) {
             this.type = type;
             return this;
         }
 
-        public Builder setSurfaceArea (int surfaceArea) {
+        public Builder setSurfaceArea(int surfaceArea) {
             this.surfaceArea = surfaceArea;
             return this;
         }
 
-        public Builder setPrice (int price) {
+        public Builder setPrice(int price) {
             this.price = price;
             return this;
         }
 
-        public Builder setBedrooms (int bedrooms) {
+        public Builder setBedrooms(int bedrooms) {
             this.bedrooms = bedrooms;
             return this;
         }
 
-        public Builder setBathrooms (int bathrooms) {
+        public Builder setBathrooms(int bathrooms) {
             this.bathrooms = bathrooms;
             return this;
         }
 
-        public Builder setOtherRooms (int otherRooms){
+        public Builder setOtherRooms(int otherRooms) {
             this.otherRooms = otherRooms;
             return this;
         }
 
-        public Builder setDescription (String description) {
+        public Builder setDescription(String description) {
             this.description = description;
             return this;
         }
 
-        public Builder setImages (List<String> listOfImages) {
+        public Builder setImages(List<String> listOfImages) {
             this.listOfImages = listOfImages;
             return this;
         }
 
-        public Builder setAddress (AddressRealEstate address) {
+        public Builder setAddress(AddressRealEstate address) {
             this.address = address;
             return this;
         }
 
-        public Builder setLatitude (double latitude) {
+        public Builder setLatitude(double latitude) {
             this.latitude = latitude;
             return this;
         }
 
-        public Builder longitude (double longitude) {
+        public Builder longitude(double longitude) {
             this.longitude = longitude;
             return this;
         }
 
-        public Builder setNearbyPointsOfInterestIds (List<String> listOfNearbyPointsOfInterestIds){
+        public Builder setNearbyPointsOfInterestIds(List<String> listOfNearbyPointsOfInterestIds) {
             this.listOfNearbyPointsOfInterestIds = listOfNearbyPointsOfInterestIds;
             return this;
         }
 
-        public Builder setStatus (boolean status) {
-            this.status = status;
-            return this;
-        }
-
-        public Builder setDatePut (String datePut) {
+        public Builder setDatePut(String datePut) {
             this.datePut = datePut;
             return this;
         }
 
-        public Builder setDateSale (String dateSale) {
+        public Builder setDateSale(String dateSale) {
             this.dateSale = dateSale;
             return this;
         }
 
-        public Builder setAgent (String agent) {
+        public Builder setAgent(String agent) {
             this.agent = agent;
             return this;
         }
 
+        public Builder setFound(boolean found) {
+            this.found = found;
+            return this;
+        }
+
         public RealEstate build() {
-            this.rooms = new RoomsRealEstate(bedrooms,bathrooms,otherRooms);
+            this.rooms = new RoomsRealEstate(bedrooms, bathrooms, otherRooms);
             return new RealEstate(this);
         }
     }
-
     @Override
     public String toString() {
         return "RealEstate{" +
@@ -366,13 +374,12 @@ public class RealEstate implements Parcelable {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", listOfNearbyPointsOfInterestIds=" + listOfNearbyPointsOfInterestIds +
-                ", status=" + status +
                 ", datePut='" + datePut + '\'' +
                 ", dateSale='" + dateSale + '\'' +
                 ", agent='" + agent + '\'' +
+                ", found=" + found +
                 '}';
     }
-
 
     @Override
     public int describeContents() {
@@ -392,10 +399,10 @@ public class RealEstate implements Parcelable {
         dest.writeDouble(this.latitude);
         dest.writeDouble(this.longitude);
         dest.writeStringList(this.listOfNearbyPointsOfInterestIds);
-        dest.writeByte(this.status ? (byte) 1 : (byte) 0);
         dest.writeString(this.datePut);
         dest.writeString(this.dateSale);
         dest.writeString(this.agent);
+        dest.writeByte(this.found ? (byte) 1 : (byte) 0);
     }
 
     protected RealEstate(Parcel in) {
@@ -410,10 +417,10 @@ public class RealEstate implements Parcelable {
         this.latitude = in.readDouble();
         this.longitude = in.readDouble();
         this.listOfNearbyPointsOfInterestIds = in.createStringArrayList();
-        this.status = in.readByte() != 0;
         this.datePut = in.readString();
         this.dateSale = in.readString();
         this.agent = in.readString();
+        this.found = in.readByte() != 0;
     }
 
     public static final Creator<RealEstate> CREATOR = new Creator<RealEstate>() {

@@ -236,6 +236,7 @@ public class PositionActivity extends BaseActivity {
                 }
             }
 
+            // TODO: 18/09/2018 Check the permission we are asking for!
         } else {
             Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
         }

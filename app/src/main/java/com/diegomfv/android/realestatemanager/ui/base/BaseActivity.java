@@ -56,6 +56,11 @@ public class BaseActivity extends AppCompatActivity {
         return getRepository().getRealEstateCache();
     }
 
+    protected void setRealEstateCache(RealEstate realEstate) {
+        Log.d(TAG, "setRealEstateCache: called!");
+        getRepository().setRealEstateCache(realEstate);
+    }
+
     protected List<ImageRealEstate> getListOfImagesRealEstateCache() {
         Log.d(TAG, "getListOfImagesRealEstateCache: called!");
         return getRepository().getListOfImagesRealEstateCache();

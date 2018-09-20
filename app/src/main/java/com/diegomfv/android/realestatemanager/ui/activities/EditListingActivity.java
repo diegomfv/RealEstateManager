@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,15 +12,12 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -43,7 +38,6 @@ import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.datamodels.RoomsRealEstate;
-import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.dialogfragments.DatePickerFragment;
@@ -63,9 +57,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.CompletableObserver;
-import io.reactivex.Single;
-import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -124,9 +115,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private TextInputAutoCompleteTextView tvTypeOfBuilding;
 
-    private TextInputAutoCompleteTextView tvPrice;
+    private TextInputEditText tvPrice;
 
-    private TextInputAutoCompleteTextView tvSurfaceArea;
+    private TextInputEditText tvSurfaceArea;
 
     private TextView tvNumberOfBedrooms;
     private CrystalSeekbar seekBarBedrooms;
@@ -137,7 +128,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     private TextView tvNumberOfOtherRooms;
     private CrystalSeekbar seekBarOtherRooms;
 
-    private TextInputAutoCompleteTextView tvDescription;
+    private TextInputEditText tvDescription;
 
     private TextInputEditText tvAddress;
 
@@ -165,11 +156,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     //RecyclerView Adapter
     private RVAdapterMediaHorizontalCreate adapter;
 
-    private RealEstate realEstate;
-
     private int currency;
-
-    private EditViewModel editViewModel;
 
     private Unbinder unbinder;
 
@@ -187,7 +174,8 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
         if (intent.getExtras() != null) {
             bundle.putParcelable(Constants.GET_PARCELABLE, intent.getExtras().getParcelable(Constants.SEND_PARCELABLE));
-            realEstate = bundle.getParcelable(Constants.GET_PARCELABLE);
+            RealEstate realEstate = bundle.getParcelable(Constants.GET_PARCELABLE);
+            setRealEstateCache(realEstate);
             Log.i(TAG, "onCreateView: bundle = " + bundle);
 
             /* We only delete the cache when we come from MainActivity (we do not do it when we come
@@ -201,9 +189,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
             this.prepareCache();
 
         } else {
-            /* When we come from PhotoGridActivity, we keep using the object in the cache
+            /* When we come from PhotoGridActivity,
+            we keep using the object in the cache
             * */
-            realEstate = getRealEstateCache();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -379,14 +367,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     private void prepareCache () {
         Log.d(TAG, "prepareCache: called!");
 
-        /* Firts*/
-        getRepository().deleteCache();
-
-        /* We firstly clone the real estate object in the RealEstateCache
-        * */
-        getRepository().cloneRealEstate(realEstate);
-        Log.w(TAG, "prepareCache: clone = " + getRealEstateCache().toString());
-
         /* We delete the bitmapCache and fill it with the bitmaps related to the
         * real estate that is loaded
         * */
@@ -407,6 +387,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         this.configureToolBar();
 
         this.getAutocompleteTextViews();
+        this.getEditTexts();
         this.getTextViews();
         this.getSeekBars();
         this.getCheckbox();
@@ -422,9 +403,13 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     private void getAutocompleteTextViews () {
         Log.d(TAG, "getAutocompleteTextViews: called!");
         this.tvTypeOfBuilding = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-        this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
+    }
+
+    private void getEditTexts() {
+        Log.d(TAG, "getEditTexts: called!");
+        this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
+        this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
+        this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
         this.tvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
     }
 
@@ -452,7 +437,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         Log.d(TAG, "setAllHints: called!");
 
         // TODO: 23/08/2018 Use Resources instead of hardcoded text
-
         setHint(cardViewType, "Type");
         setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency) + ")");
         setHint(cardViewSurfaceArea, "Surface Area (sqm)");
@@ -490,7 +474,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         setMinMaxValues(seekBarOtherRooms);
     }
 
-    // TODO: 29/08/2018 Check!
     private void setMinMaxValues(CrystalSeekbar seekBar) {
         Log.d(TAG, "setMinMaxValues: called!");
         seekBar.setMinValue(0);
@@ -550,14 +533,14 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private void setSoldInfo () {
         Log.d(TAG, "setSoldInfo: called!");
-        if(realEstate.getDateSale() == null || realEstate.getDateSale().isEmpty()) {
+        if(getRealEstateCache().getDateSale() == null || getRealEstateCache().getDateSale().isEmpty()) {
             dateSold = "";
             tvSold.setText(dateSold);
             cbSold.setChecked(false);
 
         } else {
-            dateSold = realEstate.getDateSale();
-            tvSold.setText(realEstate.getDateSale());
+            dateSold = getRealEstateCache().getDateSale();
+            tvSold.setText(getRealEstateCache().getDateSale());
             cbSold.setChecked(true);
         }
     }
@@ -566,7 +549,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
-
         this.recyclerView.setHasFixedSize(true);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.HORIZONTAL, false));
@@ -585,7 +567,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private void configureOnClickRecyclerView() {
         Log.d(TAG, "configureOnClickRecyclerView: called!");
-
         ItemClickSupport.addTo(recyclerView)
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
@@ -698,7 +679,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     private boolean allChecksCorrect () {
         Log.d(TAG, "allChecksCorrect: called!");
 
-        /* Left like this for readibility purposes
+        /* Left like this for readability purposes
         * */
 
         if (!Utils.isNumeric(Utils.getStringFromTextView(tvPrice))) {

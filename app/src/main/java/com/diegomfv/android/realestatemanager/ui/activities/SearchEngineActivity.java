@@ -1,6 +1,7 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
@@ -37,6 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -151,6 +154,8 @@ public class SearchEngineActivity extends BaseActivity {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private int currency;
+
+    private int updateCounter;
 
     private Unbinder unbinder;
 
@@ -751,24 +756,34 @@ public class SearchEngineActivity extends BaseActivity {
 
         // TODO: 05/09/2018 Show Progress Bar!
 
-        getRepository().getListOfFoundRealEstates().clear();
+        // TODO: 17/09/2018 This is wrong. The ideal process would be to update all the real estates
+        // TODO: 17/09/2018 in the database whether they passed the filter or not. This way, the
+        // TODO: search information will be stored and can be accessed at any moment without a search
+
+        /* We create a new list
+        * to store the found real estates
+        * */
+        List<RealEstate> listOfFoundRealEstates = new ArrayList<>();
 
         for (int i = 0; i < listOfRealEstate.size(); i++) {
 
+            /* If the real estate does not pass the filter, we set it to false
+            * */
             if (!allFiltersPassed(listOfRealEstate.get(i))) {
+                listOfRealEstate.get(i).setFound(false);
                 continue;
             }
 
-            getRepository().getListOfFoundRealEstates().add(listOfRealEstate.get(i));
+            /* If the real estate passes the filter, we set the found field to true and add
+            * it to the list
+            * */
+
+            listOfRealEstate.get(i).setFound(true);
+            listOfFoundRealEstates.add(listOfRealEstate.get(i));
         }
 
-        if (getRepository().getListOfFoundRealEstates().size() > 0) {
-
-            Log.w(TAG, "initSearch: list = " + getRepository().getListOfFoundRealEstates());
-
-            Utils.launchActivity(this, SearchResultsActivity.class);
-            ToastHelper.toastLong(this, "One or more results available");
-
+        if (listOfFoundRealEstates.size() > 0) {
+            updateRealEstatesWithFoundInfo(listOfFoundRealEstates);
 
         } else {
             ToastHelper.toastLong(this, "No results were found");
@@ -1052,5 +1067,54 @@ public class SearchEngineActivity extends BaseActivity {
             }
         }
         return false;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @SuppressLint("CheckResult")
+    private void updateRealEstatesWithFoundInfo (final List<RealEstate> list) {
+        Log.d(TAG, "updateRealEstatesWithFoundInfo: called!");
+        if (list != null) {
+
+            updateCounter = 0;
+
+            for (int i = 0; i < list.size(); i++) {
+                getRepository().updateRealEstate(list.get(i))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .subscribeWith(new CompletableObserver() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+                                Log.d(TAG, "onSubscribe: called!");
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Log.d(TAG, "onComplete: called!");
+
+                                /* The counter allows us to know when the process
+                                * has finished and we can launch next activity
+                                * */
+                                updateCounter++;
+                                if (list.size() - 1 == updateCounter) {
+                                    launchActivityWithCustomIntent();
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.d(TAG, "onError: called!");
+
+                            }
+                        });
+            }
+        }
+    }
+
+    private void launchActivityWithCustomIntent(){
+        Log.d(TAG, "launchActivityWithCustomIntent: called!");
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(Constants.INTENT_FROM_SEARCH_ENGINE, true);
+        startActivity(intent);
     }
 }

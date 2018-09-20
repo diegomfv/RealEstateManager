@@ -58,13 +58,6 @@ public class FragmentHandsetListListingsSearch extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // TODO: 27/08/2018 Check this!
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

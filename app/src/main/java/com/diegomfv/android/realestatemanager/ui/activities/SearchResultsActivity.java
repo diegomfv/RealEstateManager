@@ -1,7 +1,9 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +23,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
+
 /**
  * Created by Diego Fajardo on 05/09/2018.
  */
@@ -28,15 +32,14 @@ public class SearchResultsActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    @BindView(R.id.toolbar_id)
+    Toolbar toolbar;
+
     @BindView(R.id.textView_please_insert_data_id)
     TextView tvInsertData;
 
     @BindView(R.id.fragment1_container_id)
     FrameLayout fragment1Layout;
-
-    private ActionBar actionBar;
-
-    private boolean dataAvailable;
 
     private int currency;
 
@@ -51,13 +54,11 @@ public class SearchResultsActivity extends BaseActivity {
 
         this.currency = Utils.readCurrentCurrencyShPref(this);
 
-        dataAvailable = !getRepository().getDatabaseIsEmpty();
-
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
 
-        this.configureActionBar();
+        this.configureToolBar();
 
         if (getRepository().getListOfFoundRealEstates().size() > 0) {
             this.loadFragmentOrFragments();
@@ -104,16 +105,19 @@ public class SearchResultsActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureActionBar() {
-        Log.d(TAG, "configureActionBar: called!");
+    private void configureToolBar() {
+        Log.d(TAG, "configureToolBar: called!");
 
-        actionBar = getSupportActionBar();
+        setSupportActionBar(toolbar);
+        setOverflowButtonColor(toolbar, Color.WHITE);
 
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+                onBackPressed();
+            }
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

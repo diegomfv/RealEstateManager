@@ -205,12 +205,10 @@ public class FragmentHandsetItemDescriptionMain extends BaseFragment {
         setAddress(realEstate);
         setPrice(realEstate);
         setSoldState(realEstate);
-
     }
 
     private void setDescription(RealEstate realEstate) {
         Log.d(TAG, "setDescription: called!");
-
         if (realEstate.getDescription().isEmpty()) {
             cardViewDescription.setVisibility(View.GONE);
 

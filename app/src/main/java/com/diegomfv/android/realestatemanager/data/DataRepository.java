@@ -106,7 +106,7 @@ public class DataRepository {
     //GENERAL CACHE
 
     /**
-     * Cache for Real Estate
+     * Getter, cache real estate
      */
     public RealEstate getRealEstateCache() {
         Log.d(TAG, "getRealEstateCache: called!");
@@ -116,9 +116,12 @@ public class DataRepository {
         return realEstateCache;
     }
 
-    public void cloneRealEstate(RealEstate realEstate) {
-        Log.d(TAG, "cloneRealEstate: called!");
-        this.realEstateCache = new RealEstate(realEstate);
+    /**
+     * Setter, cache real estate
+     */
+    public void setRealEstateCache(RealEstate realEstate) {
+        Log.d(TAG, "setRealEstateCache: called!");
+        realEstateCache = realEstate;
     }
 
     public List<ImageRealEstate> getListOfImagesRealEstateCache() {
@@ -399,6 +402,16 @@ public class DataRepository {
             @Override
             public List<RealEstate> call() throws Exception {
                 return mDatabase.realStateDao().getAllListingsOrderedByType();
+            }
+        });
+    }
+
+    public io.reactivex.Observable<List<RealEstate>> getAllFoundListingsRealEstateObservable() {
+        Log.d(TAG, "getAllFoundListingsRealEstateObservable: called!");
+        return io.reactivex.Observable.fromCallable(new Callable<List<RealEstate>>() {
+            @Override
+            public List<RealEstate> call() throws Exception {
+                return mDatabase.realStateDao().getAllFoundListings(true);
             }
         });
     }

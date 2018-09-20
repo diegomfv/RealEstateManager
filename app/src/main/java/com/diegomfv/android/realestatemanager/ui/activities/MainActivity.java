@@ -2,16 +2,11 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -37,6 +32,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -49,8 +46,6 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  * 2. Add String.valueOf() to convert int to String
  */
 
-// TODO: 05/09/2018 Check dynamic query for room (query than varies depending on user's input)
-// TODO: 28/08/2018 Add a listener for when changing CURRENCY
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -75,8 +70,6 @@ public class MainActivity extends BaseActivity {
     private int currency;
 
     private List<RealEstate> listOfRealEstates;
-
-    private ListingsSharedViewModel listingsSharedViewModel;
 
     private Unbinder unbinder;
 
@@ -105,10 +98,15 @@ public class MainActivity extends BaseActivity {
 
         this.checkInternalStoragePermissionGranted();
 
-        this.createModel();
+        // TODO: 17/09/2018 Differentiate here if
+        // we come from any activity or SearchEngineActivity
 
-        this.subscribeToModel();
-
+        // TODO: 17/09/2018 Create a method for this
+        if (searchEngineActivityLaunchedThisActivity()) {
+            this.getAllFoundArticlesAndLoadFragmentOrFragments();
+        } else {
+            this.getAllListingsAndLoadFragmentOrFragments();
+        }
     }
 
     @Override
@@ -211,6 +209,16 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private boolean searchEngineActivityLaunchedThisActivity() {
+        Log.d(TAG, "searchEngineActivityLaunchedThisActivity: called!");
+        if (getIntent() != null
+                && getIntent().getExtras() != null) {
+            return getIntent().getExtras().getBoolean(Constants.INTENT_FROM_SEARCH_ENGINE);
+        }
+        return false;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * Method that returns the list of Real Estates in the database.
      * It is accessible for the fragment
@@ -221,6 +229,11 @@ public class MainActivity extends BaseActivity {
             return listOfRealEstates = new ArrayList<>();
         }
         return listOfRealEstates;
+    }
+
+    private void setListOfRealEstates(List<RealEstate> list) {
+        Log.d(TAG, "setListOfRealEstates: called!");
+        listOfRealEstates = list;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -281,31 +294,73 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void createModel() {
-        Log.d(TAG, "createModel: called!");
+    @SuppressLint("CheckResult")
+    private void getAllFoundArticlesAndLoadFragmentOrFragments() {
+        Log.d(TAG, "getAllFoundArticlesAndLoadFragmentOrFragments: called!");
+        getRepository().getAllFoundListingsRealEstateObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new Observer<List<RealEstate>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
 
-        ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
-        this.listingsSharedViewModel = ViewModelProviders
-                .of(this, factory)
-                .get(ListingsSharedViewModel.class);
+                    }
 
-    }
-
-    private void subscribeToModel() {
-        Log.d(TAG, "subscribeToModel: called!");
-
-        if (listingsSharedViewModel != null) {
-            this.listingsSharedViewModel.getObservableListOfListings().observe(this, new Observer<List<RealEstate>>() {
-                @Override
-                public void onChanged(@Nullable List<RealEstate> realEstates) {
-                    Log.d(TAG, "onChanged: called!");
-                    if (realEstates != null) {
-                        listOfRealEstates = realEstates;
+                    @Override
+                    public void onNext(List<RealEstate> realEstates) {
+                        Log.d(TAG, "onNext: " + realEstates);
+                        setListOfRealEstates(realEstates);
                         loadFragmentOrFragments();
                     }
-                }
-            });
-        }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+
+                    }
+                });
+    }
+
+
+    @SuppressLint("CheckResult")
+    private void getAllListingsAndLoadFragmentOrFragments() {
+        Log.d(TAG, "getAllListingsAndLoadFragmentOrFragments: called!");
+        getRepository().getAllListingsRealEstateObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new io.reactivex.Observer<List<RealEstate>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+
+                    }
+
+                    @Override
+                    public void onNext(List<RealEstate> realEstates) {
+                        Log.d(TAG, "onNext: " + realEstates);
+                        setListOfRealEstates(realEstates);
+                        loadFragmentOrFragments();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+
+                    }
+                });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
