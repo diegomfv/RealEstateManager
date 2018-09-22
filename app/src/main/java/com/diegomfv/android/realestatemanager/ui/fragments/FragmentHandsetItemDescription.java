@@ -60,7 +60,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Diego Fajardo on 16/08/2018.
  */
 
-// TODO: 22/09/2018 Number of bedrooms still 0!
+// TODO: 22/09/2018 Number of bedrooms still 0! Problem in CreateNewListing and EditListing
 public class FragmentHandsetItemDescription extends BaseFragment {
 
     private static final String TAG = FragmentHandsetItemDescription.class.getSimpleName();
