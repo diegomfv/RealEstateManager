@@ -517,7 +517,7 @@ public class PositionActivity extends BaseActivity {
         public boolean onMyLocationButtonClick() {
             Log.d(TAG, "onMyLocationButtonClick: called!");
             getDeviceLocation();
-            return true; // TODO: 23/08/2018 Check what this does
+            return true;
         }
     };
 
