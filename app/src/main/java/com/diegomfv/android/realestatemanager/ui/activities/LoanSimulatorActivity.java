@@ -1,11 +1,11 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,11 +14,9 @@ import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterLoan;
-import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.models.Payment;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
-import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
 import java.util.ArrayList;
@@ -30,32 +28,42 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
+
 /**
  * Created by Diego Fajardo on 06/09/2018.
  */
 
 // TODO: 07/09/2018 When information is displayed in euros, decimals are always ,00
-
 // TODO: 07/09/2018 Format the floats to two decimals
 // TODO: 07/09/2018 Add currency variations
 public class LoanSimulatorActivity extends BaseActivity {
 
     private static final String TAG = LoanSimulatorActivity.class.getSimpleName();
 
+    @BindView(R.id.toolbar_id)
+    Toolbar toolbar;
+
     @BindView(R.id.tvLoanAmount)
     TextView tvLoanAmount;
 
-    @BindView(R.id.tvAnnInterestRate)
+    @BindView(R.id.tvAnnualInterestRate)
     TextView tvAnnualInterestRate;
 
     @BindView(R.id.tvLoanPeriodYears)
     TextView tvLoanPeriodInYears;
 
-    @BindView(R.id.tvPaymentFrequency)
+    @BindView(R.id.tvPaymentFreq)
     TextView tvPaymentFrequency;
 
     @BindView(R.id.tvStartDate)
     TextView tvStartDate;
+
+    @BindView(R.id.tvSchedPayment)
+    TextView tvSchedPayment;
+
+    @BindView(R.id.tvTotalInterest)
+    TextView tvTotalInterests;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,25 +72,7 @@ public class LoanSimulatorActivity extends BaseActivity {
 
     RVAdapterLoan adapter;
 
-    //////////
-
-    TextView tvMonthlyPayment;
-
-    //////////
-
-    TextView tvRatePerPeriod;
-
-    TextView tvNumberOfPayments;
-
-    TextView tvTotalPayments;
-
-    TextView tvTotalInterests;
-
-    TextView tvEstimInterestSavings;
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private ActionBar actionBar;
 
     private int currency;
 
@@ -98,10 +88,10 @@ public class LoanSimulatorActivity extends BaseActivity {
         this.currency = Utils.readCurrentCurrencyShPref(this);;
 
         ////////////////////////////////////////////////////////////////////////////////////////////
-        setContentView(R.layout.activity_loan_simulator);
+        setContentView(R.layout.activity_trial);
         unbinder = ButterKnife.bind(this);
 
-        this.configureActionBar();
+        this.configureToolBar();
 
         setTexts();
         generateTable();
@@ -136,7 +126,6 @@ public class LoanSimulatorActivity extends BaseActivity {
             break;
 
             case R.id.menu_change_currency_button: {
-
                 changeCurrency();
                 Utils.updateCurrencyIcon(this, currency, item);
                 generateTable();
@@ -150,16 +139,24 @@ public class LoanSimulatorActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureActionBar() {
-        Log.d(TAG, "configureActionBar: called!");
+    /**
+     * Method to configure the toolbar.
+     * Depending on mainMenu, on the button behaves one way or another. With mainMenu = true,
+     * user can return to AuthLoginAtivity via a dialog that will pop-up. With mainMenu = false,
+     * the user will go to SearchEngineActivity
+     */
+    private void configureToolBar() {
+        Log.d(TAG, "configureToolBar: called!");
+        setSupportActionBar(toolbar);
+        setOverflowButtonColor(toolbar, Color.WHITE);
 
-        actionBar = getSupportActionBar();
-
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+                Utils.launchActivity(LoanSimulatorActivity.this, MainActivity.class);
+            }
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,7 +181,7 @@ public class LoanSimulatorActivity extends BaseActivity {
         tvAnnualInterestRate.setText(String.valueOf(0.05d));
         tvLoanPeriodInYears.setText(String.valueOf(20));
         tvPaymentFrequency.setText(String.valueOf(12));
-        tvStartDate.setText("");
+        tvStartDate.setText(Utils.dateToString(new Date()));
 
     }
 
@@ -210,6 +207,8 @@ public class LoanSimulatorActivity extends BaseActivity {
         int f = Utils.getIntegerFromTextView(tvPaymentFrequency);
 
         float schPayment = getScheduledPaymentPerPeriod();
+
+        tvSchedPayment.setText(Utils.floatToString(schPayment));
 
         float principal;
         float interests;
@@ -264,6 +263,8 @@ public class LoanSimulatorActivity extends BaseActivity {
             listOfPayments.add(builder.build());
 
         }
+
+        tvTotalInterests.setText(Utils.floatToString(cumInterests));
 
         configureRecyclerView(listOfPayments);
 

@@ -652,13 +652,13 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                     getDeviceLocation();
                 }
 
-                /*Listener for when clicking the info window in a map
-                 * */
+                /* Listener for when clicking
+                * the info window in a map
+                * */
                 if (mMap != null) {
-
                     mMap.setOnInfoWindowClickListener(onInfoWindowClickListener);
                     mMap.setOnMyLocationButtonClickListener(onMyLocationButtonClickedListener);
-
+                    mMap.setOnMarkerClickListener(onMarkerClickListener);
                 }
             }
         });
@@ -695,7 +695,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
                         moveCamera(
                                 new LatLng(realEstate.getLatitude(), realEstate.getLongitude()),
-                                Constants.MAPS_STATIC_DEFAULT_ZOOM);
+                                Constants.MAPS_POSITION_DEFAULT_ZOOM);
 
                     } else {
                         Log.d(TAG, "onComplete: current location is null");
@@ -713,10 +713,8 @@ public class FragmentHandsetItemDescription extends BaseFragment {
      * Method used to move the camera in the map
      */
     private void moveCamera(LatLng latLng, float zoom) {
-
         Log.d(TAG, "moveCamera: moving the camera to lat: " + latLng.latitude + ", lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-
     }
 
     /**
@@ -807,9 +805,8 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         options = new MarkerOptions()
                 .position(latLng)
                 .title(placeRealEstate.getName())
-                .snippet(placeRealEstate.getTypesList().get(0))
+                .snippet(Utils.capitalize(Utils.replaceUnderscore(placeRealEstate.getTypesList().get(0))))
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-
 
         /* We fill the listOfMarkers and the map with the markers
          * */
@@ -838,5 +835,11 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         }
     };
 
-
+    private GoogleMap.OnMarkerClickListener onMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            marker.showInfoWindow();
+            return false;
+        }
+    };
 }

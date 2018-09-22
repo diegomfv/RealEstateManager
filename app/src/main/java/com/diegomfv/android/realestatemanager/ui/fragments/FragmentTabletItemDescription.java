@@ -609,10 +609,9 @@ public class FragmentTabletItemDescription extends BaseFragment {
                 /*Listener for when clicking the info window in a map
                  * */
                 if (mMap != null) {
-
                     mMap.setOnInfoWindowClickListener(onInfoWindowClickListener);
                     mMap.setOnMyLocationButtonClickListener(onMyLocationButtonClickedListener);
-
+                    mMap.setOnMarkerClickListener(onMarkerClickListener);
                 }
             }
         });
@@ -649,7 +648,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
 
                         moveCamera(
                                 new LatLng(realEstate.getLatitude(), realEstate.getLongitude()),
-                                Constants.MAPS_STATIC_DEFAULT_ZOOM);
+                                Constants.MAPS_POSITION_DEFAULT_ZOOM);
 
                     } else {
                         Log.d(TAG, "onComplete: current location is null");
@@ -761,7 +760,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
         options = new MarkerOptions()
                 .position(latLng)
                 .title(placeRealEstate.getName())
-                .snippet(placeRealEstate.getTypesList().get(0))
+                .snippet(Utils.capitalize(Utils.replaceUnderscore(placeRealEstate.getTypesList().get(0))))
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
 
 
@@ -789,6 +788,14 @@ public class FragmentTabletItemDescription extends BaseFragment {
             Log.d(TAG, "onMyLocationButtonClick: called!");
             getDeviceLocation();
             return true;
+        }
+    };
+
+    private GoogleMap.OnMarkerClickListener onMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            marker.showInfoWindow();
+            return false;
         }
     };
 }

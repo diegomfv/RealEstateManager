@@ -783,6 +783,12 @@ public class Utils {
         }
     }
 
+    public static String replaceUnderscoreWithSpace (String string) {
+        Log.d(TAG, "replaceUnderscoreWithSpace: called!");
+        return string.replaceAll("_", " ");
+
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static RectF calculationRectOnScreen(View view) {

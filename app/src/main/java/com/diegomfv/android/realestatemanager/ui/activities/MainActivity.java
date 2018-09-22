@@ -256,6 +256,8 @@ public class MainActivity extends BaseActivity {
         return findViewById(R.id.fragment2_container_id) == null;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * Method to configure the toolbar.
      * Depending on mainMenu, on the button behaves one way or another. With mainMenu = true,
