@@ -440,7 +440,6 @@ public class PositionActivity extends BaseActivity {
         /* We make a difference between the listings
          * that have been already sold and those which has not
          * */
-
         boolean alreadySold = realEstateAlreadySold(realEstate.getDateSale());
 
         options = new MarkerOptions()
@@ -505,7 +504,7 @@ public class PositionActivity extends BaseActivity {
 
             for (int i = 0; i < listOfListings.size(); i++) {
 
-                if (marker.getSnippet().equals(listOfListings.get(i).getAddress())) {
+                if (marker.getSnippet().equals(Utils.getAddressAsString(listOfListings.get(i)))) {
                     launchDetailActivity(listOfListings.get(i));
                     break;
                 }
@@ -517,9 +516,7 @@ public class PositionActivity extends BaseActivity {
         @Override
         public boolean onMyLocationButtonClick() {
             Log.d(TAG, "onMyLocationButtonClick: called!");
-
             getDeviceLocation();
-
             return true; // TODO: 23/08/2018 Check what this does
         }
     };
