@@ -1,9 +1,11 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
@@ -21,6 +23,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
+
 /**
  * Created by Diego Fajardo on 29/08/2018.
  */
@@ -29,6 +33,9 @@ public class SignUpActivity extends BaseActivity {
     private static final String TAG = SignUpActivity.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @BindView(R.id.toolbar_id)
+    Toolbar toolbar;
 
     @BindView(R.id.card_view_first_name_id)
     CardView cvFirstName;
@@ -82,7 +89,7 @@ public class SignUpActivity extends BaseActivity {
         setTitle("Sign Up");
         unbinder = ButterKnife.bind(this);
 
-        this.configureActionBar();
+        this.configureToolBar();
 
         this.getAllAcTextViews();
 
@@ -95,21 +102,6 @@ public class SignUpActivity extends BaseActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy: called!");
         unbinder.unbind();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected: called!");
-
-        switch (item.getItemId()) {
-
-            case android.R.id.home: {
-                Utils.launchActivity(this, AuthLoginActivity.class);
-            }
-            break;
-
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @OnClick (R.id.sign_up_button_id)
@@ -127,16 +119,34 @@ public class SignUpActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureActionBar() {
-        Log.d(TAG, "configureActionBar: called!");
+    /**
+     * Method to configure the toolbar.
+     * Depending on mainMenu, on the button behaves one way or another. With mainMenu = true,
+     * user can return to AuthLoginAtivity via a dialog that will pop-up. With mainMenu = false,
+     * the user will go to SearchEngineActivity
+     */
+    private void configureToolBar() {
+        Log.d(TAG, "configureToolBar: called!");
+        setSupportActionBar(toolbar);
+        setOverflowButtonColor(toolbar, Color.WHITE);
 
-        actionBar = getSupportActionBar();
+        setToolbarTitle();
 
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+                Utils.launchActivity(SignUpActivity.this, AuthLoginActivity.class);
+            }
+        });
+    }
+
+    /**
+     * Method to set the toolbar title
+     */
+    private void setToolbarTitle() {
+        Log.d(TAG, "setToolbarTitle: called!");
+        toolbar.setTitle("Sign Up");
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
