@@ -1,10 +1,12 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +23,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
+
 /**
  * Created by Diego Fajardo on 29/08/2018.
  */
@@ -29,6 +33,9 @@ public class ForgotPasswordActivity extends BaseActivity {
     private static final String TAG = ForgotPasswordActivity.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @BindView(R.id.toolbar_id)
+    Toolbar toolbar;
 
     @BindView(R.id.card_view_memorable_data_question_id)
     CardView cardViewQuestion;
@@ -40,11 +47,7 @@ public class ForgotPasswordActivity extends BaseActivity {
 
     private TextInputAutoCompleteTextView tvAnswer;
 
-    private Button buttonRemindPassword;
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private ActionBar actionBar;
 
     private Unbinder unbinder;
 
@@ -56,8 +59,7 @@ public class ForgotPasswordActivity extends BaseActivity {
         setContentView(R.layout.activity_forgot_password);
         unbinder = ButterKnife.bind(this);
 
-        this.configureActionBar();
-
+        this.configureToolBar();
         this.configureLayout();
 
     }
@@ -109,16 +111,34 @@ public class ForgotPasswordActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void configureActionBar() {
-        Log.d(TAG, "configureActionBar: called!");
+    /**
+     * Method to configure the toolbar.
+     * Depending on mainMenu, on the button behaves one way or another. With mainMenu = true,
+     * user can return to AuthLoginAtivity via a dialog that will pop-up. With mainMenu = false,
+     * the user will go to SearchEngineActivity
+     */
+    private void configureToolBar() {
+        Log.d(TAG, "configureToolBar: called!");
+        setSupportActionBar(toolbar);
+        setOverflowButtonColor(toolbar, Color.WHITE);
 
-        actionBar = getSupportActionBar();
+        setToolbarTitle();
 
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeActionContentDescription(getResources().getString(R.string.go_back));
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+                Utils.launchActivity(ForgotPasswordActivity.this, MainActivity.class);
+            }
+        });
+    }
+
+    /**
+     * Method to set the toolbar title
+     */
+    private void setToolbarTitle() {
+        Log.d(TAG, "setToolbarTitle: called!");
+        toolbar.setTitle("Recover Password");
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
