@@ -29,4 +29,5 @@
     <string name="information_not_available">Information not Available</string>
     <string name="not_implemented">Not implemented yet</string>
     <string name="no_description_available">No description available</string>
+    <string name="modify_loan">Modify Loan</string>
 </resources>

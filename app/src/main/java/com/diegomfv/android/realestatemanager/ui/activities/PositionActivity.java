@@ -446,7 +446,7 @@ public class PositionActivity extends BaseActivity {
                 .position(latLng)
                 .title(realEstate.getType()
                         + " - "
-                        + getPriceInProperCurrency(realEstate.getPrice(), currency)
+                        + Utils.formatToDecimals(realEstate.getPrice(), currency)
                         + Utils.getCurrencySymbol(currency))
                 .snippet(Utils.getAddressAsString(realEstate))
                 .icon(getIconAccordingToAlreadySold(alreadySold));
@@ -455,26 +455,6 @@ public class PositionActivity extends BaseActivity {
         /* We fill the listOfMarkers and the map with the markers
          * */
         listOfMarkers.add(mMap.addMarker(options));
-    }
-
-    private String getPriceInProperCurrency (int price, int currency) {
-        Log.d(TAG, "getPriceInProperCurrency: called!");
-
-        switch (currency) {
-
-            case 0: {
-                return Utils.formatToDecimals(price, currency);
-            }
-
-            case 1: {
-                int priceInEuros = (int) Utils.convertDollarToEuro((float) price);
-                return Utils.formatToDecimals(priceInEuros, currency);
-            }
-
-            default: {
-                return Utils.formatToDecimals(price, currency);
-            }
-        }
     }
 
     private boolean realEstateAlreadySold(String dateSale) {

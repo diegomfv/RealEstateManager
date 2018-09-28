@@ -193,7 +193,7 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
         private String getPriceOfBuilding(int position) {
             Log.d(TAG, "getPriceOfBuilding: called!");
-            int price = (int) Utils.getPriceAccordingToCurrency(currency, listRealEstates.get(position).getPrice());
+            float price = Utils.getPriceAccordingToCurrency(currency, listRealEstates.get(position).getPrice());
             if (price == 0.0f) {
                 return "Price not available";
             }

@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="center"
+        android:text="MODIFY LOAN"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:textColor="@color/colorPrimaryDark"/>
+
+    <include layout="@layout/card_view_number_edit_text"
+        android:id="@+id/card_view_loan_amount_id"/>
+
+    <include layout="@layout/card_view_number_edit_text"
+        android:id="@+id/card_view_loan_annual_interest_rate_id"/>
+
+    <include layout="@layout/card_view_number_edit_text"
+        android:id="@+id/card_view_loan_period_in_years_id"/>
+
+    <include layout="@layout/card_view_number_edit_text"
+        android:id="@+id/card_view_loan_payment_frequency_id"/>
+
+</LinearLayout>

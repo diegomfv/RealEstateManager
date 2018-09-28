@@ -131,10 +131,13 @@ public class RVAdapterLoan extends RecyclerView.Adapter<RVAdapterLoan.MyViewHold
         private String convertToEurosIfNecessary (float amount) {
             Log.d(TAG, "convertToEurosIfNecessary: called!");
 
+            Log.w(TAG, "convertToEurosIfNecessary: " + amount);
+            Log.w(TAG, "convertToEurosIfNecessary: " + Utils.convertDollarToEuro(amount));
+
             if (currency == 0) {
                 return Utils.floatToString(amount);
             } else {
-                return Utils.formatToDecimals((int)Utils.convertDollarToEuro(amount), currency);
+                return Utils.formatToDecimals(Utils.convertDollarToEuro(amount), currency);
             }
         }
     }

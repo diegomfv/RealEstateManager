@@ -90,4 +90,9 @@ public interface Constants {
     String DIALOG_ADDRESS = "dialog_address";
 
 
+    String DIALOG_LOAN_AMOUNT = "dialog_loan_amount";
+    String DIALOG_ANNUAL_INTEREST_RATE = "dialog_annual_interest_rate";
+    String DIALOG_LOAN_PERIOD_YEARS = "dialgo_loan_period_years";
+    String DIALOG_PAYMENT_FREQ = "dialog_payment_freq";
+    String DIALOG_CURRENCY = "dialog_currency";
 }

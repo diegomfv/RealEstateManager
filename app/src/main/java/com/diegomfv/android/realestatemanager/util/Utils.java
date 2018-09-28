@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.nfc.FormatException;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -48,6 +49,7 @@ import java.net.SocketAddress;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -79,14 +81,14 @@ public class Utils {
      */
     public static float convertDollarToEuro(float dollars) {
         Log.d(TAG, "convertDollarToEuro: called!");
-        return Math.round(dollars * 0.86);
+        return (float) (dollars * 0.86);
     }
 
     /**
      * Price Conversion (Euros to Dollars):
      */
     public static float convertEuroToDollar(float euros) {
-        return Math.round(euros * 1.16);
+        return (float)(euros * 1.16);
     }
 
     /**
@@ -570,14 +572,14 @@ public class Utils {
 
     }
 
-    public static String formatToDecimals(Number number, int currency) {
+    public static String formatToDecimals(Number number, int currency) throws NumberFormatException {
         Log.d(TAG, "formatToDecimalsWithComma: called!");
 
         //CURRENCY
         //0: dollars
         //1: euros
 
-        String formatType = ",###.00";
+        String formatType = ",###.##";
 
         switch (currency) {
 
@@ -591,6 +593,8 @@ public class Utils {
                 DecimalFormat dollarsFormatter =
                         new DecimalFormat(formatType, symbolsDollars);
                 dollarsFormatter.setGroupingSize(3);
+                dollarsFormatter.setMinimumFractionDigits(2);
+                dollarsFormatter.setMaximumFractionDigits(2);
 
                 return dollarsFormatter.format(number);
             }
@@ -605,6 +609,8 @@ public class Utils {
                 DecimalFormat eurosFormatter =
                         new DecimalFormat(formatType, symbolsEuros);
                 eurosFormatter.setGroupingSize(3);
+                eurosFormatter.setMinimumFractionDigits(2);
+                eurosFormatter.setMaximumFractionDigits(2);
 
                 return eurosFormatter.format(number);
             }

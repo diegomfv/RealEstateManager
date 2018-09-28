@@ -361,14 +361,14 @@ public class SearchEngineActivity extends BaseActivity {
 
     private void setMinMaxValuesRangeSeekBars(List<RealEstate> listOfRealEstates) {
         Log.d(TAG, "setMinMaxValuesRangeSeekBars: called!");
-        int maxPrice = 0;
-        int maxSurfaceArea = 0;
+        float maxPrice = 0;
+        float maxSurfaceArea = 0;
         int maxNumberOfRooms = 0;
         int maxAmountOfPhotos = 0;
 
         for (int i = 0; i < listOfRealEstates.size(); i++) {
             if (maxPrice < listOfRealEstates.get(i).getPrice()) {
-                maxPrice = listOfRealEstates.get(i).getPrice();
+                maxPrice = (int) listOfRealEstates.get(i).getPrice();
             }
             if (maxSurfaceArea < listOfRealEstates.get(i).getSurfaceArea()) {
                 maxSurfaceArea = listOfRealEstates.get(i).getSurfaceArea();
@@ -738,11 +738,11 @@ public class SearchEngineActivity extends BaseActivity {
         return getTextFromView(textView).equals("");
     }
 
-    private boolean maxMinValuesFilterPassed(CrystalRangeSeekbar rangeSeekBar, int value) {
+    private boolean maxMinValuesFilterPassed(CrystalRangeSeekbar rangeSeekBar, float value) {
         Log.d(TAG, "maxMinValuesFilterPassed: called!");
 
-        if (value > (int) rangeSeekBar.getSelectedMinValue()
-                && value < (int) rangeSeekBar.getSelectedMaxValue()) {
+        if (value > (float) rangeSeekBar.getSelectedMinValue()
+                && value < (float) rangeSeekBar.getSelectedMaxValue()) {
             return true;
         }
         return false;

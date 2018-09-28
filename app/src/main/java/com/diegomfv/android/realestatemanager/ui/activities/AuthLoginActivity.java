@@ -33,7 +33,7 @@ public class AuthLoginActivity extends BaseActivity {
 
     private static final String TAG = AuthLoginActivity.class.getSimpleName();
 
-    //////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @BindView(R.id.card_view_email_id)
     CardView cvEmail;
@@ -54,7 +54,7 @@ public class AuthLoginActivity extends BaseActivity {
 
     TextInputAutoCompleteTextView tvPassword;
 
-    //////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private Unbinder unbinder;
 
@@ -62,7 +62,7 @@ public class AuthLoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_auth_choose_login);
         unbinder = ButterKnife.bind(this);
 

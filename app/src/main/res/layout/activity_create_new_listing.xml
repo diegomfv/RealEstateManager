@@ -89,7 +89,7 @@
                     <include layout="@layout/card_view_multiline_edit_text"
                         android:id="@+id/card_view_description_id"/>
 
-                    <include layout="@layout/card_view_address"
+                    <include layout="@layout/card_view_with_button"
                         android:id="@+id/card_view_address_id"/>
 
                     <android.support.v7.widget.RecyclerView

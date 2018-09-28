@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -153,10 +154,22 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         return new FragmentHandsetItemDescription();
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.i(TAG, "onAttach: called!");
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate: called!");
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView: called!");
+        Log.i(TAG, "onCreateView: called!");
 
         this.deviceLocationPermissionGranted = false;
 
@@ -187,15 +200,14 @@ public class FragmentHandsetItemDescription extends BaseFragment {
             Log.w(TAG, "onCreateView: bundle NULL");
             createModel();
         }
-
-
+        
         return view;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, "onDestroyView: called!");
+        Log.i(TAG, "onDestroyView: called!");
         this.unbinder.unbind();
     }
 

@@ -27,9 +27,9 @@ public class RealEstate implements Parcelable {
     private String type;
 
     @ColumnInfo(name = "surface_area")
-    private int surfaceArea;
+    private float surfaceArea;
 
-    private int price;
+    private float price;
 
     @ColumnInfo(name = "rooms")
     private RoomsRealEstate rooms;
@@ -66,7 +66,7 @@ public class RealEstate implements Parcelable {
     /**
      * Used for when reading from the table
      */
-    public RealEstate(@NonNull String id, String type, int surfaceArea, int price, RoomsRealEstate rooms,
+    public RealEstate(@NonNull String id, String type, float surfaceArea, float price, RoomsRealEstate rooms,
                       String description, List<String> listOfImagesIds, AddressRealEstate address,
                       double latitude, double longitude, List<String> listOfNearbyPointsOfInterestIds,
                       String datePut, String dateSale, String agent, boolean found) {
@@ -145,19 +145,19 @@ public class RealEstate implements Parcelable {
         this.type = type;
     }
 
-    public int getSurfaceArea() {
+    public float getSurfaceArea() {
         return surfaceArea;
     }
 
-    public void setSurfaceArea(int surfaceArea) {
+    public void setSurfaceArea(float surfaceArea) {
         this.surfaceArea = surfaceArea;
     }
 
-    public int getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
@@ -253,8 +253,8 @@ public class RealEstate implements Parcelable {
 
         private String id;
         private String type;
-        private int surfaceArea;
-        private int price;
+        private float surfaceArea;
+        private float price;
         private RoomsRealEstate rooms;
         private int bedrooms;
         private int bathrooms;
@@ -280,12 +280,12 @@ public class RealEstate implements Parcelable {
             return this;
         }
 
-        public Builder setSurfaceArea(int surfaceArea) {
+        public Builder setSurfaceArea(float surfaceArea) {
             this.surfaceArea = surfaceArea;
             return this;
         }
 
-        public Builder setPrice(int price) {
+        public Builder setPrice(float price) {
             this.price = price;
             return this;
         }
@@ -360,6 +360,7 @@ public class RealEstate implements Parcelable {
             return new RealEstate(this);
         }
     }
+
     @Override
     public String toString() {
         return "RealEstate{" +
@@ -381,6 +382,7 @@ public class RealEstate implements Parcelable {
                 '}';
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -390,8 +392,8 @@ public class RealEstate implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
         dest.writeString(this.type);
-        dest.writeInt(this.surfaceArea);
-        dest.writeInt(this.price);
+        dest.writeFloat(this.surfaceArea);
+        dest.writeFloat(this.price);
         dest.writeParcelable(this.rooms, flags);
         dest.writeString(this.description);
         dest.writeStringList(this.listOfImagesIds);
@@ -408,8 +410,8 @@ public class RealEstate implements Parcelable {
     protected RealEstate(Parcel in) {
         this.id = in.readString();
         this.type = in.readString();
-        this.surfaceArea = in.readInt();
-        this.price = in.readInt();
+        this.surfaceArea = in.readFloat();
+        this.price = in.readFloat();
         this.rooms = in.readParcelable(RoomsRealEstate.class.getClassLoader());
         this.description = in.readString();
         this.listOfImagesIds = in.createStringArrayList();

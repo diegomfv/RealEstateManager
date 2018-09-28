@@ -82,7 +82,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: called!");
+        Log.i(TAG, "onCreate: called!");
 
         this.editModeActive = false;
 
@@ -115,7 +115,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: called!");
+        Log.i(TAG, "onDestroy: called!");
         unbinder.unbind();
     }
 

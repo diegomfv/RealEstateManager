@@ -25,7 +25,6 @@ public class RealEstateManagerApp extends Application {
     private String imagesDir;
     private String temporaryDir;
 
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -38,11 +37,10 @@ public class RealEstateManagerApp extends Application {
         this.getInternalStorageImageFiles();
 
         int BITMAP_CACHE_SIZE = (int) Runtime.getRuntime().maxMemory() / 1024 / 8;
-        Log.w(TAG, "onCreate: BITMAP_CACHE_SIZE application= " + BITMAP_CACHE_SIZE);
+        Log.w(TAG, "onCreate: BITMAP_CACHE_SIZE application = " + BITMAP_CACHE_SIZE);
         Log.w(TAG, "onCreate: MAX_MEMORY application = " + Runtime.getRuntime().maxMemory() / 1048576L);
         Log.w(TAG, "onCreate: FREE_MEMORY application = " + Runtime.getRuntime().freeMemory() / 1048576L);
-        Log.w(TAG, "onCreate: AVAILABLE application = " + (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().freeMemory()) /  1048576L);
-
+        Log.w(TAG, "onCreate: AVAILABLE application = " + (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().freeMemory()) / 1048576L);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,18 +66,17 @@ public class RealEstateManagerApp extends Application {
         if (internalStorage == null) {
             internalStorage = new Storage(getApplicationContext());
             return internalStorage;
-        }
-        else return internalStorage;
+        } else return internalStorage;
     }
 
-    public int getBitmapCacheSize () {
+    public int getBitmapCacheSize() {
         Log.d(TAG, "getBitmapCacheSize: called!");
         return (int) Runtime.getRuntime().maxMemory() / 1024 / Constants.CACHE_PARTITION;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void setDirectories () {
+    private void setDirectories() {
         Log.d(TAG, "setDirectories: called!");
         mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
         temporaryDir = getMainPath() + Constants.TEMPORARY_DIRECTORY + File.separator;
@@ -103,7 +100,7 @@ public class RealEstateManagerApp extends Application {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void clearTables () {
+    private void clearTables() {
         Log.d(TAG, "clearTables: called!");
         getDatabase().clearAllTables();
 
@@ -111,7 +108,7 @@ public class RealEstateManagerApp extends Application {
 
     // TODO: 21/08/2018 Delete
 
-    public void getAllFiles () {
+    public void getAllFiles() {
         Log.d(TAG, "getAllFiles: called!");
 
         List<File> listOfFiles = getInternalStorage().getFiles(getFilesDir().getPath());
@@ -132,7 +129,7 @@ public class RealEstateManagerApp extends Application {
             Log.i(TAG, "getInternalStorageTemporaryFiles: 0");
 
         } else {
-            for (File item: listOfFiles) {
+            for (File item : listOfFiles) {
                 Log.i(TAG, "onCreate Image: " + item);
             }
         }
@@ -150,7 +147,7 @@ public class RealEstateManagerApp extends Application {
             Log.i(TAG, "getInternalStorageImageFiles: 0");
 
         } else {
-            for (File item: listOfFiles) {
+            for (File item : listOfFiles) {
                 Log.i(TAG, "onCreate Image: " + item);
             }
         }

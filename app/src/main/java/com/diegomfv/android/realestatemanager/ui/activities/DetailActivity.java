@@ -47,7 +47,7 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: called!");
+        Log.i(TAG, "onCreate: called!");
 
         this.getInfoFromIntent();
 
@@ -66,7 +66,7 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: called!");
+        Log.i(TAG, "onDestroy: called!");
         unbinder.unbind();
     }
 

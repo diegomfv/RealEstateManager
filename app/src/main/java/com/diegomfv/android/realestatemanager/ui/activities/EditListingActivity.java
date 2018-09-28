@@ -45,7 +45,6 @@ import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
-import com.diegomfv.android.realestatemanager.viewmodel.EditViewModel;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -139,7 +138,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private String dateSold;
 
-    @BindView(R.id.button_add_edit_address_id)
+    @BindView(R.id.button_card_view_with_button_id)
     Button buttonEditAddress;
 
     @BindView(R.id.recyclerView_media_id)
@@ -247,13 +246,13 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick ({R.id.button_add_edit_address_id, R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id, R.id.checkbox_sold_id})
+    @OnClick ({R.id.button_card_view_with_button_id, R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id, R.id.checkbox_sold_id})
     public void buttonClicked(View view) {
         Log.d(TAG, "buttonClicked: " + ((Button) view).getText().toString() + " clicked!");
 
         switch (view.getId()) {
 
-            case R.id.button_add_edit_address_id: {
+            case R.id.button_card_view_with_button_id: {
                 ToastHelper.toastShort(this, "Sorry, the address cannot be modified");
             }
             break;
@@ -582,19 +581,24 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     private void updateRealEstateCache() {
         Log.d(TAG, "updateRealEstateCache: called!");
         this.updateStringValues();
+        this.updateFloatValues();
         this.updateIntegerValues();
+    }
+
+    private void updateFloatValues() {
+        Log.d(TAG, "updateFloatValues: called!");
+        this.getRealEstateCache().setPrice(Utils.getPriceAccordingToCurrency(currency, Utils.getFloatFromTextView(tvPrice)));
+        this.getRealEstateCache().setSurfaceArea(Utils.getFloatFromTextView(tvSurfaceArea));
     }
 
     private void updateIntegerValues() {
         Log.d(TAG, "updateIntegerValues: called!");
-        this.getRealEstateCache().setPrice((int) Utils.getPriceAccordingToCurrency(currency, Utils.getIntegerFromTextView(tvPrice)));
-        this.getRealEstateCache().setSurfaceArea(Utils.getIntegerFromTextView(tvSurfaceArea));
-        this.setRooms(this.getRealEstateCache());
+        this.setRooms();
     }
 
-    private void setRooms(RealEstate realEstate) {
+    private void setRooms() {
         Log.d(TAG, "setRooms: called!");
-        realEstate.setRooms(new RoomsRealEstate(
+        getRealEstateCache().setRooms(new RoomsRealEstate(
                 seekBarBedrooms.getSelectedMinValue().intValue(),
                 seekBarBathrooms.getSelectedMinValue().intValue(),
                 seekBarOtherRooms.getSelectedMinValue().intValue()));
@@ -748,7 +752,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
         //1: euros
         if (currency == 1) {
-            float price = Utils.getIntegerFromTextView(tvPrice);
+            float price = Utils.getFloatFromTextView(tvPrice);
             getRealEstateCache().setPrice((int)Utils.convertEuroToDollar(price));
         }
     }

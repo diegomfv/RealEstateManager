@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -151,4 +152,13 @@ public class UnitTest {
         System.out.println(interests);
 
     }
+
+    @Test
+    public void formatToTwoDecimals() {
+
+        System.out.println(Utils.formatToDecimals(5.23, 1));
+        System.out.println(Utils.formatToDecimals(5.23, 0));
+
+    }
+
 }

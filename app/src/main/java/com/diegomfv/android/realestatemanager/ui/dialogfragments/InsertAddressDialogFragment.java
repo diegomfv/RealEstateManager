@@ -236,10 +236,10 @@ public class InsertAddressDialogFragment extends DialogFragment {
             ToastHelper.toastShort(getActivity(), "Please, introduce a street");
 
         } else if (Utils.getStringFromTextView(tvLocality).length() == 0) {
-            ToastHelper.toastShort(getActivity(), "Please, introduce a city");
+            ToastHelper.toastShort(getActivity(), "Please, introduce a locality");
 
         } else if (Utils.getStringFromTextView(tvCity).length() == 0) {
-            ToastHelper.toastShort(getActivity(), "Please, introduce a locality");
+            ToastHelper.toastShort(getActivity(), "Please, introduce a city");
 
         } else if (Utils.getStringFromTextView(tvPostcode).length() == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a postcode");
