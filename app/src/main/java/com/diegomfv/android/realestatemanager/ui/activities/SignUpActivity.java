@@ -8,7 +8,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -91,7 +90,7 @@ public class SignUpActivity extends BaseActivity {
 
         this.configureToolBar();
 
-        this.getAllAcTextViews();
+        this.getAllAutocompleteTextViews();
 
         this.configureLayout();
 
@@ -104,8 +103,8 @@ public class SignUpActivity extends BaseActivity {
         unbinder.unbind();
     }
 
-    @OnClick (R.id.sign_up_button_id)
-    public void buttonClicked (View view) {
+    @OnClick(R.id.sign_up_button_id)
+    public void buttonClicked(View view) {
         Log.d(TAG, "buttonClicked: called!");
 
         switch (view.getId()) {
@@ -151,18 +150,27 @@ public class SignUpActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the layout.
+     */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
         setHints();
         setPasswordInputType();
     }
 
+    /**
+     * Method to set the input type for the password
+     */
     private void setPasswordInputType() {
         Log.d(TAG, "setPasswordInputType: called!");
         tvPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     }
 
-    private void setHints () {
+    /**
+     * Method to set the hints of all the Views.
+     */
+    private void setHints() {
         Log.d(TAG, "getAllTextInputLayouts: called!");
         Utils.getTextInputLayoutFromCardview(cvFirstName).setHint("First Name");
         Utils.getTextInputLayoutFromCardview(cvLastName).setHint("Last Name");
@@ -172,7 +180,10 @@ public class SignUpActivity extends BaseActivity {
         Utils.getTextInputLayoutFromCardview(cvMemDataAnswer).setHint("Memorable Data Answer");
     }
 
-    private void getAllAcTextViews() {
+    /**
+     * Method to get references to all the AutocompleteTextViews
+     */
+    private void getAllAutocompleteTextViews() {
         Log.d(TAG, "getAllTextviews: called!");
         tvFirstName = Utils.getTextInputAutoCompleteTextViewFromCardView(cvFirstName);
         tvLastName = Utils.getTextInputAutoCompleteTextViewFromCardView(cvLastName);
@@ -184,7 +195,10 @@ public class SignUpActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void saveInfoAndLaunchActivity () {
+    /**
+     * Method to save the information inputted and launch MainActivity
+     */
+    private void saveInfoAndLaunchActivity() {
         Log.d(TAG, "saveInfoAndLaunchActivity: called!");
 
         if (allChecksPassed()) {
@@ -201,8 +215,11 @@ public class SignUpActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Method to check that the information inputted is correct
+     */
     // TODO: 29/08/2018 Check!
-    private boolean allChecksPassed () {
+    private boolean allChecksPassed() {
         Log.d(TAG, "allChecksPassed: called!");
 
         if (Utils.getStringFromTextView(tvFirstName).length() < 3) {
@@ -221,7 +238,7 @@ public class SignUpActivity extends BaseActivity {
             ToastHelper.toastShort(this, "The password is too short");
             return false;
 
-        } else if (Utils.getStringFromTextView(tvMemDataQuestion).length() < 3 ) {
+        } else if (Utils.getStringFromTextView(tvMemDataQuestion).length() < 3) {
             ToastHelper.toastShort(this, "The memorable data question is too short");
             return false;
 

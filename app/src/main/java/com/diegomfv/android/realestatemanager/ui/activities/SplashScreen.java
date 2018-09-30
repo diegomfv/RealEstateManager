@@ -61,7 +61,51 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
         unbinder = ButterKnife.bind(this);
 
+        /* We hide the status bar
+         * */
         this.hideStatusBar();
+
+        /* We start the animation
+         * */
+        this.initSplashScreenAnimation();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: called!");
+        unbinder.unbind();
+    }
+
+    /**
+     * Method to hide the status bar
+     */
+    private void hideStatusBar() {
+        Log.d(TAG, "hideStatusBar: called!");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window w = getWindow(); // in Activity's onCreate() for instance
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
+    }
+
+    /**
+     * Method that launches AuthLoginActivity
+     */
+    private void launchAuthLoginActivity() {
+        Log.d(TAG, "launchAuthLoginActivity: called!");
+
+        Intent intent = new Intent(this, AuthLoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    /**
+     * Method that starts the intro animation
+     */
+    private void initSplashScreenAnimation() {
+        Log.d(TAG, "initSplashScreenAnimation: called!");
 
         mainLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -98,29 +142,5 @@ public class SplashScreen extends AppCompatActivity {
                 }).start();
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy: called!");
-        unbinder.unbind();
-    }
-
-    private void hideStatusBar () {
-        Log.d(TAG, "hideStatusBar: called!");
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window w = getWindow(); // in Activity's onCreate() for instance
-            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        }
-    }
-
-    private void launchAuthLoginActivity() {
-        Log.d(TAG, "launchAuthLoginActivity: called!");
-
-        Intent intent = new Intent(this, AuthLoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
     }
 }
