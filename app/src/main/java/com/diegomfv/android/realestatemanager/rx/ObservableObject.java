@@ -9,13 +9,18 @@ public class ObservableObject extends Observable {
 
     private static ObservableObject instance = new ObservableObject();
 
-    public static ObservableObject getInstance () {
+    public static ObservableObject getInstance() {
         return instance;
     }
 
-    private ObservableObject() {}
+    private ObservableObject() {
+    }
 
-    public void update (Object data) {
+    /**
+     * Method to set the observable object's field hasChanged() as true and notify the
+     * observers (passing data to them).
+     */
+    public void update(Object data) {
         synchronized (this) {
             setChanged();
             notifyObservers(data);
