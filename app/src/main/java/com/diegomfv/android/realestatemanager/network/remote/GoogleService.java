@@ -14,6 +14,9 @@ import retrofit2.http.Query;
  */
 public interface GoogleService {
 
+    /**
+     * Method to get Places using Text (It uses a URL).
+     */
     @GET("json")
     Observable<PlaceFromText> fetchPlaceFromText(
             @Query("input") String input,
@@ -21,19 +24,24 @@ public interface GoogleService {
             @Query("key") String key
     );
 
+    /**
+     * Method to get Details from a Place (It uses a URL).
+     */
     @GET("json")
     Observable<PlaceDetails> fetchPlaceId(
             @Query("placeid") String placeId,
             @Query("key") String key
     );
 
+    /**
+     * Method to get Nearby Places (It uses a URL).
+     */
     @GET("json")
     Observable<PlacesByNearby> fetchNearbyPlaces(
             @Query("location") LatLngForRetrofit latLngForRetrofit,
             @Query("rankby") String rankby,
             @Query("key") String key
     );
-
 
 
 }
