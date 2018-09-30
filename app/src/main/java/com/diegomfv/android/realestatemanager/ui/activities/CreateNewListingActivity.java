@@ -82,6 +82,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 // TODO: 30/09/2018 When the address is introduced, we can have the problem of finding and address
 // TODO: 30/09/2018 But not the lat long or the nearby places! (And it will be saved)!
 
+// TODO: 30/09/2018 Max value for rooms = 9
 /**
  * This activity allows the user to create new listings and add them to the database. Once a listing
  * has been created it cannot be deleted. Photos cannot be deleted once the have been chosen. When

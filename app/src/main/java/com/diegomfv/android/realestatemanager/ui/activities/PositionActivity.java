@@ -112,10 +112,16 @@ public class PositionActivity extends BaseActivity {
         setContentView(R.layout.activity_position);
         this.unbinder = ButterKnife.bind(this);
 
+        /* Configuring the toolbar
+         * */
         this.configureToolbarBar();
 
+        /* Checks the device location
+         * */
         this.checkDeviceLocationPermissionGranted();
 
+        /* Creating and subscribing to the ViewModel
+         * */
         this.createViewModel();
 
     }
@@ -169,7 +175,8 @@ public class PositionActivity extends BaseActivity {
                 Utils.updateCurrencyIcon(this, currency, item);
                 updateMapWithPins();
 
-            } break;
+            }
+            break;
 
         }
         return super.onOptionsItemSelected(item);
@@ -177,14 +184,20 @@ public class PositionActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<RealEstate> getListOfListings () {
+    /**
+     * Getter for listOfListings.
+     */
+    private List<RealEstate> getListOfListings() {
         if (listOfListings == null) {
             return listOfListings = new ArrayList<>();
         }
         return listOfListings;
     }
 
-    private List<Marker> getListOfMarkers () {
+    /**
+     * Getter for listOfMarkers.
+     */
+    private List<Marker> getListOfMarkers() {
         if (listOfMarkers == null) {
             return listOfMarkers = new ArrayList<>();
         }
@@ -193,6 +206,9 @@ public class PositionActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the toolbar.
+     */
     private void configureToolbarBar() {
         Log.d(TAG, "configureToolbarBar: called!");
 
@@ -210,6 +226,10 @@ public class PositionActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that modifies the currency variable
+     * and writes the new info to sharedPreferences.
+     */
     private void changeCurrency() {
         Log.d(TAG, "changeCurrency: called!");
 
@@ -218,11 +238,15 @@ public class PositionActivity extends BaseActivity {
         } else {
             this.currency = 0;
         }
-        Utils.writeCurrentCurrencyShPref(this,currency);
+        Utils.writeCurrentCurrencyShPref(this, currency);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that checks if we have the location permissions granted. If not, it asks the user
+     * for the necessary permissions.
+     */
     private void checkDeviceLocationPermissionGranted() {
         Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
 
@@ -236,7 +260,6 @@ public class PositionActivity extends BaseActivity {
                 }
             }
 
-            // TODO: 18/09/2018 Check the permission we are asking for!
         } else {
             Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
         }
@@ -246,6 +269,9 @@ public class PositionActivity extends BaseActivity {
 
     //VIEWMODEL
 
+    /**
+     * Method that creates the ViewModel.
+     */
     private void createViewModel() {
         Log.d(TAG, "createViewModel: called!");
 
@@ -257,7 +283,10 @@ public class PositionActivity extends BaseActivity {
         subscribeToModel(positionViewModel);
     }
 
-    private void subscribeToModel (PositionViewModel positionViewModel) {
+    /**
+     * Method to subscribe to the ViewModel.
+     */
+    private void subscribeToModel(PositionViewModel positionViewModel) {
         Log.d(TAG, "subscribeToModel: called!");
 
         if (positionViewModel != null) {
@@ -281,7 +310,7 @@ public class PositionActivity extends BaseActivity {
 
     /**
      * Checks if the user has the correct
-     * Google Play Services Version
+     * Google Play Services Version.
      */
     public boolean isGooglePlayServicesOK() {
         Log.d(TAG, "isGooglePlayServicesOK: called!");
@@ -309,7 +338,7 @@ public class PositionActivity extends BaseActivity {
     }
 
     /**
-     * Method used to initialise the map
+     * Method used to initialise the map.
      */
     private void initMap() {
         Log.d(TAG, "initMap: called!");
@@ -346,7 +375,7 @@ public class PositionActivity extends BaseActivity {
     }
 
     /**
-     * Method used to get the user's location
+     * Method used to get the user's location.
      */
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: called!");
@@ -393,7 +422,7 @@ public class PositionActivity extends BaseActivity {
     }
 
     /**
-     * Method used to move the camera in the map
+     * Method used to move the camera in the map.
      */
     private void moveCamera(LatLng latLng, float zoom) {
 
@@ -402,6 +431,9 @@ public class PositionActivity extends BaseActivity {
 
     }
 
+    /**
+     * Method to update the map with pins.
+     */
     private void updateMapWithPins() {
         Log.d(TAG, "updateMapWithPins: called!");
 
@@ -428,6 +460,9 @@ public class PositionActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Method to add markers to the map.
+     */
     private void addMarkerToMap(RealEstate realEstate) {
         Log.d(TAG, "addMarkerToMap: called!");
 
@@ -458,6 +493,9 @@ public class PositionActivity extends BaseActivity {
         listOfMarkers.add(mMap.addMarker(options));
     }
 
+    /**
+     * Method that checks id a real estate has already been sold
+     */
     private boolean realEstateAlreadySold(String dateSale) {
         Log.d(TAG, "realEstateAlreadySold: called!");
         if (dateSale == null || dateSale.equals("")) {
@@ -467,6 +505,9 @@ public class PositionActivity extends BaseActivity {
 
     }
 
+    /**
+     * Method to that retrieves an icon depending on the "sale" state of the listing
+     */
     private BitmapDescriptor getIconAccordingToAlreadySold(boolean alreadySold) {
         Log.d(TAG, "getIconAccordingToAlreadySold: called!");
         if (alreadySold) {
@@ -477,7 +518,9 @@ public class PositionActivity extends BaseActivity {
     }
 
     //MAP LISTENERS
-
+    /**
+     * Listener for when an item in the map is clicked
+     */
     private GoogleMap.OnInfoWindowClickListener onInfoWindowClickListener = new GoogleMap.OnInfoWindowClickListener() {
         @Override
         public void onInfoWindowClick(Marker marker) {
@@ -493,6 +536,9 @@ public class PositionActivity extends BaseActivity {
         }
     };
 
+    /**
+     * Listener for when the "myLocationButton" is clicked
+     */
     private GoogleMap.OnMyLocationButtonClickListener onMyLocationButtonClickedListener = new GoogleMap.OnMyLocationButtonClickListener() {
         @Override
         public boolean onMyLocationButtonClick() {
@@ -504,10 +550,11 @@ public class PositionActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Launches detail activity
+    /**
+     * Launches detail activity
      * with a Parcelable (item clicked) carried by the intent
-     * */
-    private void launchDetailActivity (RealEstate realEstate) {
+     */
+    private void launchDetailActivity(RealEstate realEstate) {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(Constants.SEND_PARCELABLE, realEstate);
         startActivity(intent);

@@ -203,7 +203,7 @@ public class SearchEngineActivity extends BaseActivity {
         switch (item.getItemId()) {
 
             case R.id.menu_change_currency_button: {
-                updateCurrency();
+                changeCurrency();
                 Utils.updateCurrencyIcon(this, currency, item);
                 updatePriceTextView();
 
@@ -235,8 +235,12 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void updateCurrency() {
-        Log.d(TAG, "updateCurrency: called!");
+    /**
+     * Method that modifies the currency variable and writes the new info to sharedPreferences.
+     * It also loads the fragment (or fragments).
+     */
+    private void changeCurrency() {
+        Log.d(TAG, "changeCurrency: called!");
 
         if (this.currency == 0) {
             this.currency = 1;
@@ -246,6 +250,9 @@ public class SearchEngineActivity extends BaseActivity {
         Utils.writeCurrentCurrencyShPref(this, currency);
     }
 
+    /**
+     * Method to set the price of the TextView related to price
+     */
     private void updatePriceTextView() {
         Log.d(TAG, "updatePriceTextView: called!");
         tvPrice.setText("Price (thousands, " + Utils.getCurrencySymbol(currency) + ")");
@@ -253,6 +260,9 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Getter for listOfRealEstate
+     */
     private List<RealEstate> getListOfRealEstate() {
         Log.d(TAG, "getListOfRealEstate: called!");
 
@@ -262,6 +272,9 @@ public class SearchEngineActivity extends BaseActivity {
         return listOfRealEstate;
     }
 
+    /**
+     * Getter for listOfPlaceRealEstate
+     */
     private List<PlaceRealEstate> getListOfPlaceRealEstate() {
         Log.d(TAG, "getListOfPlaceRealEstate: called!");
 
@@ -273,6 +286,12 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the toolbar.
+     * Depending on mainMenu, on the button behaves one way or another. With mainMenu = true,
+     * user can return to AuthLoginAtivity via a dialog that will pop-up. With mainMenu = false,
+     * the user will go to SearchEngineActivity
+     */
     private void configureToolBar() {
         Log.d(TAG, "configureToolBar: called!");
 
@@ -298,6 +317,9 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the layout.
+     */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
 
@@ -310,10 +332,13 @@ public class SearchEngineActivity extends BaseActivity {
         this.setCrystalSeekBarListeners();
 
         this.setMinMaxValuesRangeSeekBars(getListOfRealEstate());
-        this.prepareSets();
+        this.configureSets();
 
     }
 
+    /**
+     * Method to get references to the ViewGroups.
+     */
     private void getViewGroups() {
         Log.d(TAG, "getViewGroups: called!");
         this.linearLayoutTypes = cardViewType.findViewById(R.id.linear_layout_checkboxes_id);
@@ -322,6 +347,9 @@ public class SearchEngineActivity extends BaseActivity {
         this.linearLayoutTypesPointsOfInterestNearby = cardViewPointsOfInterest.findViewById(R.id.linear_layout_checkboxes_id);
     }
 
+    /**
+     * Method to get references to the TextViews.
+     */
     private void getTextViews() {
         Log.d(TAG, "getTextViews: called!");
 
@@ -337,6 +365,9 @@ public class SearchEngineActivity extends BaseActivity {
 
     }
 
+    /**
+     * Method to get references to the SeekBars.
+     */
     private void getSeekBars() {
         Log.d(TAG, "getSeekBars: called!");
         this.seekBarPrice = cardViewPrice.findViewById(R.id.single_seek_bar_id);
@@ -346,6 +377,9 @@ public class SearchEngineActivity extends BaseActivity {
 
     }
 
+    /**
+     * Method to set the text of all TextViews.
+     */
     private void setAllTexts() {
         Log.d(TAG, "setAllTexts: called!");
         tvPrice.setText("Price (thousands, $)");
@@ -359,6 +393,9 @@ public class SearchEngineActivity extends BaseActivity {
         tvPointsOfInterest.setText("Types of Points of Interest");
     }
 
+    /**
+     * Method to set the min an max values in the seekBars.
+     */
     private void setMinMaxValuesRangeSeekBars(List<RealEstate> listOfRealEstates) {
         Log.d(TAG, "setMinMaxValuesRangeSeekBars: called!");
         float maxPrice = 0;
@@ -400,12 +437,18 @@ public class SearchEngineActivity extends BaseActivity {
 
     }
 
+    /**
+     * Sets the min an max values for a seekBar.
+     */
     private void setMinMaxValues(CrystalRangeSeekbar seekBar, float min, float max) {
         Log.d(TAG, "setMinMaxValues: called!");
         seekBar.setMinValue(min);
         seekBar.setMaxValue(max);
     }
 
+    /**
+     * Sets the listeners for the seekBars.
+     */
     private void setCrystalSeekBarListeners() {
         Log.d(TAG, "setCrystalSeekBarListeners: called!");
         setListeners(seekBarPrice);
@@ -414,6 +457,9 @@ public class SearchEngineActivity extends BaseActivity {
         setListeners(seekBarAmountOfPhotos);
     }
 
+    /**
+     * Sets the listener for a seekBar.
+     */
     private void setListeners(final CrystalRangeSeekbar seekBar) {
         Log.d(TAG, "setListeners: called!");
 
@@ -436,6 +482,9 @@ public class SearchEngineActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Sets the text of the TextView related to a seekBar depending on the seekBar.
+     */
     private void setTextDependingOnSeekBar(CrystalRangeSeekbar seekBar, Number min, Number max) {
         Log.d(TAG, "setTextDependingOnTextView: called!");
         if (seekBar == seekBarPrice) {
@@ -453,6 +502,9 @@ public class SearchEngineActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Sets if a seekBar has been used before or not.
+     */
     private void setUsedStateAccordingToSeekBar(CrystalRangeSeekbar seekBar) {
         Log.d(TAG, "setUsedStateAccordingToSeekBar: called!");
         if (seekBar == seekBarPrice) {
@@ -468,8 +520,11 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void prepareSets() {
-        Log.d(TAG, "prepareSets: called!");
+    /**
+     * Method to configure the sets.
+     */
+    private void configureSets() {
+        Log.d(TAG, "configureSets: called!");
         setOfBuildingTypes = null;
         setOfLocalities = null;
         setOfCities = null;
@@ -477,6 +532,9 @@ public class SearchEngineActivity extends BaseActivity {
         fillSets();
     }
 
+    /**
+     * Getter for setOfBuildingTypes.
+     */
     private Set<String> getSetOfBuildingTypes() {
         Log.d(TAG, "getSetOfBuildingTypes: called!");
         if (setOfBuildingTypes == null) {
@@ -486,6 +544,9 @@ public class SearchEngineActivity extends BaseActivity {
 
     }
 
+    /**
+     * Getter for setOfLocalities.
+     */
     private Set<String> getSetOfLocalities() {
         Log.d(TAG, "getSetOfLocalities: called!");
         if (setOfLocalities == null) {
@@ -494,6 +555,9 @@ public class SearchEngineActivity extends BaseActivity {
         return setOfLocalities;
     }
 
+    /**
+     * Getter for setOfCities.
+     */
     private Set<String> getSetOfCities() {
         Log.d(TAG, "getSetOfCities: called!");
         if (setOfCities == null) {
@@ -502,6 +566,9 @@ public class SearchEngineActivity extends BaseActivity {
         return setOfCities;
     }
 
+    /**
+     * Getter for setOfTypesOfPointsOfInterest
+     */
     private Set<String> getSetOfTypesOfPointsOfInterest() {
         Log.d(TAG, "getSetOfTypesOfPointsOfInterest: called!");
         if (setOfTypesOfPointsOfInterest == null) {
@@ -510,6 +577,9 @@ public class SearchEngineActivity extends BaseActivity {
         return setOfTypesOfPointsOfInterest;
     }
 
+    /**
+     * Method that uses RxJava to fill the sets.
+     */
     @SuppressLint("CheckResult")
     private void fillSets() {
         Log.d(TAG, "fillSets: called!");
@@ -547,6 +617,9 @@ public class SearchEngineActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * Method to fill the setOfBuildingTypes
+     */
     private void fillSetOfBuildingTypes(List<RealEstate> list) {
         Log.d(TAG, "fillSetOfBuildingTypes: called!");
         Log.w(TAG, "fillSetOfBuildingTypes: " + list);
@@ -557,6 +630,9 @@ public class SearchEngineActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Method to fill the setOfLocalities
+     */
     private void fillSetOfLocalities(List<RealEstate> list) {
         Log.d(TAG, "fillSetOfLocalities: called!");
         if (list != null) {
@@ -566,6 +642,9 @@ public class SearchEngineActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Method to fill the setOfCities
+     */
     private void fillSetOfCities(List<RealEstate> list) {
         Log.d(TAG, "fillSetOfCities: called!");
         if (list != null) {
@@ -575,6 +654,9 @@ public class SearchEngineActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Method that uses RxJava to fill the setOfTypesOfPointsOfInterest
+     */
     @SuppressLint("CheckResult")
     private void fillSetOfTypesOfPointsOfInterest() {
         Log.d(TAG, "fillSetOfTypesOfPointsOfInterest: called!");
@@ -613,6 +695,9 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that uses the sets to fill the layout with checkboxes
+     */
     private void addCheckboxesToLayout() {
         Log.d(TAG, "addCheckboxesToLayout: called!");
 
@@ -647,6 +732,9 @@ public class SearchEngineActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Method that fills the layout with checkboxes according to certain information
+     */
     private void fillWithCheckboxes(LinearLayout linearLayout, String type, List<CheckBox> listOfCheckboxes) {
         Log.d(TAG, "addPointsOfInterestCheckboxesToLayout: called!");
 
@@ -668,6 +756,9 @@ public class SearchEngineActivity extends BaseActivity {
         listOfCheckboxes.add(checkBox);
     }
 
+    /**
+     * Getter for listOfBuildingTypeCheckboxes
+     */
     public List<CheckBox> getListOfBuildingTypeCheckboxes() {
         Log.d(TAG, "getListOfBuildingTypeCheckboxes: called!");
         if (listOfBuildingTypeCheckboxes == null) {
@@ -676,6 +767,9 @@ public class SearchEngineActivity extends BaseActivity {
         return listOfBuildingTypeCheckboxes;
     }
 
+    /**
+     * Getter for listOfCityCheckboxes
+     */
     public List<CheckBox> getListOfCityCheckboxes() {
         Log.d(TAG, "getListOfCityCheckboxes: called!");
         if (listOfCityCheckboxes == null) {
@@ -684,6 +778,9 @@ public class SearchEngineActivity extends BaseActivity {
         return listOfCityCheckboxes;
     }
 
+    /**
+     * Getter for listOfLocalityCheckboxes
+     */
     public List<CheckBox> getListOfLocalityCheckboxes() {
         Log.d(TAG, "getListOfBuildingTypeCheckboxes: called!");
         if (listOfLocalityCheckboxes == null) {
@@ -692,6 +789,9 @@ public class SearchEngineActivity extends BaseActivity {
         return listOfLocalityCheckboxes;
     }
 
+    /**
+     * Getter for listOfPointOfInterestCheckboxes
+     */
     public List<CheckBox> getListOfPointOfInterestCheckboxes() {
         Log.d(TAG, "getListOfPointOfInterestCheckboxes: called!");
         if (listOfPointOfInterestCheckboxes == null) {
@@ -702,21 +802,33 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to get the text from a TextView and capitalize it
+     */
     private String getTextFromView(TextView textView) {
         Log.d(TAG, "getTextFromView: called!");
         return Utils.capitalize(Utils.getStringFromTextView(textView));
     }
 
+    /**
+     * Method to get the max value from a seekBar
+     */
     private int getMaxValueFromSeekBar(CrystalRangeSeekbar rangeSeekBar) {
         Log.d(TAG, "getMaxValueFromSeekBar: called!");
         return (int) rangeSeekBar.getSelectedMaxValue();
     }
 
+    /**
+     * Method to get the min value from a seekBar
+     */
     private int getMinValueFromSeekBar(CrystalRangeSeekbar rangeSeekBar) {
         Log.d(TAG, "getMinValueFromSeekBar: called!");
         return (int) rangeSeekBar.getSelectedMinValue();
     }
 
+    /**
+     * Method to check if a seekBar has been used
+     */
     private boolean seekBarNotUsed(CrystalRangeSeekbar seekBar) {
         Log.d(TAG, "seekBarNotUsed: called!");
 
@@ -733,11 +845,9 @@ public class SearchEngineActivity extends BaseActivity {
         }
     }
 
-    private boolean textViewNotUsed(TextView textView) {
-        Log.d(TAG, "textViewNotUsed: called!");
-        return getTextFromView(textView).equals("");
-    }
-
+    /**
+     * Method to check if the seekBar values pass or not a specific filter
+     */
     private boolean maxMinValuesFilterPassed(CrystalRangeSeekbar rangeSeekBar, float value) {
         Log.d(TAG, "maxMinValuesFilterPassed: called!");
 
@@ -751,6 +861,9 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to init the search of listings
+     */
     private void initSearch() {
         Log.d(TAG, "initSearch: called!");
 
@@ -761,22 +874,22 @@ public class SearchEngineActivity extends BaseActivity {
         // TODO: search information will be stored and can be accessed at any moment without a search
 
         /* We create a new list
-        * to store the found real estates
-        * */
+         * to store the found real estates
+         * */
         List<RealEstate> listOfFoundRealEstates = new ArrayList<>();
 
         for (int i = 0; i < listOfRealEstate.size(); i++) {
 
             /* If the real estate does not pass the filter, we set it to false
-            * */
+             * */
             if (!allFiltersPassed(listOfRealEstate.get(i))) {
                 listOfRealEstate.get(i).setFound(false);
                 continue;
             }
 
             /* If the real estate passes the filter, we set the found field to true and add
-            * it to the list
-            * */
+             * it to the list
+             * */
             listOfRealEstate.get(i).setFound(true);
             listOfFoundRealEstates.add(listOfRealEstate.get(i));
         }
@@ -794,6 +907,10 @@ public class SearchEngineActivity extends BaseActivity {
 
     //FILTERS
 
+    /**
+     * Method that returns true if all filters has been passed. If that is the case, the listing
+     * will be added to a list and displayed in the list of listings found bu the Search Engine
+     */
     private boolean allFiltersPassed(RealEstate realEstate) {
         Log.d(TAG, "allFiltersPassed: called!");
 
@@ -839,6 +956,9 @@ public class SearchEngineActivity extends BaseActivity {
         return true;
     }
 
+    /**
+     * Method to check if a listing passes the type filter
+     */
     private boolean typeFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "typeFilterPassed: called!");
 
@@ -868,6 +988,9 @@ public class SearchEngineActivity extends BaseActivity {
         return false;
     }
 
+    /**
+     * Method to check if a listing passes the price filter
+     */
     private boolean priceFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "priceFilterPassed: called!");
 
@@ -894,6 +1017,9 @@ public class SearchEngineActivity extends BaseActivity {
         return false;
     }
 
+    /**
+     * Method to check if a listing passes the surface area filter
+     */
     private boolean surfaceAreaFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "surfaceAreaFilterPassed: called!");
 
@@ -909,6 +1035,9 @@ public class SearchEngineActivity extends BaseActivity {
         return false;
     }
 
+    /**
+     * Method to check if a listing passes the number of rooms filter
+     */
     private boolean numberOfRoomsFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "numberOfRoomsFilterPassed: called!");
 
@@ -924,13 +1053,16 @@ public class SearchEngineActivity extends BaseActivity {
         return false;
     }
 
+    /**
+     * Method to check if a listing passes the locality filter
+     */
     private boolean localityFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "localityFilterPassed: called!");
 
         List<String> listOfCheckedTypes = new ArrayList<>();
 
         /* A list is filled with all the texts of the related checked checkboxes
-        * */
+         * */
         for (int i = 0; i < getListOfLocalityCheckboxes().size(); i++) {
             if (getListOfLocalityCheckboxes().get(i).isChecked()) {
                 listOfCheckedTypes.add(Utils.getStringFromTextView(getListOfLocalityCheckboxes().get(i)));
@@ -944,7 +1076,7 @@ public class SearchEngineActivity extends BaseActivity {
         }
 
         /* The user checked at least one checkbox
-        * */
+         * */
         for (int i = 0; i < getListOfLocalityCheckboxes().size(); i++) {
             if (realEstate.getAddress().getLocality().equalsIgnoreCase(listOfCheckedTypes.get(i))) {
                 return true;
@@ -953,7 +1085,9 @@ public class SearchEngineActivity extends BaseActivity {
         return false;
     }
 
-
+    /**
+     * Method to check if a listing passes the city filter
+     */
     private boolean cityFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "cityFilterPassed: called!");
 
@@ -983,6 +1117,9 @@ public class SearchEngineActivity extends BaseActivity {
         return false;
     }
 
+    /**
+     * Method to check if a listing passes the amount of photos filter
+     */
     private boolean amountOfPhotosFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "amountOfPhotosFilterPassed: called!");
 
@@ -998,6 +1135,9 @@ public class SearchEngineActivity extends BaseActivity {
         return false;
     }
 
+    /**
+     * Method to check if a listing passes the on sale filter
+     */
     private boolean onSaleFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "onSaleFilterPassed: called!");
 
@@ -1016,6 +1156,9 @@ public class SearchEngineActivity extends BaseActivity {
         return false;
     }
 
+    /**
+     * Method to check if a listing passes the Points Of Interest filter
+     */
     private boolean pointsOfInterestFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "pointsOfInterestFilterPassed: called!");
 
@@ -1070,8 +1213,12 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that uses RxJava to update the list of found articles. When the counter reaches 0,
+     * the SearchEngineActivity is launched
+     */
     @SuppressLint("CheckResult")
-    private void updateRealEstatesWithFoundInfo (final List<RealEstate> list) {
+    private void updateRealEstatesWithFoundInfo(final List<RealEstate> list) {
         Log.d(TAG, "updateRealEstatesWithFoundInfo: called!");
         if (list != null) {
 
@@ -1092,8 +1239,8 @@ public class SearchEngineActivity extends BaseActivity {
                                 Log.d(TAG, "onComplete: called!");
 
                                 /* The counter allows us to know when the process
-                                * has finished and we can launch next activity
-                                * */
+                                 * has finished and we can launch next activity
+                                 * */
                                 updateCounter++;
                                 if (list.size() == updateCounter) {
                                     launchActivityWithIntent();
@@ -1110,7 +1257,10 @@ public class SearchEngineActivity extends BaseActivity {
         }
     }
 
-    private void launchActivityWithIntent () {
+    /**
+     * Method to launch the specific activity with a concrete intent
+     */
+    private void launchActivityWithIntent() {
         Log.d(TAG, "launchActivityWithIntent: called!");
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Constants.INTENT_FROM_SEARCH_ENGINE, Constants.STRING_FROM_SEARCH_ENGINE);

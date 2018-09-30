@@ -44,8 +44,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  */
 
 // TODO: 02/09/2018 Take care, the user may leave the app and then come back and the
-    //cache might be cleared!
-// TODO: 11/09/2018 Add RecyclerView decorator!
+// TODO: cache might be cleared!
 public class PhotoGridActivity extends BaseActivity implements InsertDescriptionDialogFragment.InsertDescriptionDialogListener {
 
     private static final String TAG = PhotoGridActivity.class.getSimpleName();
@@ -123,11 +122,11 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
 
                         /* We generate an id (key) for the bitmap
-                        * */
+                         * */
                         String key = FirebasePushIdGenerator.generate();
 
                         /* The Bitmap itself anf its information is added to the cache
-                        * */
+                         * */
                         getListOfImagesRealEstateCache().add(new ImageRealEstate(key, ""));
                         getListOfBitmapKeys().add(key);
                         getRepository().addBitmapToBitmapCache(key, Utils.getResizedBitmap(selectedImage, 840));
@@ -138,7 +137,7 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
                         Log.i(TAG, "onActivityResult: " + getBitmapCache().size());
 
                         /* The recycler view is notified in order to display the new data
-                        * */
+                         * */
                         updateAdapterData();
 
                     }
@@ -174,6 +173,10 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
         checkActivityLaunched();
     }
 
+    /**
+     * This callback gets triggered when the user inputs information in the dialogFragment and
+     * presses the positive button.
+     */
     @Override
     public void onDialogPositiveClick(ImageRealEstate imageRealEstate) {
         Log.d(TAG, "onDatePickerDialogPositiveClick: called!");
@@ -181,6 +184,10 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
 
     }
 
+    /**
+     * This callback gets triggered when the user
+     * presses the negative button.
+     */
     @Override
     public void onDialogNegativeClick() {
         Log.d(TAG, "onDatePickerDialogNegativeClick: called!");
@@ -189,6 +196,9 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the toolbar.
+     */
     private void configureToolBar() {
         Log.d(TAG, "configureToolBar: called!");
 
@@ -207,7 +217,11 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void checkActivityLaunched () {
+    /**
+     * Method to determine which activity we launch. It depends on the activity we came from
+     * (CreateNewListingActivity or EditListingActivity).
+     */
+    private void checkActivityLaunched() {
         Log.d(TAG, "checkActivityLaunched: called!");
 
         if (getIntent() != null && getIntent().getExtras() != null) {
@@ -225,6 +239,9 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
         }
     }
 
+    /**
+     * Method to configure the RecyclerView.
+     */
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
@@ -233,7 +250,7 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
         boolean includeEdge = true; //Includes spaces on the sides
 
         /* We are using a GridRecyclerView (custom view). See layout
-        * */
+         * */
         this.recyclerView.setHasFixedSize(true);
         this.recyclerView.setLayoutManager(new GridLayoutManager(
                 this, spanCount));
@@ -254,9 +271,11 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
 
     }
 
+    /**
+     * Method to configure the onClick listeners of the RecyclerView.
+     */
     private void configureOnClickRecyclerView() {
         Log.d(TAG, "configureOnClickRecyclerView: called!");
-
         ItemClickSupport.addTo(recyclerView)
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
@@ -276,7 +295,10 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
                 });
     }
 
-    private void updateAdapterData () {
+    /**
+     * Method to update the data in the RecyclerView.
+     */
+    private void updateAdapterData() {
         Log.d(TAG, "updateAdapterData: called!");
         adapter.setDataKeys(getListOfBitmapKeys());
         adapter.setDataBitmapCache(getBitmapCache());
@@ -284,9 +306,11 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to launch the gallery so the user can choose a picture
+     */
     private void launchGallery() {
         Log.d(TAG, "launchGallery: called!");
-
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, Constants.REQUEST_CODE_GALLERY);
@@ -295,11 +319,13 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void launchAddDescriptionDialog (ImageRealEstate imageRealEstate) {
+    /**
+     * Method that launches AddDescriptionDialog which allows the user to enter information
+     * about the picture
+     */
+    private void launchAddDescriptionDialog(ImageRealEstate imageRealEstate) {
         Log.d(TAG, "launchAddDescriptionDialog: called!");
-
         InsertDescriptionDialogFragment.newInstance(imageRealEstate)
                 .show(getSupportFragmentManager(), "InsertDescriptionDialogFragment");
-
     }
 }
