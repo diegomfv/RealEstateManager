@@ -42,6 +42,8 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  * Created by Diego Fajardo on 06/09/2018.
  */
 
+// TODO: 30/09/2018 Limit the size of the loan! Too many numbers could lead to layout problems!
+
 /**
  * This activity allows the user to simulate a loan inputting different kind of values.
  * Clicking the edit button, a dialog will be display to input thge information. The table with

@@ -29,6 +29,11 @@ import butterknife.Unbinder;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
+// TODO: 30/09/2018 AuthLoginActivity code
+// TODO: 30/09/2018 SearchEngine
+// TODO: 30/09/2018 Layouts for Tablets
+// TODO: 30/09/2018 Check the Floats
+
 /**
  * MainActivity displays a different layout depending on the size of the screen (handsets or
  * tablets). Additionally, it behaves different according to what activity launched it. If the activity
