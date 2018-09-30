@@ -162,8 +162,8 @@ public class FragmentTabletItemDescription extends BaseFragment {
 
         this.deviceLocationPermissionGranted = false;
 
-        if (getRootActivity() != null) {
-            this.currency = Utils.readCurrentCurrencyShPref(getRootActivity());
+        if (getRootMainActivity() != null) {
+            this.currency = Utils.readCurrentCurrencyShPref(getRootMainActivity());
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -323,11 +323,11 @@ public class FragmentTabletItemDescription extends BaseFragment {
     private void createModel() {
         Log.d(TAG, "createModel: called!");
 
-        if (getRootActivity() != null) {
+        if (getRootMainActivity() != null) {
 
             ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
             this.listingsSharedViewModel = ViewModelProviders
-                    .of(getRootActivity(), factory)
+                    .of(getRootMainActivity(), factory)
                     .get(ListingsSharedViewModel.class);
 
             subscribeToModel();
@@ -482,13 +482,13 @@ public class FragmentTabletItemDescription extends BaseFragment {
 
             } else {
 
-                if (getRootActivity() != null) {
+                if (getRootMainActivity() != null) {
 
                     this.recyclerViewMedia.setHasFixedSize(true);
                     this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(
-                            getRootActivity(), LinearLayoutManager.HORIZONTAL, false));
+                            getRootMainActivity(), LinearLayoutManager.HORIZONTAL, false));
                     this.adapter = new RVAdapterMediaHorizontalDescr(
-                            getRootActivity(),
+                            getRootMainActivity(),
                             getRepository(),
                             getInternalStorage(),
                             getImagesDir(),
@@ -518,7 +518,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
 
                         for (int i = 0; i < getListOfImagesRealEstate().size(); i++) {
                             if (getListOfImagesRealEstate().get(i).getId().equals(key)) {
-                                ToastHelper.toastShort(getRootActivity(), getListOfImagesRealEstate().get(i).getDescription());
+                                ToastHelper.toastShort(getRootMainActivity(), getListOfImagesRealEstate().get(i).getDescription());
                             }
                         }
                     }
@@ -530,9 +530,9 @@ public class FragmentTabletItemDescription extends BaseFragment {
     private void checkDeviceLocationPermissionGranted() {
         Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
 
-        if (getRootActivity() != null) {
-            if (Utils.checkPermission(getRootActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-                if (Utils.checkPermission(getRootActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
+        if (getRootMainActivity() != null) {
+            if (Utils.checkPermission(getRootMainActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (Utils.checkPermission(getRootMainActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
                     deviceLocationPermissionGranted = true;
 
                     if (isGooglePlayServicesOK()) {
@@ -554,7 +554,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
     public boolean isGooglePlayServicesOK() {
         Log.d(TAG, "isGooglePlayServicesOK: called!");
 
-        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getRootActivity());
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getRootMainActivity());
 
         if (available == ConnectionResult.SUCCESS) {
             //Everything is fine and the user can make map requests
@@ -564,16 +564,16 @@ public class FragmentTabletItemDescription extends BaseFragment {
         } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
             //There is an error but we can resolve it
             Log.d(TAG, "isGooglePlayServicesOK: an error occurred but we can fix it");
-            if (getRootActivity() != null) {
+            if (getRootMainActivity() != null) {
                 Dialog dialog = GoogleApiAvailability.getInstance()
-                        .getErrorDialog(getRootActivity(), available, Constants.REQUEST_ERROR_DIALOG);
+                        .getErrorDialog(getRootMainActivity(), available, Constants.REQUEST_ERROR_DIALOG);
                 dialog.show();
             }
 
         } else {
             Log.d(TAG, "isGooglePlayServicesOK: an error occurred; you cannot make map requests");
-            if (getRootActivity() != null) {
-                ToastHelper.toastLong(getRootActivity(), this.getResources().getString(R.string.cant_make_map_requests));
+            if (getRootMainActivity() != null) {
+                ToastHelper.toastLong(getRootMainActivity(), this.getResources().getString(R.string.cant_make_map_requests));
             }
         }
         return false;
@@ -624,8 +624,8 @@ public class FragmentTabletItemDescription extends BaseFragment {
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: called!");
 
-        if (getRootActivity() != null) {
-            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getRootActivity());
+        if (getRootMainActivity() != null) {
+            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getRootMainActivity());
         }
 
         try {
@@ -776,8 +776,8 @@ public class FragmentTabletItemDescription extends BaseFragment {
         @Override
         public void onInfoWindowClick(Marker marker) {
             Log.d(TAG, "onInfoWindowClick: called!");
-            if (getRootActivity() != null) {
-                ToastHelper.toastNotImplemented(getRootActivity());
+            if (getRootMainActivity() != null) {
+                ToastHelper.toastNotImplemented(getRootMainActivity());
             }
         }
     };

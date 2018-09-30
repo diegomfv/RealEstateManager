@@ -74,7 +74,7 @@ public class RealEstateManagerApp extends Application {
     }
 
     /**
-     * Method to get an entry point to the internal storage
+     * Method to get an entry point to the internal storage.
      */
     public Storage getInternalStorage() {
         Log.d(TAG, "getInternalStorage: called!");
@@ -88,7 +88,7 @@ public class RealEstateManagerApp extends Application {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Method to set the directories of the internal storage
+     * Method to set the directories of the internal storage.
      */
     private void setDirectories() {
         Log.d(TAG, "setDirectories: called!");
@@ -98,7 +98,7 @@ public class RealEstateManagerApp extends Application {
     }
 
     /**
-     * Method to get the mainPath of the internal storage
+     * Method to get the mainPath of the internal storage.
      */
     public String getMainPath() {
         Log.d(TAG, "getMainPath: called!");
@@ -106,7 +106,7 @@ public class RealEstateManagerApp extends Application {
     }
 
     /**
-     * Method to get the images directory of the internal storage
+     * Method to get the images directory of the internal storage.
      */
     public String getImagesDir() {
         Log.d(TAG, "getImagesDir: called!");
@@ -114,7 +114,7 @@ public class RealEstateManagerApp extends Application {
     }
 
     /**
-     * Method to get the temporary images directory of the internal storage
+     * Method to get the temporary images directory of the internal storage.
      */
     public String getTemporaryDir() {
         Log.d(TAG, "getTemporaryDir: called!");
@@ -124,7 +124,7 @@ public class RealEstateManagerApp extends Application {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Method to clear all the tables of the database
+     * Method to clear all the tables of the database.
      */
     private void clearTables() {
         Log.d(TAG, "clearTables: called!");
@@ -134,7 +134,7 @@ public class RealEstateManagerApp extends Application {
 
     // TODO: 21/08/2018 Delete
     /**
-     * Method to clear all the files of the internal storage
+     * Method to clear all the files of the internal storage.
      */
     public void getAllFiles() {
         Log.d(TAG, "getAllFiles: called!");
@@ -146,7 +146,7 @@ public class RealEstateManagerApp extends Application {
     }
 
     /**
-     * Method to get all the temporary files of the internal storage
+     * Method to get all the temporary files of the internal storage.
      */
     public void getInternalStorageTemporaryFiles() {
         Log.d(TAG, "getInternalStorageTemporaryFiles: called!");
@@ -167,7 +167,7 @@ public class RealEstateManagerApp extends Application {
     }
 
     /**
-     * Method to get all the image files of the internal storage
+     * Method to get all the image files of the internal storage.
      */
     public void getInternalStorageImageFiles() {
         Log.d(TAG, "getInternalStorageImageFiles: called!");

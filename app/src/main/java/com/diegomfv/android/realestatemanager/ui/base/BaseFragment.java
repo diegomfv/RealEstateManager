@@ -25,61 +25,90 @@ public class BaseFragment extends Fragment {
 
     private static final String TAG = BaseFragment.class.getSimpleName();
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //SINGLETON GETTERS
+
+    /**
+     * Method to get a reference to the application.
+     */
     protected RealEstateManagerApp getApp() {
         Log.d(TAG, "getApp: called");
         return (RealEstateManagerApp) getActivity().getApplication();
     }
 
+    /**
+     * Method to get a reference to the Database.
+     */
     protected AppDatabase getAppDatabase() {
         Log.d(TAG, "getAppDatabase: called!");
         return getApp().getDatabase();
     }
 
+    /**
+     * Method to get a reference to the DataRepository.
+     */
     protected DataRepository getRepository() {
         Log.d(TAG, "getRepository: called!");
         return getApp().getRepository();
     }
 
+    /**
+     * Method to get a reference to the Internal Storage.
+     */
     protected Storage getInternalStorage() {
         Log.d(TAG, "getInternalStorage: called!");
         return getApp().getInternalStorage();
     }
 
+    /**
+     * Getter of the real estate cache object.
+     */
     protected RealEstate getRealEstateCache() {
         Log.d(TAG, "getRealEstateCache: called!");
         return getRepository().getRealEstateCache();
     }
 
+    /**
+     * Getter of the list of images of the real estate cache object.
+     */
     protected List<ImageRealEstate> getListOfImagesRealEstateCache() {
         Log.d(TAG, "getListOfImagesRealEstateCache: called!");
         return getRepository().getListOfImagesRealEstateCache();
     }
 
+    /**
+     * Getter of the list of places of the real estate cache object.
+     */
     protected List<PlaceRealEstate> getListOfPlacesRealEstateCache() {
         Log.d(TAG, "getListOfPlacesRealEstateCache: called!");
         return getRepository().getListOfPlacesRealEstateCache();
     }
 
-    protected List<PlaceRealEstate> getListOfPlacesByNearbyCache() {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getRepository().getListOfPlacesRealEstateCache();
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected MainActivity getRootActivity () {
+    /**
+     * Method that retrieves a reference to MainActivity
+     */
+    protected MainActivity getRootMainActivity() {
         Log.d(TAG, "getActivity: called!");
-        return (MainActivity)getActivity();
+        return (MainActivity) getActivity();
     }
 
-    protected String getImagesDir () {
+    /**
+     * Getter of the Images Directory
+     */
+    protected String getImagesDir() {
         Log.d(TAG, "getImagesDir: called!");
         //mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
         return getInternalStorage().getInternalFilesDirectory() + File.separator
                 + Constants.IMAGES_DIRECTORY + File.separator;
     }
 
-    protected String getTemporaryDir () {
+    /**
+     * Getter of the Images Temporary Directory
+     */
+    protected String getTemporaryDir() {
         Log.d(TAG, "getTemporaryDir: called!");
         return getInternalStorage().getInternalFilesDirectory() + File.separator
                 + Constants.TEMPORARY_DIRECTORY + File.separator;
@@ -87,7 +116,10 @@ public class BaseFragment extends Fragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected RequestManager getGlide () {
+    /**
+     * Getter for Glide.
+     */
+    protected RequestManager getGlide() {
         Log.d(TAG, "getGlide: called!");
         return Glide.with(getApp());
     }

@@ -24,7 +24,6 @@ import com.diegomfv.android.realestatemanager.ui.activities.DetailActivity;
 import com.diegomfv.android.realestatemanager.ui.activities.EditListingActivity;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
-import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
@@ -82,8 +81,8 @@ public class FragmentListListings extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: called!");
 
-        if (getRootActivity() != null) {
-            this.currency = Utils.readCurrentCurrencyShPref(getRootActivity());
+        if (getRootMainActivity() != null) {
+            this.currency = Utils.readCurrentCurrencyShPref(getRootMainActivity());
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,12 +131,12 @@ public class FragmentListListings extends BaseFragment {
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
-        if (getRootActivity() != null) {
+        if (getRootMainActivity() != null) {
 
             this.recyclerView.setHasFixedSize(true);
-            this.recyclerView.setLayoutManager(new LinearLayoutManager(getRootActivity()));
+            this.recyclerView.setLayoutManager(new LinearLayoutManager(getRootMainActivity()));
             this.adapter = new RVAdapterListings(
-                    getRootActivity(),
+                    getRootMainActivity(),
                     getRepository(),
                     getInternalStorage(),
                     getImagesDir(),
@@ -145,7 +144,7 @@ public class FragmentListListings extends BaseFragment {
                     getGlide(),
                     currency);
 
-            LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getRootActivity(), R.anim.layout_animation_fall_down);
+            LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getRootMainActivity(), R.anim.layout_animation_fall_down);
             recyclerView.setLayoutAnimation(animation);
 
             this.recyclerView.setAdapter(this.adapter);
@@ -168,9 +167,9 @@ public class FragmentListListings extends BaseFragment {
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
 
-                        if (getRootActivity() != null) {
+                        if (getRootMainActivity() != null) {
 
-                            if ((getRootActivity()).getEditModeActive()) {
+                            if ((getRootMainActivity()).getEditModeActive()) {
                                 /* If editMode is ACTIVE, we launch EditListingActivity when an item is clicked. It does
                                  * not matter whether we are in a handset or a tablet
                                  * */
@@ -180,7 +179,7 @@ public class FragmentListListings extends BaseFragment {
                                 /* If editMode is NOT ACTIVE, the functionality varies depending on if the user is using
                                  * a handset or a tablet.
                                  * */
-                                if (getRootActivity().getDeviceIsHandset()) {
+                                if (getRootMainActivity().getDeviceIsHandset()) {
                                     /* This code runs when we are using a handset. The app displays information about the
                                      * listing in DetailActivity
                                      * */
@@ -205,11 +204,11 @@ public class FragmentListListings extends BaseFragment {
     private void createModel() {
         Log.d(TAG, "createModel: called!");
 
-        if (getRootActivity() != null) {
+        if (getRootMainActivity() != null) {
 
             ListingsSharedViewModel.Factory factory = new ListingsSharedViewModel.Factory(getApp());
             this.listingsSharedViewModel = ViewModelProviders
-                    .of(getRootActivity(), factory)
+                    .of(getRootMainActivity(), factory)
                     .get(ListingsSharedViewModel.class);
 
             subscribeToModel();
@@ -226,7 +225,7 @@ public class FragmentListListings extends BaseFragment {
 
         if (listingsSharedViewModel != null) {
 
-            if ((getRootActivity()).getMainMenu()) {
+            if ((getRootMainActivity()).getMainMenu()) {
                 Log.w(TAG, "subscribeToModel: mainMenu = true");
 
                 this.listingsSharedViewModel.getObservableListOfListings().observe(this, new Observer<List<RealEstate>>() {
@@ -262,7 +261,7 @@ public class FragmentListListings extends BaseFragment {
      * with a Parcelable (item clicked) carried by the intent
      */
     private void launchActivityWithRealEstate(RealEstate realEstate, Class<? extends AppCompatActivity> activity) {
-        Intent intent = new Intent(getRootActivity(), activity);
+        Intent intent = new Intent(getRootMainActivity(), activity);
         intent.putExtra(Constants.SEND_PARCELABLE, realEstate);
         startActivity(intent);
     }

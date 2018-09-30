@@ -23,6 +23,11 @@ import java.util.Set;
 /**
  * Created by Diego Fajardo on 27/08/2018.
  */
+
+/**
+ * Activity that serves as base
+ * for the other activities.
+ */
 public class BaseActivity extends AppCompatActivity {
 
     private static final String TAG = BaseActivity.class.getSimpleName();
@@ -31,84 +36,113 @@ public class BaseActivity extends AppCompatActivity {
 
     //SINGLETON GETTERS
 
+    /**
+     * Method to get a reference to the application.
+     */
     protected RealEstateManagerApp getApp() {
         Log.d(TAG, "getApp: called");
         return (RealEstateManagerApp) getApplication();
     }
 
+    /**
+     * Method to get a reference to the Database.
+     */
     protected AppDatabase getAppDatabase() {
         Log.d(TAG, "getAppDatabase: called!");
         return getApp().getDatabase();
     }
 
+    /**
+     * Method to get a reference to the DataRepository.
+     */
     protected DataRepository getRepository() {
         Log.d(TAG, "getRepository: called!");
         return getApp().getRepository();
     }
 
+    /**
+     * Method to get a reference to the Internal Storage.
+     */
     protected Storage getInternalStorage() {
         Log.d(TAG, "getInternalStorage: called!");
         return getApp().getInternalStorage();
     }
 
+    /**
+     * Getter of the real estate cache object.
+     */
     protected RealEstate getRealEstateCache() {
         Log.d(TAG, "getRealEstateCache: called!");
         return getRepository().getRealEstateCache();
     }
 
+    /**
+     * Setter of the real estate cache object.
+     */
     protected void setRealEstateCache(RealEstate realEstate) {
         Log.d(TAG, "setRealEstateCache: called!");
         getRepository().setRealEstateCache(realEstate);
     }
 
+    /**
+     * Getter of the list of images of the real estate cache object.
+     */
     protected List<ImageRealEstate> getListOfImagesRealEstateCache() {
         Log.d(TAG, "getListOfImagesRealEstateCache: called!");
         return getRepository().getListOfImagesRealEstateCache();
     }
 
+    /**
+     * Getter of the list of places of the real estate cache object.
+     */
     protected List<PlaceRealEstate> getListOfPlacesRealEstateCache() {
         Log.d(TAG, "getListOfPlacesRealEstateCache: called!");
         return getRepository().getListOfPlacesRealEstateCache();
     }
 
-    protected List<PlaceRealEstate> getListOfPlacesByNearbyCache() {
-        Log.d(TAG, "getListOfImagesRealEstateCache: called!");
-        return getRepository().getListOfPlacesRealEstateCache();
-    }
-
-    protected List<String> getListOfBitmapKeys () {
+    /**
+     * Getter of the list of bitmap keys of the real estate cache object.
+     */
+    protected List<String> getListOfBitmapKeys() {
         Log.d(TAG, "getListOfBitmapCacheKeys: called!");
         return getRepository().getListOfBitmapCacheKeys();
     }
 
-    protected Map<String,Bitmap> getBitmapCache () {
+    /**
+     * Getter of the bitmap cache.
+     */
+    protected Map<String, Bitmap> getBitmapCache() {
         Log.d(TAG, "getBitmapCache: called!");
         return getRepository().getBitmapCache();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected String getImagesDir () {
+    /**
+     * Getter of the Images Directory
+     */
+    protected String getImagesDir() {
         Log.d(TAG, "getImagesDir: called!");
         //mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
         return getInternalStorage().getInternalFilesDirectory() + File.separator
                 + Constants.IMAGES_DIRECTORY + File.separator;
     }
 
-    protected String getTemporaryDir () {
+    /**
+     * Getter of the Images Temporary Directory
+     */
+    protected String getTemporaryDir() {
         Log.d(TAG, "getTemporaryDir: called!");
         return getInternalStorage().getInternalFilesDirectory() + File.separator
                 + Constants.TEMPORARY_DIRECTORY + File.separator;
     }
 
-    protected String getCacheDirectory () {
-        Log.d(TAG, "getCacheDir: called!");
-        return getInternalStorage().getInternalCacheDirectory() + File.separator;
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected RequestManager getGlide () {
+    /**
+     * Getter for Glide.
+     */
+    protected RequestManager getGlide() {
         Log.d(TAG, "getGlide: called!");
         return Glide.with(getApp());
     }
