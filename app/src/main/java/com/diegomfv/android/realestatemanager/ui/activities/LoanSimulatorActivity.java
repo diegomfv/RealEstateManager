@@ -219,20 +219,29 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
-        setInitialTexts();
+        setTextInTextViews();
         generateTable();
     }
 
-    private void setInitialTexts() {
-        Log.d(TAG, "setInitialTexts: called!");
+    private void setTextInTextViews() {
+        Log.d(TAG, "setTextInTextViews: called!");
 
         /* Random data for the beginning
         * */
-        tvLoanAmount.setText(String.valueOf(loanAmountInDollars));
-        tvAnnualInterestRate.setText(String.valueOf(annualInterestRate));
+        tvLoanAmount.setText(Utils.getValueFormattedAccordingToCurrency(loanAmountInDollars, currency));
+        tvAnnualInterestRate.setText(Utils.getValueFormattedAccordingToCurrency(annualInterestRate, currency));
         tvLoanPeriodInYears.setText(String.valueOf(loanPeriodInYears));
         tvPaymentFrequency.setText(String.valueOf(paymentFrequency));
         tvStartDate.setText(Utils.dateToString(new Date()));
+    }
+
+    private void updateViews () {
+        Log.d(TAG, "updateViews: called!");
+        setTextInTextViews();
+
+        if (allChecksPassed()) {
+            generateTable();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -266,20 +275,6 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void updateViews () {
-        Log.d(TAG, "updateViews: called!");
-        tvLoanAmount.setText(String.valueOf(Utils.getValueAccordingToCurrency(currency, loanAmountInDollars)));
-        tvAnnualInterestRate.setText(String.valueOf(annualInterestRate));
-        tvLoanPeriodInYears.setText(String.valueOf(loanPeriodInYears));
-        tvPaymentFrequency.setText(String.valueOf(paymentFrequency));
-
-        if (allChecksPassed()) {
-            generateTable();
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     private float getScheduledPaymentPerPeriod() {
         Log.d(TAG, "simulateLoan: called!");
 
@@ -303,7 +298,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
         float schPayment = getScheduledPaymentPerPeriod();
 
-        tvScheduledPayment.setText(String.valueOf(Utils.getValueAccordingToCurrency(currency, schPayment)));
+        tvScheduledPayment.setText(Utils.getValueFormattedAccordingToCurrency(schPayment, currency));
 
         float principal;
         float interests;
@@ -359,7 +354,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
         }
 
-        tvTotalInterests.setText(String.valueOf(Utils.getValueAccordingToCurrency(currency, cumInterests)));
+        tvTotalInterests.setText(Utils.getValueFormattedAccordingToCurrency(cumInterests, currency));
 
         configureRecyclerView(listOfPayments);
 
