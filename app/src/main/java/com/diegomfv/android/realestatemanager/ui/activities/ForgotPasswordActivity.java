@@ -128,7 +128,7 @@ public class ForgotPasswordActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: called!");
-                Utils.launchActivity(ForgotPasswordActivity.this, MainActivity.class);
+                Utils.launchActivity(ForgotPasswordActivity.this, AuthLoginActivity.class);
             }
         });
     }

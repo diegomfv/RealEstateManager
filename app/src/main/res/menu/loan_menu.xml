@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/menu_show_loan_id"
+        android:icon="@drawable/ic_view_list_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/show_list"/>
+
     <item android:id="@+id/menu_modify_loan_button"
         android:icon="@drawable/ic_edit_white_24dp"
         app:showAsAction="ifRoom"

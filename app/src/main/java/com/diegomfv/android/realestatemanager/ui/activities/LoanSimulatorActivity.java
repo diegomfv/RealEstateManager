@@ -1,8 +1,13 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.Guideline;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
@@ -21,6 +28,7 @@ import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,6 +51,12 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
     @BindView(R.id.toolbar_id)
     Toolbar toolbar;
 
+    @BindView(R.id.constraintLayout_main_id)
+    ConstraintLayout constraintLayout;
+
+    @BindView(R.id.frameLayout_id)
+    FrameLayout frameLayout;
+
     @BindView(R.id.tvLoanAmount)
     TextView tvLoanAmount;
 
@@ -63,6 +77,9 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     @BindView(R.id.tvTotalInterest)
     TextView tvTotalInterests;
+
+    @BindView(R.id.layout_main_card_view_id)
+    CardView cardViewLoanTitle;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -85,6 +102,10 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     private int currency;
 
+    private boolean loanVisible;
+
+    ConstraintLayout.LayoutParams params;
+
     private Unbinder unbinder;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,8 +117,10 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
         this.currency = Utils.readCurrentCurrencyShPref(this);
 
+        this.loanVisible = false;
+
         /* We set initial values for the loan
-        * */
+         * */
         this.loanAmountInDollars = 100000.00f;
         this.annualInterestRate = 5.00f;
         this.loanPeriodInYears = 20;
@@ -133,8 +156,13 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
         switch (item.getItemId()) {
 
-            case android.R.id.home: {
-                Utils.launchActivity(this, MainActivity.class);
+            case R.id.menu_show_loan_id: {
+                if (loanVisible) {
+                    hideLoan();
+
+                } else {
+                    showLoan();
+                }
 
             }
             break;
@@ -163,7 +191,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         Log.d(TAG, "onDialogPositiveClick: called!");
 
         /* Updating the layout
-        * */
+         * */
         this.loanAmountInDollars = loanAmount;
         this.annualInterestRate = annualInterestRate;
         this.loanPeriodInYears = loanPeriodInYears;
@@ -220,6 +248,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
         setTextInTextViews();
+        setRvTitleLayoutStyle();
         generateTable();
     }
 
@@ -227,7 +256,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         Log.d(TAG, "setTextInTextViews: called!");
 
         /* Random data for the beginning
-        * */
+         * */
         tvLoanAmount.setText(Utils.getValueFormattedAccordingToCurrency(loanAmountInDollars, currency));
         tvAnnualInterestRate.setText(Utils.getValueFormattedAccordingToCurrency(annualInterestRate, currency));
         tvLoanPeriodInYears.setText(String.valueOf(loanPeriodInYears));
@@ -235,7 +264,30 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         tvStartDate.setText(Utils.dateToString(new Date()));
     }
 
-    private void updateViews () {
+    private void setRvTitleLayoutStyle() {
+        Log.d(TAG, "setRvTitleLayoutStyle: called!");
+
+        LinearLayout linearLayout = cardViewLoanTitle.findViewById(R.id.main_layout_id);
+
+        setStyle((TextView) linearLayout.findViewById(R.id.textView_nPay_id));
+        setStyle((TextView) linearLayout.findViewById(R.id.textView_pay_date_id));
+        setStyle((TextView) linearLayout.findViewById(R.id.textView_beg_balance_id));
+        setStyle((TextView) linearLayout.findViewById(R.id.textView_sch_payment_id));
+        setStyle((TextView) linearLayout.findViewById(R.id.textView_principal_id));
+        setStyle((TextView) linearLayout.findViewById(R.id.textView_interests_id));
+        setStyle((TextView) linearLayout.findViewById(R.id.textView_end_balance_id));
+        setStyle((TextView) linearLayout.findViewById(R.id.textView_cum_interests_id));
+    }
+
+    private void setStyle (TextView textView) {
+        Log.d(TAG, "setStyle: called!");
+        textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.arima_madurai);
+        textView.setTypeface(typeface, Typeface.BOLD);
+    }
+
+    private void updateViews() {
         Log.d(TAG, "updateViews: called!");
         setTextInTextViews();
 
@@ -250,6 +302,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         Log.d(TAG, "configureRecyclerView: called!");
 
         this.recyclerView.setHasFixedSize(true);
+
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         this.adapter = new RVAdapterLoan(
                 this,
@@ -258,6 +311,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         this.recyclerView.setAdapter(this.adapter);
 
         this.configureOnClickRecyclerView();
+
 
     }
 
@@ -271,6 +325,23 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
                     }
                 });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void showLoan() {
+        Log.d(TAG, "showLoan: called!");
+        constraintLayout.setVisibility(View.GONE);
+        frameLayout.setVisibility(View.GONE);
+        loanVisible = true;
+
+    }
+
+    private void hideLoan() {
+        Log.d(TAG, "hideLoan: called!");
+        constraintLayout.setVisibility(View.VISIBLE);
+        frameLayout.setVisibility(View.VISIBLE);
+        loanVisible = false;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -376,7 +447,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
                         "ModifyLoanDialogFragment");
     }
 
-    private boolean allChecksPassed () {
+    private boolean allChecksPassed() {
         Log.d(TAG, "allChecksPassed: called!");
 
         if (Utils.getStringFromTextView(tvLoanAmount).length() < 4) {

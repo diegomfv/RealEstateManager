@@ -2,7 +2,6 @@ package com.diegomfv.android.realestatemanager.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,7 +49,7 @@ public class RVAdapterLoan extends RecyclerView.Adapter<RVAdapterLoan.MyViewHold
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         View view = layoutInflater.inflate(
-                R.layout.card_view_item_loan,
+                R.layout.rv_loan_item,
                 parent,
                 false);
 

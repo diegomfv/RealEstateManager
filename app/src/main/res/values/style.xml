@@ -92,24 +92,36 @@
         <item name="android:layout_marginEnd">@dimen/side_margin_10dp</item>
     </style>
 
-    <style name="loanTextViewInfoStyle">
+    <style name="loanTextViewTitle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">right</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="loanTextViewInfoStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">right</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="loanTextViewDataStyle">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorAccent</item>
     </style>
 
-    <style name="textViewLoanRvData">
+    <style name="loanTextViewRvData">
         <item name="android:layout_width">100dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">10dp</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
 </resources>

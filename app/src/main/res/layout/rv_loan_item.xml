@@ -16,42 +16,42 @@
         <TextView
             android:id="@+id/textView_nPay_id"
             android:layout_width="30dp"
-            style="@style/textViewLoanRvData"
+            style="@style/loanTextViewRvData"
             android:text="N." />
 
         <TextView
             android:id="@+id/textView_pay_date_id"
-            style="@style/textViewLoanRvData"
+            style="@style/loanTextViewRvData"
             android:text="Paym. Date" />
 
         <TextView
             android:id="@+id/textView_beg_balance_id"
-            style="@style/textViewLoanRvData"
+            style="@style/loanTextViewRvData"
             android:text="Beg.Balance" />
 
         <TextView
             android:id="@+id/textView_sch_payment_id"
-            style="@style/textViewLoanRvData"
+            style="@style/loanTextViewRvData"
             android:text="Sch.Payment" />
 
         <TextView
             android:id="@+id/textView_principal_id"
-            style="@style/textViewLoanRvData"
+            style="@style/loanTextViewRvData"
             android:text="Principal" />
 
         <TextView
             android:id="@+id/textView_interests_id"
-            style="@style/textViewLoanRvData"
+            style="@style/loanTextViewRvData"
             android:text="Interest" />
 
         <TextView
             android:id="@+id/textView_end_balance_id"
-            style="@style/textViewLoanRvData"
+            style="@style/loanTextViewRvData"
             android:text="End.Balance" />
 
         <TextView
             android:id="@+id/textView_cum_interests_id"
-            style="@style/textViewLoanRvData"
+            style="@style/loanTextViewRvData"
             android:text="Cum.Interests" />
 
     </LinearLayout>
