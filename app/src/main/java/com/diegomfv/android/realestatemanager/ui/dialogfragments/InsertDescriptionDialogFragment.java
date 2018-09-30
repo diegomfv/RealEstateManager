@@ -47,15 +47,19 @@ public class InsertDescriptionDialogFragment extends android.support.v4.app.Dial
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public interface InsertDescriptionDialogListener {
-        void onDialogPositiveClick (ImageRealEstate imageRealEstate);
-        void onDialogNegativeClick ();
+        void onDialogPositiveClick(ImageRealEstate imageRealEstate);
+
+        void onDialogNegativeClick();
     }
 
     private InsertDescriptionDialogFragment.InsertDescriptionDialogListener onButtonClickedListener;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static InsertDescriptionDialogFragment newInstance (ImageRealEstate imageRealEstate) {
+    /**
+     * Method to create a new instance of the fragment
+     */
+    public static InsertDescriptionDialogFragment newInstance(ImageRealEstate imageRealEstate) {
 
         InsertDescriptionDialogFragment dialogFragment = new InsertDescriptionDialogFragment();
 
@@ -129,6 +133,9 @@ public class InsertDescriptionDialogFragment extends android.support.v4.app.Dial
 
     }
 
+    /**
+     * We set the listener in OnAttach()
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -153,6 +160,9 @@ public class InsertDescriptionDialogFragment extends android.support.v4.app.Dial
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the layout
+     */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
 
@@ -161,13 +171,19 @@ public class InsertDescriptionDialogFragment extends android.support.v4.app.Dial
         this.setText();
     }
 
-    private void getAutocompleteTextViews () {
+    /**
+     * Method to get a reference to the AutocompleteTextViews
+     */
+    private void getAutocompleteTextViews() {
         Log.d(TAG, "getAutocompleteTextViews: called!");
 
         this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
 
     }
 
+    /**
+     * Method to set the hints of all the Views.
+     */
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
 
@@ -176,21 +192,30 @@ public class InsertDescriptionDialogFragment extends android.support.v4.app.Dial
 
     }
 
-    private void setHint (CardView cardView, String hint) {
+    /**
+     * Method that sets the hint in a TextInputLayout.
+     */
+    private void setHint(CardView cardView, String hint) {
         Log.d(TAG, "setHint: called!");
 
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
     }
 
-    private void setText () {
+    /**
+     * Method to set the text of a TextView
+     */
+    private void setText() {
         Log.d(TAG, "setText: called!");
         tvDescription.setText(imageRealEstate.getDescription());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void setImageRealEstateDescription (AlertDialog dialog) {
+    /**
+     * Method to set the description
+     */
+    private void setImageRealEstateDescription(AlertDialog dialog) {
         Log.d(TAG, "setImageRealEstateDescription: called!");
         imageRealEstate.setDescription(Utils.getStringFromTextView(tvDescription));
         onButtonClickedListener.onDialogPositiveClick(imageRealEstate);

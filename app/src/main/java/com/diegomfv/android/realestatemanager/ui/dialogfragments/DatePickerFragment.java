@@ -33,6 +33,9 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to create a new instance of the fragment
+     */
     public static DatePickerFragment newInstance() {
 
         DatePickerFragment dialogFragment = new DatePickerFragment();

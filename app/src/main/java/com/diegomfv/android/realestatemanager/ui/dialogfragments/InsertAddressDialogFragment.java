@@ -87,6 +87,9 @@ public class InsertAddressDialogFragment extends DialogFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to create a new instance of the fragment
+     */
     public static InsertAddressDialogFragment newInstance(AddressRealEstate addressRealEstate) {
 
         InsertAddressDialogFragment dialogFragment = new InsertAddressDialogFragment();
@@ -159,6 +162,9 @@ public class InsertAddressDialogFragment extends DialogFragment {
 
     }
 
+    /**
+     * We set the listener in OnAttach()
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -203,7 +209,6 @@ public class InsertAddressDialogFragment extends DialogFragment {
         this.tvLocality = cardViewLocality.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvCity = cardViewCity.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvPostcode = cardViewPostcode.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
-
     }
 
     /**
@@ -218,7 +223,6 @@ public class InsertAddressDialogFragment extends DialogFragment {
         setHint(cardViewLocality, "Locality");
         setHint(cardViewCity, "City");
         setHint(cardViewPostcode, "Postcode");
-
     }
 
     /**

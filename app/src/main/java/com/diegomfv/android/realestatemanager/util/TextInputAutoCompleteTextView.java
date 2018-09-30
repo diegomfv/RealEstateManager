@@ -9,7 +9,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
 /**
- * Created by Diego Fajardo on 24/05/2018.
+ * View that allows to work with AutcompleteTextViews in TextInputLayouts
  */
 public class TextInputAutoCompleteTextView extends AppCompatAutoCompleteTextView {
 

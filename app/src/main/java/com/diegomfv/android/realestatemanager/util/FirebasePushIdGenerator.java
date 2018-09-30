@@ -4,6 +4,8 @@ package com.diegomfv.android.realestatemanager.util;
  * Created by swftvsn (github)
  */
 
+/** This class generates a completely unique id
+ */
 public class FirebasePushIdGenerator {
 
     // Modeled after base64 web-safe chars, but ordered by ASCII.
@@ -18,6 +20,9 @@ public class FirebasePushIdGenerator {
     // characters except "incremented" by one.
     private static int[] LAST_RAND_CHARS = new int[72];
 
+    /**
+     * Method that generates a completely new id that is unique
+     */
     public static synchronized String generate() {
 
         long now = System.currentTimeMillis();
@@ -26,7 +31,7 @@ public class FirebasePushIdGenerator {
 
         char[] timeStampChars = new char[8];
         for (int i = 7; i >= 0; i--) {
-            timeStampChars[i] = PUSH_CHARS.charAt((int)(now % 64));
+            timeStampChars[i] = PUSH_CHARS.charAt((int) (now % 64));
             now = (long) Math.floor(now / 64);
         }
 
@@ -46,7 +51,7 @@ public class FirebasePushIdGenerator {
         } else {
             // If the timestamp hasn't changed since last push, use the same random number,
             //except incremented by 1.
-            int i=0;
+            int i = 0;
             for (i = 11; i >= 0 && LAST_RAND_CHARS[i] == 63; i--) {
                 LAST_RAND_CHARS[i] = 0;
             }

@@ -86,6 +86,9 @@ public class ModifyLoanDialogFragment extends DialogFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to create a new instance of the fragment
+     */
     public static ModifyLoanDialogFragment newInstance(float loanAmount, float annualInterestRate,
                                                        int loanPeriodInYears, int paymentFreq,
                                                        int currency) {
@@ -169,6 +172,9 @@ public class ModifyLoanDialogFragment extends DialogFragment {
 
     }
 
+    /**
+     * We set the listener in OnAttach()
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -193,13 +199,19 @@ public class ModifyLoanDialogFragment extends DialogFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the layout
+     */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
         this.getTextViews();
         this.setAllHints();
-        this.setTextInTextViews();
+        this.setText();
     }
 
+    /**
+     * Method to get a reference to the TextViews
+     */
     private void getTextViews() {
         Log.d(TAG, "getTextViews: called!");
         this.tvLoanAmount = cardViewLoanAmount.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
@@ -208,6 +220,9 @@ public class ModifyLoanDialogFragment extends DialogFragment {
         this.tvLoanPaymentFreq = cardViewLoanPaymentFrequency.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
     }
 
+    /**
+     * Method to set the hints of all the Views.
+     */
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
         // TODO: 23/08/2018 Use Resources instead of hardcode text
@@ -217,14 +232,20 @@ public class ModifyLoanDialogFragment extends DialogFragment {
         setHint(cardViewLoanPaymentFrequency, "Payment Frequency (every __ months)");
     }
 
+    /**
+     * Method that sets the hint in a TextInputLayout.
+     */
     private void setHint(CardView cardView, String hint) {
         Log.d(TAG, "setHint: called!");
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
     }
 
-    private void setTextInTextViews() {
-        Log.d(TAG, "setTextInTextViews: called!");
+    /**
+     * Method to set the text of a TextView
+     */
+    private void setText() {
+        Log.d(TAG, "setText: called!");
         tvLoanAmount.setText(String.valueOf(Utils.getValueAccordingToCurrency(currency, loanAmountInDollars)));
         tvLoanAnnualIntRate.setText(String.valueOf(annualInterestRate));
         tvLoanPeriodYears.setText(String.valueOf(loanPeriodInYears));

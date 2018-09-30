@@ -4,8 +4,9 @@ import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+
 /**
- * Created by Diego Fajardo (https://github.com/diegomfv) on 15/09/2018.
+ * Decoration for the Grid that displays the images in the RecyclerView
  */
 public class GridSpaceItemDecoration extends RecyclerView.ItemDecoration {
 

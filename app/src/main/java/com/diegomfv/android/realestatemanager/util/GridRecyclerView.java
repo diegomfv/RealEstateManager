@@ -8,33 +8,40 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.GridLayoutAnimationController;
 
-/** RecyclerView with support for grid animations.
- *
+/**
+ * RecyclerView with support for grid animations.
+ * <p>
  * Based on:
  * https://gist.github.com/Musenkishi/8df1ab549857756098ba
  * Credit to Freddie (Musenkishi) Lust-Hed
- *
+ * <p>
  * ...which in turn is based on the GridView implementation of attachLayoutParameters(...):
  * https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/widget/GridView.java
- *
  */
 
+/** This class is used for the RecyclerView that displays the images in  a Grid*/
 public class GridRecyclerView extends RecyclerView {
 
     /** @see View#View(Context) */
-    public GridRecyclerView(Context context) { super(context); }
+    public GridRecyclerView(Context context) {
+        super(context);
+    }
 
     /** @see View#View(Context, AttributeSet) */
-    public GridRecyclerView(Context context, AttributeSet attrs) { super(context, attrs); }
+    public GridRecyclerView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
     /** @see View#View(Context, AttributeSet, int) */
-    public GridRecyclerView(Context context, AttributeSet attrs, int defStyle) { super(context, attrs, defStyle); }
+    public GridRecyclerView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
     @Override
     protected void attachLayoutAnimationParameters(View child, ViewGroup.LayoutParams params,
                                                    int index, int count) {
         final LayoutManager layoutManager = getLayoutManager();
-        if (getAdapter() != null && layoutManager instanceof GridLayoutManager){
+        if (getAdapter() != null && layoutManager instanceof GridLayoutManager) {
 
             GridLayoutAnimationController.AnimationParameters animationParams =
                     (GridLayoutAnimationController.AnimationParameters) params.layoutAnimationParameters;

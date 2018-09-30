@@ -12,58 +12,46 @@ import com.diegomfv.android.realestatemanager.R;
 /**
  * Created by Diego Fajardo on 13/08/2018.
  */
+
+/**
+ * Helper class for toasts
+ */
 public class ToastHelper {
 
     private static final String TAG = ToastHelper.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static void toastShort (Context context, String string) {
+    /**
+     * Method to create a short toast.
+     */
+    public static void toastShort(Context context, String string) {
         Log.d(TAG, "toastShort: called!");
         Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
 
     }
 
-    public static void toastLong (Context context, String string){
+    /**
+     * Method to create a long toast.
+     */
+    public static void toastLong(Context context, String string) {
         Log.d(TAG, "toastLong: called!");
         Toast.makeText(context, string, Toast.LENGTH_LONG).show();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static void toastButtonClicked (Context context, View view) {
-        Log.d(TAG, "toastButtonClicked: " + ((Button)view).getText().toString() + " clicked!");
-        Toast.makeText(context, "Button - " + ((Button)view).getText().toString() + " - clicked", Toast.LENGTH_SHORT).show();
-    }
-
-    public static void toastMenuItemClicked (Context context, MenuItem item) {
-        Log.d(TAG, "toastMenuItemClicked: " + item.getTitle() + " clicked!");
-        Toast.makeText(context, "Button - " + item.getTitle().toString() + " - clicked", Toast.LENGTH_SHORT).show();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static void toastNoDescriptionAvailable (Context context) {
-        Log.d(TAG, "toastNoDescriptionAvailable: called!");
-        Toast.makeText(context, context.getResources().getString(R.string.no_description_available), Toast.LENGTH_SHORT).show();
-    }
-
-
-    public static void toastInternalStorageAccessNotGranted (Context context) {
-        Log.d(TAG, "toastInternalStorageAccessNotGranted: called!");
-        Toast.makeText(context, context.getResources().getString(R.string.access_internal_storage_not_granted), Toast.LENGTH_SHORT).show();
-    }
-
-    public static void toastThereWasAnError(Context context) {
-        Log.d(TAG, "toastInternalStorageAccessNotGranted: called!");
-        Toast.makeText(context, context.getResources().getString(R.string.there_was_an_error), Toast.LENGTH_SHORT).show();
-    }
-
+    /**
+     * Method to create a toast that notifies the user that some access has not been granted.
+     */
     public static void toastSomeAccessNotGranted(Context context) {
         Log.d(TAG, "toastSomeAccessNotGranted: called!");
         Toast.makeText(context, context.getResources().getString(R.string.some_access_not_granted), Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Method to create a toast that tells the user that a something has not been implemented yet.
+     */
     public static void toastNotImplemented(Context context) {
         Log.d(TAG, "toastNotImplemented: called!");
         Toast.makeText(context, context.getResources().getString(R.string.not_implemented), Toast.LENGTH_SHORT).show();

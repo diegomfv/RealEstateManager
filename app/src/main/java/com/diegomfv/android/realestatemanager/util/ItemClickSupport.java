@@ -6,7 +6,7 @@ import android.view.View;
 import com.diegomfv.android.realestatemanager.R;
 
 /**
- * Created by Diego Fajardo on 20/06/2018.
+ * Class that allows to enable clicks in the RecyclerView
  */
 public class ItemClickSupport {
     private final RecyclerView mRecyclerView;
