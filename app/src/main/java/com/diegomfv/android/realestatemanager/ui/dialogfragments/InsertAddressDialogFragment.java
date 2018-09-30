@@ -32,7 +32,7 @@ import butterknife.Unbinder;
 /**
  * Tássio Auad, Medium
  * DialogFragment/AlertDialog dismiss automatically on click button.
- *
+ * <p>
  * What happens with AlertDialog’s setButton() method (and I imagine the same with
  * AlertDialogBuilder’s setPositiveButton() and setNegativeButton()) is that the button
  * you set (e.g. AlertDialog.BUTTON_POSITIVE) with it will actually trigger TWO different
@@ -41,7 +41,7 @@ import butterknife.Unbinder;
  * The other is View.OnClickListener, which will be set to automatically dismiss your AlertDialog
  * when any of its button is pressed — and is set by AlertDialog itself.
  * That is why we override the View.OnClickListener();
- * */
+ */
 
 public class InsertAddressDialogFragment extends DialogFragment {
 
@@ -78,15 +78,16 @@ public class InsertAddressDialogFragment extends DialogFragment {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public interface InsertAddressDialogListener {
-        void onDialogPositiveClick (AddressRealEstate addressRealEstate);
-        void onDialogNegativeClick ();
+        void onDialogPositiveClick(AddressRealEstate addressRealEstate);
+
+        void onDialogNegativeClick();
     }
 
     private InsertAddressDialogListener listener;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static InsertAddressDialogFragment newInstance (AddressRealEstate addressRealEstate) {
+    public static InsertAddressDialogFragment newInstance(AddressRealEstate addressRealEstate) {
 
         InsertAddressDialogFragment dialogFragment = new InsertAddressDialogFragment();
 
@@ -182,6 +183,9 @@ public class InsertAddressDialogFragment extends DialogFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the layout
+     */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
 
@@ -190,9 +194,11 @@ public class InsertAddressDialogFragment extends DialogFragment {
         this.setText();
     }
 
-    private void getAutocompleteTextViews () {
+    /**
+     * Method to get a reference to the AutocompleteTextViews
+     */
+    private void getAutocompleteTextViews() {
         Log.d(TAG, "getAutocompleteTextViews: called!");
-
         this.tvStreet = cardViewStreet.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvLocality = cardViewLocality.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvCity = cardViewCity.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
@@ -200,6 +206,9 @@ public class InsertAddressDialogFragment extends DialogFragment {
 
     }
 
+    /**
+     * Method to set the hints of all the Views.
+     */
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
 
@@ -212,14 +221,20 @@ public class InsertAddressDialogFragment extends DialogFragment {
 
     }
 
-    private void setHint (CardView cardView, String hint) {
+    /**
+     * Method that sets the hint in a TextInputLayout.
+     */
+    private void setHint(CardView cardView, String hint) {
         Log.d(TAG, "setHint: called!");
 
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
     }
 
-    private void setText () {
+    /**
+     * Method to set the text of a TextView
+     */
+    private void setText() {
         Log.d(TAG, "setText: called!");
         tvStreet.setText(addressRealEstate.getStreet());
         tvLocality.setText(addressRealEstate.getLocality());
@@ -229,6 +244,9 @@ public class InsertAddressDialogFragment extends DialogFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that checks if the TextViews's texts introduced are valid
+     */
     private void checkTextViewsText(AlertDialog dialog) {
         Log.d(TAG, "checkTextViewsText: called!");
 

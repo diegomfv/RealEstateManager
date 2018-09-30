@@ -17,7 +17,7 @@ import java.util.Date;
 /**
  * Created by Diego Fajardo on 05/09/2018.
  */
-public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
+public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
     private static final String TAG = DatePickerFragment.class.getSimpleName();
 
@@ -25,6 +25,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     public interface DatePickerFragmentListener {
         void onDateSet(Date date);
+
         void onNegativeButtonClicked();
     }
 
@@ -32,21 +33,21 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static DatePickerFragment newInstance () {
+    public static DatePickerFragment newInstance() {
 
         DatePickerFragment dialogFragment = new DatePickerFragment();
         return dialogFragment;
     }
 
-    /** Could also be done like this and avoid using onAttach()
-     * */
+    /**
+     * Could also be done like this and avoid using onAttach()
+     */
 //    public static DatePickerFragment newInstance (DatePickerFragmentListener listener) {
 //
 //        DatePickerFragment dialogFragment = new DatePickerFragment();
 //        fragment.setDatePickerListener(listener);
 //        return dialogFragment;
 //    }
-
     @NonNull
     @SuppressLint("InflateParams")
     @Override
@@ -58,7 +59,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog (getActivity(), this, year, month, day);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), this, year, month, day);
 
         datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
                 "Cancel",
@@ -74,6 +75,9 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     }
 
+    /**
+     * We set the listener in OnAttach()
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -100,14 +104,20 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         }
     }
 
+    /**
+     * Method to notify the listener that the date is set
+     */
     protected void notifyDatePickerListenerDateIsSet(Date date) {
-        if(this.listener != null) {
+        if (this.listener != null) {
             this.listener.onDateSet(date);
         }
     }
 
+    /**
+     * Method to notify the listener that the negative button has been clicked
+     */
     protected void notifyDatePickerListenerNegativeButtonClicked() {
-        if(this.listener != null) {
+        if (this.listener != null) {
             this.listener.onNegativeButtonClicked();
         }
     }
