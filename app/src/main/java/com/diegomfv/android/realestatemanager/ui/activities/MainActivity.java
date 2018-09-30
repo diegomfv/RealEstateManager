@@ -229,8 +229,8 @@ public class MainActivity extends BaseActivity {
      * Getter for deviceIsHandsetField
      * It will be used by the fragment that displays a list of items.
      */
-    public boolean getDeviceIsHanset() {
-        Log.d(TAG, "getDeviceIsHanset: called!");
+    public boolean getDeviceIsHandset() {
+        Log.d(TAG, "getDeviceIsHandset: called!");
         return deviceIsHandset;
     }
 

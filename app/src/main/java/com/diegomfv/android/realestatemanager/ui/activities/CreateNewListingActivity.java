@@ -596,6 +596,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                         Log.d(TAG, "onNext: called!");
 
                         if (Utils.checksPlaceDetails(placeDetails)) {
+
+                            // TODO: 30/09/2018 In tablet, it gets it but it does not display it
                             getRealEstateCache().setLatitude(placeDetails.getResult().getGeometry().getLocation().getLat());
                             getRealEstateCache().setLongitude(placeDetails.getResult().getGeometry().getLocation().getLng());
 

@@ -24,6 +24,7 @@ import com.diegomfv.android.realestatemanager.ui.activities.DetailActivity;
 import com.diegomfv.android.realestatemanager.ui.activities.EditListingActivity;
 import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
+import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 
@@ -179,7 +180,7 @@ public class FragmentListListings extends BaseFragment {
                                 /* If editMode is NOT ACTIVE, the functionality varies depending on if the user is using
                                  * a handset or a tablet.
                                  * */
-                                if (getRootActivity().getDeviceIsHanset()) {
+                                if (getRootActivity().getDeviceIsHandset()) {
                                     /* This code runs when we are using a handset. The app displays information about the
                                      * listing in DetailActivity
                                      * */

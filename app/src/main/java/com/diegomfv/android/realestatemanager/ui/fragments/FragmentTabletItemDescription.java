@@ -298,6 +298,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
                     Utils.getCurrencySymbol(currency)
                             + " "
                             + Utils.getValueFormattedAccordingToCurrency(realEstate.getPrice(), currency));
+
         }
     }
 
