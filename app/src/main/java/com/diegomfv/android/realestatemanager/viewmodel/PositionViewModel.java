@@ -20,7 +20,6 @@ import java.util.List;
  */
 
 /** This ViewModel is basically similar to ListingsSharedViewModel
- * Therefore, todo: Code could be simplified
  * */
 public class PositionViewModel extends AndroidViewModel {
 

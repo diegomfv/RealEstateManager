@@ -20,6 +20,10 @@ import java.util.List;
 /**
  * Created by Diego Fajardo on 16/08/2018.
  */
+
+/**
+ * ViewModel to display information of the listings.
+ */
 public class ListingsSharedViewModel extends AndroidViewModel {
 
     private static final String TAG = ListingsSharedViewModel.class.getSimpleName();
@@ -61,13 +65,17 @@ public class ListingsSharedViewModel extends AndroidViewModel {
     }
 
     /**
-     * Expose the LiveData
+     * Method to expose the LiveData
      * so the UI can observe it.
      */
     public LiveData<List<RealEstate>> getObservableListOfListings() {
         return observableListOfListings;
     }
 
+    /**
+     * Method to expose the LiveData
+     * so the UI can observe it.
+     */
     public LiveData<List<RealEstate>> getObservableListOfFoundArticles() {
         return observableListOfFoundArticles;
     }

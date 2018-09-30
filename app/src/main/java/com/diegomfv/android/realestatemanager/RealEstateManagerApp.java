@@ -15,6 +15,10 @@ import java.util.List;
 /**
  * Created by Diego Fajardo on 16/08/2018.
  */
+
+/**
+ * Application class
+ */
 public class RealEstateManagerApp extends Application {
 
     private static final String TAG = RealEstateManagerApp.class.getSimpleName();
@@ -45,21 +49,33 @@ public class RealEstateManagerApp extends Application {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to get an entry point to AppExecutors.
+     */
     public AppExecutors getAppExecutors() {
         Log.d(TAG, "getAppExecutors: called!");
         return AppExecutors.getInstance();
     }
 
+    /**
+     * Method to get an entry point to the App Database.
+     */
     public AppDatabase getDatabase() {
         Log.d(TAG, "getDatabase: called!");
         return AppDatabase.getInstance(this, getAppExecutors());
     }
 
+    /**
+     * Method to get an entry point to the DataRepository.
+     */
     public DataRepository getRepository() {
         Log.d(TAG, "getRepository: called!");
         return DataRepository.getInstance(getDatabase(), Runtime.getRuntime().maxMemory());
     }
 
+    /**
+     * Method to get an entry point to the internal storage
+     */
     public Storage getInternalStorage() {
         Log.d(TAG, "getInternalStorage: called!");
 
@@ -69,13 +85,11 @@ public class RealEstateManagerApp extends Application {
         } else return internalStorage;
     }
 
-    public int getBitmapCacheSize() {
-        Log.d(TAG, "getBitmapCacheSize: called!");
-        return (int) Runtime.getRuntime().maxMemory() / 1024 / Constants.CACHE_PARTITION;
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to set the directories of the internal storage
+     */
     private void setDirectories() {
         Log.d(TAG, "setDirectories: called!");
         mainPath = getInternalStorage().getInternalFilesDirectory() + File.separator;
@@ -83,16 +97,25 @@ public class RealEstateManagerApp extends Application {
         imagesDir = getMainPath() + Constants.IMAGES_DIRECTORY + File.separator;
     }
 
+    /**
+     * Method to get the mainPath of the internal storage
+     */
     public String getMainPath() {
         Log.d(TAG, "getMainPath: called!");
         return mainPath;
     }
 
+    /**
+     * Method to get the images directory of the internal storage
+     */
     public String getImagesDir() {
         Log.d(TAG, "getImagesDir: called!");
         return imagesDir;
     }
 
+    /**
+     * Method to get the temporary images directory of the internal storage
+     */
     public String getTemporaryDir() {
         Log.d(TAG, "getTemporaryDir: called!");
         return temporaryDir;
@@ -100,6 +123,9 @@ public class RealEstateManagerApp extends Application {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to clear all the tables of the database
+     */
     private void clearTables() {
         Log.d(TAG, "clearTables: called!");
         getDatabase().clearAllTables();
@@ -107,7 +133,9 @@ public class RealEstateManagerApp extends Application {
     }
 
     // TODO: 21/08/2018 Delete
-
+    /**
+     * Method to clear all the files of the internal storage
+     */
     public void getAllFiles() {
         Log.d(TAG, "getAllFiles: called!");
 
@@ -117,6 +145,9 @@ public class RealEstateManagerApp extends Application {
 
     }
 
+    /**
+     * Method to get all the temporary files of the internal storage
+     */
     public void getInternalStorageTemporaryFiles() {
         Log.d(TAG, "getInternalStorageTemporaryFiles: called!");
 
@@ -135,6 +166,9 @@ public class RealEstateManagerApp extends Application {
         }
     }
 
+    /**
+     * Method to get all the image files of the internal storage
+     */
     public void getInternalStorageImageFiles() {
         Log.d(TAG, "getInternalStorageImageFiles: called!");
 
