@@ -62,6 +62,11 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  * Created by Diego Fajardo on 23/08/2018.
  */
 // TODO: 16/09/2018 The progress bar is not shown properly when an Item is added
+
+/**
+ * This activity allows to modify an already existing listing. It does not allow to modify the
+ * address and does not allow to delete images that were added before to the listing.
+ */
 public class EditListingActivity extends BaseActivity implements DatePickerFragment.DatePickerFragmentListener {
 
     private static final String TAG = EditListingActivity.class.getSimpleName();
@@ -193,13 +198,15 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         setContentView(R.layout.activity_edit_listing);
         unbinder = ButterKnife.bind(this);
 
+        /* Configuring the layout
+         * */
         this.configureLayout();
 
         Utils.showMainContent(progressBarContent, mainLayout);
 
+        /* Configuring the RecyclerView
+         * */
         this.configureRecyclerView();
-
-        Log.i(TAG, "onCreate: " + getImagesDir());
 
     }
 
@@ -281,6 +288,11 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     // TODO: 16/09/2018 Should block the DatePickerDialog and dont let to choose a wrong date instead
     // TODO: of leaving the dialog and set all to false and not chosen
+
+    /**
+     * This callback gets triggered when the user inputs information in the DatePicker fragment and
+     * clicks the positive button.
+     */
     @Override
     public void onDateSet(Date date) {
         Log.d(TAG, "onDateSet: called!");
@@ -298,6 +310,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         }
     }
 
+    /**
+     * This callback gets triggered when the user clicks the negative button in the DatePicker Fragment.
+     */
     @Override
     public void onNegativeButtonClicked() {
         Log.d(TAG, "onNegativeButtonClicked: called!");
@@ -306,11 +321,17 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         tvSold.setText(getDateSold());
     }
 
+    /**
+     * Checks if a date is valid (is not after today)
+     */
     private boolean dateIsValid(Date date) {
         Log.d(TAG, "dateIsValid: called!");
         return !date.after(new Date());
     }
 
+    /**
+     * Listener for the "sold" checkbox
+     */
     private View.OnClickListener tvSoldListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -324,6 +345,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the toolbar.
+     */
     private void configureToolBar() {
         Log.d(TAG, "configureToolBar: called!");
 
@@ -348,6 +372,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that modifies the currency variable and writes the new info to sharedPreferences.
+     */
     private void changeCurrency() {
         Log.d(TAG, "changeCurrency: called!");
 
@@ -361,6 +388,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that gets the cache ready with the necessary images
+     */
     private void prepareCache() {
         Log.d(TAG, "prepareCache: called!");
 
@@ -378,12 +408,15 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the layout.
+     */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
 
         this.configureToolBar();
 
-        this.getAutocompleteTextViews();
+        this.getAutocompleteTextView();
         this.getEditTexts();
         this.getTextViews();
         this.getCheckbox();
@@ -394,11 +427,17 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         this.setAllInformation();
     }
 
-    private void getAutocompleteTextViews() {
-        Log.d(TAG, "getAutocompleteTextViews: called!");
+    /**
+     * Method to get a reference to the AutocompleteTextView
+     */
+    private void getAutocompleteTextView() {
+        Log.d(TAG, "getAutocompleteTextView: called!");
         this.tvTypeOfBuilding = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
     }
 
+    /**
+     * Method to get references to the TextInputEditTexts.
+     */
     private void getEditTexts() {
         Log.d(TAG, "getEditTexts: called!");
         this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
@@ -410,16 +449,25 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         this.tvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
     }
 
+    /**
+     * Method to get reference to the TextView
+     */
     private void getTextViews() {
         Log.d(TAG, "getTextViews: called!");
         this.tvSold = cardViewSold.findViewById(R.id.relative_layout_id).findViewById(R.id.textView_date_id);
     }
 
+    /**
+     * Method to get reference to the CheckBox
+     */
     private void getCheckbox() {
         Log.d(TAG, "getCheckbox: called!");
         this.cbSold = cardViewSold.findViewById(R.id.relative_layout_id).findViewById(R.id.checkbox_sold_id);
     }
 
+    /**
+     * Method to set the hints of all the Views.
+     */
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
         // TODO: 23/08/2018 Use Resources instead of hardcoded strings
@@ -433,29 +481,43 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         setHint(cardViewAddress, "Address");
     }
 
+    /**
+     * Method that sets the hint in a TextInputLayout.
+     */
     private void setHint(CardView cardView, String hint) {
         Log.d(TAG, "setHint: called!");
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
     }
 
+    /**
+     * Method to set the listener on the TextView
+     */
     private void setListeners() {
         Log.d(TAG, "setListeners: called!");
         this.tvSold.setOnClickListener(tvSoldListener);
     }
 
+    /**
+     * Method to update the price hint.
+     */
     private void updatePriceHint() {
         Log.d(TAG, "updatePriceHint: called!");
-        TextInputLayout textInputLayout = cardViewPrice.findViewById(R.id.text_input_layout_id);
-        textInputLayout.setHint("Price (" + Utils.getCurrencySymbol(currency) + ")");
+        setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency) + ")");
     }
 
+    /**
+     * Method to set the text of the buttons.
+     */
     private void setTextButtons() {
         Log.d(TAG, "setTextButtons: called!");
         this.buttonEditListing.setText("Edit Listing");
         this.buttonEditAddress.setText("Edit Address");
     }
 
+    /**
+     * Method to set the views with the information from the real estate cache object.
+     */
     private void setAllInformation() {
         Log.d(TAG, "setAllInformation: called!");
         this.tvTypeOfBuilding.setText(getRealEstateCache().getType());
@@ -469,6 +531,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         setSoldInfo();
     }
 
+    /**
+     * Method to set the information related to the sold state in the TextView and the Checkbox.
+     */
     private void setSoldInfo() {
         Log.d(TAG, "setSoldInfo: called!");
         if (getRealEstateCache().getDateSale() == null || getRealEstateCache().getDateSale().isEmpty()) {
@@ -485,6 +550,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the RecyclerView.
+     */
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
         this.recyclerView.setHasFixedSize(true);
@@ -503,6 +571,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     }
 
+    /**
+     * Method to configure the onClick listeners of the RecyclerView.
+     */
     private void configureOnClickRecyclerView() {
         Log.d(TAG, "configureOnClickRecyclerView: called!");
         ItemClickSupport.addTo(recyclerView)
@@ -517,7 +588,11 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //CACHE
+    //CACHE UPDATE
+
+    /**
+     * Method to update the real estate cache information.
+     */
     private void updateRealEstateCache() {
         Log.d(TAG, "updateRealEstateCache: called!");
         this.updateStringValues();
@@ -525,17 +600,36 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         this.updateIntegerValues();
     }
 
+    /**
+     * Method that updates the real estate cache information (strings).
+     */
+    private void updateStringValues() {
+        Log.d(TAG, "updateStringValues: called!");
+        this.getRealEstateCache().setType(Utils.capitalize(tvTypeOfBuilding.getText().toString().trim()));
+        this.getRealEstateCache().setDescription(Utils.capitalize(tvDescription.getText().toString().trim()));
+        this.getRealEstateCache().setDateSale(getDateSold());
+    }
+
+    /**
+     * Method that updates the real estate cache information (floats).
+     */
     private void updateFloatValues() {
         Log.d(TAG, "updateFloatValues: called!");
         this.getRealEstateCache().setPrice(Utils.getValueAccordingToCurrency(currency, Utils.getFloatFromTextView(tvPrice)));
         this.getRealEstateCache().setSurfaceArea(Utils.getFloatFromTextView(tvSurfaceArea));
     }
 
+    /**
+     * Method that updates the real estate cache information (integers).
+     */
     private void updateIntegerValues() {
         Log.d(TAG, "updateIntegerValues: called!");
         this.setRooms();
     }
 
+    /**
+     * Method that updates the real estate cache information (rooms information).
+     */
     private void setRooms() {
         Log.d(TAG, "setRooms: called!");
         getRealEstateCache().setRooms(new RoomsRealEstate(
@@ -544,13 +638,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
                 Utils.getIntegerFromTextView(tvNumberOfOtherRooms)));
     }
 
-    private void updateStringValues() {
-        Log.d(TAG, "updateStringValues: called!");
-        this.getRealEstateCache().setType(Utils.capitalize(tvTypeOfBuilding.getText().toString().trim()));
-        this.getRealEstateCache().setDescription(Utils.capitalize(tvDescription.getText().toString().trim()));
-        this.getRealEstateCache().setDateSale(getDateSold());
-    }
-
+    /**
+     * Method that retrieves information about the date the listing was sold.
+     */
     private String getDateSold() {
         Log.d(TAG, "getDateSold: called!");
         if (dateSold == null) {
@@ -563,62 +653,10 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void launchEditPhotoActivity() {
-        Log.d(TAG, "launchEditPhotoActivity: called!");
-
-        updateRealEstateCache();
-
-        Intent intent = new Intent(this, PhotoGridActivity.class);
-        intent.putExtra(Constants.INTENT_FROM_ACTIVITY, Constants.INTENT_FROM_EDIT);
-        startActivity(intent);
-
-    }
-
-    private void launchDatePickerDialog() {
-        Log.d(TAG, "launchDatePickerDialog: called!");
-
-        DatePickerFragment.newInstance()
-                .show(getSupportFragmentManager(), "DatePickerDialogFragment");
-
-    }
-
-    private void createNotification() {
-        Log.d(TAG, "createNotification: called!");
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel mChannel = new NotificationChannel(
-                    Constants.NOTIFICATION_CHANNEL_ID,
-                    getString(R.string.notif_notification_channel_name),
-                    NotificationManager.IMPORTANCE_HIGH);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(mChannel);
-            }
-        }
-
-        //The request code must be the same as the same we pass to .notify later
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
-                        .setSmallIcon(R.drawable.real_estate_logo)
-                        .setContentTitle(getResources().getString(R.string.notification_title_edit))
-                        .setContentText(getResources().getString(R.string.notification_text, Utils.getAddressAsString(getRealEstateCache())))
-                        .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
-                        .setAutoCancel(true);
-        //SetAutoCancel(true) makes the notification dismissible when the user swipes it away
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
-        }
-
-        if (notificationManager != null) {
-            notificationManager.notify(100, notificationBuilder.build());
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
+    /**
+     * Method to check if the inputted information is correct. If it is, we proceed updating the
+     * listing in the database.
+     */
     private boolean allChecksCorrect() {
         Log.d(TAG, "allChecksCorrect: called!");
 
@@ -646,6 +684,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         return true;
     }
 
+    /**
+     * Method that starts the update (edit) process
+     */
     private void editListing() {
         Log.d(TAG, "editListing: called!");
 
@@ -656,10 +697,14 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
             updateRealEstate();
 
         } else {
-            ToastHelper.toastShort(this, "Sorry, there is a problem with some data");
+            ToastHelper.toastShort(this,
+                    "Sorry, there is a problem with some data");
         }
     }
 
+    /**
+     * Method that updates the images list of the real estate cache.
+     */
     private void updateImagesIdRealEstateCache() {
         Log.d(TAG, "updateImagesIdRealEstateCache: called!");
 
@@ -671,6 +716,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         this.getRealEstateCache().setListOfImagesIds(listOfImagesIds);
     }
 
+    /**
+     * Method that updates the date sold of listing.
+     */
     private void updateDateSold() {
         Log.d(TAG, "updateDateSold: called!");
 
@@ -687,13 +735,16 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to update the real estate cache object in the database
+     */
     private void updateRealEstate() {
         Log.d(TAG, "updateRealEstate: called!");
 
         /* We update the real estate cache according to the information inputted in the views
          * */
         updateRealEstateCache();
-        
+
         /* We update the images the real estate is related to
          * */
         updateImagesIdRealEstateCache();
@@ -711,6 +762,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     }
 
+    /**
+     * Method that uses RxJava to update the real estate in the database.
+     */
     @SuppressLint("CheckResult")
     private void updateRealEstateInTheDatabase() {
         Log.d(TAG, "updateRealEstateInTheDatabase: called!");
@@ -741,6 +795,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
                 });
     }
 
+    /**
+     * Method that uses RxJava to update the images of listing in the database.
+     */
     @SuppressLint("CheckResult")
     private void updateImagesRealEstateInTheDatabase() {
         Log.d(TAG, "updateImagesRealEstateInTheDatabase: called!");
@@ -793,6 +850,10 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that checks if it is necessary to launch a dialog asking the user if he/she is
+     * sure to leave. It depends on if there is information inputted.
+     */
     private void launchAreYouSureDialog() {
         Log.d(TAG, "launchAreYouSureDialog: called!");
         Utils.launchSimpleDialog(
@@ -811,4 +872,67 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         );
     }
 
+    /**
+     * Method to launch EditPhotoActivity.
+     * It uses an intent with Extras.
+     */
+    private void launchEditPhotoActivity() {
+        Log.d(TAG, "launchEditPhotoActivity: called!");
+
+        updateRealEstateCache();
+
+        Intent intent = new Intent(this, PhotoGridActivity.class);
+        intent.putExtra(Constants.INTENT_FROM_ACTIVITY, Constants.INTENT_FROM_EDIT);
+        startActivity(intent);
+
+    }
+
+    /**
+     * Method to launch DatePickerDialog.
+     */
+    private void launchDatePickerDialog() {
+        Log.d(TAG, "launchDatePickerDialog: called!");
+
+        DatePickerFragment.newInstance()
+                .show(getSupportFragmentManager(), "DatePickerDialogFragment");
+
+    }
+
+    /**
+     * Method that creates a notification.
+     */
+    private void createNotification() {
+        Log.d(TAG, "createNotification: called!");
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(
+                    Constants.NOTIFICATION_CHANNEL_ID,
+                    getString(R.string.notif_notification_channel_name),
+                    NotificationManager.IMPORTANCE_HIGH);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(mChannel);
+            }
+        }
+
+        //The request code must be the same as the same we pass to .notify later
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.real_estate_logo)
+                        .setContentTitle(getResources().getString(R.string.notification_title_edit))
+                        .setContentText(getResources().getString(R.string.notification_text, Utils.getAddressAsString(getRealEstateCache())))
+                        .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+                        .setAutoCancel(true);
+        //SetAutoCancel(true) makes the notification dismissible when the user swipes it away
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        }
+
+        if (notificationManager != null) {
+            notificationManager.notify(100, notificationBuilder.build());
+        }
+    }
 }

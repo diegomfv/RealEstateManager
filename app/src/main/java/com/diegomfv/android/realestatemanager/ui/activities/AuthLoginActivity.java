@@ -225,5 +225,4 @@ public class AuthLoginActivity extends BaseActivity {
             return false;
         }
     }
-
 }
