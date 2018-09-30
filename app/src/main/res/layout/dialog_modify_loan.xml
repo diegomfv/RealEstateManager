@@ -15,16 +15,16 @@
         android:textSize="30sp"
         android:textColor="@color/colorPrimaryDark"/>
 
-    <include layout="@layout/card_view_number_edit_text"
+    <include layout="@layout/card_view_number_decimal_edit_text"
         android:id="@+id/card_view_loan_amount_id"/>
 
-    <include layout="@layout/card_view_number_edit_text"
+    <include layout="@layout/card_view_number_decimal_edit_text"
         android:id="@+id/card_view_loan_annual_interest_rate_id"/>
 
-    <include layout="@layout/card_view_number_edit_text"
+    <include layout="@layout/card_view_number_decimal_edit_text"
         android:id="@+id/card_view_loan_period_in_years_id"/>
 
-    <include layout="@layout/card_view_number_edit_text"
+    <include layout="@layout/card_view_number_decimal_edit_text"
         android:id="@+id/card_view_loan_payment_frequency_id"/>
 
 </LinearLayout>

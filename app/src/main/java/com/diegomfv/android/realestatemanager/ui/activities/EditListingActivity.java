@@ -118,18 +118,17 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private TextInputEditText tvSurfaceArea;
 
-    private TextView tvNumberOfBedrooms;
-    private CrystalSeekbar seekBarBedrooms;
+    private TextInputEditText tvNumberOfBedrooms;
 
-    private TextView tvNumberOfBathrooms;
-    private CrystalSeekbar seekBarBathrooms;
+    private TextInputEditText tvNumberOfBathrooms;
 
-    private TextView tvNumberOfOtherRooms;
-    private CrystalSeekbar seekBarOtherRooms;
+    private TextInputEditText tvNumberOfOtherRooms;
 
     private TextInputEditText tvDescription;
 
     private TextInputEditText tvAddress;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @BindView(R.id.checkbox_sold_id)
     CheckBox cbSold;
@@ -182,9 +181,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
              * */
 
             /* Here, we clone the realEstate object in the cache and from that moment on, we use
-            * the cache object. We also use the model to access real estate images. We fill the cache
-            * of images with those that are related to the real estate object
-            * */
+             * the cache object. We also use the model to access real estate images. We fill the cache
+             * of images with those that are related to the real estate object
+             * */
             this.prepareCache();
 
         } else {
@@ -240,13 +239,14 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
                 Utils.updateCurrencyIcon(this, currency, item);
                 updatePriceHint();
 
-            } break;
+            }
+            break;
 
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick ({R.id.button_card_view_with_button_id, R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id, R.id.checkbox_sold_id})
+    @OnClick({R.id.button_card_view_with_button_id, R.id.button_add_edit_photo_id, R.id.button_insert_edit_listing_id, R.id.checkbox_sold_id})
     public void buttonClicked(View view) {
         Log.d(TAG, "buttonClicked: " + ((Button) view).getText().toString() + " clicked!");
 
@@ -265,7 +265,8 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
             case R.id.button_insert_edit_listing_id: {
                 editListing();
 
-            }break;
+            }
+            break;
 
             case R.id.checkbox_sold_id: {
                 if (cbSold.isChecked()) {
@@ -275,7 +276,8 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
                     dateSold = "";
                     tvSold.setText(dateSold);
                 }
-            } break;
+            }
+            break;
 
         }
     }
@@ -357,17 +359,17 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         } else {
             this.currency = 0;
         }
-        Utils.writeCurrentCurrencyShPref(this,currency);
+        Utils.writeCurrentCurrencyShPref(this, currency);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void prepareCache () {
+    private void prepareCache() {
         Log.d(TAG, "prepareCache: called!");
 
         /* We delete the bitmapCache and fill it with the bitmaps related to the
-        * real estate that is loaded
-        * */
+         * real estate that is loaded
+         * */
         getRepository().deleteAndFillBitmapCache(getRealEstateCache().getListOfImagesIds(), getInternalStorage(), getImagesDir());
 
         /* We fill the cache of Images Real Estate
@@ -387,18 +389,15 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         this.getAutocompleteTextViews();
         this.getEditTexts();
         this.getTextViews();
-        this.getSeekBars();
         this.getCheckbox();
 
         this.setAllHints();
         this.setTextButtons();
-        this.setCrystalSeekBarsMinMaxValues();
-        this.setCrystalSeekBarsListeners();
         this.setListeners();
         this.setAllInformation();
     }
 
-    private void getAutocompleteTextViews () {
+    private void getAutocompleteTextViews() {
         Log.d(TAG, "getAutocompleteTextViews: called!");
         this.tvTypeOfBuilding = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
     }
@@ -407,50 +406,45 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         Log.d(TAG, "getEditTexts: called!");
         this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
         this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
+        this.tvNumberOfBedrooms = cardViewNumberOfBedrooms.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
+        this.tvNumberOfBathrooms = cardViewNumberOfBathrooms.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
+        this.tvNumberOfOtherRooms = cardViewNumberOfOtherRooms.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
         this.tvDescription = cardViewDescription.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
         this.tvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
     }
 
-    private void getTextViews () {
+    private void getTextViews() {
         Log.d(TAG, "getTextViews: called!");
-        this.tvNumberOfBedrooms = cardViewNumberOfBedrooms.findViewById(R.id.textView_title_id);
-        this.tvNumberOfBathrooms = cardViewNumberOfBathrooms.findViewById(R.id.textView_title_id);
-        this.tvNumberOfOtherRooms = cardViewNumberOfOtherRooms.findViewById(R.id.textView_title_id);
         this.tvSold = cardViewSold.findViewById(R.id.relative_layout_id).findViewById(R.id.textView_date_id);
     }
 
-    private void getSeekBars() {
-        Log.d(TAG, "getSeekBars: called!");
-        this.seekBarBedrooms = cardViewNumberOfBedrooms.findViewById(R.id.single_seek_bar_id);
-        this.seekBarBathrooms = cardViewNumberOfBathrooms.findViewById(R.id.single_seek_bar_id);
-        this.seekBarOtherRooms = cardViewNumberOfOtherRooms.findViewById(R.id.single_seek_bar_id);
-    }
-
-    private void getCheckbox () {
+    private void getCheckbox() {
         Log.d(TAG, "getCheckbox: called!");
         this.cbSold = cardViewSold.findViewById(R.id.relative_layout_id).findViewById(R.id.checkbox_sold_id);
     }
 
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
-
-        // TODO: 23/08/2018 Use Resources instead of hardcoded text
+        // TODO: 23/08/2018 Use Resources instead of hardcoded strings
         setHint(cardViewType, "Type");
         setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency) + ")");
         setHint(cardViewSurfaceArea, "Surface Area (sqm)");
+        setHint(cardViewNumberOfBedrooms, "Bedrooms");
+        setHint(cardViewNumberOfBathrooms, "Bathrooms");
+        setHint(cardViewNumberOfOtherRooms, "Other Rooms");
         setHint(cardViewDescription, "Description");
         setHint(cardViewAddress, "Address");
     }
 
-    private void setHint (CardView cardView, String hint) {
+    private void setHint(CardView cardView, String hint) {
         Log.d(TAG, "setHint: called!");
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
     }
 
-    private void setListeners () {
+    private void setListeners() {
         Log.d(TAG, "setListeners: called!");
-        tvSold.setOnClickListener(tvSoldListener);
+        this.tvSold.setOnClickListener(tvSoldListener);
     }
 
     private void updatePriceHint() {
@@ -461,77 +455,26 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private void setTextButtons() {
         Log.d(TAG, "setTextButtons: called!");
-        buttonEditListing.setText("Edit Listing");
-        buttonEditAddress.setText("Edit Address");
-    }
-
-    private void setCrystalSeekBarsMinMaxValues() {
-        Log.d(TAG, "setCrystalSeekBarsMinMaxValues: called!");
-        setMinMaxValues(seekBarBedrooms);
-        setMinMaxValues(seekBarBathrooms);
-        setMinMaxValues(seekBarOtherRooms);
-    }
-
-    private void setMinMaxValues(CrystalSeekbar seekBar) {
-        Log.d(TAG, "setMinMaxValues: called!");
-        seekBar.setMinValue(0);
-        seekBar.setMaxValue(9);
-    }
-
-    private void setCrystalSeekBarsListeners() {
-        Log.d(TAG, "setCrystalSeekBarsListeners: called!");
-        setListeners(seekBarBedrooms);
-        setListeners(seekBarBathrooms);
-        setListeners(seekBarOtherRooms);
-    }
-
-    private void setListeners(final CrystalSeekbar seekBar) {
-        Log.d(TAG, "setListeners: called!");
-
-        seekBar.setOnSeekbarChangeListener(new OnSeekbarChangeListener() {
-            @Override
-            public void valueChanged(Number value) {
-                Log.d(TAG, "valueChanged: called! --> " + value);
-                setTextDependingOnSeekBar(seekBar, value);
-            }
-        });
-
-        seekBar.setOnSeekbarFinalValueListener(new OnSeekbarFinalValueListener() {
-            @Override
-            public void finalValue(Number value) {
-                Log.d(TAG, "finalValue: called! --> " + value);
-                setTextDependingOnSeekBar(seekBar, value);
-            }
-        });
-    }
-
-    private void setTextDependingOnSeekBar (CrystalSeekbar seekBar, Number value) {
-        Log.d(TAG, "updateSeekBarTextView: called!");
-        if (seekBar == seekBarBedrooms) {
-            tvNumberOfBedrooms.setText("Bedrooms (" + value + ")");
-        } else if (seekBar == seekBarBathrooms) {
-            tvNumberOfBathrooms.setText("Bathrooms (" + value + ")");
-        } else if (seekBar == seekBarOtherRooms) {
-            tvNumberOfOtherRooms.setText("Other Rooms (" + value + ")");
-        }
+        this.buttonEditListing.setText("Edit Listing");
+        this.buttonEditAddress.setText("Edit Address");
     }
 
     private void setAllInformation() {
         Log.d(TAG, "setAllInformation: called!");
-        tvTypeOfBuilding.setText(getRealEstateCache().getType());
-        tvPrice.setText(String.valueOf((int)Utils.getPriceAccordingToCurrency(currency, getRealEstateCache().getPrice())));
-        tvSurfaceArea.setText(String.valueOf(getRealEstateCache().getSurfaceArea()));
-        tvNumberOfBedrooms.setText("Bedrooms (" + getRealEstateCache().getRooms().getBedrooms() + ")");
-        tvNumberOfBathrooms.setText("Bathrooms (" + getRealEstateCache().getRooms().getBedrooms() + ")");
-        tvNumberOfOtherRooms.setText("Other Rooms (" + getRealEstateCache().getRooms().getBedrooms() + ")");
-        tvDescription.setText(getRealEstateCache().getDescription());
-        tvAddress.setText(Utils.getAddressAsString(getRealEstateCache()));
+        this.tvTypeOfBuilding.setText(getRealEstateCache().getType());
+        this.tvPrice.setText(String.valueOf((int) Utils.getPriceAccordingToCurrency(currency, getRealEstateCache().getPrice())));
+        this.tvSurfaceArea.setText(String.valueOf(getRealEstateCache().getSurfaceArea()));
+        this.tvNumberOfBedrooms.setText(String.valueOf(getRealEstateCache().getRooms().getBedrooms()));
+        this.tvNumberOfBathrooms.setText(String.valueOf(getRealEstateCache().getRooms().getBathrooms()));
+        this.tvNumberOfOtherRooms.setText(String.valueOf(getRealEstateCache().getRooms().getOtherRooms()));
+        this.tvDescription.setText(getRealEstateCache().getDescription());
+        this.tvAddress.setText(Utils.getAddressAsString(getRealEstateCache()));
         setSoldInfo();
     }
 
-    private void setSoldInfo () {
+    private void setSoldInfo() {
         Log.d(TAG, "setSoldInfo: called!");
-        if(getRealEstateCache().getDateSale() == null || getRealEstateCache().getDateSale().isEmpty()) {
+        if (getRealEstateCache().getDateSale() == null || getRealEstateCache().getDateSale().isEmpty()) {
             dateSold = "";
             tvSold.setText(dateSold);
             cbSold.setChecked(false);
@@ -599,9 +542,9 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     private void setRooms() {
         Log.d(TAG, "setRooms: called!");
         getRealEstateCache().setRooms(new RoomsRealEstate(
-                seekBarBedrooms.getSelectedMinValue().intValue(),
-                seekBarBathrooms.getSelectedMinValue().intValue(),
-                seekBarOtherRooms.getSelectedMinValue().intValue()));
+                Utils.getIntegerFromTextView(tvNumberOfBedrooms),
+                Utils.getIntegerFromTextView(tvNumberOfBathrooms),
+                Utils.getIntegerFromTextView(tvNumberOfOtherRooms)));
     }
 
     private void updateStringValues() {
@@ -611,7 +554,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         this.getRealEstateCache().setDateSale(getDateSold());
     }
 
-    private String getDateSold () {
+    private String getDateSold() {
         Log.d(TAG, "getDateSold: called!");
         if (dateSold == null) {
             return "";
@@ -634,7 +577,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     }
 
-    private void launchDatePickerDialog () {
+    private void launchDatePickerDialog() {
         Log.d(TAG, "launchDatePickerDialog: called!");
 
         DatePickerFragment.newInstance()
@@ -679,11 +622,11 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private boolean allChecksCorrect () {
+    private boolean allChecksCorrect() {
         Log.d(TAG, "allChecksCorrect: called!");
 
         /* Left like this for readability purposes
-        * */
+         * */
 
         if (!Utils.isNumeric(Utils.getStringFromTextView(tvPrice))) {
             return false;
@@ -694,8 +637,8 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         }
 
         /* If dateSold is different than null
-        * and dateSold (which is a String) is parcelable to Date...
-        * */
+         * and dateSold (which is a String) is parcelable to Date...
+         * */
         if (dateSold != null && Utils.stringToDate(dateSold) != null) {
             if (getRealEstateCache().getDatePut() != null
                     && Utils.stringToDate(dateSold).after(Utils.stringToDate(getRealEstateCache().getDatePut()))) {
@@ -706,54 +649,17 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         return true;
     }
 
-    private void editListing () {
+    private void editListing() {
         Log.d(TAG, "editListing: called!");
 
         if (allChecksCorrect()) {
 
             Utils.hideMainContent(progressBarContent, mainLayout);
 
-            priceCorrectionIfNecessary();
-
-            Log.w(TAG, "editListing: " + getRealEstateCache().toString());
-            Log.w(TAG, "editListing: " + getListOfImagesRealEstateCache().toString());
-
-            /* We update the images the real estate is related to
-            * */
-            updateImagesIdRealEstateCache();
-
-            Log.w(TAG, "editListing: afterUpdate = " + getRealEstateCache().toString());
-            Log.w(TAG, "editListing: afterUpdate = " + getListOfImagesRealEstateCache().toString());
-
-            /* We update the date sold. If the checkbox is not checked, it might be because
-            * the real estate has not been sold yet or because it was sold but now it is
-            * on sale again. We leave this option open
-            * */
-            updateDateSold();
-
-            Log.w(TAG, "editListing: bitmapCache = " + getBitmapCache() + " +++++++++++++++");
-            Log.w(TAG, "editListing: listOfBitmapKeys() = " + getListOfBitmapKeys() + " +++++++++++++++");
-
-            /* From now on, we can update the real estate and the imagesRealEstate in the database
-            * and insert the bitmaps in the internal storage
-            * */
-            updateRealEstateInTheDatabase();
+            updateRealEstate();
 
         } else {
             ToastHelper.toastShort(this, "Sorry, there is a problem with some data");
-        }
-    }
-
-    /** This method updates real estate price info if the currency used is euros (the database
-     * stores the information in dollars)
-     * */
-    private void priceCorrectionIfNecessary () {
-        Log.d(TAG, "priceCorrectionIfNecessary: called!");
-
-        //1: euros
-        if (currency == 1) {
-            float price = Utils.getFloatFromTextView(tvPrice);
-            getRealEstateCache().setPrice((int)Utils.convertEuroToDollar(price));
         }
     }
 
@@ -768,7 +674,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         this.getRealEstateCache().setListOfImagesIds(listOfImagesIds);
     }
 
-    private void updateDateSold () {
+    private void updateDateSold() {
         Log.d(TAG, "updateDateSold: called!");
 
         if (!cbSold.isChecked()) {
@@ -784,8 +690,32 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private void updateRealEstate() {
+        Log.d(TAG, "updateRealEstate: called!");
+
+        /* We update the real estate cache according to the information inputted in the views
+         * */
+        updateRealEstateCache();
+        
+        /* We update the images the real estate is related to
+         * */
+        updateImagesIdRealEstateCache();
+
+        /* We update the date sold. If the checkbox is not checked, it might be because
+         * the real estate has not been sold yet or because it was sold but now it is
+         * on sale again. We leave this option open
+         * */
+        updateDateSold();
+
+        /* From now on, we can update the real estate and the imagesRealEstate in the database
+         * and insert the bitmaps in the internal storage
+         * */
+        updateRealEstateInTheDatabase();
+
+    }
+
     @SuppressLint("CheckResult")
-    private void updateRealEstateInTheDatabase () {
+    private void updateRealEstateInTheDatabase() {
         Log.d(TAG, "updateRealEstateInTheDatabase: called!");
         getRepository().updateRealEstate(getRealEstateCache())
                 .subscribeOn(Schedulers.io())
@@ -815,7 +745,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     }
 
     @SuppressLint("CheckResult")
-    private void updateImagesRealEstateInTheDatabase () {
+    private void updateImagesRealEstateInTheDatabase() {
         Log.d(TAG, "updateImagesRealEstateInTheDatabase: called!");
 
         getRepository().insertListImagesRealEstate(getListOfImagesRealEstateCache())
@@ -846,14 +776,15 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
                 });
     }
 
-    /** Method that inserts the Bitmaps in the database, creates a notification,
+    /**
+     * Method that inserts the Bitmaps in the database, creates a notification,
      * deletes the cache and launches MainActivity
-     * */
-    public void insertAllBitmapsInImagesDirectory () {
+     */
+    public void insertAllBitmapsInImagesDirectory() {
         Log.d(TAG, "insertAllBitmapsInImagesDirectory: called!");
 
         /* Already done in a background thread
-        * */
+         * */
         for (Map.Entry<String, Bitmap> entry : getBitmapCache().entrySet()) {
             getRepository().addBitmapToBitmapCacheAndStorage(getInternalStorage(), getImagesDir(), entry.getKey(), entry.getValue());
         }
