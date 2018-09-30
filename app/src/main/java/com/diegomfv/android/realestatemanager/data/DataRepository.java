@@ -31,7 +31,14 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Diego Fajardo on 16/08/2018.
  */
-// TODO: 22/08/2018 Fetch network data from the repository!
+
+/**
+ * Repository to store the necessary information for the app to work.
+ * It acts as a layer between the database
+ * and the ViewModel.
+ * The repository stores a real estate cache that is used to create or update items. When the item
+ * is created or edited, the cache is cleared.
+ */
 public class DataRepository {
 
     private static final String TAG = DataRepository.class.getSimpleName();
@@ -93,6 +100,9 @@ public class DataRepository {
         checkIfDatabaseIsEmpty();
     }
 
+    /**
+     * Method to get an entry point to the Repository.
+     */
     public static DataRepository getInstance(final AppDatabase database, long maxMemoryInMB) {
         if (sInstance == null) {
             synchronized (DataRepository.class) {
@@ -178,6 +188,9 @@ public class DataRepository {
                 });
     }
 
+    /**
+     * Getter for listOfPlacesNearbyCache.
+     */
     public List<PlaceRealEstate> getListOfPlacesRealEstateCache() {
         if (listOfPlacesNearbyCache == null) {
             return listOfPlacesNearbyCache = new ArrayList<>();
@@ -185,6 +198,9 @@ public class DataRepository {
         return listOfPlacesNearbyCache;
     }
 
+    /**
+     * Method to delete the cache.
+     */
     public void deleteCache() {
         Log.d(TAG, "deleteCache: called!");
 
@@ -197,6 +213,9 @@ public class DataRepository {
 
     //BITMAPS CACHE
 
+    /**
+     * Getter for listOfBitmapCacheKeys.
+     */
     public List<String> getListOfBitmapCacheKeys() {
         Log.d(TAG, "getListOfBitmapCacheKeys: called!");
         if (listOfBitmapCacheKeys == null) {
@@ -206,6 +225,9 @@ public class DataRepository {
         return updateListOfBitmapKeys();
     }
 
+    /**
+     * Method to update the ListOfBitmapKeys.
+     */
     private List<String> updateListOfBitmapKeys() {
         Log.d(TAG, "updateListOfBitmapKeys: called!");
 
@@ -219,6 +241,9 @@ public class DataRepository {
         return listOfBitmapCacheKeys;
     }
 
+    /**
+     * Getter for bitmap cache.
+     */
     public Map<String, Bitmap> getBitmapCache() {
         Log.d(TAG, "getBitmapCache: called!");
         if (bitmapCache == null) {
@@ -227,9 +252,11 @@ public class DataRepository {
         double currentSize = getCurrentSizeOfBitmapCache();
         Log.i(TAG, "getBitmapCache: getSizeOfBitmapCache = " + currentSize + " MB");
         return bitmapCache;
-
     }
 
+    /**
+     * Method that retrieves the current size of the bitmap cache.
+     */
     public double getCurrentSizeOfBitmapCache() {
         Log.d(TAG, "getCurrentSizeOfBitmapCache: called!");
 
@@ -241,6 +268,9 @@ public class DataRepository {
         return size / 1024 / 1024;
     }
 
+    /**
+     * Method that adds a new Bitmap to the Bitmap Cache.
+     */
     public void addBitmapToBitmapCache(String key, Bitmap bitmap) {
         Log.d(TAG, "addBitmapToBitmapCache: called!");
         if (!getBitmapCache().containsKey(key)) {
@@ -252,6 +282,12 @@ public class DataRepository {
         }
     }
 
+    /**
+     * Method that checks if the Bitmap cache size is higher that possible. If it is, it removes
+     * the first element of the cache
+     * This system could be improved since at the moment is deleting the first element of the
+     * cache and we may need that element soon. It'd be better to implement a LRU cache.
+     */
     private void checkBitmapCacheSize() {
         Log.d(TAG, "checkBitmapCacheSize: called!");
 
@@ -263,6 +299,9 @@ public class DataRepository {
         }
     }
 
+    /**
+     * Method to remove the first element from the bitmap cache.
+     */
     private void removeFirstElementFromBitmapCache() {
         Log.d(TAG, "removeFirstElementFromBitmapCache: called!");
 
@@ -272,17 +311,20 @@ public class DataRepository {
         Log.w(TAG, "removeFirstElementFromBitmapCache: item removed, ky = " + key);
 
         checkBitmapCacheSize();
-
     }
 
+    /**
+     * Method to add a Bitmap to the bitmap cache and to the Internal Storage.
+     */
     public void addBitmapToBitmapCacheAndStorage(Storage internalStorage, String imagesDir, String key, Bitmap bitmap) {
         Log.d(TAG, "addBitmapToAllMemories: called!");
-
         addBitmapToBitmapCache(key, bitmap);
         addBitmapToInternalStorageInWorkerThread(internalStorage, imagesDir, key, bitmap);
-
     }
 
+    /**
+     * Method to add a Bitmap to the Internal Storage using a Worker Thread.
+     */
     public void addBitmapToInternalStorageInWorkerThread(final Storage internalStorage, final String imagesDir, final String key, final Bitmap bitmap) {
         Log.d(TAG, "addBitmapToInternalStorageInWorkerThread: called!");
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
@@ -318,6 +360,9 @@ public class DataRepository {
 
     }
 
+    /**
+     * Method to delete the Bitmap Cache and immediately after fill it with Bitmaps
+     */
     public void deleteAndFillBitmapCache(List<String> listOfKeys, Storage internalStorage, String imagesDir) {
         Log.d(TAG, "fillBitmapCache: called!");
 
@@ -328,12 +373,18 @@ public class DataRepository {
         }
     }
 
+    /**
+     * Method to delete the Bitmap Cache
+     */
     public void deleteBitmapCache() {
         Log.d(TAG, "deleteBitmapCache: called!");
         bitmapCache = null;
         listOfBitmapCacheKeys = null;
     }
 
+    /**
+     * Method to get all the keys of all the Bitmaps that are in the Internal Storage.
+     */
     public List<String> getListOfBitmapKeysInternalStorage(String imagesDir) {
         Log.d(TAG, "getListOfBitmapKeysInternalStorage: called!");
         listOfBitmapKeysInternalStorage = new ArrayList<>();
@@ -352,6 +403,9 @@ public class DataRepository {
 
     //SEARCH CACHE
 
+    /**
+     * Getter for listOfFoundRealEstates.
+     */
     public List<RealEstate> getListOfFoundRealEstates() {
         Log.d(TAG, "getListOfFoundRealEstates: called!");
         if (listOfFoundRealEstates == null) {
@@ -388,6 +442,9 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Use the DAOs to access the data in the database and fill the lists of the repository.
+     */
     private LiveData<List<RealEstate>> getAllListingsLiveData() {
         Log.d(TAG, "getAllListingsLiveData: called!");
         return mDatabase.realStateDao().getAllListingsOrderedByTypeLiveData();
@@ -408,6 +465,10 @@ public class DataRepository {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * RxJava methods that return Observables. They allow access to the information of the Database.
+     */
 
     public io.reactivex.Observable<List<RealEstate>> getAllListingsRealEstateObservable() {
         Log.d(TAG, "getAllListingsRealEstateObservable: called!");
@@ -451,6 +512,10 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * RxJava methods that return Completables. They are used to insert and update information
+     * in the database.
+     */
     public Completable insertRealEstate(final RealEstate realEstate) {
         Log.d(TAG, "insertRealEstate: called!");
         return Completable.fromCallable(new Callable<Long>() {
@@ -493,11 +558,17 @@ public class DataRepository {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public boolean getDatabaseIsEmpty(){
+    /**
+     * Getter for databaseIsEmpty.
+     */
+    public boolean getDatabaseIsEmpty() {
         Log.d(TAG, "getDatabaseIsEmpty: called!");
         return databaseIsEmpty;
     }
 
+    /**
+     * Getter to check in a Worker Thread if the database is empty.
+     */
     @SuppressLint("CheckResult")
     public void checkIfDatabaseIsEmpty() {
         Log.d(TAG, "checkIfDatabaseIsEmpty: called!");
@@ -525,5 +596,4 @@ public class DataRepository {
                     }
                 });
     }
-
 }

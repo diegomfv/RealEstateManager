@@ -2,6 +2,12 @@ package com.diegomfv.android.realestatemanager.data;
 
 /**
  * Created by Diego Fajardo on 05/08/2018.
+ * Room database point of entry
+ * version -> should be updated when we updateItem our database
+ * exportSchema -> writes the database info to a folder
+ * Room database point of entry
+ * version -> should be updated when we updateItem our database
+ * exportSchema -> writes the database info to a folder
  */
 /** Room database point of entry
  * */
@@ -80,6 +86,10 @@ public abstract class AppDatabase extends RoomDatabase {
         return sInstance;
     }
 
+    /**
+     * This method is used to build the database (we left the .addCallback() method as an example
+     * of an interesting possibility).
+     */
     private static AppDatabase buildDatabase(final Context appContext,
                                              final AppExecutors executors) {
         return Room.databaseBuilder(appContext, AppDatabase.class, DATABASE_NAME)
@@ -99,16 +109,25 @@ public abstract class AppDatabase extends RoomDatabase {
                 }).build();
     }
 
+    /**
+     * Method that updates the created database.
+     */
     private void updateDatabaseCreated(final Context context) {
         if (context.getDatabasePath(DATABASE_NAME).exists()) {
             setDatabaseCreated();
         }
     }
 
+    /**
+     * Method to set the boolean value that stores if the database has been created.
+     */
     private void setDatabaseCreated() {
         mIsDatabaseCreated.postValue(true);
     }
 
+    /**
+     * Getter for mIsDatabaseCreated.
+     */
     public LiveData<Boolean> getDatabaseCreated() {
         return mIsDatabaseCreated;
     }

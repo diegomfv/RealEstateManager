@@ -44,6 +44,9 @@ public class AppExecutors {
         this.mainThread = mainThread;
     }
 
+    /**
+     * Method to get an entry point to AppExecutors.
+     */
     public static AppExecutors getInstance() {
         if (sInstance == null) {
             synchronized (LOCK) {
@@ -55,27 +58,32 @@ public class AppExecutors {
         return sInstance;
     }
 
-    /** DiskIO is a Single Thread Executor (see above).
+    /**
+     * DiskIO is a Single Thread Executor (see above).
      * It ensures that our database transactions are done in order so we do not have
-     * race conditions */
+     * race conditions
+     */
     public Executor diskIO() {
         return diskIO;
     }
 
-    /** The mainThread executor uses the "MainThreadExecutor" class which essentially will pause
+    /**
+     * The mainThread executor uses the "MainThreadExecutor" class which essentially will pause
      * executors using a handle associated with the main looper. When we are in an activity, we don't need
      * this main thread executor because we can use the run on UI Thread method. When we are in a
      * different class and we do not have the runOnUIThread() method, we can access the main thread
      * using this executor (It is difficult to imagine an example when we need this, see example
-     * UDACITY, Android Development, Android Architecture Components */
+     * UDACITY, Android Development, Android Architecture Components
+     */
 
     public Executor mainThread() {
         return mainThread;
     }
 
-    /** The networkIO Executor is a pool of three threads. This allows us to run different
+    /**
+     * The networkIO Executor is a pool of three threads. This allows us to run different
      * network calls simultaneously while controlling the number or threads that we have.
-     * */
+     */
     public Executor networkIO() {
         return networkIO;
     }
