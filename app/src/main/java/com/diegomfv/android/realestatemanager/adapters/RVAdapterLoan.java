@@ -35,10 +35,10 @@ public class RVAdapterLoan extends RecyclerView.Adapter<RVAdapterLoan.MyViewHold
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public RVAdapterLoan(Context context, List<Payment>listOfPayments, int currency) {
+    public RVAdapterLoan(Context context, List<Payment> listOfPayments, int currency) {
         this.context = context;
         this.listOfPayments = listOfPayments;
-        this.currency  = currency;
+        this.currency = currency;
     }
 
     @NonNull
@@ -110,21 +110,27 @@ public class RVAdapterLoan extends RecyclerView.Adapter<RVAdapterLoan.MyViewHold
 
         }
 
-        public void updateItem (int position) {
+        /**
+         * Method that updates the item of the holder.
+         */
+        public void updateItem(int position) {
             Log.d(TAG, "updateItem: called!");
             setTexts(position);
         }
 
-        private void setTexts (int position) {
+        /**
+         * Method to update the TextViews of the holder.
+         */
+        private void setTexts(int position) {
             Log.d(TAG, "setText: called!");
             tvNPay.setText(String.valueOf(listOfPayments.get(position).getPayN()));
             tvPayDate.setText(Utils.dateToString(listOfPayments.get(position).getPaymentDate()));
-            tvBegBalance.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getBeginningBalance(),currency)));
-            tvSchPayment.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getSchPayment(),currency)));
-            tvPrincipal.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getPrincipal(),currency)));
-            tvInterests.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getInterests(),currency)));
-            tvEndBalance.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getEndingBalance(),currency)));
-            tvCumInterests.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getCumInterests(),currency)));
+            tvBegBalance.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getBeginningBalance(), currency)));
+            tvSchPayment.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getSchPayment(), currency)));
+            tvPrincipal.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getPrincipal(), currency)));
+            tvInterests.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getInterests(), currency)));
+            tvEndBalance.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getEndingBalance(), currency)));
+            tvCumInterests.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getCumInterests(), currency)));
         }
     }
 }

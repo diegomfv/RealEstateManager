@@ -26,7 +26,7 @@ public class RVAdapterMediaHorizontalCreate extends RecyclerView.Adapter<RVAdapt
 
     private static final String TAG = RVAdapterListings.class.getSimpleName();
 
-//////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private Context context;
     private List<String> listOfKeys;
@@ -34,20 +34,18 @@ public class RVAdapterMediaHorizontalCreate extends RecyclerView.Adapter<RVAdapt
     private String imagesDir;
     private RequestManager glide;
 
-//////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public RVAdapterMediaHorizontalCreate(Context context, List<String> listOfKeys, Map<String,Bitmap> bitmapCache, String imagesDir, RequestManager glide) {
         Log.d(TAG, "RVAdapterListings: called!");
-
         this.context = context;
         this.listOfKeys = listOfKeys;
         this.bitmapCache = bitmapCache;
         this.imagesDir = imagesDir;
         this.glide = glide;
-
     }
 
-///////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NonNull
     @Override
@@ -62,25 +60,20 @@ public class RVAdapterMediaHorizontalCreate extends RecyclerView.Adapter<RVAdapt
                 false);
 
         return new RVAdapterMediaHorizontalCreate.MyViewHolder(view);
-
     }
 
     @Override
     public void onBindViewHolder(@NonNull RVAdapterMediaHorizontalCreate.MyViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called!");
-
         holder.updateItem(position);
-
     }
 
     @Override
     public int getItemCount() {
         Log.d(TAG, "getItemCount: called!");
-
         if (listOfKeys == null) {
             return 0;
         }
-
         return listOfKeys.size();
     }
 
@@ -91,6 +84,9 @@ public class RVAdapterMediaHorizontalCreate extends RecyclerView.Adapter<RVAdapt
         notifyDataSetChanged();
     }
 
+    /**
+     * Method to update the Bitmap data.
+     */
     public void setDataBitmapCache(Map<String,Bitmap> newData) {
         this.bitmapCache = newData;
         notifyDataSetChanged();
@@ -104,7 +100,7 @@ public class RVAdapterMediaHorizontalCreate extends RecyclerView.Adapter<RVAdapt
         return listOfKeys.get(position);
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
@@ -121,18 +117,24 @@ public class RVAdapterMediaHorizontalCreate extends RecyclerView.Adapter<RVAdapt
             ButterKnife.bind(this, itemView);
         }
 
+        /**
+         * Method that updates the item of the holder.
+         */
         private void updateItem (int position) {
             Log.d(TAG, "updateItem: called!");
             loadBitmap(position, imageView);
         }
-    }
 
-    public void loadBitmap (int position, ImageView imageView) {
-        Log.d(TAG, "loadBitmap: called!");
-        Log.i(TAG, "loadBitmap: bitmapCacheSize = " + bitmapCache.size());
-        Log.i(TAG, "loadBitmap: listOfKeysSize = " + listOfKeys.size());
+        /**
+         * Method to load the image of the item.
+         */
+        private void loadBitmap (int position, ImageView imageView) {
+            Log.d(TAG, "loadBitmap: called!");
+            Log.i(TAG, "loadBitmap: bitmapCacheSize = " + bitmapCache.size());
+            Log.i(TAG, "loadBitmap: listOfKeysSize = " + listOfKeys.size());
 
-        glide.load(bitmapCache.get(listOfKeys.get(position)))
-                .into(imageView);
+            glide.load(bitmapCache.get(listOfKeys.get(position)))
+                    .into(imageView);
+        }
     }
 }

@@ -106,7 +106,10 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
         notifyDataSetChanged();
     }
 
-    public void setCurrency (int newData) {
+    /**
+     * Method to set the currency.
+     */
+    public void setCurrency(int newData) {
         Log.d(TAG, "setCurrency: called!");
         this.currency = newData;
         notifyDataSetChanged();
@@ -149,6 +152,9 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
             ButterKnife.bind(this, itemView);
         }
 
+        /**
+         * Method that updates the item of the holder
+         */
         private void updateItem(int position) {
             Log.d(TAG, "updateItem: called!");
             loadImage(position);
@@ -158,7 +164,10 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
             setVisibilityOfSoldTextView(position);
         }
 
-        private void loadImage (int position) {
+        /**
+         * Method to load the image of the item.
+         */
+        private void loadImage(int position) {
             Log.d(TAG, "loadImage: called!");
 
             if (listRealEstates.get(position).getListOfImagesIds() != null
@@ -175,6 +184,9 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
             }
         }
 
+        /**
+         * Method to get the Type of the real estate
+         */
         private String getType(int position) {
             Log.d(TAG, "getType: called!");
             if (Utils.capitalize(listRealEstates.get(position).getType()).isEmpty()) {
@@ -183,6 +195,9 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
             return Utils.capitalize(listRealEstates.get(position).getType());
         }
 
+        /**
+         * Method to get the Surface Area of the real estate
+         */
         private String getSurfaceArea(int position) {
             Log.d(TAG, "getSurfaceArea: called!");
             if (listRealEstates.get(position).getSurfaceArea() == 0.0f) {
@@ -191,6 +206,9 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
             return String.valueOf(listRealEstates.get(position).getSurfaceArea()) + " sqm";
         }
 
+        /**
+         * Method to get the Price of the real estate
+         */
         private String getPriceOfBuilding(int position) {
             Log.d(TAG, "getPriceOfBuilding: called!");
             float price = Utils.getValueAccordingToCurrency(currency, listRealEstates.get(position).getPrice());
@@ -200,7 +218,10 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
             return Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listRealEstates.get(position).getPrice(), currency);
         }
 
-        private void setVisibilityOfSoldTextView (int position) {
+        /**
+         * Method to set the visibility of the TextViewSold
+         */
+        private void setVisibilityOfSoldTextView(int position) {
             Log.d(TAG, "setVisibilityOfSoldTextView: called!");
             if (listRealEstates.get(position).getDateSale() != null) {
                 textViewSold.setVisibility(View.VISIBLE);

@@ -22,22 +22,21 @@ import butterknife.ButterKnife;
 /**
  * Created by Diego Fajardo on 02/09/2018.
  */
-public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.MyViewHolder>{
+public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.MyViewHolder> {
 
     private static final String TAG = RVAdapterListings.class.getSimpleName();
 
-//////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private Context context;
     private List<String> listOfKeys;
-    private Map<String,Bitmap> bitmapCache;
+    private Map<String, Bitmap> bitmapCache;
     private RequestManager glide;
 
-//////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public RVAdapterMediaGrid (Context context, List<String> listOfKeys, Map<String,Bitmap> bitmapCache, RequestManager glide) {
+    public RVAdapterMediaGrid(Context context, List<String> listOfKeys, Map<String, Bitmap> bitmapCache, RequestManager glide) {
         Log.d(TAG, "RVAdapterListings: called!");
-
         this.context = context;
         this.listOfKeys = listOfKeys;
         this.bitmapCache = bitmapCache;
@@ -45,7 +44,7 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
 
     }
 
-///////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NonNull
     @Override
@@ -60,51 +59,51 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
                 false);
 
         return new MyViewHolder(view);
-
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called!");
-
         holder.updateItem(position);
-
     }
 
     @Override
     public int getItemCount() {
         Log.d(TAG, "getItemCount: called!");
-
         if (listOfKeys == null) {
             return 0;
         }
-
         return listOfKeys.size();
     }
 
-    /** Method to update the data
-     * */
+    /**
+     * Method to update the data.
+     */
     public void setDataKeys(List<String> newData) {
         this.listOfKeys = newData;
         notifyDataSetChanged();
     }
 
-    public void setDataBitmapCache(Map<String,Bitmap> newData) {
+    /**
+     * Method to update the Bitmap data.
+     */
+    public void setDataBitmapCache(Map<String, Bitmap> newData) {
         this.bitmapCache = newData;
         notifyDataSetChanged();
     }
 
 
-    /** Method that retrieves the key when an item is clicked
-     * */
-    public String getKey (int position) {
+    /**
+     * Method that retrieves the key when an item is clicked
+     */
+    public String getKey(int position) {
         Log.d(TAG, "getKey: called!");
         return listOfKeys.get(position);
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder {
 
         private final String TAG = RVAdapterMediaHorizontalCreate.MyViewHolder.class.getSimpleName();
 
@@ -119,19 +118,25 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
             ButterKnife.bind(this, itemView);
         }
 
-        private void updateItem (int position) {
+        /**
+         * Method that updates the item of the holder.
+         */
+        private void updateItem(int position) {
             Log.d(TAG, "updateItem: called!");
             loadBitmap(position, imageView);
         }
-    }
 
-    public void loadBitmap (int position, ImageView imageView) {
-        Log.d(TAG, "loadBitmap: called!");
-        Log.i(TAG, "loadBitmap: bitmapCacheSize = " + bitmapCache.size());
-        Log.i(TAG, "loadBitmap: listOfKeysSize = " + listOfKeys.size());
+        /**
+         * Method to load the image of the item.
+         */
+        private void loadBitmap(int position, ImageView imageView) {
+            Log.d(TAG, "loadBitmap: called!");
+            Log.i(TAG, "loadBitmap: bitmapCacheSize = " + bitmapCache.size());
+            Log.i(TAG, "loadBitmap: listOfKeysSize = " + listOfKeys.size());
 
-        glide.load(bitmapCache.get(listOfKeys.get(position)))
-                .into(imageView);
+            glide.load(bitmapCache.get(listOfKeys.get(position)))
+                    .into(imageView);
 
+        }
     }
 }

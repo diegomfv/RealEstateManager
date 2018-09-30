@@ -25,7 +25,7 @@ public class RVAdapterMediaHorizontalDescr extends RecyclerView.Adapter<RVAdapte
 
     private static final String TAG = RVAdapterListings.class.getSimpleName();
 
-    //////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private Context context;
 
@@ -41,7 +41,7 @@ public class RVAdapterMediaHorizontalDescr extends RecyclerView.Adapter<RVAdapte
 
     private int currency;
 
-    //////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public RVAdapterMediaHorizontalDescr (Context context, DataRepository dataRepository,
                                      Storage storage, String imageDir,
@@ -58,7 +58,7 @@ public class RVAdapterMediaHorizontalDescr extends RecyclerView.Adapter<RVAdapte
         this.currency = currency;
     }
 
-///////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NonNull
     @Override
@@ -102,7 +102,7 @@ public class RVAdapterMediaHorizontalDescr extends RecyclerView.Adapter<RVAdapte
         return realEstate.getListOfImagesIds().get(position);
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
@@ -119,11 +119,17 @@ public class RVAdapterMediaHorizontalDescr extends RecyclerView.Adapter<RVAdapte
             ButterKnife.bind(this, itemView);
         }
 
+        /**
+         * Method that updates the item of the holder.
+         */
         private void updateItem (int position) {
             Log.d(TAG, "updateItem: called!");
             loadBitmap(position, imageView);
         }
 
+        /**
+         * Method to load the image of the item.
+         */
         private void loadBitmap (int position, ImageView imageView) {
             Log.d(TAG, "loadBitmap: called!");
 

@@ -9,7 +9,8 @@ package com.diegomfv.android.realestatemanager.network.remote;
  * but when you exceed that, it will queue the request (assuming that you are using
  * it asynchronously, which you should). I've successfully thrown a dozen or more async
  * requests at it in quick succession, without worrying about how many outstanding requests
- * there are. */
+ * there are.
+ * */
 
 import android.util.Log;
 
