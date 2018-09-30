@@ -29,6 +29,11 @@ import butterknife.Unbinder;
 // TODO: 21/08/2018 Clean caches!
 // TODO: 30/08/2018 Remember to put a flag so we cannot come her again after signed in
 // TODO: 02/09/2018 Allow to continue only if InternalStorageAccess is granted!
+
+/**
+ * AuthLoginActivity is the entry point of the app.
+ * It allows the user to sign in, sign up or recover the password
+ */
 public class AuthLoginActivity extends BaseActivity {
 
     private static final String TAG = AuthLoginActivity.class.getSimpleName();
@@ -58,6 +63,8 @@ public class AuthLoginActivity extends BaseActivity {
 
     private Unbinder unbinder;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,11 +73,14 @@ public class AuthLoginActivity extends BaseActivity {
         setContentView(R.layout.activity_auth_choose_login);
         unbinder = ButterKnife.bind(this);
 
+        /* We get a reference to the views
+         * */
         this.getAllAcTextViews();
 
+        /* Layout configuration*/
         this.configureLayout();
 
-        /* We check if we have permissions
+        /* We check if we have the necessary permissions for the app to work
          * */
         Utils.checkAllPermissions(this);
 
@@ -129,14 +139,11 @@ public class AuthLoginActivity extends BaseActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        //do nothing
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that is used to configure the layout
+     */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
         setHints();
@@ -145,23 +152,35 @@ public class AuthLoginActivity extends BaseActivity {
         setListeners();
     }
 
+    /**
+     * Method that sets the password input type
+     */
     private void setPasswordInputType() {
         Log.d(TAG, "setPasswordInputType: called!");
         tvPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     }
 
-    private void setHints () {
+    /**
+     * Method that sets the hints in the views
+     */
+    private void setHints() {
         Log.d(TAG, "getAllTextInputLayouts: called!");
         Utils.getTextInputLayoutFromCardview(cvEmail).setHint("Email");
         Utils.getTextInputLayoutFromCardview(cvPassword).setHint("Password");
     }
 
+    /**
+     * Method used to get a reference to the views
+     */
     private void getAllAcTextViews() {
         Log.d(TAG, "getAllTextviews: called!");
         tvEmail = Utils.getTextInputAutoCompleteTextViewFromCardView(cvEmail);
         tvPassword = Utils.getTextInputAutoCompleteTextViewFromCardView(cvPassword);
     }
 
+    /**
+     * Method used to set the information from SharedPreferences in the views
+     */
     private void setEmailAndPasswordIfInSharedPref() {
         Log.d(TAG, "setEmailIfInSharedPref: called!");
         String[] info = Utils.readCurrentAgentData(this);
@@ -169,7 +188,10 @@ public class AuthLoginActivity extends BaseActivity {
         tvPassword.setText(info[3]);
     }
 
-    private void setListeners () {
+    /**
+     * Method used to set a listener to a specific text view
+     */
+    private void setListeners() {
         Log.d(TAG, "setListeners: called!");
         tvForgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,8 +205,14 @@ public class AuthLoginActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method used to check if the information inputted is correct. If it is, MainActivity is
+     * launched
+     */
     private boolean allChecksPassed() {
         Log.d(TAG, "allChecksPassed: called!");
+
+        // TODO: 30/09/2018 Modify!
 
         String[] info = Utils.readCurrentAgentData(this);
 

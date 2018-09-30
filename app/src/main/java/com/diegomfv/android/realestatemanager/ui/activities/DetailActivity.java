@@ -96,6 +96,9 @@ public class DetailActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the toolbar.
+     */
     private void configureToolbar() {
         Log.d(TAG, "configureToolbar: called!");
 
@@ -114,6 +117,10 @@ public class DetailActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that modifies the currency variable and writes the new info to sharedPreferences.
+     * It also loads the fragment again
+     */
     private void changeCurrency() {
         Log.d(TAG, "changeCurrency: called!");
 
@@ -128,7 +135,10 @@ public class DetailActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void getInfoFromIntent () {
+    /**
+     * Method to get the information from the intent. It will be passed to the fragment later
+     */
+    private void getInfoFromIntent() {
         Log.d(TAG, "getInfoFromIntent: called!");
 
         Intent intent = getIntent();
@@ -141,6 +151,10 @@ public class DetailActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to load the fragment (if the bundle has been filled, the information will be passed
+     * to the fragment using the args). It replaces the fragment.
+     */
     private void loadFragment(Bundle bundle) {
         Log.d(TAG, "loadFragmentOrFragments: called!");
 

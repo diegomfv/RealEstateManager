@@ -36,11 +36,9 @@ import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppExecutors;
-import com.diegomfv.android.realestatemanager.data.FakeDataGenerator;
 import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
 import com.diegomfv.android.realestatemanager.data.datamodels.RoomsRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
-import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.LatLngForRetrofit;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.PlacesByNearby;
 import com.diegomfv.android.realestatemanager.network.models.placedetails.PlaceDetails;
@@ -80,11 +78,23 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 // TODO: 12/09/2018 Add RecyclerView Decorator! Necessary to do it differently depending on the device size
 // TODO: 22/09/2018 When creating the view, the app does not get the info from the seekbars
 // TODO: 25/09/2018 Feedback when user searchs for an address and there is no internet
+
+// TODO: 30/09/2018 When the address is introduced, we can have the problem of finding and address
+// TODO: 30/09/2018 But not the lat long or the nearby places! (And it will be saved)!
+
+/**
+ * This activity allows the user to create new listings and add them to the database. Once a listing
+ * has been created it cannot be deleted. Photos cannot be deleted once the have been chosen. When
+ * the address is inputted, the system automatically checks if it is valid (if it can be found using
+ * Google Places services). If it is valid, the listing can be saved in the database (if not, it cannot
+ * be saved). To save the listing internet connection is required (since the last part of the process
+ * requires internet).
+ */
 public class CreateNewListingActivity extends BaseActivity implements Observer, InsertAddressDialogFragment.InsertAddressDialogListener {
 
     private static final String TAG = CreateNewListingActivity.class.getSimpleName();
 
-    /////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @BindView(R.id.collapsing_toolbar_id)
     CollapsingToolbarLayout collapsingToolbar;
@@ -188,30 +198,21 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         If that is the case, the cache is not deleted*/
         this.checkIntent();
 
+        /* Configuring the layout*/
         this.configureLayout();
 
+        /* Showing the info and hiding the progress bar
+         * */
         Utils.showMainContent(progressBarContent, mainLayout);
 
+        /* Updating the views according to cache information
+         * */
         this.updateViews();
 
+        /* Configuring the RecyclerView
+         * */
         this.configureRecyclerView();
 
-        // TODO: 26/08/2018 Delete
-        if (getRealEstateCache().getPrice() == 0) {
-            generateFakeData();
-        }
-    }
-
-    // TODO: 26/08/2018 Delete!
-    private void generateFakeData() {
-        Log.d(TAG, "generateFakeData: called!");
-
-        FakeDataGenerator fakeDataGenerator = new FakeDataGenerator();
-        RealEstate realEstate = fakeDataGenerator.generateFakeData();
-        tvTypeOfBuilding.setText(realEstate.getType());
-        tvSurfaceArea.setText(String.valueOf(realEstate.getSurfaceArea()));
-        tvPrice.setText(String.valueOf(realEstate.getPrice()));
-        tvDescription.setText(realEstate.getDescription());
     }
 
     @Override
@@ -235,6 +236,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         unbinder.unbind();
     }
 
+    /**
+     * If back pressed is clicked, the system launches a dialog asking the user if he/she
+     * really wants to leave.
+     */
     @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed: called!");
@@ -267,6 +272,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * This callback gets triggered when internet connection changes. If there is no internet,
+     * a snackbar appears notifying the user.
+     */
     @Override
     public void update(Observable o, Object internetAvailable) {
         Log.d(TAG, "update: called!");
@@ -274,12 +283,19 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         snackBarConfiguration();
     }
 
+    /**
+     * This callback gets triggered when the user inputs information in the dialogFragment and
+     * presses the positive button.
+     */
     @Override
     public void onDialogPositiveClick(AddressRealEstate addressRealEstate) {
         Log.d(TAG, "onDatePickerDialogPositiveClick: called!");
         checkAddressIsValid(addressRealEstate);
     }
 
+    /**
+     * This callback gets triggered when the user presses the negative button in the dialogFragment.
+     */
     @Override
     public void onDialogNegativeClick() {
         Log.d(TAG, "onDatePickerDialogNegativeClick: called!");
@@ -294,18 +310,15 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
             case R.id.button_card_view_with_button_id: {
                 launchInsertAddressDialog();
-
             }
             break;
 
             case R.id.button_add_edit_photo_id: {
                 launchPhotoGridActivity();
-
             }
             break;
 
             case R.id.button_insert_edit_listing_id: {
-
                 if (allChecksCorrect()) {
                     insertListing();
                 }
@@ -316,6 +329,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that checks if the activity was launched from PhotoGridActivity.
+     * If it was not, the cache related to bitmap is deleted.
+     */
     private void checkIntent() {
         Log.d(TAG, "checkIntent: called!");
         if (getIntent() != null
@@ -334,6 +351,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the toolbar.
+     */
     private void configureToolBar() {
         Log.d(TAG, "configureToolBar: called!");
 
@@ -358,6 +378,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that modifies the currency variable and writes the new info to sharedPreferences.
+     */
     private void changeCurrency() {
         Log.d(TAG, "changeCurrency: called!");
 
@@ -371,23 +394,32 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the layout.
+     */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
 
         this.configureToolBar();
 
-        this.getAutocompleteTextViews();
+        this.getAutocompleteTextView();
         this.getEditTexts();
 
         this.setAllHints();
         this.setTextButtons();
     }
 
-    private void getAutocompleteTextViews() {
-        Log.d(TAG, "getAutocompleteTextViews: called!");
+    /**
+     * Method to get a reference to the AutocompleteTextView
+     */
+    private void getAutocompleteTextView() {
+        Log.d(TAG, "getAutocompleteTextView: called!");
         this.tvTypeOfBuilding = cardViewType.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
     }
 
+    /**
+     * Method to get references to the TextInputEditTexts.
+     */
     private void getEditTexts() {
         Log.d(TAG, "getEditTexts: called!");
         this.tvPrice = cardViewPrice.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
@@ -399,6 +431,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.tvAddress = cardViewAddress.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
     }
 
+    /**
+     * Method to set the hints of all the Views.
+     */
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
         // TODO: 23/08/2018 Use Resources instead of hardcoded strings
@@ -412,18 +447,26 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         setHint(cardViewAddress, "Address");
     }
 
+    /**
+     * Method that sets the hint in a TextInputLayout.
+     */
     private void setHint(CardView cardView, String hint) {
         Log.d(TAG, "setHint: called!");
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
     }
 
+    /**
+     * Method to update the price hint.
+     */
     private void updatePriceHint() {
         Log.d(TAG, "updatePriceHint: called!");
-        TextInputLayout textInputLayout = cardViewPrice.findViewById(R.id.text_input_layout_id);
-        textInputLayout.setHint("Price (" + Utils.getCurrencySymbol(currency) + ")");
+        setHint(cardViewPrice, "Price (" + Utils.getCurrencySymbol(currency) + ")");
     }
 
+    /**
+     * Method to set the text of the buttons.
+     */
     private void setTextButtons() {
         Log.d(TAG, "setTextButtons: called!");
         buttonInsertListing.setText("Insert Listing");
@@ -432,6 +475,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to update the views according to the real estate cache info.
+     */
     private void updateViews() {
         Log.d(TAG, "updateViews: called!");
         this.tvTypeOfBuilding.setText(getRealEstateCache().getType());
@@ -448,11 +494,18 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     //CACHE UPDATE
 
+    /**
+     * Method that generates an id using the FirebasePushIdGenerator and sets this id
+     * to the real estare cache object.
+     */
     private void updateRealEstateCacheId() {
         Log.d(TAG, "updateRealEstateCacheId: called!");
         this.getRealEstateCache().setId(FirebasePushIdGenerator.generate());
     }
 
+    /**
+     * Method to update the real estate cache information.
+     */
     private void updateRealEstateCache() {
         Log.d(TAG, "updateRealEstateCache: called!");
         this.updateStringValues();
@@ -461,23 +514,35 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.updateBooleanValues();
     }
 
+    /**
+     * Method that updates the real estate cache information (strings).
+     */
     private void updateStringValues() {
         Log.d(TAG, "updateStringValues: called!");
         this.getRealEstateCache().setType(Utils.capitalize(tvTypeOfBuilding.getText().toString().trim()));
         this.getRealEstateCache().setDescription(Utils.capitalize(tvDescription.getText().toString().trim()));
     }
 
+    /**
+     * Method that updates the real estate cache information (floats).
+     */
     private void updateFloatValues() {
         Log.d(TAG, "updateFloatValues: called!");
         this.getRealEstateCache().setPrice(Utils.getValueAccordingToCurrency(currency, Utils.getFloatFromTextView(tvPrice)));
         this.getRealEstateCache().setSurfaceArea(Utils.getFloatFromTextView(tvSurfaceArea));
     }
 
+    /**
+     * Method that updates the real estate cache information (integers).
+     */
     private void updateIntegerValues() {
         Log.d(TAG, "updateIntegerValues: called!");
         this.setRooms();
     }
 
+    /**
+     * Method that updates the real estate cache information (rooms information).
+     */
     private void setRooms() {
         Log.d(TAG, "setRooms: called!");
         getRealEstateCache().setRooms(new RoomsRealEstate(
@@ -486,11 +551,17 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 Utils.getIntegerFromTextView(tvNumberOfOtherRooms)));
     }
 
+    /**
+     * Method that updates the real estate cache information (booleans).
+     */
     private void updateBooleanValues() {
         Log.d(TAG, "updateBooleanValues: called!");
         this.getRealEstateCache().setFound(false);
     }
 
+    /**
+     * Method that updates the real estate cache information (list of images).
+     */
     private void updateImagesIdRealEstateCache() {
         Log.d(TAG, "updateImagesIdRealEstateCache: called!");
 
@@ -502,6 +573,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         this.getRealEstateCache().setListOfImagesIds(listOfImagesIds);
     }
 
+    /**
+     * Method that updates the real estate cache information (when the listing has been put in the list).
+     */
     private void updateDatePutRealEstateCacheCache() {
         Log.d(TAG, "updateDatePutRealEstateCacheCache: called!");
         this.getRealEstateCache().setDatePut(Utils.getTodayDate());
@@ -511,6 +585,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     //NETWORK
 
+    /**
+     * Method that checks if an address is valid.
+     * If it is not, it displays a toast notifying the user.
+     */
     private void checkAddressIsValid(AddressRealEstate addressRealEstate) {
         Log.d(TAG, "checkIfAddressIsValid: called!");
 
@@ -523,6 +601,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         }
     }
 
+    /**
+     * Method that updates the information related to address of the real estate cache
+     */
     private void updateRealEstateCacheWithAddress(AddressRealEstate addressRealEstate) {
         Log.d(TAG, "updateRealEstateCacheWithAddress: called!");
         getRealEstateCache().getAddress().setStreet(addressRealEstate.getStreet());
@@ -531,6 +612,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         getRealEstateCache().getAddress().setPostcode(addressRealEstate.getPostcode());
     }
 
+    /**
+     * Method that uses RxJava to check if a place is valid (if it is returned as a valid place).
+     * If it is valid, we get details from the place (latitude, longitude) and nearby places.
+     */
     @SuppressLint("CheckResult")
     private void getPlaceFromText(final AddressRealEstate addressRealEstate) {
         Log.d(TAG, "getPlaceFromText: called!");
@@ -549,6 +634,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
                         if (Utils.checksPlaceFromText(placeFromText)) {
 
+                            /* Notifying the user
+                             * */
                             ToastHelper.toastShort(CreateNewListingActivity.this,
                                     "The address is valid");
 
@@ -574,6 +661,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError: " + e.getMessage());
+                        ToastHelper.toastShort(CreateNewListingActivity.this,
+                                "The address is not valid");
                     }
 
                     @Override
@@ -583,6 +672,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 });
     }
 
+    /**
+     * Method that uses RxJava to get details about a certain place. If it retrieves the information
+     * we start getting the nearby places.
+     */
     @SuppressLint("CheckResult")
     private void getPlaceDetails(String placeId) {
         Log.d(TAG, "getPlaceDetails: called!");
@@ -597,7 +690,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
                         if (Utils.checksPlaceDetails(placeDetails)) {
 
-                            // TODO: 30/09/2018 In tablet, it gets it but it does not display it
+                            // TODO: 30/09/2018 In tablet, it gets it but it does not display it. Problem is the address will be
+                            // TODO: 30/09/2018 but afterwards the latitude and longitude might be null!
+                            /* We set the latitude and longitude of the address
+                             * */
                             getRealEstateCache().setLatitude(placeDetails.getResult().getGeometry().getLocation().getLat());
                             getRealEstateCache().setLongitude(placeDetails.getResult().getGeometry().getLocation().getLng());
 
@@ -610,14 +706,15 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
                         } else {
                             ToastHelper.toastShort(CreateNewListingActivity.this,
-                                    "There is a problem with the latitude and longitude");
+                                    "There was a problem with the latitude and longitude");
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError: " + e.getMessage());
-
+                        ToastHelper.toastShort(CreateNewListingActivity.this,
+                                "There was a problem with the latitude and longitude");
                     }
 
                     @Override
@@ -628,6 +725,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 });
     }
 
+    /**
+     * Method that uses RxJava to get the nearby places related to a place.
+     */
     @SuppressLint("CheckResult")
     private void getNearbyPlaces(double latitude, double longitude) {
         Log.d(TAG, "getNearbyPlaces: called!");
@@ -637,7 +737,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         getListOfPlacesRealEstateCache().clear();
 
         // TODO: 22/08/2018 Constraint the search with types!
-
+        // TODO: 30/09/2018 We can show in the map the places in different colour
         GoogleServiceStreams.streamFetchPlacesNearby(
                 new LatLngForRetrofit(latitude, longitude),
                 Constants.FETCH_NEARBY_RANKBY,
@@ -665,21 +765,29 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                                             placesByNearby.getResults().get(i).getGeometry().getLocation().getLat(),
                                             placesByNearby.getResults().get(i).getGeometry().getLocation().getLng());
 
-                                    /* If the result passes all checks, add the place to the cache
+                                    /* If the result passes all checks, we add the place to the list
                                      * */
                                     getListOfPlacesRealEstateCache().add(placeRealEstate);
                                     listPlaceRealEstateIds.add(placeRealEstate.getId());
 
                                 }
                             }
+
+                            /* We add the list to the cache
+                             * */
                             getRealEstateCache().setListOfNearbyPointsOfInterestIds(listPlaceRealEstateIds);
+
+                        } else {
+                            ToastHelper.toastShort(CreateNewListingActivity.this,
+                                    "There was a problem fetching nearby places");
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError: " + e.getMessage());
-
+                        ToastHelper.toastShort(CreateNewListingActivity.this,
+                                "There was a problem fetching nearby places");
                     }
 
                     @Override
@@ -696,7 +804,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     /**
      * Method that connects a broadcastReceiver to the activity.
-     * It allows to notify the user about the internet state
+     * It allows to notify the user about the internet state.
      */
     private void connectBroadcastReceiver() {
         Log.d(TAG, "connectBroadcastReceiver: called!");
@@ -723,6 +831,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         snackbar = null;
     }
 
+    /**
+     * Method to configure the snackBar. If there is internet it won't be displayed. If there
+     * isn't it will be shown.
+     */
     private void snackBarConfiguration() {
         Log.d(TAG, "snackBarConfiguration: called!");
 
@@ -746,6 +858,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the RecyclerView.
+     */
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
@@ -772,6 +887,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     }
 
+    /**
+     * Method to configure the onClick listeners of the RecyclerView.
+     */
     private void configureOnClickRecyclerView() {
         Log.d(TAG, "configureOnClickRecyclerView: called!");
 
@@ -788,8 +906,14 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that checks if the address information is correct or not.
+     * It is used to check if we can continue inserting the listing into the database.
+     */
     private boolean allChecksCorrect() {
         Log.d(TAG, "allChecksCorrect: called!");
+
+        // TODO: 30/09/2018 Check also nearby places!
 
         if (Utils.textViewIsFilled(tvAddress)
                 && getRealEstateCache().getLatitude() != 0d
@@ -802,6 +926,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         }
     }
 
+    /**
+     * Method that starts the insertion process of the listing into the database.
+     */
     private void insertListing() {
         Log.d(TAG, "insertListing: called!");
 
@@ -813,12 +940,15 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     }
 
+    /**
+     * Method that updates the real estate information and then inserts the object in the database.
+     */
     @SuppressLint("CheckResult")
     private void insertRealEstateObject() {
         Log.d(TAG, "insertRealEstateObject: called!");
 
         /* We update the id of the real estate
-        * */
+         * */
         updateRealEstateCacheId();
 
         /* We update the real estate cache according to the information inputted in the views
@@ -830,7 +960,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         updateImagesIdRealEstateCache();
 
         /* We update the date we put the real estate in the database
-        * */
+         * */
         updateDatePutRealEstateCacheCache();
 
         /* We use RxJava to insert the real estate object
@@ -857,10 +987,17 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 });
     }
 
+    /**
+     * Method to insert the list of images of the real estate object in the database.
+     * The real estate object will keep a reference to these images in the list of images it
+     * has as a field.
+     */
     @SuppressLint("CheckResult")
     private void insertListImageRealEstate() {
         Log.d(TAG, "insertListImageRealEstate: called!");
 
+        /* We use RxJava to proceed with the insertion
+         * */
         getRepository().insertListImagesRealEstate(getListOfImagesRealEstateCache())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -883,10 +1020,17 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                 });
     }
 
+    /**
+     * Method to insert the list of nearby places of the real estate object in the database.
+     * The real estate object will keep a reference to these places in the list ofnaerby places it
+     * has as a field.
+     */
     @SuppressLint("CheckResult")
     public void insertListPlacesRealEstate() {
         Log.d(TAG, "insertListPlacesRealEstate: called");
 
+        /* We use RxJava to proceed with the insertion
+         * */
         getRepository().insertListPlacesRealEstate(getListOfPlacesRealEstateCache())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -899,6 +1043,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                     @Override
                     public void onComplete() {
                         Log.d(TAG, "onComplete: called!");
+
+                        /* We also insert the images of the real estate cache object
+                         * in the Images Directory
+                         */
                         insertAllBitmapsInImagesDirectory();
                     }
 
@@ -908,7 +1056,8 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                     }
                 });
 
-
+        /* Inserting the information using AppExecutors
+         * */
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -920,6 +1069,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         });
     }
 
+    /**
+     * This method inserts the images into the images directory.
+     */
     public void insertAllBitmapsInImagesDirectory() {
         Log.d(TAG, "insertAllBitmapsInImagesDirectory: called!");
 
@@ -936,6 +1088,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to launch PhotoGridActivity.
+     * It uses an intent with Extras.
+     */
     private void launchPhotoGridActivity() {
         Log.d(TAG, "launchPhotoGridActivity: called!");
 
@@ -947,12 +1103,18 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     }
 
+    /**
+     * Method to launch InsertAddressDialog.
+     */
     private void launchInsertAddressDialog() {
         Log.d(TAG, "launchInsertAddressDialog: called!");
         InsertAddressDialogFragment.newInstance(getRealEstateCache().getAddress())
                 .show(getSupportFragmentManager(), "InsertAddressDialogFragment");
     }
 
+    /**
+     * Method to check if information was inputted.
+     */
     private boolean informationWasInputted() {
         Log.d(TAG, "informationWasInputted: called!");
 
@@ -968,6 +1130,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         return false;
     }
 
+    /**
+     * Method to launch a dialog asking the user if he/she is sure to leave the activity.
+     * The information won't be saved.
+     */
     private void launchAreYouSureDialog() {
         Log.d(TAG, "launchAreYouSureDialog: called!");
         Utils.launchSimpleDialog(
@@ -986,6 +1152,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         );
     }
 
+    /**
+     * Method that checks if it is necessary to launch a dialog asking the user if he/she is
+     * sure to leave. It depends on if there is information inputted.
+     */
     private void launchAreYouSureDialogIfNecessary() {
         Log.d(TAG, "launchAreYouSureDialogIfNecessary: called!");
         if (informationWasInputted()) {
@@ -996,6 +1166,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         }
     }
 
+    /**
+     * Method that creates a notification.
+     */
     private void createNotification() {
         Log.d(TAG, "createNotification: called!");
 
