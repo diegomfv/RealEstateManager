@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -27,6 +26,11 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 
 /**
  * Created by Diego Fajardo on 29/08/2018.
+ */
+
+/**
+ * This activity allows the user to recover the password if he/she answers correctly
+ * to the memorable data question.
  */
 public class ForgotPasswordActivity extends BaseActivity {
 
@@ -59,6 +63,8 @@ public class ForgotPasswordActivity extends BaseActivity {
         setContentView(R.layout.activity_forgot_password);
         unbinder = ButterKnife.bind(this);
 
+        /* Toolbar and Layout configurations
+         * */
         this.configureToolBar();
         this.configureLayout();
 
@@ -89,7 +95,8 @@ public class ForgotPasswordActivity extends BaseActivity {
 
                 }
 
-            } break;
+            }
+            break;
         }
     }
 
@@ -113,9 +120,6 @@ public class ForgotPasswordActivity extends BaseActivity {
 
     /**
      * Method to configure the toolbar.
-     * Depending on mainMenu, on the button behaves one way or another. With mainMenu = true,
-     * user can return to AuthLoginAtivity via a dialog that will pop-up. With mainMenu = false,
-     * the user will go to SearchEngineActivity
      */
     private void configureToolBar() {
         Log.d(TAG, "configureToolBar: called!");
@@ -143,6 +147,9 @@ public class ForgotPasswordActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the layout.
+     */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
 
@@ -152,27 +159,39 @@ public class ForgotPasswordActivity extends BaseActivity {
 
     }
 
+    /**
+     * Method to get a reference to the AutocompleteTextViews.
+     */
     private void getAutocompleteTextViews() {
         Log.d(TAG, "getAutocompleteTextViews: called!");
         this.tvQuestion = cardViewQuestion.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvAnswer = cardViewAnswer.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
     }
 
+    /**
+     * Method to set the hints of all the Views.
+     */
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
 
         // TODO: 23/08/2018 Use Resources instead of hardcoded
-        setAcTvHint(cardViewQuestion, "Question");
-        setAcTvHint(cardViewAnswer, "Answer");
+        setAutoCompleteTextViewHint(cardViewQuestion, "Question");
+        setAutoCompleteTextViewHint(cardViewAnswer, "Answer");
     }
 
-    private void setAcTvHint(CardView cardView, String hint) {
-        Log.d(TAG, "setAcTvHint: called!");
+    /**
+     * Method that sets the hint in a AutoCompleteTextView.
+     */
+    private void setAutoCompleteTextViewHint(CardView cardView, String hint) {
+        Log.d(TAG, "setAutoCompleteTextViewHint: called!");
         TextInputLayout textInputLayout = cardView.findViewById(R.id.text_input_layout_id);
         textInputLayout.setHint(hint);
     }
 
-    private void setText () {
+    /**
+     * Method to set the text in a specific view
+     */
+    private void setText() {
         Log.d(TAG, "setText: called!");
         tvQuestion.setText(Utils.readCurrentAgentData(this)[4]);
 

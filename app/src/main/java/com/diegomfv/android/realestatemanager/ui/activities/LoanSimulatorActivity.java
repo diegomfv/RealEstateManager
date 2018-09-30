@@ -5,7 +5,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.Guideline;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +27,6 @@ import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,6 +42,12 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  * Created by Diego Fajardo on 06/09/2018.
  */
 
+/**
+ * This activity allows the user to simulate a loan inputting different kind of values.
+ * Clicking the edit button, a dialog will be display to input thge information. The table with
+ * the loan information can be seen clicking the list button. The user can change at anytime
+ * between dollars and euros.
+ */
 public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDialogFragment.ModifyLoanDialogListener {
 
     private static final String TAG = LoanSimulatorActivity.class.getSimpleName();
@@ -185,12 +189,15 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         return super.onOptionsItemSelected(item);
     }
 
-
+    /**
+     * This callback gets triggered when the user clicks the positive button on the dialog.
+     * It updates the layout with the information inputted in the dialog and generates a new
+     * table.
+     */
     @Override
     public void onDialogPositiveClick(float loanAmount, float annualInterestRate, int loanPeriodInYears, int paymentFreq) {
         Log.d(TAG, "onDialogPositiveClick: called!");
         Log.w(TAG, "onDialogPositiveClick: " + loanAmount);
-
 
         /* Updating the layout
          * */
@@ -201,6 +208,9 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         updateViews();
     }
 
+    /**
+     * This callback gets triggered when the user clicks the negative button on the dialog.
+     */
     @Override
     public void onDialogNegativeClick() {
         Log.d(TAG, "onDialogNegativeClick: called!");
@@ -210,6 +220,9 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that modifies the currency variable and writes the new info to sharedPreferences.
+     */
     private void changeCurrency() {
         Log.d(TAG, "changeCurrency: called!");
 
@@ -227,9 +240,6 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     /**
      * Method to configure the toolbar.
-     * Depending on mainMenu, on the button behaves one way or another. With mainMenu = true,
-     * user can return to AuthLoginAtivity via a dialog that will pop-up. With mainMenu = false,
-     * the user will go to SearchEngineActivity
      */
     private void configureToolBar() {
         Log.d(TAG, "configureToolBar: called!");
@@ -247,13 +257,19 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the layout.
+     */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
         setTextInTextViews();
-        setRvTitleLayoutStyle();
+        setTableTitleTextViewsStyle();
         generateTable();
     }
 
+    /**
+     * Method to set the texts in the Text Views.
+     **/
     private void setTextInTextViews() {
         Log.d(TAG, "setTextInTextViews: called!");
 
@@ -266,8 +282,11 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         tvStartDate.setText(Utils.dateToString(new Date()));
     }
 
-    private void setRvTitleLayoutStyle() {
-        Log.d(TAG, "setRvTitleLayoutStyle: called!");
+    /**
+     * Sets the style for the TextViews of the first row of the table.
+     */
+    private void setTableTitleTextViewsStyle() {
+        Log.d(TAG, "setTableTitleTextViewsStyle: called!");
 
         LinearLayout linearLayout = cardViewLoanTitle.findViewById(R.id.main_layout_id);
 
@@ -281,7 +300,10 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         setStyle((TextView) linearLayout.findViewById(R.id.textView_cum_interests_id));
     }
 
-    private void setStyle (TextView textView) {
+    /**
+     * Method that sets the style of a TextView.
+     */
+    private void setStyle(TextView textView) {
         Log.d(TAG, "setStyle: called!");
         textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
@@ -289,6 +311,10 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         textView.setTypeface(typeface, Typeface.BOLD);
     }
 
+    /**
+     * Method to update the views and, inf the information in them is correct, generate
+     * the loan table.
+     */
     private void updateViews() {
         Log.d(TAG, "updateViews: called!");
         setTextInTextViews();
@@ -300,6 +326,9 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the RecyclerView.
+     */
     private void configureRecyclerView(List<Payment> listOfPayments) {
         Log.d(TAG, "configureRecyclerView: called!");
 
@@ -313,10 +342,11 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         this.recyclerView.setAdapter(this.adapter);
 
         this.configureOnClickRecyclerView();
-
-
     }
 
+    /**
+     * Method to configure the onClick listeners of the RecyclerView.
+     */
     private void configureOnClickRecyclerView() {
         Log.d(TAG, "configureOnClickRecyclerView: called!");
 
@@ -331,6 +361,9 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that shows the table occupying all the screen.
+     */
     private void showLoan() {
         Log.d(TAG, "showLoan: called!");
         constraintLayout.setVisibility(View.GONE);
@@ -339,6 +372,10 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     }
 
+
+    /**
+     * Method that reduces the size of the table and displays the other elements of the layout.
+     */
     private void hideLoan() {
         Log.d(TAG, "hideLoan: called!");
         constraintLayout.setVisibility(View.VISIBLE);
@@ -348,6 +385,9 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to get the scheduled payment per period according to the information inputted
+     */
     private float getScheduledPaymentPerPeriod() {
         Log.d(TAG, "simulateLoan: called!");
 
@@ -358,10 +398,15 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
         Log.w(TAG, "getScheduledPaymentPerPeriod: = " + capital * i / (1 - Math.pow(1 + i, -n)) / f);
 
-        return (float) (capital * i / (1 - Math.pow(1 + i, -n)) / f); //scheduled payment
+        /* We return the scheduled payment
+         * */
+        return (float) (capital * i / (1 - Math.pow(1 + i, -n)) / f);
 
     }
 
+    /**
+     * Method that generates the table of the loan according to the information inputted
+     */
     private void generateTable() {
         Log.d(TAG, "generateTable: called!");
 
@@ -369,8 +414,9 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         float i = annualInterestRate / 100;
         int f = paymentFrequency;
 
+        /* We get the scheduled payment and set it in the view
+         * */
         float schPayment = getScheduledPaymentPerPeriod();
-
         tvScheduledPayment.setText(Utils.getValueFormattedAccordingToCurrency(schPayment, currency));
 
         float principal;
@@ -383,6 +429,8 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         List<Payment> listOfPayments = new ArrayList<>();
         Payment.Builder builder;
 
+        /* We establish that the first day of the payment will be today
+         * */
         Calendar calendar = Calendar.getInstance();
         Date date = calendar.getTime();
 
@@ -392,14 +440,17 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
             builder = new Payment.Builder();
 
+            /* We set the date and then update it for the next payment
+             * */
             builder.setPaymentDate(date);
 
             calendar.setTime(date);
             calendar.add(Calendar.MONTH, 1);
-
-            payN++;
-
             date = calendar.getTime();
+
+            /* We increase the number of the payment
+             * */
+            payN++;
 
             builder.setPaynN(payN);
             builder.setBeginningBalance(remainingCapital);
@@ -423,18 +474,28 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
             Log.i(TAG, "generateTable: interests = " + interests);
             Log.i(TAG, "generateTable: endBalance = " + remainingCapital);
 
+            /* We add the payment to the list that will be used to display the information
+             * in the RecyclerView
+             * */
             listOfPayments.add(builder.build());
 
         }
 
+        /* We set in the view the Total Interests
+         * */
         tvTotalInterests.setText(Utils.getValueFormattedAccordingToCurrency(cumInterests, currency));
 
+        /* RecyclerView configuration
+         * */
         configureRecyclerView(listOfPayments);
 
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to launch the dialog used to input information about the loan
+     */
     private void launchModifyLoanDialog() {
         Log.d(TAG, "launchModifyLoanDialog: called!");
 
@@ -449,6 +510,10 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
                         "ModifyLoanDialogFragment");
     }
 
+    /**
+     * Method to check if the information inputted is valid. If it is, we can generate the
+     * table
+     */
     private boolean allChecksPassed() {
         Log.d(TAG, "allChecksPassed: called!");
 

@@ -428,7 +428,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     }
 
     /**
-     * Method to get a reference to the AutocompleteTextView
+     * Method to get a reference to the AutocompleteTextView.
      */
     private void getAutocompleteTextView() {
         Log.d(TAG, "getAutocompleteTextView: called!");
