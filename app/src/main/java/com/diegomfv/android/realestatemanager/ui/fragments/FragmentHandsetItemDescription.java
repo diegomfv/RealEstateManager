@@ -10,7 +10,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +29,6 @@ import com.diegomfv.android.realestatemanager.ui.base.BaseFragment;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
-import com.diegomfv.android.realestatemanager.viewmodel.ItemDescriptionViewModel;
 import com.diegomfv.android.realestatemanager.viewmodel.ListingsSharedViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -387,8 +385,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
             tvPrice.setText(
                     Utils.getCurrencySymbol(currency)
                             + " "
-                            + (Utils.formatToDecimals((int) Utils.getPriceAccordingToCurrency(
-                            currency, getRealEstate().getPrice()), currency)));
+                            + Utils.getValueFormattedAccordingToCurrency(getRealEstate().getPrice(), currency));
         }
     }
 

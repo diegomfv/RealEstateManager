@@ -31,11 +31,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
-import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
-import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
-import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.constants.Constants;
@@ -473,7 +469,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
     private void updateFloatValues() {
         Log.d(TAG, "updateFloatValues: called!");
-        this.getRealEstateCache().setPrice(Utils.getPriceAccordingToCurrency(currency, Utils.getFloatFromTextView(tvPrice)));
+        this.getRealEstateCache().setPrice(Utils.getValueAccordingToCurrency(currency, Utils.getFloatFromTextView(tvPrice)));
         this.getRealEstateCache().setSurfaceArea(Utils.getFloatFromTextView(tvSurfaceArea));
     }
 

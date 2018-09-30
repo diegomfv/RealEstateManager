@@ -115,8 +115,8 @@ public class Utils {
         }
     }
 
-    public static float getPriceAccordingToCurrency(int currency, float price) {
-        Log.d(TAG, "getPriceAccordingToCurrency: called!");
+    public static float getValueAccordingToCurrency(int currency, float price) {
+        Log.d(TAG, "getValueAccordingToCurrency: called!");
 
         if (currency == 0) {
             return price;
@@ -126,6 +126,20 @@ public class Utils {
             return price;
         }
     }
+
+    public static String getValueFormattedAccordingToCurrency(float price, int currency) {
+        Log.d(TAG, "getValueFormattedAccordingToCurrency: called!");
+
+        if (currency == 0) {
+            return Utils.formatToDecimals(price, currency);
+        } else if (currency == 1) {
+            return Utils.formatToDecimals(Utils.convertDollarToEuro(price), currency);
+        } else {
+            return Utils.formatToDecimals(price, currency);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static void updateCurrencyIconWhenMenuCreated(Context context, int currency, Menu menu, int itemRef) {
         Log.d(TAG, "updateCurrencyIconWhenMenuCreated: called!");
@@ -572,7 +586,11 @@ public class Utils {
 
     }
 
-    public static String formatToDecimals(Number number, int currency) throws NumberFormatException {
+    /** Method that formats the price according to the currency.
+     * Dollars -> eg. 123,456.78
+     * Euros -> eg. 123.456,78
+     * */
+    private static String formatToDecimals(Number number, int currency) throws NumberFormatException {
         Log.d(TAG, "formatToDecimalsWithComma: called!");
 
         //CURRENCY

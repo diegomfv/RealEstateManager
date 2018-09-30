@@ -20,8 +20,6 @@ import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
-import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -227,7 +225,7 @@ public class ModifyLoanDialogFragment extends DialogFragment {
 
     private void setTextInTextViews() {
         Log.d(TAG, "setTextInTextViews: called!");
-        tvLoanAmount.setText(String.valueOf(Utils.getPriceAccordingToCurrency(currency, loanAmountInDollars)));
+        tvLoanAmount.setText(String.valueOf(Utils.getValueAccordingToCurrency(currency, loanAmountInDollars)));
         tvLoanAnnualIntRate.setText(String.valueOf(annualInterestRate));
         tvLoanPeriodYears.setText(String.valueOf(loanPeriodInYears));
         tvLoanPaymentFreq.setText(String.valueOf(paymentFreq));

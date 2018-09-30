@@ -297,8 +297,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
             tvPrice.setText(
                     Utils.getCurrencySymbol(currency)
                             + " "
-                            + (Utils.formatToDecimals((int) Utils.getPriceAccordingToCurrency(
-                            currency, getRealEstate().getPrice()), currency)));
+                            + Utils.getValueFormattedAccordingToCurrency(realEstate.getPrice(), currency));
         }
     }
 

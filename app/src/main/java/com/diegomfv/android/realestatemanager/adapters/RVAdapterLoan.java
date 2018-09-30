@@ -120,25 +120,12 @@ public class RVAdapterLoan extends RecyclerView.Adapter<RVAdapterLoan.MyViewHold
             Log.d(TAG, "setText: called!");
             tvNPay.setText(String.valueOf(listOfPayments.get(position).getPayN()));
             tvPayDate.setText(Utils.dateToString(listOfPayments.get(position).getPaymentDate()));
-            tvBegBalance.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + convertToEurosIfNecessary(listOfPayments.get(position).getBeginningBalance())));
-            tvSchPayment.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + convertToEurosIfNecessary(listOfPayments.get(position).getSchPayment())));
-            tvPrincipal.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + convertToEurosIfNecessary(listOfPayments.get(position).getPrincipal())));
-            tvInterests.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + convertToEurosIfNecessary(listOfPayments.get(position).getInterests())));
-            tvEndBalance.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + convertToEurosIfNecessary(listOfPayments.get(position).getEndingBalance())));
-            tvCumInterests.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + convertToEurosIfNecessary(listOfPayments.get(position).getCumInterests())));
-        }
-
-        private String convertToEurosIfNecessary (float amount) {
-            Log.d(TAG, "convertToEurosIfNecessary: called!");
-
-            Log.w(TAG, "convertToEurosIfNecessary: " + amount);
-            Log.w(TAG, "convertToEurosIfNecessary: " + Utils.convertDollarToEuro(amount));
-
-            if (currency == 0) {
-                return Utils.floatToString(amount);
-            } else {
-                return Utils.formatToDecimals(Utils.convertDollarToEuro(amount), currency);
-            }
+            tvBegBalance.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getBeginningBalance(),currency)));
+            tvSchPayment.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getSchPayment(),currency)));
+            tvPrincipal.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getPrincipal(),currency)));
+            tvInterests.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getInterests(),currency)));
+            tvEndBalance.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getEndingBalance(),currency)));
+            tvCumInterests.setText(String.valueOf(Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listOfPayments.get(position).getCumInterests(),currency)));
         }
     }
 }

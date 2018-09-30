@@ -16,7 +16,6 @@ import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterLoan;
 import com.diegomfv.android.realestatemanager.models.Payment;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.dialogfragments.DatePickerFragment;
 import com.diegomfv.android.realestatemanager.ui.dialogfragments.ModifyLoanDialogFragment;
 import com.diegomfv.android.realestatemanager.util.ItemClickSupport;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
@@ -269,7 +268,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     private void updateViews () {
         Log.d(TAG, "updateViews: called!");
-        tvLoanAmount.setText(String.valueOf(Utils.getPriceAccordingToCurrency(currency, loanAmountInDollars)));
+        tvLoanAmount.setText(String.valueOf(Utils.getValueAccordingToCurrency(currency, loanAmountInDollars)));
         tvAnnualInterestRate.setText(String.valueOf(annualInterestRate));
         tvLoanPeriodInYears.setText(String.valueOf(loanPeriodInYears));
         tvPaymentFrequency.setText(String.valueOf(paymentFrequency));
@@ -304,7 +303,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
         float schPayment = getScheduledPaymentPerPeriod();
 
-        tvScheduledPayment.setText(String.valueOf(Utils.getPriceAccordingToCurrency(currency, schPayment)));
+        tvScheduledPayment.setText(String.valueOf(Utils.getValueAccordingToCurrency(currency, schPayment)));
 
         float principal;
         float interests;
@@ -360,7 +359,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
         }
 
-        tvTotalInterests.setText(String.valueOf(Utils.getPriceAccordingToCurrency(currency, cumInterests)));
+        tvTotalInterests.setText(String.valueOf(Utils.getValueAccordingToCurrency(currency, cumInterests)));
 
         configureRecyclerView(listOfPayments);
 

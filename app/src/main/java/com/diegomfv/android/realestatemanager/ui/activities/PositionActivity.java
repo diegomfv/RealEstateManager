@@ -446,8 +446,9 @@ public class PositionActivity extends BaseActivity {
                 .position(latLng)
                 .title(realEstate.getType()
                         + " - "
-                        + Utils.formatToDecimals(realEstate.getPrice(), currency)
-                        + Utils.getCurrencySymbol(currency))
+                        + Utils.getCurrencySymbol(currency)
+                        + " "
+                        + Utils.getValueFormattedAccordingToCurrency(realEstate.getPrice(), currency))
                 .snippet(Utils.getAddressAsString(realEstate))
                 .icon(getIconAccordingToAlreadySold(alreadySold));
 

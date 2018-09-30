@@ -193,11 +193,11 @@ public class RVAdapterListings extends RecyclerView.Adapter<RVAdapterListings.My
 
         private String getPriceOfBuilding(int position) {
             Log.d(TAG, "getPriceOfBuilding: called!");
-            float price = Utils.getPriceAccordingToCurrency(currency, listRealEstates.get(position).getPrice());
+            float price = Utils.getValueAccordingToCurrency(currency, listRealEstates.get(position).getPrice());
             if (price == 0.0f) {
                 return "Price not available";
             }
-            return Utils.getCurrencySymbol(currency) + " " + Utils.formatToDecimals(price, currency);
+            return Utils.getCurrencySymbol(currency) + " " + Utils.getValueFormattedAccordingToCurrency(listRealEstates.get(position).getPrice(), currency);
         }
 
         private void setVisibilityOfSoldTextView (int position) {

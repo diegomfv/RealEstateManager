@@ -31,9 +31,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
-import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarFinalValueListener;
-import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.adapters.RVAdapterMediaHorizontalCreate;
 import com.diegomfv.android.realestatemanager.constants.Constants;
@@ -462,7 +459,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     private void setAllInformation() {
         Log.d(TAG, "setAllInformation: called!");
         this.tvTypeOfBuilding.setText(getRealEstateCache().getType());
-        this.tvPrice.setText(String.valueOf((int) Utils.getPriceAccordingToCurrency(currency, getRealEstateCache().getPrice())));
+        this.tvPrice.setText(String.valueOf((int) Utils.getValueAccordingToCurrency(currency, getRealEstateCache().getPrice())));
         this.tvSurfaceArea.setText(String.valueOf(getRealEstateCache().getSurfaceArea()));
         this.tvNumberOfBedrooms.setText(String.valueOf(getRealEstateCache().getRooms().getBedrooms()));
         this.tvNumberOfBathrooms.setText(String.valueOf(getRealEstateCache().getRooms().getBathrooms()));
@@ -530,7 +527,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
     private void updateFloatValues() {
         Log.d(TAG, "updateFloatValues: called!");
-        this.getRealEstateCache().setPrice(Utils.getPriceAccordingToCurrency(currency, Utils.getFloatFromTextView(tvPrice)));
+        this.getRealEstateCache().setPrice(Utils.getValueAccordingToCurrency(currency, Utils.getFloatFromTextView(tvPrice)));
         this.getRealEstateCache().setSurfaceArea(Utils.getFloatFromTextView(tvSurfaceArea));
     }
 
