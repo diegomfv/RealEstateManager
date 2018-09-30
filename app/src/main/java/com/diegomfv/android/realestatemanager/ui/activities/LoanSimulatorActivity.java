@@ -189,6 +189,8 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
     @Override
     public void onDialogPositiveClick(float loanAmount, float annualInterestRate, int loanPeriodInYears, int paymentFreq) {
         Log.d(TAG, "onDialogPositiveClick: called!");
+        Log.w(TAG, "onDialogPositiveClick: " + loanAmount);
+
 
         /* Updating the layout
          * */
@@ -258,7 +260,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         /* Random data for the beginning
          * */
         tvLoanAmount.setText(Utils.getValueFormattedAccordingToCurrency(loanAmountInDollars, currency));
-        tvAnnualInterestRate.setText(Utils.getValueFormattedAccordingToCurrency(annualInterestRate, currency));
+        tvAnnualInterestRate.setText(String.valueOf(annualInterestRate));
         tvLoanPeriodInYears.setText(String.valueOf(loanPeriodInYears));
         tvPaymentFrequency.setText(String.valueOf(paymentFrequency));
         tvStartDate.setText(Utils.dateToString(new Date()));

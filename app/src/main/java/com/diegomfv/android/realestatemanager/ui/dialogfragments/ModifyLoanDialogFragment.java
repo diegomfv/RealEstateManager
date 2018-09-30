@@ -250,6 +250,11 @@ public class ModifyLoanDialogFragment extends DialogFragment {
 
         } else {
 
+            loanAmountInDollars = Float.valueOf(Utils.getStringFromTextView(tvLoanAmount));
+            annualInterestRate = Float.valueOf(Utils.getStringFromTextView(tvLoanAnnualIntRate));
+            loanPeriodInYears = Integer.valueOf(Utils.getStringFromTextView(tvLoanPeriodYears));
+            paymentFreq = Integer.valueOf(Utils.getStringFromTextView(tvLoanPaymentFreq));
+
             if (currency == 1) {
                 //if the price is in euros, we convert it to dollars
                 loanAmountInDollars = Float.valueOf(Utils.getStringFromTextView(tvLoanAmount));
