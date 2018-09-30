@@ -9,12 +9,13 @@ It uses Android Architecture Components.
 
 UI under development.
 
+<img src="./screenshots/sign_in.png" width="30%" height="30%">&ensp;<img src="./screenshots/main.png" width="30%" height="30%">
+
 ## Libraries
 
 * [ButterKnife](https://github.com/JakeWharton/butterknife/)
 * [Android Support Library](https://developer.android.com/topic/libraries/support-library/)
 * [Glide](https://github.com/bumptech/glide/)
-* [Firebase](https://firebase.google.com/)
 * [Google Maps Platform](https://cloud.google.com/maps-platform/) 
 * [Retrofit](https://github.com/square/retrofit/)
 * [Retrofit Converter Gson](https://github.com/google/gson)
