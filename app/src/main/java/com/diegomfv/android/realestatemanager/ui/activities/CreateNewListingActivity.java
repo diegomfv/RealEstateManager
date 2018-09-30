@@ -850,13 +850,11 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                     public void onComplete() {
                         Log.d(TAG, "onComplete: called!");
                         insertListImageRealEstate();
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError: " + e.getMessage());
-
                     }
                 });
     }
