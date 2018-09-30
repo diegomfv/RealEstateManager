@@ -29,7 +29,7 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".ui.activities.SplashScreen">
+        <activity android:name=".ui.activities.SplashScreenActivity">
 
         </activity>
 

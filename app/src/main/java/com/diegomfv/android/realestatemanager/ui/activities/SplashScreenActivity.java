@@ -25,9 +25,9 @@ import static com.diegomfv.android.realestatemanager.util.Utils.calculationRectO
 /**
  * Created by Diego Fajardo (https://github.com/diegomfv) on 08/09/2018.
  */
-public class SplashScreen extends AppCompatActivity {
+public class SplashScreenActivity extends AppCompatActivity {
 
-    private static final String TAG = SplashScreen.class.getSimpleName();
+    private static final String TAG = SplashScreenActivity.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
