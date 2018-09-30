@@ -57,6 +57,10 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /* This variable becomes true when edit mode is active. When this mode is active, clicking an
+     * item of the recycler view will launche EditListingActivity instead of loading the information
+     * of the listing
+     * */
     private boolean editModeActive;
 
     /* Variable to differentiate when we are in the normal menu
@@ -285,7 +289,7 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * Method to set the toolbar title
+     * Method to set the toolbar title.
      */
     private void setToolbarTitle() {
         Log.d(TAG, "setToolbarTitle: called!");
@@ -299,13 +303,16 @@ public class MainActivity extends BaseActivity {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Method used in the fragments
+     * Method used in the fragments.
      */
     public boolean getEditModeActive() {
         Log.d(TAG, "getEditMode: called!");
         return editModeActive;
     }
 
+    /**
+     * Method that updates EditMode and the toolbar according to this state.
+     */
     private void updateMode() {
         Log.d(TAG, "updateMode: called!");
 
@@ -322,6 +329,10 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that modifies the currency variable and writes the new info to sharedPreferences.
+     * It also loads the fragment (or fragments).
+     */
     private void changeCurrency() {
         Log.d(TAG, "changeCurrency: called!");
 
@@ -337,7 +348,7 @@ public class MainActivity extends BaseActivity {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Method that loads one or two fragments depending on the device
+     * Method that loads one or two fragments depending on the device.
      */
     private void loadFragmentOrFragments() {
         Log.d(TAG, "loadFragmentOrFragments: called!");
@@ -361,6 +372,9 @@ public class MainActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that checks if we have the necessary permissions.
+     */
     private void checkInternalStoragePermissionGranted() {
         Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
 
@@ -373,6 +387,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Method that creates the necessary directories if they didn't exist yet.
+     */
     private void createDirectories() {
         Log.d(TAG, "createDirectories: called");
 
@@ -387,6 +404,10 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Method to hides the TextView that tells the user to insert new information and displays
+     * the fragments
+     */
     private void hideTextViewShowFragments() {
         Log.d(TAG, "hideTextViewData: called!");
         tvInsertData.setVisibility(View.GONE);
@@ -397,6 +418,10 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    /**
+     * Method to launch a dialog asking the user if he/she is sure to leave the activity.
+     * The information won't be saved.
+     */
     private void launchAreYouSureDialog() {
         Log.d(TAG, "launchAreYouSureDialog: called!");
         Utils.launchSimpleDialog(this,
