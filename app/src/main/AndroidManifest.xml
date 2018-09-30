@@ -51,8 +51,7 @@
         <activity android:name=".ui.activities.ForgotPasswordActivity" />
         <activity android:name=".ui.activities.SignUpActivity" />
         <activity android:name=".ui.activities.PhotoGridActivity" />
-        <activity android:name=".ui.activities.LoanSimulatorActivity"
-            android:hardwareAccelerated="true"/>
+        <activity android:name=".ui.activities.LoanSimulatorActivity"/>
 
 
         <receiver android:name=".receivers.InternetConnectionReceiver"/>
