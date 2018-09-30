@@ -87,5 +87,4 @@ public class RetrofitClient {
         }
         return retrofitNearby;
     }
-
 }

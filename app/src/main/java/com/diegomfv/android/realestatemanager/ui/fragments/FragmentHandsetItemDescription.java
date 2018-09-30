@@ -583,6 +583,10 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that checks if the location permission has been granted. If it is granted, it loads
+     * the Google Map.
+     */
     private void checkDeviceLocationPermissionGranted() {
         Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
 

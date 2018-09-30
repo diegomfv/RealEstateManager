@@ -147,9 +147,10 @@ public class FragmentTabletItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Method that returns
+    /**
+     * Method that returns
      * an instance of the Fragment
-     * */
+     */
     public static FragmentTabletItemDescription newInstance() {
         Log.d(TAG, "newInstance: called!");
         return new FragmentTabletItemDescription();
@@ -241,6 +242,9 @@ public class FragmentTabletItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to fill the layour with the information from the real estate object.
+     */
     private void fillLayoutWithRealEstateInfo() {
         Log.d(TAG, "fillLayoutWithRealEstateInfo: called!");
         setDescription();
@@ -251,6 +255,10 @@ public class FragmentTabletItemDescription extends BaseFragment {
         setSoldState();
     }
 
+    /**
+     * Method to set the text of the view related to the description using the information
+     * of the real estate object.
+     */
     private void setDescription() {
         Log.d(TAG, "setDescription: called!");
 
@@ -262,6 +270,10 @@ public class FragmentTabletItemDescription extends BaseFragment {
         }
     }
 
+    /**
+     * Method to set the text of the view related to the surface area using the information
+     * of the real estate object.
+     */
     private void setSurfaceArea() {
         Log.d(TAG, "setSurfaceArea: called!");
         if (getRealEstate().getSurfaceArea() == 0) {
@@ -272,12 +284,20 @@ public class FragmentTabletItemDescription extends BaseFragment {
         }
     }
 
+    /**
+     * Method to set the texts of the views related to the rooms using the information
+     * of the real estate object.
+     */
     public void setRooms() {
         tvNumberBedrooms.setText(String.valueOf("Bedrooms -- " + getRealEstate().getRooms().getBedrooms()));
         tvNumberBathrooms.setText(String.valueOf("Bathrooms -- " + getRealEstate().getRooms().getBathrooms()));
         tvNumberOtherRooms.setText(String.valueOf("Other Rooms -- " + getRealEstate().getRooms().getOtherRooms()));
     }
 
+    /**
+     * Method to set the text of the views related to the addresses using the information
+     * of the real estate object.
+     */
     private void setAddress() {
         Log.d(TAG, "setLocation: called!");
         tvStreet.setText(getRealEstate().getAddress().getStreet());
@@ -287,6 +307,11 @@ public class FragmentTabletItemDescription extends BaseFragment {
     }
 
     // TODO: 28/08/2018 Use Placeholders
+
+    /**
+     * Method to set the text of the view related to the price using the information
+     * of the real estate object.
+     */
     @SuppressLint("SetTextI18n")
     private void setPrice() {
         Log.d(TAG, "setPrice: called!");
@@ -298,11 +323,14 @@ public class FragmentTabletItemDescription extends BaseFragment {
                     Utils.getCurrencySymbol(currency)
                             + " "
                             + Utils.getValueFormattedAccordingToCurrency(realEstate.getPrice(), currency));
-
         }
     }
 
-    private void setSoldState () {
+    /**
+     * Method to set the text of the view related to the "sale state" using the information
+     * of the real estate object.
+     */
+    private void setSoldState() {
         Log.d(TAG, "setSoldState: called!");
         if (getRealEstate().getDateSale() != null) {
             tvSold.setText("SOLD on " + getRealEstate().getDateSale());
@@ -471,6 +499,9 @@ public class FragmentTabletItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to configure the RecyclerView.
+     */
     private void configureRecyclerView() {
         Log.d(TAG, "configureRecyclerView: called!");
 
@@ -505,6 +536,9 @@ public class FragmentTabletItemDescription extends BaseFragment {
         }
     }
 
+    /**
+     * Method to configure the onClick listeners of the RecyclerView.
+     */
     private void configureOnClickRecyclerView() {
         Log.d(TAG, "configureOnClickRecyclerView: called!");
 
@@ -527,6 +561,10 @@ public class FragmentTabletItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that checks if the location permission has been granted. If it is granted, it loads
+     * the Google Map.
+     */
     private void checkDeviceLocationPermissionGranted() {
         Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
 
