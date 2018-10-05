@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
@@ -66,10 +68,16 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    @BindView(R.id.progress_bar_content_id)
+    LinearLayout progressBarLayout;
+
+    @BindView(R.id.main_layout_id)
+    ScrollView mainLayout;
+
     @BindView(R.id.card_view_recycler_view_media_id)
     CardView cardViewRecyclerView;
 
-    @BindView(R.id.recyclerView_media_id)
+    @BindView(R.id.card_view_recyclerView_media_id)
     RecyclerView recyclerViewMedia;
 
     @BindView(R.id.card_view_description_id)
@@ -188,13 +196,18 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
         if (bundle != null) {
             Log.w(TAG, "onCreateView: bundle NOT NULL");
+
             /* If the bundle is not null, then we came from DetailActivity
              * */
             realEstate = bundle.getParcelable(Constants.GET_PARCELABLE);
             setRealEstate(realEstate);
+
             setInfoRelatedToRealEstate();
 
         } else {
+
+            /* If the bundle is null, we are in a tablet
+            * */
             Log.w(TAG, "onCreateView: bundle NULL");
             createModel();
         }
@@ -321,6 +334,8 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         setAddress();
         setPrice();
         setSoldState();
+
+        Utils.showMainContent(progressBarLayout, mainLayout);
     }
 
     /**
@@ -330,10 +345,12 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         Log.d(TAG, "setDescription: called!");
 
         if (getRealEstate().getDescription().isEmpty()) {
-            cardViewDescription.setVisibility(View.GONE);
+            /* Do nothing (do not show the cardView
+            * */
 
         } else {
             tvDescription.setText(getRealEstate().getDescription());
+            cardViewDescription.setVisibility(View.VISIBLE);
         }
     }
 
@@ -530,7 +547,9 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
             if (getRealEstate().getListOfImagesIds() == null
                     || realEstate.getListOfImagesIds().size() == 0) {
-                cardViewRecyclerView.setVisibility(View.GONE);
+
+                /* Do nothing (do not show recyclerView)
+                * */
 
             } else {
 
@@ -549,6 +568,10 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                             currency);
 
                     this.recyclerViewMedia.setAdapter(this.adapter);
+
+                    /* We show the recyclerView
+                    * */
+                    cardViewRecyclerView.setVisibility(View.VISIBLE);
 
                     this.configureOnClickRecyclerView();
 

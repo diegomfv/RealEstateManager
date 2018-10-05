@@ -1,6 +1,7 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -17,23 +18,31 @@ import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.ui.fragments.FragmentHandsetItemDescription;
 import com.diegomfv.android.realestatemanager.ui.fragments.FragmentListListings;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
 // TODO: 30/09/2018 AuthLoginActivity code
 // TODO: 30/09/2018 SearchEngine
 // TODO: 30/09/2018 Layouts for Tablets
+// TODO: 05/10/2018 Map is not shown correctly in the tablet
 // TODO: 30/09/2018 Check the Floats
-
+// TODO: 05/10/2018 Documentation
 /**
  * MainActivity displays a different layout depending on the size of the screen (handsets or
  * tablets). Additionally, it behaves different according to what activity launched it. If the activity
@@ -353,26 +362,58 @@ public class MainActivity extends BaseActivity {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Method that loads one or two fragments depending on the device.
+     * Method that checks if the database is empty. If it is not,
+     * it loads one or two fragments depending on the device.
      */
+    @SuppressLint("CheckResult")
     private void loadFragmentOrFragments() {
         Log.d(TAG, "loadFragmentOrFragments: called!");
 
-        hideTextViewShowFragments();
+        /* We check if the database is empty. If it is, we do not load the fragments.
+        * If it is not empty, we load them.
+        * */
+        getRepository().getAllListingsRealEstateObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new Observer<List<RealEstate>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment1_container_id, FragmentListListings.newInstance())
-                .commit();
+                    }
 
-        if (!deviceIsHandset) {
+                    @Override
+                    public void onNext(List<RealEstate> realEstates) {
+                        Log.d(TAG, "onNext: " + realEstates);
 
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment2_container_id, FragmentHandsetItemDescription.newInstance())
-                    .commit();
+                        if (!realEstates.isEmpty()) {
 
-        }
+                            hideTextViewShowFragments();
+
+                            getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.fragment1_container_id, FragmentListListings.newInstance())
+                                    .commit();
+
+                            if (!deviceIsHandset) {
+
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.fragment2_container_id, FragmentHandsetItemDescription.newInstance())
+                                        .commit();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

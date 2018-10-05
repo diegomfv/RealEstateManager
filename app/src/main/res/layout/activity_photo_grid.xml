@@ -36,7 +36,7 @@
             android:orientation="vertical">
 
             <com.diegomfv.android.realestatemanager.util.GridRecyclerView
-                android:id="@+id/recyclerView_media_id"
+                android:id="@+id/card_view_recyclerView_media_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp" />

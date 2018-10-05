@@ -156,7 +156,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     @BindView(R.id.button_card_view_with_button_id)
     Button buttonAddAddress;
 
-    @BindView(R.id.recyclerView_media_id)
+    @BindView(R.id.card_view_recyclerView_media_id)
     RecyclerView recyclerView;
 
     @BindView(R.id.button_add_edit_photo_id)

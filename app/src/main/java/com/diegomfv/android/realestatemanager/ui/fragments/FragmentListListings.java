@@ -228,6 +228,8 @@ public class FragmentListListings extends BaseFragment {
             if ((getRootMainActivity()).getMainMenu()) {
                 Log.w(TAG, "subscribeToModel: mainMenu = true");
 
+                /* If we are in the main menu, we load all the articles
+                * */
                 this.listingsSharedViewModel.getObservableListOfListings().observe(this, new Observer<List<RealEstate>>() {
                     @Override
                     public void onChanged(@Nullable List<RealEstate> realEstates) {
@@ -235,12 +237,20 @@ public class FragmentListListings extends BaseFragment {
                         if (realEstates != null && realEstates.size() > 0) {
                             setListOfRealEstates(realEstates);
                             adapter.setData(getListOfRealEstates());
+
+                            /* We load the first item automatically in case we are in a tablet
+                            * */
+                            listingsSharedViewModel.selectItem(realEstates.get(0));
                         }
                     }
                 });
 
             } else {
                 Log.w(TAG, "subscribeToModel: mainMenu = false");
+
+                /* If we are in the search menu, we load the found articles
+                 * */
+
                 this.listingsSharedViewModel.getObservableListOfFoundArticles().observe(this, new Observer<List<RealEstate>>() {
                     @Override
                     public void onChanged(@Nullable List<RealEstate> realEstates) {
@@ -248,6 +258,10 @@ public class FragmentListListings extends BaseFragment {
                         if (realEstates != null && realEstates.size() > 0) {
                             setListOfRealEstates(realEstates);
                             adapter.setData(getListOfRealEstates());
+
+                            /* We load the first item automatically in case we are in a tablet
+                             * */
+                            listingsSharedViewModel.selectItem(realEstates.get(0));
                         }
                     }
                 });

@@ -54,7 +54,7 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
     @BindView(R.id.toolbar_id)
     Toolbar toolbar;
 
-    @BindView(R.id.recyclerView_media_id)
+    @BindView(R.id.card_view_recyclerView_media_id)
     RecyclerView recyclerView;
 
     private RVAdapterMediaGrid adapter;

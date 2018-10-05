@@ -570,7 +570,7 @@ public class DataRepository {
      * Getter to check in a Worker Thread if the database is empty.
      */
     @SuppressLint("CheckResult")
-    public void checkIfDatabaseIsEmpty() {
+    private void checkIfDatabaseIsEmpty() {
         Log.d(TAG, "checkIfDatabaseIsEmpty: called!");
         getAllListingsRealEstateObservable()
                 .subscribeWith(new Observer<List<RealEstate>>() {

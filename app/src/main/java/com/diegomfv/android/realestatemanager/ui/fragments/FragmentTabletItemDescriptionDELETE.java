@@ -66,7 +66,7 @@ import io.reactivex.schedulers.Schedulers;
  * This fragment is only used in tablets. The ViewModel retrieves the information of
  * the MutableLiveData object. This information is used to fill the layout.
  */
-public class FragmentTabletItemDescription extends BaseFragment {
+public class FragmentTabletItemDescriptionDELETE extends BaseFragment {
 
     private static final String TAG = FragmentHandsetItemDescription.class.getSimpleName();
 
@@ -75,7 +75,7 @@ public class FragmentTabletItemDescription extends BaseFragment {
     @BindView(R.id.card_view_recycler_view_media_id)
     CardView cardViewRecyclerView;
 
-    @BindView(R.id.recyclerView_media_id)
+    @BindView(R.id.card_view_recyclerView_media_id)
     RecyclerView recyclerViewMedia;
 
     @BindView(R.id.card_view_description_id)
@@ -151,9 +151,9 @@ public class FragmentTabletItemDescription extends BaseFragment {
      * Method that returns
      * an instance of the Fragment
      */
-    public static FragmentTabletItemDescription newInstance() {
+    public static FragmentTabletItemDescriptionDELETE newInstance() {
         Log.d(TAG, "newInstance: called!");
-        return new FragmentTabletItemDescription();
+        return new FragmentTabletItemDescriptionDELETE();
     }
 
     @Nullable
