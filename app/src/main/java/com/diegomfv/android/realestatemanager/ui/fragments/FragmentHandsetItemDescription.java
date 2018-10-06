@@ -510,15 +510,14 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                                                     }
                                                 }
                                             }
-
-                                            /* Once done,
-                                             * we can set the layout
-                                             * */
-                                            configureRecyclerView();
-                                            fillLayoutWithRealEstateInfo();
-                                            updateMapWithPins();
-
                                         }
+
+                                        /* Once done,
+                                         * we can set the layout
+                                         * */
+                                        configureRecyclerView();
+                                        fillLayoutWithRealEstateInfo();
+                                        updateMapWithPins();
                                     }
 
                                     @Override
@@ -754,19 +753,19 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
         if (mMap != null && getRealEstate() != null) {
 
+            /* We delete all the elements of the listOfMarkers and clear the map
+             * */
+            getListOfMarkers().clear();
+            mMap.clear();
+
+            /* We add a pin with the real estate
+             * */
+            addMarkerToMapRealEstate(getRealEstate());
+
             if (!getListOfPlacesRealEstate().isEmpty()) {
                 Log.i(TAG, "displayPinsInMap: listOfPlaces is NOT EMPTY");
 
-                /* We delete all the elements of the listOfMarkers and clear the map
-                 * */
-                getListOfMarkers().clear();
-                mMap.clear();
-
-                /* We add a pin with the real estate
-                 * */
-                addMarkerToMapRealEstate(getRealEstate());
-
-                /* We get all those places that are related to the real estate (if there are any)
+                /* We get all the places that are related to the real estate (if there are any)
                  * */
                 if (getRealEstate().getListOfNearbyPointsOfInterestIds() != null
                         && getRealEstate().getListOfNearbyPointsOfInterestIds().size() > 0) {
