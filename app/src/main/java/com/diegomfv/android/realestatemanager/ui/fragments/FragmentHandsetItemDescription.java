@@ -187,7 +187,11 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_item_description, container, false);
         this.unbinder = ButterKnife.bind(this, view);
 
-        this.checkDeviceLocationPermissionGranted();
+        /* We init the map
+         * */
+        if (isGooglePlayServicesOK()) {
+            initMap();
+        }
 
         /* We try to get information from the Bundle. If the fragment is loaded by
          * DetailActivity the bundle will be filled. Otherwise, it won't
@@ -207,11 +211,11 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         } else {
 
             /* If the bundle is null, we are in a tablet
-            * */
+             * */
             Log.w(TAG, "onCreateView: bundle NULL");
             createModel();
         }
-        
+
         return view;
     }
 
@@ -346,7 +350,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
         if (getRealEstate().getDescription().isEmpty()) {
             /* Do nothing (do not show the cardView
-            * */
+             * */
 
         } else {
             tvDescription.setText(getRealEstate().getDescription());
@@ -549,7 +553,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                     || realEstate.getListOfImagesIds().size() == 0) {
 
                 /* Do nothing (do not show recyclerView)
-                * */
+                 * */
 
             } else {
 
@@ -570,7 +574,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                     this.recyclerViewMedia.setAdapter(this.adapter);
 
                     /* We show the recyclerView
-                    * */
+                     * */
                     cardViewRecyclerView.setVisibility(View.VISIBLE);
 
                     this.configureOnClickRecyclerView();
@@ -602,29 +606,6 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                         }
                     }
                 });
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Method that checks if the location permission has been granted. If it is granted, it loads
-     * the Google Map.
-     */
-    private void checkDeviceLocationPermissionGranted() {
-        Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
-
-        if (getActivity() != null) {
-            if (Utils.checkPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-                if (Utils.checkPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    deviceLocationPermissionGranted = true;
-
-                    if (isGooglePlayServicesOK()) {
-                        initMap();
-                    }
-                }
-            }
-        }
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -690,8 +671,8 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                 }
 
                 /* Listener for when clicking
-                * the info window in a map
-                * */
+                 * the info window in a map
+                 * */
                 if (mMap != null) {
                     mMap.setOnInfoWindowClickListener(onInfoWindowClickListener);
                     mMap.setOnMyLocationButtonClickListener(onMyLocationButtonClickedListener);

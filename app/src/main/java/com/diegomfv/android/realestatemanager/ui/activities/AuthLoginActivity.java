@@ -1,34 +1,41 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amitshekhar.DebugDB;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.entities.Agent;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-
-// TODO: 02/09/2018 Check here if internal storage permissions
-// TODO: 21/08/2018 Clean caches!
-// TODO: 30/08/2018 Remember to put a flag so we cannot come her again after signed in
-// TODO: 02/09/2018 Allow to continue only if InternalStorageAccess is granted!
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * AuthLoginActivity is the entry point of the app.
@@ -61,6 +68,12 @@ public class AuthLoginActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private List<Agent> listOfAgents;
+
+    private boolean locationPermissionGranted;
+
+    private boolean accessInternalStorageGranted;
+
     private Unbinder unbinder;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,6 +86,13 @@ public class AuthLoginActivity extends BaseActivity {
         setContentView(R.layout.activity_auth_choose_login);
         unbinder = ButterKnife.bind(this);
 
+        this.locationPermissionGranted = false;
+        this.accessInternalStorageGranted = false;
+
+        /* We get the list of all agents from the database
+         * */
+        this.getListOfAgents();
+
         /* We get a reference to the views
          * */
         this.getAllAcTextViews();
@@ -82,7 +102,7 @@ public class AuthLoginActivity extends BaseActivity {
 
         /* We check if we have the necessary permissions for the app to work
          * */
-        Utils.checkAllPermissions(this);
+        checkAllPermissions();
 
     }
 
@@ -93,18 +113,33 @@ public class AuthLoginActivity extends BaseActivity {
         switch (view.getId()) {
 
             case R.id.button_sign_in_password_id: {
-                if (allChecksPassed()) {
-                    Utils.launchActivity(this, MainActivity.class);
+
+                /* We check if we have the necessary permissions.
+                If we do not, we ask for them.
+                 * */
+                if (allNecessaryPermissionsGranted()) {
+                    if (allChecksPassed()) {
+                        launchMainActivityWithIntent();
+                    }
+
+                } else {
+                    notifyAndAskForPermissions();
                 }
+
             }
             break;
 
             case R.id.button_sign_up_password_id: {
-                Utils.launchActivity(this, SignUpActivity.class);
                 DebugDB.getAddressLog();
+
+                if (allNecessaryPermissionsGranted()) {
+                    Utils.launchActivity(this, SignUpActivity.class);
+
+                } else {
+                    notifyAndAskForPermissions();
+                }
             }
             break;
-
         }
     }
 
@@ -119,19 +154,40 @@ public class AuthLoginActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d(TAG, "onRequestPermissionsResult: called!");
 
         switch (requestCode) {
 
             case Constants.REQUEST_CODE_ALL_PERMISSIONS: {
-                /* Do nothing, */
+
+                //0: Coarse Location
+                //1: Fine Location
+                //2: Write External Storage
+                //3: Read External Storage
 
                 if (grantResults.length > 0) {
 
                     for (int i = 0; i < grantResults.length; i++) {
-                        if (grantResults[i] == -1) {
-                            //-1 means access NOT GRANTED
-                            ToastHelper.toastSomeAccessNotGranted(this);
-                            return;
+                        Log.w(TAG, "onRequestPermissionsResult: " + grantResults[i]);
+
+                        switch (i) {
+
+                            case 0:
+                            case 1: {
+                                if (grantResults[i] != -1) {
+                                    locationPermissionGranted = true;
+                                }
+                            }
+                            break;
+
+                            case 2:
+                            case 3: {
+                                if (grantResults[i] != -1) {
+                                    accessInternalStorageGranted = true;
+                                }
+                            }
+                            break;
+
                         }
                     }
                 }
@@ -140,6 +196,43 @@ public class AuthLoginActivity extends BaseActivity {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Method that retrieves the list of agents in the database
+     */
+    @SuppressLint("CheckResult")
+    private void getListOfAgents() {
+        Log.d(TAG, "getListOfAgents: called!");
+
+        getRepository().getAllAgents()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new Observer<List<Agent>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+                    }
+
+                    @Override
+                    public void onNext(List<Agent> agents) {
+                        Log.d(TAG, "onNext: " + agents);
+                        listOfAgents = agents;
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+
+                    }
+                });
+
+    }
 
     /**
      * Method that is used to configure the layout
@@ -185,7 +278,6 @@ public class AuthLoginActivity extends BaseActivity {
         Log.d(TAG, "setEmailIfInSharedPref: called!");
         String[] info = Utils.readCurrentAgentData(this);
         tvEmail.setText(info[2]);
-        tvPassword.setText(info[3]);
     }
 
     /**
@@ -197,12 +289,50 @@ public class AuthLoginActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: called!");
-                Utils.launchActivity(AuthLoginActivity.this, ForgotPasswordActivity.class);
+
+                if (allNecessaryPermissionsGranted()) {
+
+                    if (listOfAgents.size() > 0) {
+
+                        for (int i = 0; i < listOfAgents.size(); i++) {
+
+                            if (Utils.getStringFromTextView(tvEmail).equalsIgnoreCase(listOfAgents.get(i).getEmail())) {
+                                launchForgotPasswordActivityWithIntent(listOfAgents.get(i));
+                                break;
+                            }
+                        }
+                        ToastHelper.toastShort(AuthLoginActivity.this, "This email is not registered");
+
+                    } else {
+                        ToastHelper.toastShort(AuthLoginActivity.this, "Please, register first.");
+                    }
+
+                } else {
+                    notifyAndAskForPermissions();
+                }
             }
         });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Method to notify the user that the necessary permissions have not been granted and
+     * that launches the permissions requests
+     */
+    private void notifyAndAskForPermissions() {
+        Log.d(TAG, "notifyAndAskForPermissions: called!");
+        ToastHelper.toastShort(this, "The app needs more permissions");
+        checkAllPermissions();
+    }
+
+    /**
+     * Method that checks if we have the necessary permissions (location and internal storage)
+     */
+    private boolean allNecessaryPermissionsGranted() {
+        Log.d(TAG, "allNecessaryPermissionsGranted: called!");
+        return locationPermissionGranted && accessInternalStorageGranted;
+    }
 
     /**
      * Method used to check if the information inputted is correct. If it is, MainActivity is
@@ -211,17 +341,104 @@ public class AuthLoginActivity extends BaseActivity {
     private boolean allChecksPassed() {
         Log.d(TAG, "allChecksPassed: called!");
 
-        // TODO: 30/09/2018 Modify!
+        if (listOfAgents.size() > 0) {
 
-        String[] info = Utils.readCurrentAgentData(this);
+            /* We iterate throught the agents list to find if the email and password inputted match
+             * with any in the database.
+             * */
+            for (int i = 0; i < listOfAgents.size(); i++) {
 
-        if (Utils.getStringFromTextView(tvEmail).equals(info[2])
-                && Utils.getStringFromTextView(tvPassword).equals(info[3])) {
-            return true;
+                if (Utils.getStringFromTextView(tvEmail).equalsIgnoreCase(listOfAgents.get(i).getEmail())) {
+                    if (Utils.getStringFromTextView(tvPassword).equals(listOfAgents.get(i).getPassword())) {
 
-        } else {
+                        /* If the password of the email coincides, then we save the information in
+                         * SharedPreferences and return true, which will launch MainActivity
+                         * */
+                        Utils.writeAgentDataShPref(this, listOfAgents.get(i));
+                        return true;
+                    }
+                }
+            }
+
+            /* If we do not find a matching password, the user gets notified
+             * */
             ToastHelper.toastShort(this, "Sorry, some info is incorrect");
             return false;
+
+        } else {
+            ToastHelper.toastShort(this, "Please, register first.");
+            return false;
+        }
+    }
+
+    /**
+     * Method to launch ForgotPasswordActivity with the information of the agent according
+     * to the email inputted
+     */
+    private void launchForgotPasswordActivityWithIntent(Agent agent) {
+        Log.d(TAG, "launchForgotPasswordActivityWithIntent: called!");
+        Intent intent = new Intent(this, ForgotPasswordActivity.class);
+        intent.putExtra(Constants.SEND_PARCELABLE, agent);
+        startActivity(intent);
+    }
+
+    /**
+     * Method to launch MainActivity with an intent that clears the stack
+     */
+    private void launchMainActivityWithIntent() {
+        Log.d(TAG, "launchMainActivityWithIntent: called!");
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Method that checks if we have the necessary permissions
+     */
+    public void checkAllPermissions() {
+        Log.d(TAG, "checkPermissions: called!");
+
+        if (checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                && checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            locationPermissionGranted = true;
+
+        } else {
+            requestPermission(Constants.ALL_PERMISSIONS, Constants.REQUEST_CODE_ALL_PERMISSIONS);
+            return;
+        }
+
+        if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                && checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            accessInternalStorageGranted = true;
+
+        } else {
+            requestPermission(Constants.ALL_PERMISSIONS, Constants.REQUEST_CODE_ALL_PERMISSIONS);
+        }
+    }
+
+    /**
+     * Method that checks if we have a specific permission granted
+     */
+    public boolean checkPermission(String permission) {
+        Log.d(TAG, "checkPermissions: called!");
+
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Method used to request permissions
+     */
+    public void requestPermission(String[] permissions, int requestCode) {
+        Log.d(TAG, "requestPermission: called!");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissions, requestCode);
         }
     }
 }

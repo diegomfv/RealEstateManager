@@ -1,5 +1,6 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,10 +13,14 @@ import android.view.View;
 import android.widget.Button;
 
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.constants.Constants;
+import com.diegomfv.android.realestatemanager.data.entities.Agent;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
+
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,7 +58,11 @@ public class ForgotPasswordActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private Agent agent;
+
     private Unbinder unbinder;
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +71,10 @@ public class ForgotPasswordActivity extends BaseActivity {
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_forgot_password);
         unbinder = ButterKnife.bind(this);
+
+        /* We get the agent info passed in the intent
+         * */
+        this.getIntentInfo();
 
         /* Toolbar and Layout configurations
          * */
@@ -85,16 +98,12 @@ public class ForgotPasswordActivity extends BaseActivity {
 
             case R.id.button_remind_password_id: {
 
-                //5 --> memorable data answer from shared Pref
-                if (Utils.getStringFromTextView(tvAnswer).equals(Utils.readCurrentAgentData(this)[5])) {
-                    ToastHelper.toastLong(this, "PASSWORD: " + Utils.readCurrentAgentData(this)[3]);
+                if (Utils.getStringFromTextView(tvAnswer).equals(agent.getMemorableDataAnswer())) {
+                    ToastHelper.toastLong(this, "PASSWORD: " + agent.getPassword());
 
                 } else {
                     ToastHelper.toastLong(this, "Incorrect answer");
-
-
                 }
-
             }
             break;
         }
@@ -108,10 +117,8 @@ public class ForgotPasswordActivity extends BaseActivity {
 
             case android.R.id.home: {
                 Utils.launchActivity(this, AuthLoginActivity.class);
-
             }
             break;
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -152,11 +159,9 @@ public class ForgotPasswordActivity extends BaseActivity {
      */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
-
         this.getAutocompleteTextViews();
         this.setAllHints();
         this.setText();
-
     }
 
     /**
@@ -174,7 +179,7 @@ public class ForgotPasswordActivity extends BaseActivity {
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
 
-        // TODO: 23/08/2018 Use Resources instead of hardcoded
+        // TODO: 23/08/2018 Use Resources instead of hardcoded text
         setAutoCompleteTextViewHint(cardViewQuestion, "Question");
         setAutoCompleteTextViewHint(cardViewAnswer, "Answer");
     }
@@ -189,11 +194,21 @@ public class ForgotPasswordActivity extends BaseActivity {
     }
 
     /**
-     * Method to set the text in a specific view
+     * Method to set the text in a specific view.
      */
     private void setText() {
         Log.d(TAG, "setText: called!");
-        tvQuestion.setText(Utils.readCurrentAgentData(this)[4]);
+        tvQuestion.setText(agent.getMemorableDataQuestion());
+    }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Method to get the intent info and fill the agent field.
+     */
+    private void getIntentInfo() {
+        Log.d(TAG, "getIntentInfo: called!");
+        agent = Objects.requireNonNull(getIntent().getExtras()).getParcelable(Constants.SEND_PARCELABLE);
+        setText();
     }
 }

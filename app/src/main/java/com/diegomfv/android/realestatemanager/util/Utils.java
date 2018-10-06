@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.AppExecutors;
+import com.diegomfv.android.realestatemanager.data.entities.Agent;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.PlacesByNearby;
 import com.diegomfv.android.realestatemanager.network.models.placebynearby.Result;
@@ -377,44 +378,6 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static void checkAllPermissions(AppCompatActivity app) {
-        Log.d(TAG, "checkPermissions: called!");
-
-        if (Utils.checkPermission(app, Manifest.permission.INTERNET)
-                && Utils.checkPermission(app, Manifest.permission.ACCESS_NETWORK_STATE)
-                && Utils.checkPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION)
-                && Utils.checkPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
-                && Utils.checkPermission(app, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                && Utils.checkPermission(app, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            //do nothing
-
-        } else {
-            requestPermission(app, Constants.ALL_PERMISSIONS, Constants.REQUEST_CODE_ALL_PERMISSIONS);
-
-        }
-    }
-
-    public static boolean checkPermission(Context context, String permission) {
-        Log.d(TAG, "checkPermissions: called!");
-
-        if (ContextCompat.checkSelfPermission(context.getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static void requestPermission(AppCompatActivity app, String[] permissions, int requestCode) {
-        Log.d(TAG, "requestPermission: called!");
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            app.requestPermissions(permissions, requestCode);
-        }
-
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     /**
      * Method that
      * capitalizes a string
@@ -675,16 +638,16 @@ public class Utils {
         return sharedPreferences.getInt(Constants.CURRENCY, 0);
     }
 
-    public static void writeAgentDataShPref(Context context, String firstName, String lastName, String email, String password, String memDataQ, String memDataA) {
+    public static void writeAgentDataShPref(Context context, Agent agent) {
         Log.d(TAG, "writeAgentDataShPref: called!");
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_AGENT_SETTINGS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constants.SH_PREF_AGENT_FIRST_NAME, firstName);
-        editor.putString(Constants.SH_PREF_AGENT_LAST_NAME, lastName);
-        editor.putString(Constants.SH_PREF_AGENT_EMAIL, email);
-        editor.putString(Constants.SH_PREF_AGENT_PASSWORD, password);
-        editor.putString(Constants.SH_PREF_AGENT_MEMORABLE_DATA_QUESTION, memDataQ);
-        editor.putString(Constants.SH_PREF_AGENT_MEMORABLE_DATA_ANSWER, memDataA);
+        editor.putString(Constants.SH_PREF_AGENT_FIRST_NAME, agent.getFirstName());
+        editor.putString(Constants.SH_PREF_AGENT_LAST_NAME, agent.getLastName());
+        editor.putString(Constants.SH_PREF_AGENT_EMAIL, agent.getEmail());
+        editor.putString(Constants.SH_PREF_AGENT_PASSWORD, agent.getPassword());
+        editor.putString(Constants.SH_PREF_AGENT_MEMORABLE_DATA_QUESTION, agent.getMemorableDataQuestion());
+        editor.putString(Constants.SH_PREF_AGENT_MEMORABLE_DATA_ANSWER, agent.getMemorableDataAnswer());
         editor.apply();
     }
 

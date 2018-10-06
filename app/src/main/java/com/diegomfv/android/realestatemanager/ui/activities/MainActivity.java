@@ -37,12 +37,15 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
+// TODO: 06/10/2018 Memorable Question
 // TODO: 30/09/2018 AuthLoginActivity code
 // TODO: 30/09/2018 SearchEngine
 // TODO: 30/09/2018 Layouts for Tablets
 // TODO: 05/10/2018 Map is not shown correctly in the tablet
-// TODO: 30/09/2018 Check the Floats
 // TODO: 05/10/2018 Documentation
+// TODO: 05/10/2018 See Detail information in Tablet when a label is clicked in Position Activity!
+// TODO: 06/10/2018 Comments for Utils
+
 /**
  * MainActivity displays a different layout depending on the size of the screen (handsets or
  * tablets). Additionally, it behaves different according to what activity launched it. If the activity
@@ -78,7 +81,7 @@ public class MainActivity extends BaseActivity {
     private boolean editModeActive;
 
     /* Variable to differentiate when we are in the normal menu
-    and when we come from SearchEngineActivity (true: main menu).
+    * and when we come from SearchEngineActivity (true: main menu).
     * This is done for code reuse
     */
     private boolean mainMenu;
@@ -88,8 +91,6 @@ public class MainActivity extends BaseActivity {
      * false = is a tablet
      * */
     private boolean deviceIsHandset;
-
-    private boolean accessInternalStorageGranted;
 
     private int currency;
 
@@ -112,8 +113,6 @@ public class MainActivity extends BaseActivity {
             getRepository().deleteCache();
         }
 
-        this.accessInternalStorageGranted = false;
-
         this.currency = Utils.readCurrentCurrencyShPref(this);
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,8 +122,6 @@ public class MainActivity extends BaseActivity {
         deviceIsHandset = updateDeviceIsHandset();
 
         this.configureToolBar();
-
-        this.checkInternalStoragePermissionGranted();
 
         this.loadFragmentOrFragments();
 
@@ -162,13 +159,7 @@ public class MainActivity extends BaseActivity {
         switch (item.getItemId()) {
 
             case R.id.menu_add_listing_button: {
-
-                if (accessInternalStorageGranted) {
-                    Utils.launchActivity(this, CreateNewListingActivity.class);
-
-                } else {
-                    ToastHelper.toastSomeAccessNotGranted(this);
-                }
+                Utils.launchActivity(this, CreateNewListingActivity.class);
             }
             break;
 
@@ -186,13 +177,7 @@ public class MainActivity extends BaseActivity {
             break;
 
             case R.id.menu_edit_listing_button: {
-                if (accessInternalStorageGranted) {
-                    updateMode();
-
-                } else {
-                    ToastHelper.toastSomeAccessNotGranted(this);
-                }
-
+                updateMode();
             }
             break;
 
@@ -224,7 +209,6 @@ public class MainActivity extends BaseActivity {
             case Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE: {
 
                 if (grantResults.length > 0 && grantResults[0] != -1) {
-                    accessInternalStorageGranted = true;
                     createDirectories();
                 }
             }
@@ -419,34 +403,16 @@ public class MainActivity extends BaseActivity {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Method that checks if we have the necessary permissions.
-     */
-    private void checkInternalStoragePermissionGranted() {
-        Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
-
-        if (Utils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            accessInternalStorageGranted = true;
-            createDirectories();
-
-        } else {
-            Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
-        }
-    }
-
-    /**
      * Method that creates the necessary directories if they didn't exist yet.
      */
     private void createDirectories() {
         Log.d(TAG, "createDirectories: called");
+        if (!getInternalStorage().isDirectoryExists(getImagesDir())) {
+            getInternalStorage().createDirectory(getImagesDir());
+        }
 
-        if (accessInternalStorageGranted) {
-            if (!getInternalStorage().isDirectoryExists(getImagesDir())) {
-                getInternalStorage().createDirectory(getImagesDir());
-            }
-
-            if (!getInternalStorage().isDirectoryExists(getTemporaryDir())) {
-                getInternalStorage().createDirectory(getTemporaryDir());
-            }
+        if (!getInternalStorage().isDirectoryExists(getTemporaryDir())) {
+            getInternalStorage().createDirectory(getTemporaryDir());
         }
     }
 

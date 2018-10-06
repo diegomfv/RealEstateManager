@@ -1,5 +1,7 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.diegomfv.android.realestatemanager.R;
+import com.diegomfv.android.realestatemanager.data.entities.Agent;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
@@ -21,6 +24,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
@@ -71,8 +78,6 @@ public class SignUpActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private ActionBar actionBar;
-
     private Unbinder unbinder;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +115,11 @@ public class SignUpActivity extends BaseActivity {
         switch (view.getId()) {
 
             case R.id.sign_up_button_id: {
-                saveInfoAndLaunchActivity();
+
+                if (allChecksPassed()) {
+                    saveInfoAndLaunchActivity();
+
+                }
             }
             break;
         }
@@ -198,21 +207,59 @@ public class SignUpActivity extends BaseActivity {
     /**
      * Method to save the information inputted and launch MainActivity
      */
+    @SuppressLint("CheckResult")
     private void saveInfoAndLaunchActivity() {
         Log.d(TAG, "saveInfoAndLaunchActivity: called!");
 
-        if (allChecksPassed()) {
-            Utils.writeAgentDataShPref(this,
-                    Utils.getStringFromTextView(tvFirstName),
-                    Utils.getStringFromTextView(tvLastName),
-                    Utils.getStringFromTextView(tvEmail),
-                    Utils.getStringFromTextView(tvPassword),
-                    Utils.getStringFromTextView(tvMemDataQuestion),
-                    Utils.getStringFromTextView(tvMemDataAnswer));
+        /* We store the information of the new agent in the database
+         * */
+        getRepository().insertAgent(
+                new Agent(
+                        Utils.getStringFromTextView(tvEmail),
+                        Utils.getStringFromTextView(tvPassword),
+                        Utils.getStringFromTextView(tvFirstName),
+                        Utils.getStringFromTextView(tvLastName),
+                        Utils.getStringFromTextView(tvMemDataQuestion),
+                        Utils.getStringFromTextView(tvMemDataAnswer)))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+                    }
 
-            ToastHelper.toastShort(this, "Sign up successful");
-            Utils.launchActivity(this, MainActivity.class);
-        }
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: completed!");
+
+                        /* We fill Shared Preferences with this agent data
+                         * */
+                        Utils.writeAgentDataShPref(
+                                SignUpActivity.this,
+                                new Agent(
+                                        Utils.getStringFromTextView(tvEmail),
+                                        Utils.getStringFromTextView(tvPassword),
+                                        Utils.getStringFromTextView(tvFirstName),
+                                        Utils.getStringFromTextView(tvLastName),
+                                        Utils.getStringFromTextView(tvMemDataQuestion),
+                                        Utils.getStringFromTextView(tvMemDataAnswer))
+                        );
+
+                        /* We launch MainActivity using an intent that clears the stack
+                         * */
+                        ToastHelper.toastShort(SignUpActivity.this, "Sign up successful");
+                        launchActivityWithIntent();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+                        ToastHelper.toastShort(SignUpActivity.this, "Something went wrong");
+                    }
+                });
+
     }
 
     /**
@@ -250,4 +297,16 @@ public class SignUpActivity extends BaseActivity {
             return true;
         }
     }
+
+    /**
+     * Method to launch the activity with an intent that clears the stack
+     */
+    private void launchActivityWithIntent() {
+        Log.d(TAG, "launchActivityWithIntent: called!");
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
 }

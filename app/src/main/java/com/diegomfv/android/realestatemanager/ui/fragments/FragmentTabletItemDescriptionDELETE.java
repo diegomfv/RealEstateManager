@@ -171,7 +171,11 @@ public class FragmentTabletItemDescriptionDELETE extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_item_description, container, false);
         this.unbinder = ButterKnife.bind(this, view);
 
-        this.checkDeviceLocationPermissionGranted();
+        /* We load the map
+         * */
+        if (isGooglePlayServicesOK()) {
+            initMap();
+        }
 
         this.createModel();
 
@@ -557,29 +561,6 @@ public class FragmentTabletItemDescriptionDELETE extends BaseFragment {
                         }
                     }
                 });
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Method that checks if the location permission has been granted. If it is granted, it loads
-     * the Google Map.
-     */
-    private void checkDeviceLocationPermissionGranted() {
-        Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
-
-        if (getRootMainActivity() != null) {
-            if (Utils.checkPermission(getRootMainActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-                if (Utils.checkPermission(getRootMainActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    deviceLocationPermissionGranted = true;
-
-                    if (isGooglePlayServicesOK()) {
-                        initMap();
-                    }
-                }
-            }
-        }
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

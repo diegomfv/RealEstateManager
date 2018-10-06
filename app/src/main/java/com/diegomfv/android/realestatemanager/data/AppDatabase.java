@@ -27,9 +27,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
+import com.diegomfv.android.realestatemanager.data.dao.AgentDao;
 import com.diegomfv.android.realestatemanager.data.dao.ImageRealEstateDao;
 import com.diegomfv.android.realestatemanager.data.dao.PlaceRealEstateDao;
 import com.diegomfv.android.realestatemanager.data.dao.RealEstateDao;
+import com.diegomfv.android.realestatemanager.data.entities.Agent;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
@@ -41,7 +43,7 @@ import com.diegomfv.android.realestatemanager.data.typeconverters.StringListConv
  * you'll need a "type converter" (See Android Architecture Components,
  * Android Development Course, UDACITY)
  * */
-@Database(entities = {RealEstate.class, ImageRealEstate.class, PlaceRealEstate.class}, version = 1, exportSchema = false)
+@Database(entities = {RealEstate.class, ImageRealEstate.class, PlaceRealEstate.class, Agent.class}, version = 1, exportSchema = false)
 @TypeConverters({StringListConverter.class, AddressTypeConverter.class, RoomsRealEstateTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -66,6 +68,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ImageRealEstateDao imageRealEstateDao();
 
     public abstract PlaceRealEstateDao placeRealEstateDao();
+
+    public abstract AgentDao agentDao();
 
     /////////////////////////////////////
 

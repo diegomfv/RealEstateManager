@@ -116,9 +116,12 @@ public class PositionActivity extends BaseActivity {
          * */
         this.configureToolbarBar();
 
-        /* Checks the device location
+        /* Loads the map
          * */
-        this.checkDeviceLocationPermissionGranted();
+        if (isGooglePlayServicesOK()) {
+            Utils.showMainContent(progressBarContent, mainLayout);
+            initMap();
+        }
 
         /* Creating and subscribing to the ViewModel
          * */
@@ -239,30 +242,6 @@ public class PositionActivity extends BaseActivity {
             this.currency = 0;
         }
         Utils.writeCurrentCurrencyShPref(this, currency);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Method that checks if we have the location permissions granted. If not, it asks the user
-     * for the necessary permissions.
-     */
-    private void checkDeviceLocationPermissionGranted() {
-        Log.d(TAG, "checkInternalStoragePermissionGranted: called!");
-
-        if (Utils.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-            if (Utils.checkPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                deviceLocationPermissionGranted = true;
-
-                if (isGooglePlayServicesOK()) {
-                    Utils.showMainContent(progressBarContent, mainLayout);
-                    initMap();
-                }
-            }
-
-        } else {
-            Utils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
-        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

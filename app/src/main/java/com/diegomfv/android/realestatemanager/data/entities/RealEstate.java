@@ -51,7 +51,7 @@ public class RealEstate implements Parcelable {
     @ColumnInfo(name = "date_put")
     private String datePut;
 
-    //If the propery has not been sold, this would be ""
+    //If the property has not been sold, this would be ""
     @ColumnInfo(name = "date_sale")
     private String dateSale;
 

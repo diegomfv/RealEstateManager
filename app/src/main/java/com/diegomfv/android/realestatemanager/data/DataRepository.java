@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.diegomfv.android.realestatemanager.data.datamodels.AddressRealEstate;
+import com.diegomfv.android.realestatemanager.data.entities.Agent;
 import com.diegomfv.android.realestatemanager.data.entities.ImageRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
@@ -467,7 +468,8 @@ public class DataRepository {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * RxJava methods that return Observables. They allow access to the information of the Database.
+     * RxJava methods that return Observables.
+     * They allow access to the information of the Database.
      */
 
     public io.reactivex.Observable<List<RealEstate>> getAllListingsRealEstateObservable() {
@@ -510,6 +512,16 @@ public class DataRepository {
         });
     }
 
+    public io.reactivex.Observable<List<Agent>> getAllAgents () {
+        Log.d(TAG, "getAllAgents: called!");
+        return io.reactivex.Observable.fromCallable(new Callable<List<Agent>>() {
+            @Override
+            public List<Agent> call() throws Exception {
+                return mDatabase.agentDao().getAllAgents();
+            }
+        });
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -546,12 +558,32 @@ public class DataRepository {
         });
     }
 
+    public Completable insertAgent(final Agent agent) {
+        Log.d(TAG, "updateRealEstate: called!");
+        return Completable.fromCallable(new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                return mDatabase.agentDao().insertAgent(agent);
+            }
+        });
+    }
+
     public Completable updateRealEstate(final RealEstate realEstate) {
         Log.d(TAG, "updateRealEstate: called!");
         return Completable.fromCallable(new Callable<Integer>() {
             @Override
             public Integer call() throws Exception {
                 return mDatabase.realStateDao().updateRealEstate(realEstate);
+            }
+        });
+    }
+
+    public Completable updateAgent(final Agent agent) {
+        Log.d(TAG, "updateRealEstate: called!");
+        return Completable.fromCallable(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                return mDatabase.agentDao().updateAgent(agent);
             }
         });
     }
