@@ -1,13 +1,10 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -37,11 +34,8 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
-// TODO: 06/10/2018 Memorable Question
-// TODO: 30/09/2018 AuthLoginActivity code
 // TODO: 30/09/2018 SearchEngine
 // TODO: 30/09/2018 Layouts for Tablets
-// TODO: 05/10/2018 Map is not shown correctly in the tablet
 // TODO: 05/10/2018 Documentation
 // TODO: 05/10/2018 See Detail information in Tablet when a label is clicked in Position Activity!
 // TODO: 06/10/2018 Comments for Utils

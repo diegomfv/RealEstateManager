@@ -81,8 +81,6 @@ public class PositionActivity extends BaseActivity {
 
     private List<Marker> listOfMarkers;
 
-    private boolean deviceLocationPermissionGranted;
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private List<RealEstate> listOfListings;
@@ -100,8 +98,6 @@ public class PositionActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!");
-
-        this.deviceLocationPermissionGranted = false;
 
         this.myLatitude = 0d;
         this.myLongitude = 0d;
@@ -134,28 +130,6 @@ public class PositionActivity extends BaseActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy: called!");
         this.unbinder.unbind();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.d(TAG, "onRequestPermissionsResult: called!");
-
-        switch (requestCode) {
-
-            case Constants.REQUEST_CODE_WRITE_EXTERNAL_STORAGE: {
-
-                if (grantResults.length > 0 && grantResults[0] != -1) {
-                    deviceLocationPermissionGranted = true;
-
-                    if (isGooglePlayServicesOK()) {
-                        Utils.showMainContent(progressBarContent, mainLayout);
-                        initMap();
-                    }
-                }
-            }
-            break;
-        }
     }
 
     @Override
@@ -335,11 +309,7 @@ public class PositionActivity extends BaseActivity {
                 Log.d(TAG, "onMapReady: map is ready");
                 mMap = googleMap;
 
-                if (deviceLocationPermissionGranted) {
-                    /* We get the device's location
-                     * */
-                    getDeviceLocation();
-                }
+                getDeviceLocation();
 
                 /*Listener for when clicking the info window in a map
                  * */

@@ -2,14 +2,12 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.InputType;
 import android.util.Log;
@@ -26,6 +24,7 @@ import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -91,7 +90,7 @@ public class AuthLoginActivity extends BaseActivity {
 
         /* We get the list of all agents from the database
          * */
-        this.getListOfAgents();
+        this.getListOfAgentsFromDatabase();
 
         /* We get a reference to the views
          * */
@@ -197,12 +196,21 @@ public class AuthLoginActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /** Getter for listOfAgents*/
+    private List<Agent> getListOfAgents () {
+        Log.d(TAG, "getListOfAgents: called!");
+        if (listOfAgents == null) {
+            return listOfAgents = new ArrayList<>();
+        }
+        return listOfAgents;
+    }
+
     /**
      * Method that retrieves the list of agents in the database
      */
     @SuppressLint("CheckResult")
-    private void getListOfAgents() {
-        Log.d(TAG, "getListOfAgents: called!");
+    private void getListOfAgentsFromDatabase() {
+        Log.d(TAG, "getListOfAgentsFromDatabase: called!");
 
         getRepository().getAllAgents()
                 .subscribeOn(Schedulers.io())
@@ -341,20 +349,20 @@ public class AuthLoginActivity extends BaseActivity {
     private boolean allChecksPassed() {
         Log.d(TAG, "allChecksPassed: called!");
 
-        if (listOfAgents.size() > 0) {
+        if (getListOfAgents().size() > 0) {
 
             /* We iterate throught the agents list to find if the email and password inputted match
              * with any in the database.
              * */
-            for (int i = 0; i < listOfAgents.size(); i++) {
+            for (int i = 0; i < getListOfAgents().size(); i++) {
 
-                if (Utils.getStringFromTextView(tvEmail).equalsIgnoreCase(listOfAgents.get(i).getEmail())) {
-                    if (Utils.getStringFromTextView(tvPassword).equals(listOfAgents.get(i).getPassword())) {
+                if (Utils.getStringFromTextView(tvEmail).equalsIgnoreCase(getListOfAgents().get(i).getEmail())) {
+                    if (Utils.getStringFromTextView(tvPassword).equals(getListOfAgents().get(i).getPassword())) {
 
                         /* If the password of the email coincides, then we save the information in
                          * SharedPreferences and return true, which will launch MainActivity
                          * */
-                        Utils.writeAgentDataShPref(this, listOfAgents.get(i));
+                        Utils.writeAgentDataShPref(this, getListOfAgents().get(i));
                         return true;
                     }
                 }

@@ -1,6 +1,5 @@
 package com.diegomfv.android.realestatemanager.ui.fragments;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.arch.lifecycle.Observer;
@@ -61,7 +60,6 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Diego Fajardo on 16/08/2018.
  */
 
-// TODO: 22/09/2018 Number of bedrooms still 0! Problem in CreateNewListing and EditListing
 public class FragmentHandsetItemDescription extends BaseFragment {
 
     private static final String TAG = FragmentHandsetItemDescription.class.getSimpleName();
@@ -142,8 +140,6 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
     private List<Marker> listOfMarkers;
 
-    private boolean deviceLocationPermissionGranted;
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private int currency;
@@ -179,8 +175,6 @@ public class FragmentHandsetItemDescription extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: called!");
-
-        this.deviceLocationPermissionGranted = false;
 
         if (getActivity() != null) {
             this.currency = Utils.readCurrentCurrencyShPref(getActivity());
@@ -503,24 +497,28 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                                         /* Then we fill the listOfPlacesRealEstate with those places
                                          * related to the realEstate
                                          * */
-                                        for (int i = 0; i < getRealEstate().getListOfNearbyPointsOfInterestIds().size(); i++) {
 
-                                            for (int j = 0; j < placeRealEstates.size(); j++) {
+                                        if (getRealEstate().getListOfNearbyPointsOfInterestIds() != null) {
 
-                                                if (getRealEstate().getListOfNearbyPointsOfInterestIds().get(i)
-                                                        .equals(placeRealEstates.get(j).getId())) {
-                                                    getListOfPlacesRealEstate().add(placeRealEstates.get(j));
+                                            for (int i = 0; i < getRealEstate().getListOfNearbyPointsOfInterestIds().size(); i++) {
+
+                                                for (int j = 0; j < placeRealEstates.size(); j++) {
+
+                                                    if (getRealEstate().getListOfNearbyPointsOfInterestIds().get(i)
+                                                            .equals(placeRealEstates.get(j).getId())) {
+                                                        getListOfPlacesRealEstate().add(placeRealEstates.get(j));
+                                                    }
                                                 }
                                             }
+
+                                            /* Once done,
+                                             * we can set the layout
+                                             * */
+                                            configureRecyclerView();
+                                            fillLayoutWithRealEstateInfo();
+                                            updateMapWithPins();
+
                                         }
-
-                                        /* Once done,
-                                         * we can set the layout
-                                         * */
-                                        configureRecyclerView();
-                                        fillLayoutWithRealEstateInfo();
-                                        updateMapWithPins();
-
                                     }
 
                                     @Override
@@ -677,11 +675,9 @@ public class FragmentHandsetItemDescription extends BaseFragment {
                 Log.d(TAG, "onMapReady: map is ready");
                 mMap = googleMap;
 
-                if (deviceLocationPermissionGranted) {
-                    /* We get the device's location
-                     * */
-                    getDeviceLocation();
-                }
+                /* We get the device's location
+                 * */
+                getDeviceLocation();
 
                 /* Listener for when clicking
                  * the info window in a map
