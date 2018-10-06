@@ -10,7 +10,7 @@
         android:id="@+id/main_layout_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -152,6 +152,17 @@
                         android:layout_marginTop="15dp"
                         android:text="@string/information_not_available"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView_agent_title_id"
+                        style="@style/textViewTitleStyle"
+                        android:layout_marginTop="15dp"
+                        android:text="Agent" />
+
+                    <TextView
+                        android:id="@+id/textView_agent_id"
+                        style="@style/textViewInfoStyle"
+                        android:text="@string/information_not_available" />
 
                 </LinearLayout>
 

@@ -522,6 +522,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         Log.d(TAG, "updateStringValues: called!");
         this.getRealEstateCache().setType(Utils.capitalize(tvTypeOfBuilding.getText().toString().trim()));
         this.getRealEstateCache().setDescription(Utils.capitalize(tvDescription.getText().toString().trim()));
+        this.getRealEstateCache().setAgent(Utils.readCurrentAgentData(this)[0] + " " + Utils.readCurrentAgentData(this)[1]);
     }
 
     /**

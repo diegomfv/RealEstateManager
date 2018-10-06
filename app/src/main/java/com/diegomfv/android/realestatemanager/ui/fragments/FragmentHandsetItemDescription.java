@@ -116,6 +116,9 @@ public class FragmentHandsetItemDescription extends BaseFragment {
     @BindView(R.id.textView_sold_id)
     TextView tvSold;
 
+    @BindView(R.id.textView_agent_id)
+    TextView tvAgent;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private RealEstate realEstate;
@@ -338,6 +341,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
         setAddress();
         setPrice();
         setSoldState();
+        setAgent();
 
         Utils.showMainContent(progressBarLayout, mainLayout);
     }
@@ -424,6 +428,15 @@ public class FragmentHandsetItemDescription extends BaseFragment {
             tvSold.setTextColor(getResources().getColor(R.color.colorPrimary));
             tvSold.setBackgroundColor(getResources().getColor(android.R.color.white));
         }
+    }
+
+    /**
+     * Method to set the agent related to the real estate
+     */
+    private void setAgent() {
+        Log.d(TAG, "setAgent: called!");
+        tvAgent.setText(getRealEstate().getAgent());
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
