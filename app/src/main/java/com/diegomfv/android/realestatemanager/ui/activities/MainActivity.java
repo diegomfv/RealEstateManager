@@ -17,7 +17,7 @@ import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.fragments.FragmentHandsetItemDescription;
+import com.diegomfv.android.realestatemanager.ui.fragments.FragmentItemDescription;
 import com.diegomfv.android.realestatemanager.ui.fragments.FragmentListListings;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
@@ -39,6 +39,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 // TODO: 05/10/2018 Documentation
 // TODO: 05/10/2018 See Detail information in Tablet when a label is clicked in Position Activity!
 // TODO: 06/10/2018 Comments for Utils
+// TODO: 06/10/2018 Emulator crashes when I try to change prices in MainActivity
 
 /**
  * MainActivity displays a different layout depending on the size of the screen (handsets or
@@ -356,6 +357,7 @@ public class MainActivity extends BaseActivity {
                 .subscribeWith(new Observer<List<RealEstate>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
 
                     }
 
@@ -376,7 +378,7 @@ public class MainActivity extends BaseActivity {
 
                                 getSupportFragmentManager()
                                         .beginTransaction()
-                                        .replace(R.id.fragment2_container_id, FragmentHandsetItemDescription.newInstance())
+                                        .replace(R.id.fragment2_container_id, FragmentItemDescription.newInstance())
                                         .commit();
                             }
                         }
@@ -384,11 +386,13 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
 
                     }
 
                     @Override
                     public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
 
                     }
                 });

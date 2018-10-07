@@ -60,9 +60,9 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Diego Fajardo on 16/08/2018.
  */
 
-public class FragmentHandsetItemDescription extends BaseFragment {
+public class FragmentItemDescription extends BaseFragment {
 
-    private static final String TAG = FragmentHandsetItemDescription.class.getSimpleName();
+    private static final String TAG = FragmentItemDescription.class.getSimpleName();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -154,9 +154,9 @@ public class FragmentHandsetItemDescription extends BaseFragment {
      * Method that returns
      * an instance of the Fragment
      */
-    public static FragmentHandsetItemDescription newInstance() {
+    public static FragmentItemDescription newInstance() {
         Log.d(TAG, "newInstance: called!");
-        return new FragmentHandsetItemDescription();
+        return new FragmentItemDescription();
     }
 
     @Override
@@ -444,108 +444,118 @@ public class FragmentHandsetItemDescription extends BaseFragment {
     private void setInfoRelatedToRealEstate() {
         Log.d(TAG, "setInfoRelatedToRealEstate: called!");
 
-        getRepository().getAllImagesRealEstateObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new io.reactivex.Observer<List<ImageRealEstate>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe images: called!");
+        if (getActivity() != null) {
 
-                    }
+            getRepository().getAllImagesRealEstateObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new io.reactivex.Observer<List<ImageRealEstate>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Log.d(TAG, "onSubscribe images: called!");
 
-                    @Override
-                    public void onNext(List<ImageRealEstate> imageRealEstates) {
-                        Log.d(TAG, "onNext images: called!");
-
-                        /* Firstly, we clear the listOfImages related to the real estate */
-                        getListOfImagesRealEstate().clear();
-
-                        /* Then we fill the listOfImagesRealEstate with those images
-                         * related to the realEstate
-                         * */
-                        for (int i = 0; i < getRealEstate().getListOfImagesIds().size(); i++) {
-
-                            for (int j = 0; j < imageRealEstates.size(); j++) {
-
-                                if (getRealEstate().getListOfImagesIds().get(i).equals(imageRealEstates.get(j).getId())) {
-                                    getListOfImagesRealEstate().add(imageRealEstates.get(j));
-                                }
-                            }
                         }
 
-                        /* Once done,
-                        we do the same with the places
-                        * */
-                        getRepository().getAllPlacesRealEstateObservable()
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribeWith(new io.reactivex.Observer<List<PlaceRealEstate>>() {
-                                    @Override
-                                    public void onSubscribe(Disposable d) {
-                                        Log.d(TAG, "onSubscribe places: called!");
+                        @Override
+                        public void onNext(List<ImageRealEstate> imageRealEstates) {
+                            Log.d(TAG, "onNext images: called!");
 
+                            /* Firstly, we clear the listOfImages related to the real estate */
+                            getListOfImagesRealEstate().clear();
+
+                            /* Then we fill the listOfImagesRealEstate with those images
+                             * related to the realEstate
+                             * */
+                            for (int i = 0; i < getRealEstate().getListOfImagesIds().size(); i++) {
+
+                                for (int j = 0; j < imageRealEstates.size(); j++) {
+
+                                    if (getRealEstate().getListOfImagesIds().get(i).equals(imageRealEstates.get(j).getId())) {
+                                        getListOfImagesRealEstate().add(imageRealEstates.get(j));
                                     }
+                                }
+                            }
 
-                                    @Override
-                                    public void onNext(List<PlaceRealEstate> placeRealEstates) {
-                                        Log.d(TAG, "onNext places: called!");
+                            /* Once done,
+                             * we do the same with the places
+                             * */
+                            getRepository().getAllPlacesRealEstateObservable()
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribeWith(new io.reactivex.Observer<List<PlaceRealEstate>>() {
+                                        @Override
+                                        public void onSubscribe(Disposable d) {
+                                            Log.d(TAG, "onSubscribe places: called!");
 
-                                        /* Firstly, we clear the listOfPlaces related to the real estate */
-                                        getListOfPlacesRealEstate().clear();
+                                        }
 
-                                        /* Then we fill the listOfPlacesRealEstate with those places
-                                         * related to the realEstate
-                                         * */
+                                        @Override
+                                        public void onNext(List<PlaceRealEstate> placeRealEstates) {
+                                            Log.d(TAG, "onNext places: called!");
 
-                                        if (getRealEstate().getListOfNearbyPointsOfInterestIds() != null) {
+                                            /* Firstly, we clear the listOfPlaces related to the real estate */
+                                            getListOfPlacesRealEstate().clear();
 
-                                            for (int i = 0; i < getRealEstate().getListOfNearbyPointsOfInterestIds().size(); i++) {
+                                            /* Then we fill the listOfPlacesRealEstate with those places
+                                             * related to the realEstate
+                                             * */
 
-                                                for (int j = 0; j < placeRealEstates.size(); j++) {
+                                            if (getRealEstate().getListOfNearbyPointsOfInterestIds() != null) {
 
-                                                    if (getRealEstate().getListOfNearbyPointsOfInterestIds().get(i)
-                                                            .equals(placeRealEstates.get(j).getId())) {
-                                                        getListOfPlacesRealEstate().add(placeRealEstates.get(j));
+                                                for (int i = 0; i < getRealEstate().getListOfNearbyPointsOfInterestIds().size(); i++) {
+
+                                                    for (int j = 0; j < placeRealEstates.size(); j++) {
+
+                                                        if (getRealEstate().getListOfNearbyPointsOfInterestIds().get(i)
+                                                                .equals(placeRealEstates.get(j).getId())) {
+                                                            getListOfPlacesRealEstate().add(placeRealEstates.get(j));
+                                                        }
                                                     }
                                                 }
                                             }
+
+                                            /* Once done,
+                                             * we can set the layout
+                                             * */
+                                            configureRecyclerView();
+                                            fillLayoutWithRealEstateInfo();
+                                            updateMapWithPins();
                                         }
 
-                                        /* Once done,
-                                         * we can set the layout
-                                         * */
-                                        configureRecyclerView();
-                                        fillLayoutWithRealEstateInfo();
-                                        updateMapWithPins();
-                                    }
+                                        @Override
+                                        public void onError(Throwable e) {
+                                            Log.e(TAG, "onError places: " + e.getMessage());
 
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        Log.e(TAG, "onError places: " + e.getMessage());
+                                        }
 
-                                    }
+                                        @Override
+                                        public void onComplete() {
+                                            Log.d(TAG, "onComplete places: called!");
 
-                                    @Override
-                                    public void onComplete() {
-                                        Log.d(TAG, "onComplete places: called!");
+                                        }
+                                    });
 
-                                    }
-                                });
-                    }
+                        }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError places: " + e.getMessage());
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e(TAG, "onError places: " + e.getMessage());
 
-                    }
+                        }
 
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete places: called!");
+                        @Override
+                        public void onComplete() {
+                            Log.d(TAG, "onComplete places: called!");
 
-                    }
-                });
+                        }
+                    });
+
+        } else {
+
+            /* We call the method again
+             * */
+            setInfoRelatedToRealEstate();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -567,7 +577,7 @@ public class FragmentHandsetItemDescription extends BaseFragment {
 
             } else {
 
-                if (getActivity() != null) {
+                if (getRootMainActivity() != null) {
 
                     this.recyclerViewMedia.setHasFixedSize(true);
                     this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(

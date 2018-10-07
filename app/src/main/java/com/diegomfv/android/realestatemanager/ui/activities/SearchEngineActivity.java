@@ -27,7 +27,6 @@ import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
 import java.util.ArrayList;
@@ -40,11 +39,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.CompletableObserver;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
+
+// TODO: 07/10/2018 See this! setMinMaxValuesRangeSeekBars(List<RealEstate> listOfRealEstates) {
 
 // TODO: 05/09/2018 Keep the searching information stored with SharedPreferences
 public class SearchEngineActivity extends BaseActivity {
@@ -119,19 +121,15 @@ public class SearchEngineActivity extends BaseActivity {
 
     private TextView tvPrice;
     private CrystalRangeSeekbar seekBarPrice;
-    private boolean seekBarPriceUsed;
 
     private TextView tvSurfaceArea;
     private CrystalRangeSeekbar seekBarSurfaceArea;
-    private boolean seekBarSurfaceAreaUsed;
 
     private TextView tvNumberOfRooms;
     private CrystalRangeSeekbar seekBarNumberOfRooms;
-    private boolean seekBarNumberOfRoomsUsed;
 
     private TextView tvAmountOfPhotos;
     private CrystalRangeSeekbar seekBarAmountOfPhotos;
-    private boolean seekbarAmountOfPhotosUsed;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -155,6 +153,15 @@ public class SearchEngineActivity extends BaseActivity {
 
     private int currency;
 
+    /* "maxPriceInDollars" stores the max price directly from the real estate.
+     * "maxPrice" varies depending on the currency*/
+    float maxPriceInDollars;
+    float maxPrice;
+
+    float maxSurfaceArea;
+    int maxNumberOfRooms;
+    int maxAmountOfPhotos;
+
     private int updateCounter;
 
     private Unbinder unbinder;
@@ -166,18 +173,13 @@ public class SearchEngineActivity extends BaseActivity {
 
         this.currency = Utils.readCurrentCurrencyShPref(this);
 
-        this.seekBarPriceUsed = false;
-        this.seekBarSurfaceAreaUsed = false;
-        this.seekBarNumberOfRoomsUsed = false;
-        this.seekbarAmountOfPhotosUsed = false;
-
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_search_engine);
         unbinder = ButterKnife.bind(this);
 
-        this.configureLayout();
-
-        Utils.showMainContent(progressBarContent, mainLayout);
+        /* We get the lists from the repository. After that, the configuration process starts
+         * */
+        this.fetchListsAndSetsAsync();
 
     }
 
@@ -206,16 +208,13 @@ public class SearchEngineActivity extends BaseActivity {
                 changeCurrency();
                 Utils.updateCurrencyIcon(this, currency, item);
                 updatePriceTextView();
-
             }
             break;
 
             case android.R.id.home: {
                 Utils.launchActivity(this, MainActivity.class);
-
             }
             break;
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -255,7 +254,10 @@ public class SearchEngineActivity extends BaseActivity {
      */
     private void updatePriceTextView() {
         Log.d(TAG, "updatePriceTextView: called!");
-        tvPrice.setText("Price (thousands, " + Utils.getCurrencySymbol(currency) + ")");
+        updateMaxPrice();
+        setMinMaxValues(seekBarPrice, 0, maxPrice);
+        tvPrice.setText("Price (" + Utils.getCurrencySymbol(currency) + ") - [" + 0 + ", " + seekBarPrice.getSelectedMaxValue() + "]");
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,7 +267,6 @@ public class SearchEngineActivity extends BaseActivity {
      */
     private List<RealEstate> getListOfRealEstate() {
         Log.d(TAG, "getListOfRealEstate: called!");
-
         if (listOfRealEstate == null) {
             return listOfRealEstate = new ArrayList<>();
         }
@@ -273,263 +274,30 @@ public class SearchEngineActivity extends BaseActivity {
     }
 
     /**
+     * Setter for listOfRealEstate
+     */
+    private void setListRealEstate(List<RealEstate> realEstateList) {
+        Log.d(TAG, "setListRealEstate: called!");
+        this.listOfRealEstate = realEstateList;
+    }
+
+    /**
      * Getter for listOfPlaceRealEstate
      */
     private List<PlaceRealEstate> getListOfPlaceRealEstate() {
         Log.d(TAG, "getListOfPlaceRealEstate: called!");
-
         if (listOfPlaceRealEstate == null) {
             return listOfPlaceRealEstate = new ArrayList<>();
         }
         return listOfPlaceRealEstate;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     /**
-     * Method to configure the toolbar.
-     * Depending on mainMenu, on the button behaves one way or another. With mainMenu = true,
-     * user can return to AuthLoginAtivity via a dialog that will pop-up. With mainMenu = false,
-     * the user will go to SearchEngineActivity
+     * Setter for listOfPlaceRealEstate
      */
-    private void configureToolBar() {
-        Log.d(TAG, "configureToolBar: called!");
-
-        setSupportActionBar(toolbar);
-        //setTitle("Create a New Listing");
-        setOverflowButtonColor(toolbar, Color.WHITE);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: called!");
-                Utils.launchActivity(SearchEngineActivity.this, MainActivity.class);
-            }
-        });
-
-        /* Changing the font of the toolbar
-         * */
-        Typeface typeface = ResourcesCompat.getFont(this, R.font.arima_madurai);
-        collapsingToolbar.setCollapsedTitleTypeface(typeface);
-        collapsingToolbar.setExpandedTitleTypeface(typeface);
-
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Method to configure the layout.
-     */
-    private void configureLayout() {
-        Log.d(TAG, "configureLayout: called!");
-
-        this.configureToolBar();
-
-        this.getViewGroups();
-        this.getTextViews();
-        this.getSeekBars();
-        this.setAllTexts();
-        this.setCrystalSeekBarListeners();
-
-        this.setMinMaxValuesRangeSeekBars(getListOfRealEstate());
-        this.configureSets();
-
-    }
-
-    /**
-     * Method to get references to the ViewGroups.
-     */
-    private void getViewGroups() {
-        Log.d(TAG, "getViewGroups: called!");
-        this.linearLayoutTypes = cardViewType.findViewById(R.id.linear_layout_checkboxes_id);
-        this.linearLayoutCities = cardViewCities.findViewById(R.id.linear_layout_checkboxes_id);
-        this.linearLayoutLocalities = cardViewLocalities.findViewById(R.id.linear_layout_checkboxes_id);
-        this.linearLayoutTypesPointsOfInterestNearby = cardViewPointsOfInterest.findViewById(R.id.linear_layout_checkboxes_id);
-    }
-
-    /**
-     * Method to get references to the TextViews.
-     */
-    private void getTextViews() {
-        Log.d(TAG, "getTextViews: called!");
-
-        this.tvPrice = cardViewPrice.findViewById(R.id.textView_title_id);
-        this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.textView_title_id);
-        this.tvNumberOfRooms = cardViewNumberOfRooms.findViewById(R.id.textView_title_id);
-        this.tvAmountOfPhotos = cardViewAmountPhotos.findViewById(R.id.textView_title_id);
-
-        this.tvTypes = linearLayoutTypes.findViewById(R.id.textView_add_checkboxes);
-        this.tvCities = linearLayoutCities.findViewById(R.id.textView_add_checkboxes);
-        this.tvLocalities = linearLayoutLocalities.findViewById(R.id.textView_add_checkboxes);
-        this.tvPointsOfInterest = linearLayoutTypesPointsOfInterestNearby.findViewById(R.id.textView_add_checkboxes);
-
-    }
-
-    /**
-     * Method to get references to the SeekBars.
-     */
-    private void getSeekBars() {
-        Log.d(TAG, "getSeekBars: called!");
-        this.seekBarPrice = cardViewPrice.findViewById(R.id.single_seek_bar_id);
-        this.seekBarSurfaceArea = cardViewSurfaceArea.findViewById(R.id.single_seek_bar_id);
-        this.seekBarNumberOfRooms = cardViewNumberOfRooms.findViewById(R.id.single_seek_bar_id);
-        this.seekBarAmountOfPhotos = cardViewAmountPhotos.findViewById(R.id.single_seek_bar_id);
-
-    }
-
-    /**
-     * Method to set the text of all TextViews.
-     */
-    private void setAllTexts() {
-        Log.d(TAG, "setAllTexts: called!");
-        tvPrice.setText("Price (thousands, $)");
-        tvSurfaceArea.setText("Surface area (sqm)");
-        tvNumberOfRooms.setText("Number of Rooms");
-        tvAmountOfPhotos.setText("Amount of Photos");
-
-        tvTypes.setText("Types of Building");
-        tvCities.setText("Cities");
-        tvLocalities.setText("Localities");
-        tvPointsOfInterest.setText("Types of Points of Interest");
-    }
-
-    /**
-     * Method to set the min an max values in the seekBars.
-     */
-    private void setMinMaxValuesRangeSeekBars(List<RealEstate> listOfRealEstates) {
-        Log.d(TAG, "setMinMaxValuesRangeSeekBars: called!");
-        float maxPrice = 0;
-        float maxSurfaceArea = 0;
-        int maxNumberOfRooms = 0;
-        int maxAmountOfPhotos = 0;
-
-        for (int i = 0; i < listOfRealEstates.size(); i++) {
-            if (maxPrice < listOfRealEstates.get(i).getPrice()) {
-                maxPrice = (int) listOfRealEstates.get(i).getPrice();
-            }
-            if (maxSurfaceArea < listOfRealEstates.get(i).getSurfaceArea()) {
-                maxSurfaceArea = listOfRealEstates.get(i).getSurfaceArea();
-            }
-            if (maxNumberOfRooms < listOfRealEstates.get(i).getRooms().getTotalNumberOfRooms()) {
-                maxNumberOfRooms = listOfRealEstates.get(i).getRooms().getTotalNumberOfRooms();
-            }
-            if (maxAmountOfPhotos < listOfRealEstates.get(i).getListOfImagesIds().size()) {
-                maxAmountOfPhotos = listOfRealEstates.get(i).getListOfImagesIds().size();
-            }
-        }
-
-        Log.d(TAG, "setMinMaxValuesRangeSeekBars: maxAmountOfPhotos = " + maxAmountOfPhotos);
-
-        setMinMaxValues(seekBarPrice, 0, maxPrice);
-        setMinMaxValues(seekBarSurfaceArea, 50, maxSurfaceArea);
-        setMinMaxValues(seekBarNumberOfRooms, 1, maxNumberOfRooms);
-        setMinMaxValues(seekBarAmountOfPhotos, 1, maxAmountOfPhotos);
-
-        if (maxNumberOfRooms == 1) {
-            seekBarNumberOfRooms.setEnabled(false);
-            tvNumberOfRooms.setText("Number of Rooms (Disabled)");
-        }
-
-        if (maxAmountOfPhotos == 1) {
-            seekBarAmountOfPhotos.setEnabled(false);
-            tvAmountOfPhotos.setText("Amount of Photos (Disabled)");
-        }
-
-    }
-
-    /**
-     * Sets the min an max values for a seekBar.
-     */
-    private void setMinMaxValues(CrystalRangeSeekbar seekBar, float min, float max) {
-        Log.d(TAG, "setMinMaxValues: called!");
-        seekBar.setMinValue(min);
-        seekBar.setMaxValue(max);
-    }
-
-    /**
-     * Sets the listeners for the seekBars.
-     */
-    private void setCrystalSeekBarListeners() {
-        Log.d(TAG, "setCrystalSeekBarListeners: called!");
-        setListeners(seekBarPrice);
-        setListeners(seekBarSurfaceArea);
-        setListeners(seekBarNumberOfRooms);
-        setListeners(seekBarAmountOfPhotos);
-    }
-
-    /**
-     * Sets the listener for a seekBar.
-     */
-    private void setListeners(final CrystalRangeSeekbar seekBar) {
-        Log.d(TAG, "setListeners: called!");
-
-        seekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
-            @Override
-            public void valueChanged(Number minValue, Number maxValue) {
-                Log.d(TAG, "valueChanged: min = " + minValue + " - " + "maxValue = " + maxValue);
-                setTextDependingOnSeekBar(seekBar, minValue, maxValue);
-                setUsedStateAccordingToSeekBar(seekBar);
-            }
-        });
-
-        seekBar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
-            @Override
-            public void finalValue(Number minValue, Number maxValue) {
-                Log.d(TAG, "finalValue: called1");
-                setTextDependingOnSeekBar(seekBar, minValue, maxValue);
-                setUsedStateAccordingToSeekBar(seekBar);
-            }
-        });
-    }
-
-    /**
-     * Sets the text of the TextView related to a seekBar depending on the seekBar.
-     */
-    private void setTextDependingOnSeekBar(CrystalRangeSeekbar seekBar, Number min, Number max) {
-        Log.d(TAG, "setTextDependingOnTextView: called!");
-        if (seekBar == seekBarPrice) {
-            tvPrice.setText("Price (" + Utils.getCurrencySymbol(currency) + ") - [" + min + ", " + max + "]");
-            this.seekBarPriceUsed = true;
-        } else if (seekBar == seekBarSurfaceArea) {
-            tvSurfaceArea.setText("Surface Area (sqm) - [" + min + ", " + max + "]");
-            this.seekBarSurfaceAreaUsed = true;
-        } else if (seekBar == seekBarNumberOfRooms) {
-            tvNumberOfRooms.setText("Number of Rooms - [" + min + ", " + max + "]");
-            this.seekBarNumberOfRoomsUsed = true;
-        } else if (seekBar == seekBarAmountOfPhotos) {
-            tvAmountOfPhotos.setText("Amount of Photos - [" + min + ", " + max + "]");
-            this.seekbarAmountOfPhotosUsed = true;
-        }
-    }
-
-    /**
-     * Sets if a seekBar has been used before or not.
-     */
-    private void setUsedStateAccordingToSeekBar(CrystalRangeSeekbar seekBar) {
-        Log.d(TAG, "setUsedStateAccordingToSeekBar: called!");
-        if (seekBar == seekBarPrice) {
-            this.seekBarPriceUsed = true;
-        } else if (seekBar == seekBarSurfaceArea) {
-            this.seekBarSurfaceAreaUsed = true;
-        } else if (seekBar == seekBarNumberOfRooms) {
-            this.seekBarNumberOfRoomsUsed = true;
-        } else if (seekBar == seekBarAmountOfPhotos) {
-            this.seekbarAmountOfPhotosUsed = true;
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Method to configure the sets.
-     */
-    private void configureSets() {
-        Log.d(TAG, "configureSets: called!");
-        setOfBuildingTypes = null;
-        setOfLocalities = null;
-        setOfCities = null;
-        setOfTypesOfPointsOfInterest = null;
-        fillSets();
+    private void setListOfPlaceRealEstate(List<PlaceRealEstate> listOfPlaceRealEstate) {
+        Log.d(TAG, "setListRealEstate: called!");
+        this.listOfPlaceRealEstate = listOfPlaceRealEstate;
     }
 
     /**
@@ -577,30 +345,42 @@ public class SearchEngineActivity extends BaseActivity {
         return setOfTypesOfPointsOfInterest;
     }
 
+
     /**
-     * Method that uses RxJava to fill the sets.
+     * Method to get both lists, list of real estate and list of places real estate, and init the
+     * layout configuration
      */
     @SuppressLint("CheckResult")
-    private void fillSets() {
-        Log.d(TAG, "fillSets: called!");
+    private void fetchListsAndSetsAsync() {
+        Log.d(TAG, "fetchListsAndSetsAsync: called!");
+
         getRepository().getAllListingsRealEstateObservable()
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribeWith(new io.reactivex.Observer<List<RealEstate>>() {
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new Observer<List<RealEstate>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         Log.d(TAG, "onSubscribe: called!");
-
                     }
 
                     @Override
-                    public void onNext(List<RealEstate> list) {
-                        Log.d(TAG, "onNext: called!");
-                        listOfRealEstate = list;
-                        fillSetOfBuildingTypes(list);
-                        fillSetOfLocalities(list);
-                        fillSetOfCities(list);
-                        fillSetOfTypesOfPointsOfInterest();
+                    public void onNext(List<RealEstate> realEstates) {
+                        Log.d(TAG, "onNext: " + realEstates);
+
+                        /* We store the list of real estates
+                         * */
+                        setListRealEstate(realEstates);
+
+                        /* We get necessary info for the search engine and store it
+                         * */
+                        getMaxValuesForSeekBars();
+
+                        fillSets();
+
+
+                        /* We get the list of places real estate and init configuration process
+                         * */
+                        getPlacesRealEstate();
                     }
 
                     @Override
@@ -615,6 +395,112 @@ public class SearchEngineActivity extends BaseActivity {
 
                     }
                 });
+    }
+
+    /**
+     * Method to get the list of places real estate and start configuration process
+     */
+    @SuppressLint("CheckResult")
+    private void getPlacesRealEstate() {
+        Log.d(TAG, "getPlacesRealEstate: called!");
+
+        getRepository().getAllPlacesRealEstateObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new Observer<List<PlaceRealEstate>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+                    }
+
+                    @Override
+                    public void onNext(List<PlaceRealEstate> placeRealEstates) {
+                        Log.d(TAG, "onNext: " + placeRealEstates);
+
+                        /* We store the list of places real estate
+                         * */
+                        setListOfPlaceRealEstate(placeRealEstates);
+
+                        if (getListOfPlaceRealEstate() != null) {
+                            for (int i = 0; i < getListOfPlaceRealEstate().size(); i++) {
+                                getSetOfTypesOfPointsOfInterest().addAll(getListOfPlaceRealEstate().get(i).getTypesList());
+                            }
+                        }
+
+                        /* We start the layout configuration*/
+                        configureLayout();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+
+                    }
+                });
+    }
+
+    /**
+     * This method is used to store necessary information that will be used later when
+     * configuring the layout. They are values to set the max values of the seekbars
+     */
+    private void getMaxValuesForSeekBars() {
+        Log.d(TAG, "getMaxValuesForSeekBars: called!");
+
+        maxPriceInDollars = 0;
+        maxPrice = 0;
+        maxSurfaceArea = 0;
+        maxNumberOfRooms = 0;
+        maxAmountOfPhotos = 0;
+
+        for (int i = 0; i < getListOfRealEstate().size(); i++) {
+            if (maxPriceInDollars < getListOfRealEstate().get(i).getPrice()) {
+                maxPriceInDollars = getListOfRealEstate().get(i).getPrice();
+            }
+            if (maxSurfaceArea < getListOfRealEstate().get(i).getSurfaceArea()) {
+                maxSurfaceArea = getListOfRealEstate().get(i).getSurfaceArea();
+            }
+            if (maxNumberOfRooms < getListOfRealEstate().get(i).getRooms().getTotalNumberOfRooms()) {
+                maxNumberOfRooms = getListOfRealEstate().get(i).getRooms().getTotalNumberOfRooms();
+            }
+            if (maxAmountOfPhotos < getListOfRealEstate().get(i).getListOfImagesIds().size()) {
+                maxAmountOfPhotos = getListOfRealEstate().get(i).getListOfImagesIds().size();
+            }
+        }
+
+        /* Depending on if we are using euros or dollars, we set the max price the seekbar
+         * can show
+         * */
+        updateMaxPrice();
+    }
+
+    /**
+     * Method to configure the sets.
+     */
+    private void configureSets() {
+        Log.d(TAG, "configureSets: called!");
+        setOfBuildingTypes = null;
+        setOfLocalities = null;
+        setOfCities = null;
+        setOfTypesOfPointsOfInterest = null;
+        fillSets();
+    }
+
+    /**
+     * Method to fill the sets
+     */
+    private void fillSets() {
+        Log.d(TAG, "fillSets: called!");
+        fillSetOfBuildingTypes(getListOfRealEstate());
+        fillSetOfLocalities(getListOfRealEstate());
+        fillSetOfCities(getListOfRealEstate());
+        fillSetOfTypesOfPointsOfInterest();
     }
 
     /**
@@ -678,7 +564,6 @@ public class SearchEngineActivity extends BaseActivity {
                                 getSetOfTypesOfPointsOfInterest().addAll(list.get(i).getTypesList());
                             }
                         }
-                        addCheckboxesToLayout();
                     }
 
                     @Override
@@ -691,6 +576,222 @@ public class SearchEngineActivity extends BaseActivity {
                         Log.d(TAG, "onComplete: called!");
                     }
                 });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Method to configure the toolbar.
+     * Depending on mainMenu, on the button behaves one way or another. With mainMenu = true,
+     * user can return to AuthLoginAtivity via a dialog that will pop-up. With mainMenu = false,
+     * the user will go to SearchEngineActivity
+     */
+    private void configureToolBar() {
+        Log.d(TAG, "configureToolBar: called!");
+
+        setSupportActionBar(toolbar);
+        //setTitle("Create a New Listing");
+        setOverflowButtonColor(toolbar, Color.WHITE);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: called!");
+                Utils.launchActivity(SearchEngineActivity.this, MainActivity.class);
+            }
+        });
+
+        /* Changing the font of the toolbar
+         * */
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.arima_madurai);
+        collapsingToolbar.setCollapsedTitleTypeface(typeface);
+        collapsingToolbar.setExpandedTitleTypeface(typeface);
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Method to configure the layout.
+     */
+    private void configureLayout() {
+        Log.d(TAG, "configureLayout: called!");
+
+        this.configureToolBar();
+
+        this.getViewGroups();
+        this.getTextViews();
+        this.getSeekBars();
+
+        this.setCrystalSeekBarListeners();
+        this.setAllTexts();
+
+        this.setMinMaxValuesRangeSeekBars();
+        this.configureSets();
+
+        this.addCheckboxesToLayout();
+
+        /* When the configuration process ends, we load the main content and hide the progress bar
+         * */
+        Utils.showMainContent(progressBarContent, mainLayout);
+
+    }
+
+    /**
+     * Method to get references to the ViewGroups.
+     */
+    private void getViewGroups() {
+        Log.d(TAG, "getViewGroups: called!");
+        this.linearLayoutTypes = cardViewType.findViewById(R.id.linear_layout_checkboxes_id);
+        this.linearLayoutCities = cardViewCities.findViewById(R.id.linear_layout_checkboxes_id);
+        this.linearLayoutLocalities = cardViewLocalities.findViewById(R.id.linear_layout_checkboxes_id);
+        this.linearLayoutTypesPointsOfInterestNearby = cardViewPointsOfInterest.findViewById(R.id.linear_layout_checkboxes_id);
+    }
+
+    /**
+     * Method to get references to the TextViews.
+     */
+    private void getTextViews() {
+        Log.d(TAG, "getTextViews: called!");
+
+        this.tvPrice = cardViewPrice.findViewById(R.id.textView_title_id);
+        this.tvSurfaceArea = cardViewSurfaceArea.findViewById(R.id.textView_title_id);
+        this.tvNumberOfRooms = cardViewNumberOfRooms.findViewById(R.id.textView_title_id);
+        this.tvAmountOfPhotos = cardViewAmountPhotos.findViewById(R.id.textView_title_id);
+
+        this.tvTypes = linearLayoutTypes.findViewById(R.id.textView_add_checkboxes);
+        this.tvCities = linearLayoutCities.findViewById(R.id.textView_add_checkboxes);
+        this.tvLocalities = linearLayoutLocalities.findViewById(R.id.textView_add_checkboxes);
+        this.tvPointsOfInterest = linearLayoutTypesPointsOfInterestNearby.findViewById(R.id.textView_add_checkboxes);
+
+    }
+
+    /**
+     * Method to get references to the SeekBars.
+     */
+    private void getSeekBars() {
+        Log.d(TAG, "getSeekBars: called!");
+        this.seekBarPrice = cardViewPrice.findViewById(R.id.single_seek_bar_id);
+        this.seekBarSurfaceArea = cardViewSurfaceArea.findViewById(R.id.single_seek_bar_id);
+        this.seekBarNumberOfRooms = cardViewNumberOfRooms.findViewById(R.id.single_seek_bar_id);
+        this.seekBarAmountOfPhotos = cardViewAmountPhotos.findViewById(R.id.single_seek_bar_id);
+
+    }
+
+    /**
+     * Method to set the text of all TextViews.
+     */
+    private void setAllTexts() {
+        Log.d(TAG, "setAllTexts: called!");
+        updatePriceTextView();
+        tvSurfaceArea.setText("Surface area (sqm) - [" + 0 + ", " + (int) maxSurfaceArea + "]");
+        tvNumberOfRooms.setText("Number of Rooms - [" + 0 + ", " + maxNumberOfRooms + "]");
+        tvAmountOfPhotos.setText("Amount of Photos - [" + 0 + ", " + maxAmountOfPhotos + "]");
+
+        tvTypes.setText("Types of Building");
+        tvCities.setText("Cities");
+        tvLocalities.setText("Localities");
+        tvPointsOfInterest.setText("Types of Points of Interest");
+    }
+
+    /**
+     * Method to set the min an max values in the seekBars.
+     */
+    private void setMinMaxValuesRangeSeekBars() {
+        Log.d(TAG, "setMinMaxValuesRangeSeekBars: called!");
+        setMinMaxValues(seekBarPrice, 0, maxPriceInDollars);
+        setMinMaxValues(seekBarSurfaceArea, 0, maxSurfaceArea);
+        setMinMaxValues(seekBarNumberOfRooms, 0, maxNumberOfRooms);
+        setMinMaxValues(seekBarAmountOfPhotos, 0, maxAmountOfPhotos);
+
+        if (maxPriceInDollars == 0) {
+            seekBarPrice.setEnabled(false);
+            tvPrice.setText("Price (Disabled)");
+        }
+
+        if (maxSurfaceArea == 0) {
+            seekBarNumberOfRooms.setEnabled(false);
+            tvSurfaceArea.setText("Surface Area (Disabled)");
+        }
+
+        if (maxNumberOfRooms == 0) {
+            seekBarNumberOfRooms.setEnabled(false);
+            tvNumberOfRooms.setText("Number of Rooms (Disabled)");
+        }
+
+        if (maxAmountOfPhotos == 0) {
+            seekBarAmountOfPhotos.setEnabled(false);
+            tvAmountOfPhotos.setText("Amount of Photos (Disabled)");
+        }
+    }
+
+    /**
+     * Sets the min an max values for a seekBar.
+     */
+    private void setMinMaxValues(CrystalRangeSeekbar seekBar, float min, float max) {
+        Log.d(TAG, "setMinMaxValues: called!");
+        seekBar.setMinValue(min);
+        seekBar.setMaxValue(max);
+    }
+
+    /**
+     * Sets the listeners for the seekBars.
+     */
+    private void setCrystalSeekBarListeners() {
+        Log.d(TAG, "setCrystalSeekBarListeners: called!");
+        setListeners(seekBarPrice);
+        setListeners(seekBarSurfaceArea);
+        setListeners(seekBarNumberOfRooms);
+        setListeners(seekBarAmountOfPhotos);
+    }
+
+    /**
+     * Sets the listener for a seekBar.
+     */
+    private void setListeners(final CrystalRangeSeekbar seekBar) {
+        Log.d(TAG, "setListeners: called!");
+
+        seekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
+            @Override
+            public void valueChanged(Number minValue, Number maxValue) {
+                Log.d(TAG, "valueChanged: min = " + minValue + " - " + "maxValue = " + maxValue);
+                setTextDependingOnSeekBar(seekBar, minValue, maxValue);
+            }
+        });
+
+        seekBar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
+            @Override
+            public void finalValue(Number minValue, Number maxValue) {
+                Log.d(TAG, "finalValue: called1");
+                setTextDependingOnSeekBar(seekBar, minValue, maxValue);
+            }
+        });
+    }
+
+    /**
+     * Sets the text of the TextView related to a seekBar depending on the seekBar.
+     */
+    private void setTextDependingOnSeekBar(CrystalRangeSeekbar seekBar, Number min, Number max) {
+        Log.d(TAG, "setTextDependingOnTextView: called!");
+        if (seekBar == seekBarPrice) {
+            tvPrice.setText("Price (" + Utils.getCurrencySymbol(currency) + ") - [" + min + ", " + max + "]");
+        } else if (seekBar == seekBarSurfaceArea) {
+            tvSurfaceArea.setText("Surface Area (sqm) - [" + min + ", " + max + "]");
+        } else if (seekBar == seekBarNumberOfRooms) {
+            tvNumberOfRooms.setText("Number of Rooms - [" + min + ", " + max + "]");
+        } else if (seekBar == seekBarAmountOfPhotos) {
+            tvAmountOfPhotos.setText("Amount of Photos - [" + min + ", " + max + "]");
+        }
+    }
+
+    private void updateMaxPrice() {
+        Log.d(TAG, "updateMaxPrice: called!");
+        if (currency == 0) {
+            maxPrice = maxPriceInDollars;
+
+        } else {
+            maxPrice = Utils.convertDollarToEuro(maxPriceInDollars);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -803,158 +904,56 @@ public class SearchEngineActivity extends BaseActivity {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Method to get the text from a TextView and capitalize it
-     */
-    private String getTextFromView(TextView textView) {
-        Log.d(TAG, "getTextFromView: called!");
-        return Utils.capitalize(Utils.getStringFromTextView(textView));
-    }
-
-    /**
-     * Method to get the max value from a seekBar
-     */
-    private int getMaxValueFromSeekBar(CrystalRangeSeekbar rangeSeekBar) {
-        Log.d(TAG, "getMaxValueFromSeekBar: called!");
-        return (int) rangeSeekBar.getSelectedMaxValue();
-    }
-
-    /**
-     * Method to get the min value from a seekBar
-     */
-    private int getMinValueFromSeekBar(CrystalRangeSeekbar rangeSeekBar) {
-        Log.d(TAG, "getMinValueFromSeekBar: called!");
-        return (int) rangeSeekBar.getSelectedMinValue();
-    }
-
-    /**
-     * Method to check if a seekBar has been used
-     */
-    private boolean seekBarNotUsed(CrystalRangeSeekbar seekBar) {
-        Log.d(TAG, "seekBarNotUsed: called!");
-
-        if (seekBar == seekBarPrice) {
-            return seekBarPriceUsed;
-        } else if (seekBar == seekBarSurfaceArea) {
-            return seekBarSurfaceAreaUsed;
-        } else if (seekBar == seekBarNumberOfRooms) {
-            return seekBarNumberOfRoomsUsed;
-        } else if (seekBar == seekBarAmountOfPhotos) {
-            return seekbarAmountOfPhotosUsed;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * Method to check if the seekBar values pass or not a specific filter
-     */
-    private boolean maxMinValuesFilterPassed(CrystalRangeSeekbar rangeSeekBar, float value) {
-        Log.d(TAG, "maxMinValuesFilterPassed: called!");
-
-        if (value > (float) rangeSeekBar.getSelectedMinValue()
-                && value < (float) rangeSeekBar.getSelectedMaxValue()) {
-            return true;
-        }
-        return false;
-    }
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
      * Method to init the search of listings
      */
     private void initSearch() {
         Log.d(TAG, "initSearch: called!");
 
-        // TODO: 05/09/2018 Show Progress Bar!
-
-        // TODO: 17/09/2018 This is wrong. The ideal process would be to update all the real estates
-        // TODO: 17/09/2018 in the database whether they passed the filter or not. This way, the
-        // TODO: search information will be stored and can be accessed at any moment without a search
-
-        /* We create a new list
-         * to store the found real estates
+        /* We disable user interaction
          * */
-        List<RealEstate> listOfFoundRealEstates = new ArrayList<>();
+        Utils.hideMainContent(progressBarContent, mainLayout);
 
-        for (int i = 0; i < listOfRealEstate.size(); i++) {
+        // TODO: 07/10/2018 Logs to control that we get the information properly. DELETE!
 
-            /* If the real estate does not pass the filter, we set it to false
-             * */
-            if (!allFiltersPassed(listOfRealEstate.get(i))) {
-                listOfRealEstate.get(i).setFound(false);
-                continue;
+        for (int i = 0; i < getListOfRealEstate().size(); i++) {
+            Log.w(TAG, "TYPE +++++++++++++: " + typeFilterPassed(getListOfRealEstate().get(i)));
+            Log.w(TAG, "PRICE +++++++++++++: " + priceFilterPassed(getListOfRealEstate().get(i)));
+            Log.w(TAG, "SURFACE AREA +++++++++++++: " + surfaceAreaFilterPassed(getListOfRealEstate().get(i)));
+            Log.w(TAG, "NUMBER OF ROOMS +++++++++++++: " + numberOfRoomsFilterPassed(getListOfRealEstate().get(i)));
+            Log.w(TAG, "LOCALITY +++++++++++++: " + localityFilterPassed(getListOfRealEstate().get(i)));
+            Log.w(TAG, "CITY +++++++++++++: " + cityFilterPassed(getListOfRealEstate().get(i)));
+            Log.w(TAG, "AMOUNT OF PHOTOS +++++++++++++: " + amountOfPhotosFilterPassed(getListOfRealEstate().get(i)));
+            Log.w(TAG, "ON SALE +++++++++++++: " + onSaleFilterPassed(getListOfRealEstate().get(i)));
+            Log.w(TAG, "POINTS OF INTEREST +++++++++++++: " + pointsOfInterestFilterPassed(getListOfRealEstate().get(i)));
+            Log.i(TAG, " +++++++++++++ +++++++++++++ +++++++++++++ +++++++++++++: ");
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        for (int i = 0; i < getListOfRealEstate().size(); i++) {
+            Log.w(TAG, "ALL FILTERS +++++++++++++: " + allFiltersPassed(getListOfRealEstate().get(i)));
+        }
+
+        // TODO: 07/10/2018 DELETE till here!
+
+        for (int i = 0; i < getListOfRealEstate().size(); i++) {
+
+            if (allFiltersPassed(getListOfRealEstate().get(i))) {
+                getListOfRealEstate().get(i).setFound(true);
+
+            } else {
+                getListOfRealEstate().get(i).setFound(false);
             }
-
-            /* If the real estate passes the filter, we set the found field to true and add
-             * it to the list
-             * */
-            listOfRealEstate.get(i).setFound(true);
-            listOfFoundRealEstates.add(listOfRealEstate.get(i));
         }
 
-        if (listOfFoundRealEstates.size() > 0) {
-            updateRealEstatesWithFoundInfo(listOfFoundRealEstates);
-
-        } else {
-            ToastHelper.toastLong(this, "No results were found");
-        }
+        /* We update the found information of each real estate so the ViewModel can show these
+         * real estates in MainActivity
+         * */
+        updateRealEstatesWithFoundInfo(getListOfRealEstate());
 
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //FILTERS
-
-    /**
-     * Method that returns true if all filters has been passed. If that is the case, the listing
-     * will be added to a list and displayed in the list of listings found bu the Search Engine
-     */
-    private boolean allFiltersPassed(RealEstate realEstate) {
-        Log.d(TAG, "allFiltersPassed: called!");
-
-        /* Could be simplified but we leave it like this for readability
-         * */
-
-        if (!typeFilterPassed(realEstate)) {
-            return false;
-        }
-
-        if (!priceFilterPassed(realEstate)) {
-            return false;
-        }
-
-        if (!surfaceAreaFilterPassed(realEstate)) {
-            return false;
-        }
-
-        if (!numberOfRoomsFilterPassed(realEstate)) {
-            return false;
-        }
-
-        if (!cityFilterPassed(realEstate)) {
-            return false;
-        }
-
-        if (!localityFilterPassed(realEstate)) {
-            return false;
-        }
-
-        if (!amountOfPhotosFilterPassed(realEstate)) {
-            return false;
-        }
-
-        if (!onSaleFilterPassed(realEstate)) {
-            return false;
-        }
-
-        if (!pointsOfInterestFilterPassed(realEstate)) {
-            return false;
-        }
-
-        return true;
-    }
 
     /**
      * Method to check if a listing passes the type filter
@@ -988,51 +987,84 @@ public class SearchEngineActivity extends BaseActivity {
         return false;
     }
 
+
     /**
      * Method to check if a listing passes the price filter
      */
     private boolean priceFilterPassed(RealEstate realEstate) {
-        Log.d(TAG, "priceFilterPassed: called!");
+        Log.d(TAG, "priceFilter: called!");
 
-        /* We firstly check that the seekBar was used
-         * */
-        if (seekBarNotUsed(seekBarPrice)) {
+        if (seekBarPrice.getSelectedMinValue().floatValue() == 0
+                && seekBarPrice.getSelectedMaxValue().floatValue() == maxPrice) {
+
+            /* In this case, the seekBar has not been used and the filter is automatically passed
+             * */
             return true;
-        }
 
-        /* We take care that the price is in dollars. Besides we multiply it by 1000
-         * because the range bar show prices divided by thousands
-         * */
-        int maxPrice = getMaxValueFromSeekBar(seekBarPrice) * 1000;
-        int minPrice = getMinValueFromSeekBar(seekBarPrice) * 1000;
+        } else {
 
-        if (currency == 1) {
-            maxPrice = (int) Utils.convertEuroToDollar(maxPrice);
-            minPrice = (int) Utils.convertEuroToDollar(minPrice);
-        }
+            float minPriceSelected;
+            float maxPriceSelected;
 
-        if (realEstate.getPrice() > minPrice && realEstate.getPrice() < maxPrice) {
-            return true;
+            /* Firstly, we convert the euros to dollars if necessary
+             * */
+            if (currency == 0) {
+                minPriceSelected = seekBarPrice.getSelectedMinValue().floatValue();
+                maxPriceSelected = seekBarPrice.getSelectedMaxValue().floatValue();
+
+            } else {
+                minPriceSelected = Utils.convertEuroToDollar(seekBarPrice.getSelectedMinValue().floatValue());
+                maxPriceSelected = Utils.convertEuroToDollar(seekBarPrice.getSelectedMaxValue().floatValue());
+            }
+
+            /* The user selected a price filter.
+             * Check if the real estate passes it.
+             * */
+            if (realEstate.getPrice() >= minPriceSelected
+                    && realEstate.getPrice() <= maxPriceSelected) {
+
+                /* The filter has been passed
+                 * */
+                return true;
+
+            } else {
+
+                /* The filter has not been passed
+                 * */
+                return false;
+            }
         }
-        return false;
     }
 
-    /**
-     * Method to check if a listing passes the surface area filter
-     */
     private boolean surfaceAreaFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "surfaceAreaFilterPassed: called!");
 
-        /* We firstly check that values were entered
-         * */
-        if (seekBarNotUsed(seekBarSurfaceArea)) {
-            return true;
-        }
+        if (seekBarSurfaceArea.getSelectedMinValue().floatValue() == 0
+                && seekBarSurfaceArea.getSelectedMaxValue().floatValue() == maxSurfaceArea) {
 
-        if (maxMinValuesFilterPassed(seekBarSurfaceArea, realEstate.getSurfaceArea())) {
+            /* In this case, the seekBar has not been used and the filter is automatically passed
+             * */
             return true;
+
+        } else {
+
+            /* The user selected a surfaceArea filter.
+             * Check if the real estate passes it.
+             * */
+            if (realEstate.getSurfaceArea() >= seekBarSurfaceArea.getSelectedMinValue().floatValue()
+                    && realEstate.getSurfaceArea() <= seekBarSurfaceArea.getSelectedMaxValue().floatValue()) {
+
+                /* The filter has been passed
+                 * */
+                return true;
+
+            } else {
+
+                /* The filter has not been passed
+                 * */
+                return false;
+            }
         }
-        return false;
     }
 
     /**
@@ -1041,16 +1073,32 @@ public class SearchEngineActivity extends BaseActivity {
     private boolean numberOfRoomsFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "numberOfRoomsFilterPassed: called!");
 
-        /* We firstly check that values were entered
-         * */
-        if (seekBarNotUsed(seekBarNumberOfRooms)) {
-            return true;
-        }
+        if (seekBarNumberOfRooms.getSelectedMinValue().floatValue() == 0
+                && seekBarNumberOfRooms.getSelectedMaxValue().floatValue() == maxNumberOfRooms) {
 
-        if (maxMinValuesFilterPassed(seekBarNumberOfRooms, realEstate.getRooms().getTotalNumberOfRooms())) {
+            /* In this case, the seekBar has not been used and the filter is automatically passed
+             * */
             return true;
+
+        } else {
+
+            /* The user selected a total rooms filter.
+             * Check if the real estate passes it.
+             * */
+            if (realEstate.getRooms().getTotalNumberOfRooms() >= seekBarNumberOfRooms.getSelectedMinValue().floatValue()
+                    && realEstate.getRooms().getTotalNumberOfRooms() <= seekBarNumberOfRooms.getSelectedMaxValue().floatValue()) {
+
+                /* The filter has been passed
+                 * */
+                return true;
+
+            } else {
+
+                /* The filter has not been passed
+                 * */
+                return false;
+            }
         }
-        return false;
     }
 
     /**
@@ -1123,16 +1171,32 @@ public class SearchEngineActivity extends BaseActivity {
     private boolean amountOfPhotosFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "amountOfPhotosFilterPassed: called!");
 
-        /* We firstly check that values were entered
-         * */
-        if (seekBarNotUsed(seekBarAmountOfPhotos)) {
-            return true;
-        }
+        if (seekBarAmountOfPhotos.getSelectedMinValue().floatValue() == 0
+                && seekBarAmountOfPhotos.getSelectedMaxValue().floatValue() == maxAmountOfPhotos) {
 
-        if (maxMinValuesFilterPassed(seekBarAmountOfPhotos, realEstate.getListOfImagesIds().size())) {
+            /* In this case, the seekBar has not been used and the filter is automatically passed
+             * */
             return true;
+
+        } else {
+
+            /* The user selected a total rooms filter.
+             * Check if the real estate passes it.
+             * */
+            if (realEstate.getListOfImagesIds().size() >= seekBarAmountOfPhotos.getSelectedMinValue().floatValue()
+                    && realEstate.getListOfImagesIds().size() <= seekBarAmountOfPhotos.getSelectedMaxValue().floatValue()) {
+
+                /* The filter has been passed
+                 * */
+                return true;
+
+            } else {
+
+                /* The filter has not been passed
+                 * */
+                return false;
+            }
         }
-        return false;
     }
 
     /**
@@ -1210,6 +1274,58 @@ public class SearchEngineActivity extends BaseActivity {
         }
         return false;
     }
+
+    //FILTERS
+
+    /**
+     * Method that returns true if all filters has been passed. If that is the case, the listing
+     * will be added to a list and displayed in the list of listings found bu the Search Engine
+     */
+    private boolean allFiltersPassed(RealEstate realEstate) {
+        Log.d(TAG, "allFiltersPassed: called!");
+
+        /* Could be simplified but we leave it like this for readability
+         * */
+
+        if (!typeFilterPassed(realEstate)) {
+            return false;
+        }
+
+        if (!priceFilterPassed(realEstate)) {
+            return false;
+        }
+
+        if (!surfaceAreaFilterPassed(realEstate)) {
+            return false;
+        }
+
+        if (!numberOfRoomsFilterPassed(realEstate)) {
+            return false;
+        }
+
+        if (!cityFilterPassed(realEstate)) {
+            return false;
+        }
+
+        if (!localityFilterPassed(realEstate)) {
+            return false;
+        }
+
+        if (!amountOfPhotosFilterPassed(realEstate)) {
+            return false;
+        }
+
+        if (!onSaleFilterPassed(realEstate)) {
+            return false;
+        }
+
+        if (!pointsOfInterestFilterPassed(realEstate)) {
+            return false;
+        }
+
+        return true;
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 

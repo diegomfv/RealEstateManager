@@ -471,7 +471,6 @@ public class DataRepository {
      * RxJava methods that return Observables.
      * They allow access to the information of the Database.
      */
-
     public io.reactivex.Observable<List<RealEstate>> getAllListingsRealEstateObservable() {
         Log.d(TAG, "getAllListingsRealEstateObservable: called!");
         return io.reactivex.Observable.fromCallable(new Callable<List<RealEstate>>() {

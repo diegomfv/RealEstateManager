@@ -57,7 +57,7 @@ public class ListingsSharedViewModel extends AndroidViewModel {
 
     /**
      * Returns the MutableLiveDataObject which will be used to display
-     * data in the FragmentHandsetItemDescription
+     * data in the FragmentItemDescription
      */
     public LiveData<RealEstate> getItemSelected() {
         Log.d(TAG, "getItemSelected: called!");

@@ -41,7 +41,7 @@ public class PositionViewModel extends AndroidViewModel {
     }
 
     /** This method fills the MutableLiveData with the information from
-     * the item clicked in FragmentHandsetItemDescription. When this gets modified,
+     * the item clicked in FragmentItemDescription. When this gets modified,
      * it automatically triggers the observer via getItemSelected()
      * */
     public void selectItem (RealEstate realEstate) {
@@ -50,7 +50,7 @@ public class PositionViewModel extends AndroidViewModel {
     }
 
     /** Returns the MutableLiveDataObject which will be used to display
-     * data in the FragmentHandsetItemDescription
+     * data in the FragmentItemDescription
      * */
     public LiveData<RealEstate> getItemSelected() {
         Log.d(TAG, "getItemSelected: called!");

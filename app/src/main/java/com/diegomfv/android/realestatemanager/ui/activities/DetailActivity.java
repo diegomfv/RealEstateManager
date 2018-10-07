@@ -13,7 +13,7 @@ import android.view.View;
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
-import com.diegomfv.android.realestatemanager.ui.fragments.FragmentHandsetItemDescription;
+import com.diegomfv.android.realestatemanager.ui.fragments.FragmentItemDescription;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
 import butterknife.BindView;
@@ -158,7 +158,7 @@ public class DetailActivity extends BaseActivity {
     private void loadFragment(Bundle bundle) {
         Log.d(TAG, "loadFragmentOrFragments: called!");
 
-        FragmentHandsetItemDescription fragmentItemDescription = FragmentHandsetItemDescription.newInstance();
+        FragmentItemDescription fragmentItemDescription = FragmentItemDescription.newInstance();
         fragmentItemDescription.setArguments(bundle);
 
         getSupportFragmentManager()
