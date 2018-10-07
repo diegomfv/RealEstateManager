@@ -913,29 +913,6 @@ public class SearchEngineActivity extends BaseActivity {
          * */
         Utils.hideMainContent(progressBarContent, mainLayout);
 
-        // TODO: 07/10/2018 Logs to control that we get the information properly. DELETE!
-
-        for (int i = 0; i < getListOfRealEstate().size(); i++) {
-            Log.w(TAG, "TYPE +++++++++++++: " + typeFilterPassed(getListOfRealEstate().get(i)));
-            Log.w(TAG, "PRICE +++++++++++++: " + priceFilterPassed(getListOfRealEstate().get(i)));
-            Log.w(TAG, "SURFACE AREA +++++++++++++: " + surfaceAreaFilterPassed(getListOfRealEstate().get(i)));
-            Log.w(TAG, "NUMBER OF ROOMS +++++++++++++: " + numberOfRoomsFilterPassed(getListOfRealEstate().get(i)));
-            Log.w(TAG, "LOCALITY +++++++++++++: " + localityFilterPassed(getListOfRealEstate().get(i)));
-            Log.w(TAG, "CITY +++++++++++++: " + cityFilterPassed(getListOfRealEstate().get(i)));
-            Log.w(TAG, "AMOUNT OF PHOTOS +++++++++++++: " + amountOfPhotosFilterPassed(getListOfRealEstate().get(i)));
-            Log.w(TAG, "ON SALE +++++++++++++: " + onSaleFilterPassed(getListOfRealEstate().get(i)));
-            Log.w(TAG, "POINTS OF INTEREST +++++++++++++: " + pointsOfInterestFilterPassed(getListOfRealEstate().get(i)));
-            Log.i(TAG, " +++++++++++++ +++++++++++++ +++++++++++++ +++++++++++++: ");
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////
-
-        for (int i = 0; i < getListOfRealEstate().size(); i++) {
-            Log.w(TAG, "ALL FILTERS +++++++++++++: " + allFiltersPassed(getListOfRealEstate().get(i)));
-        }
-
-        // TODO: 07/10/2018 DELETE till here!
-
         for (int i = 0; i < getListOfRealEstate().size(); i++) {
 
             if (allFiltersPassed(getListOfRealEstate().get(i))) {
