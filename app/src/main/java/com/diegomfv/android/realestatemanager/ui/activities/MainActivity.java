@@ -34,7 +34,6 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
-// TODO: 30/09/2018 SearchEngine
 // TODO: 30/09/2018 Layouts for Tablets
 // TODO: 05/10/2018 Documentation
 // TODO: 05/10/2018 See Detail information in Tablet when a label is clicked in Position Activity!
