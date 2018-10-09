@@ -479,62 +479,63 @@ public class FragmentItemDescription extends BaseFragment {
                             /* Once done,
                              * we do the same with the places
                              * */
-                            getRepository().getAllPlacesRealEstateObservable()
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribeWith(new io.reactivex.Observer<List<PlaceRealEstate>>() {
-                                        @Override
-                                        public void onSubscribe(Disposable d) {
-                                            Log.d(TAG, "onSubscribe places: called!");
+                            if (getActivity() != null) {
+                                getRepository().getAllPlacesRealEstateObservable()
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribeWith(new io.reactivex.Observer<List<PlaceRealEstate>>() {
+                                            @Override
+                                            public void onSubscribe(Disposable d) {
+                                                Log.d(TAG, "onSubscribe places: called!");
 
-                                        }
+                                            }
 
-                                        @Override
-                                        public void onNext(List<PlaceRealEstate> placeRealEstates) {
-                                            Log.d(TAG, "onNext places: called!");
+                                            @Override
+                                            public void onNext(List<PlaceRealEstate> placeRealEstates) {
+                                                Log.d(TAG, "onNext places: called!");
 
-                                            /* Firstly, we clear the listOfPlaces related to the real estate */
-                                            getListOfPlacesRealEstate().clear();
+                                                /* Firstly, we clear the listOfPlaces related to the real estate */
+                                                getListOfPlacesRealEstate().clear();
 
-                                            /* Then we fill the listOfPlacesRealEstate with those places
-                                             * related to the realEstate
-                                             * */
+                                                /* Then we fill the listOfPlacesRealEstate with those places
+                                                 * related to the realEstate
+                                                 * */
 
-                                            if (getRealEstate().getListOfNearbyPointsOfInterestIds() != null) {
+                                                if (getRealEstate().getListOfNearbyPointsOfInterestIds() != null) {
 
-                                                for (int i = 0; i < getRealEstate().getListOfNearbyPointsOfInterestIds().size(); i++) {
+                                                    for (int i = 0; i < getRealEstate().getListOfNearbyPointsOfInterestIds().size(); i++) {
 
-                                                    for (int j = 0; j < placeRealEstates.size(); j++) {
+                                                        for (int j = 0; j < placeRealEstates.size(); j++) {
 
-                                                        if (getRealEstate().getListOfNearbyPointsOfInterestIds().get(i)
-                                                                .equals(placeRealEstates.get(j).getId())) {
-                                                            getListOfPlacesRealEstate().add(placeRealEstates.get(j));
+                                                            if (getRealEstate().getListOfNearbyPointsOfInterestIds().get(i)
+                                                                    .equals(placeRealEstates.get(j).getId())) {
+                                                                getListOfPlacesRealEstate().add(placeRealEstates.get(j));
+                                                            }
                                                         }
                                                     }
                                                 }
+
+                                                /* Once done,
+                                                 * we can set the layout
+                                                 * */
+                                                configureRecyclerView();
+                                                fillLayoutWithRealEstateInfo();
+                                                updateMapWithPins();
                                             }
 
-                                            /* Once done,
-                                             * we can set the layout
-                                             * */
-                                            configureRecyclerView();
-                                            fillLayoutWithRealEstateInfo();
-                                            updateMapWithPins();
-                                        }
+                                            @Override
+                                            public void onError(Throwable e) {
+                                                Log.e(TAG, "onError places: " + e.getMessage());
 
-                                        @Override
-                                        public void onError(Throwable e) {
-                                            Log.e(TAG, "onError places: " + e.getMessage());
+                                            }
 
-                                        }
+                                            @Override
+                                            public void onComplete() {
+                                                Log.d(TAG, "onComplete places: called!");
 
-                                        @Override
-                                        public void onComplete() {
-                                            Log.d(TAG, "onComplete places: called!");
-
-                                        }
-                                    });
-
+                                            }
+                                        });
+                            }
                         }
 
                         @Override
@@ -577,7 +578,7 @@ public class FragmentItemDescription extends BaseFragment {
 
             } else {
 
-                if (getRootMainActivity() != null) {
+                if (getActivity() != null) {
 
                     this.recyclerViewMedia.setHasFixedSize(true);
                     this.recyclerViewMedia.setLayoutManager(new LinearLayoutManager(

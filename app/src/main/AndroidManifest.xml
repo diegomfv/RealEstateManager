@@ -25,6 +25,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDuv5PtP5uwugkDW189v9_ycrp8A0nlwkU"/>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -42,8 +43,8 @@
 
         <activity android:name=".ui.activities.MainActivity" />
         <activity android:name=".ui.activities.DetailActivity" />
-        <activity android:name=".ui.activities.SearchEngineActivity" />
-        <activity android:name=".ui.activities.CreateNewListingActivity" />
+        <activity android:name=".ui.activities.SearchEngineActivity"/>
+        <activity android:name=".ui.activities.CreateNewListingActivity"/>
         <activity android:name=".ui.activities.EditListingActivity" />
         <activity android:name=".ui.activities.PositionActivity" />
         <activity android:name=".ui.base.BaseActivity" />
@@ -51,7 +52,6 @@
         <activity android:name=".ui.activities.SignUpActivity" />
         <activity android:name=".ui.activities.PhotoGridActivity" />
         <activity android:name=".ui.activities.LoanSimulatorActivity"/>
-
 
         <receiver android:name=".receivers.InternetConnectionReceiver"/>
 

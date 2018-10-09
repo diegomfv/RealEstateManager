@@ -2,6 +2,8 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
@@ -108,6 +111,9 @@ public class MainActivity extends BaseActivity {
         }
 
         this.currency = Utils.readCurrentCurrencyShPref(this);
+
+        // TODO: 09/10/2018 Delete!
+        ifTabletObligateLandscape();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         setContentView(R.layout.activity_main);
@@ -445,5 +451,12 @@ public class MainActivity extends BaseActivity {
                         Utils.launchActivityClearStack(MainActivity.this, AuthLoginActivity.class);
                     }
                 });
+    }
+
+    private void ifTabletObligateLandscape() {
+        Log.d(TAG, "ifTabletObligateLandscape: called!");
+        if ((getResources().getConfiguration().screenLayout &      Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
     }
 }

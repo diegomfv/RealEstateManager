@@ -81,7 +81,7 @@ public class FragmentListListings extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: called!");
 
-        if (getRootMainActivity() != null) {
+        if (getActivity() != null) {
             this.currency = Utils.readCurrentCurrencyShPref(getRootMainActivity());
         }
 
