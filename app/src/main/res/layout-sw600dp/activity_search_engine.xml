@@ -22,7 +22,7 @@
             app:expandedTitleMarginBottom="94dp"
             app:expandedTitleTextAppearance="@android:color/white"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:title="SEARCH">
+            app:title="Search">
 
             <ImageView
                 android:layout_width="fill_parent"

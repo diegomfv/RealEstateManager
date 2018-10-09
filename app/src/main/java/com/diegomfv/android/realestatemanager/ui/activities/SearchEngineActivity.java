@@ -1,12 +1,15 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -114,10 +117,10 @@ public class SearchEngineActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<CheckBox> listOfBuildingTypeCheckboxes;
-    private List<CheckBox> listOfCityCheckboxes;
-    private List<CheckBox> listOfLocalityCheckboxes;
-    private List<CheckBox> listOfPointOfInterestCheckboxes;
+    private List<AppCompatCheckBox> listOfBuildingTypeCheckboxes;
+    private List<AppCompatCheckBox> listOfCityCheckboxes;
+    private List<AppCompatCheckBox> listOfLocalityCheckboxes;
+    private List<AppCompatCheckBox> listOfPointOfInterestCheckboxes;
 
     private TextView tvPrice;
     private CrystalRangeSeekbar seekBarPrice;
@@ -836,10 +839,10 @@ public class SearchEngineActivity extends BaseActivity {
     /**
      * Method that fills the layout with checkboxes according to certain information
      */
-    private void fillWithCheckboxes(LinearLayout linearLayout, String type, List<CheckBox> listOfCheckboxes) {
+    private void fillWithCheckboxes(LinearLayout linearLayout, String type, List<AppCompatCheckBox> listOfCheckboxes) {
         Log.d(TAG, "addPointsOfInterestCheckboxesToLayout: called!");
 
-        CheckBox checkBox = new CheckBox(this);
+        AppCompatCheckBox checkBox = new AppCompatCheckBox(this);
         linearLayout.addView(checkBox);
 
         // TODO: 26/08/2018 LayoutParams does not work!
@@ -852,7 +855,9 @@ public class SearchEngineActivity extends BaseActivity {
 
         checkBox.setLayoutParams(layoutParams);
         checkBox.setText(Utils.capitalize(Utils.replaceUnderscore(type)));
+        checkBox.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         checkBox.setTag(type);
+        checkBox.setSupportButtonTintList(ContextCompat.getColorStateList(this, R.color.colorPrimaryDark));
 
         listOfCheckboxes.add(checkBox);
     }
@@ -860,7 +865,7 @@ public class SearchEngineActivity extends BaseActivity {
     /**
      * Getter for listOfBuildingTypeCheckboxes
      */
-    public List<CheckBox> getListOfBuildingTypeCheckboxes() {
+    public List<AppCompatCheckBox> getListOfBuildingTypeCheckboxes() {
         Log.d(TAG, "getListOfBuildingTypeCheckboxes: called!");
         if (listOfBuildingTypeCheckboxes == null) {
             return listOfBuildingTypeCheckboxes = new ArrayList<>();
@@ -871,7 +876,7 @@ public class SearchEngineActivity extends BaseActivity {
     /**
      * Getter for listOfCityCheckboxes
      */
-    public List<CheckBox> getListOfCityCheckboxes() {
+    public List<AppCompatCheckBox> getListOfCityCheckboxes() {
         Log.d(TAG, "getListOfCityCheckboxes: called!");
         if (listOfCityCheckboxes == null) {
             return listOfCityCheckboxes = new ArrayList<>();
@@ -882,7 +887,7 @@ public class SearchEngineActivity extends BaseActivity {
     /**
      * Getter for listOfLocalityCheckboxes
      */
-    public List<CheckBox> getListOfLocalityCheckboxes() {
+    public List<AppCompatCheckBox> getListOfLocalityCheckboxes() {
         Log.d(TAG, "getListOfBuildingTypeCheckboxes: called!");
         if (listOfLocalityCheckboxes == null) {
             return listOfLocalityCheckboxes = new ArrayList<>();
@@ -893,7 +898,7 @@ public class SearchEngineActivity extends BaseActivity {
     /**
      * Getter for listOfPointOfInterestCheckboxes
      */
-    public List<CheckBox> getListOfPointOfInterestCheckboxes() {
+    public List<AppCompatCheckBox> getListOfPointOfInterestCheckboxes() {
         Log.d(TAG, "getListOfPointOfInterestCheckboxes: called!");
         if (listOfPointOfInterestCheckboxes == null) {
             return listOfPointOfInterestCheckboxes = new ArrayList<>();

@@ -22,7 +22,7 @@
             app:expandedTitleMarginBottom="94dp"
             app:expandedTitleTextAppearance="@android:color/white"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:title="SEARCH">
+            app:title="Search">
 
             <ImageView
                 android:layout_width="fill_parent"
@@ -106,19 +106,24 @@
                                 android:id="@+id/textView_sale_id"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Sale State" />
+                                android:text="Sale State"
+                                android:textColor="@color/colorAccent"/>
 
                             <CheckBox
                                 android:id="@+id/checkbox_on_sale_id"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="On Sale" />
+                                android:text="On Sale"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:buttonTint="@color/colorPrimaryDark"/>
 
                             <CheckBox
                                 android:id="@+id/checkbox_sold_id"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Sold" />
+                                android:text="Sold"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:buttonTint="@color/colorPrimaryDark"/>
 
                         </LinearLayout>
 
