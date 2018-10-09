@@ -621,8 +621,15 @@ public class FragmentItemDescription extends BaseFragment {
                         String key = adapter.getKey(position);
 
                         for (int i = 0; i < getListOfImagesRealEstate().size(); i++) {
+
                             if (getListOfImagesRealEstate().get(i).getId().equals(key)) {
-                                ToastHelper.toastShort(getActivity(), getListOfImagesRealEstate().get(i).getDescription());
+
+                                if (getListOfImagesRealEstate().get(i).getDescription().isEmpty()) {
+                                    ToastHelper.toastShort(getActivity(), "No description available");
+
+                                } else {
+                                    ToastHelper.toastShort(getActivity(), getListOfImagesRealEstate().get(i).getDescription());
+                                }
                             }
                         }
                     }

@@ -901,7 +901,13 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
                         Log.w(TAG, "onItemClicked: " + getListOfImagesRealEstateCache().get(position).getDescription());
-                        ToastHelper.toastShort(CreateNewListingActivity.this, getListOfImagesRealEstateCache().get(position).getDescription());
+
+                        if (getListOfImagesRealEstateCache().get(position).getDescription().isEmpty()) {
+                            ToastHelper.toastShort(CreateNewListingActivity.this, "No description available");
+
+                        } else {
+                            ToastHelper.toastShort(CreateNewListingActivity.this, getListOfImagesRealEstateCache().get(position).getDescription());
+                        }
                     }
                 });
     }

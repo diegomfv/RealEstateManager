@@ -582,7 +582,13 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Log.d(TAG, "onItemClicked: item(" + position + ") clicked!");
-                        ToastHelper.toastShort(EditListingActivity.this, getListOfImagesRealEstateCache().get(position).getDescription());
+                        if (getListOfImagesRealEstateCache().get(position).getDescription().isEmpty()) {
+                            ToastHelper.toastShort(EditListingActivity.this, "No description available");
+
+                        } else {
+                            ToastHelper.toastShort(EditListingActivity.this, getListOfImagesRealEstateCache().get(position).getDescription());
+                        }
+
                     }
                 });
     }
