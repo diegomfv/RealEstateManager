@@ -43,8 +43,6 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
  * Created by Diego Fajardo on 02/09/2018.
  */
 
-// TODO: 02/09/2018 Take care, the user may leave the app and then come back and the
-// TODO: cache might be cleared!
 public class PhotoGridActivity extends BaseActivity implements InsertDescriptionDialogFragment.InsertDescriptionDialogListener {
 
     private static final String TAG = PhotoGridActivity.class.getSimpleName();

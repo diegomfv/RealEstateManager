@@ -2,10 +2,12 @@ package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
@@ -30,6 +32,7 @@ import com.diegomfv.android.realestatemanager.constants.Constants;
 import com.diegomfv.android.realestatemanager.data.entities.PlaceRealEstate;
 import com.diegomfv.android.realestatemanager.data.entities.RealEstate;
 import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
+import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
 import java.util.ArrayList;
@@ -41,16 +44,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
-
-// TODO: 09/10/2018 Modify points of interest check
-// TODO: 09/10/2018 Types of points of interest not shown
 
 public class SearchEngineActivity extends BaseActivity {
 
@@ -229,7 +233,16 @@ public class SearchEngineActivity extends BaseActivity {
         switch (view.getId()) {
 
             case R.id.button_search_id: {
+                // TODO: 09/10/2018 See this!
                 initSearch();
+
+//                try {
+//                    initSearch();
+//                } catch(Exception e){
+//                    // WindowManager$BadTokenException will be caught and the app would not display
+//                    // the 'Force Close' message
+//                    ToastHelper.toastShort(this, "Exception caught!");
+//                }
             }
             break;
         }
@@ -874,6 +887,7 @@ public class SearchEngineActivity extends BaseActivity {
     /**
      * Method to init the search of listings
      */
+    @SuppressLint("CheckResult")
     private void initSearch() {
         Log.d(TAG, "initSearch: called!");
 
@@ -881,21 +895,76 @@ public class SearchEngineActivity extends BaseActivity {
          * */
         Utils.hideMainContent(progressBarContent, mainLayout);
 
-        for (int i = 0; i < getListOfRealEstate().size(); i++) {
-
-            if (allFiltersPassed(getListOfRealEstate().get(i))) {
-                getListOfRealEstate().get(i).setFound(true);
-
-            } else {
-                getListOfRealEstate().get(i).setFound(false);
-            }
-        }
-
-        /* We update the found information of each real estate so the ViewModel can show these
-         * real estates in MainActivity
+        /* We use RxJava to load the process in a background thread.
+        * Try/catch is used to catch a possible ChoreoGrapher exception
          * */
-        updateRealEstatesWithFoundInfo(getListOfRealEstate());
+        try {
+            Single.just("Init process")
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribeWith(new SingleObserver<String>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Log.d(TAG, "onSubscribe: called!");
+                        }
 
+                        @Override
+                        public void onSuccess(String s) {
+                            Log.d(TAG, "onSuccess: " + s);
+
+                            /* This variable will allow us to see if at least
+                             * we found one real estate. If that is the case,
+                             * we will proceed showing them.
+                             * */
+                            boolean atLeastOneFound = false;
+
+                            for (int i = 0; i < getListOfRealEstate().size(); i++) {
+
+                                if (allFiltersPassed(getListOfRealEstate().get(i))) {
+                                    getListOfRealEstate().get(i).setFound(true);
+                                    atLeastOneFound = true;
+
+                                } else {
+                                    getListOfRealEstate().get(i).setFound(false);
+                                }
+
+                                if (atLeastOneFound) {
+
+                                    /* We found at least one real estate matching the criteria.
+                                     *
+                                     * We update the found information of each real estate so the ViewModel can show these
+                                     * real estates in MainActivity. The method also launches the activity.
+                                     * */
+                                    updateRealEstatesWithFoundInfo(getListOfRealEstate());
+
+                                } else {
+
+                                    /* If no real estates were found, we notify the user and
+                                    * show the main layout
+                                    * */
+                                    new Handler(SearchEngineActivity.this.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Log.d(TAG, "run: called!");
+                                            ToastHelper.toastShort(SearchEngineActivity.this,
+                                                    "Sorry, no real estates were found matching this criteria");
+                                            Utils.showMainContent(progressBarContent, mainLayout);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e(TAG, "onError: " + e.getMessage());
+                            notifyUserErrorDuringProcess();
+                        }
+                    });
+
+        } catch (Exception e) {
+            notifyUserErrorDuringProcess();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1185,38 +1254,43 @@ public class SearchEngineActivity extends BaseActivity {
             return true;
         }
 
-        /* We get all the nearby point of interests' types of a real estate
-         * */
-        List<PlaceRealEstate> listOfPointsOfInterestRelatedToTheRealEstate = new ArrayList<>();
-
-        for (int i = 0; i < realEstate.getListOfNearbyPointsOfInterestIds().size(); i++) {
-            for (int j = 0; j < getListOfPlaceRealEstate().size(); j++) {
-                if (realEstate.getListOfNearbyPointsOfInterestIds().get(i).equals(getListOfPlaceRealEstate().get(j).getId())) {
-                    listOfPointsOfInterestRelatedToTheRealEstate.add(getListOfPlaceRealEstate().get(j));
-                }
-            }
-        }
-
-        /* Now we extract all the points of interest related to the real estate
-         * */
-        Set<String> setOfPointsOfInterest = new HashSet<>();
-        for (int i = 0; i < listOfPointsOfInterestRelatedToTheRealEstate.size(); i++) {
-            for (int j = 0; j < listOfPointsOfInterestRelatedToTheRealEstate.get(i).getTypesList().size(); j++) {
-                setOfPointsOfInterest.add(Utils.capitalize(Utils.replaceUnderscore(listOfPointsOfInterestRelatedToTheRealEstate.get(i).getTypesList().get(j))));
-            }
-        }
-
         // TODO: 09/10/2018 Modify this!
-        /* Finally, we do the checks. The real estate will pass the filter if at least one type
-         * of point of interest can be found in the list of points of interest related to the
-         * real estate
-         * */
-        for (int i = 0; i < listOfPointsOfInterestRelatedToTheRealEstate.size(); i++) {
-            for (int j = 0; j < listOfCheckedPointsOfInterest.size(); j++) {
-                if (setOfPointsOfInterest.contains(listOfCheckedPointsOfInterest.get(j))) {
-                    return true;
+        if (realEstate.getListOfNearbyPointsOfInterestIds() != null) {
+
+            /* We get all the nearby point of interests' types of a real estate
+             * */
+            List<PlaceRealEstate> listOfPointsOfInterestRelatedToTheRealEstate = new ArrayList<>();
+
+            for (int i = 0; i < realEstate.getListOfNearbyPointsOfInterestIds().size(); i++) {
+                for (int j = 0; j < getListOfPlaceRealEstate().size(); j++) {
+                    if (realEstate.getListOfNearbyPointsOfInterestIds().get(i).equals(getListOfPlaceRealEstate().get(j).getId())) {
+                        listOfPointsOfInterestRelatedToTheRealEstate.add(getListOfPlaceRealEstate().get(j));
+                    }
                 }
             }
+
+            /* Now we extract all the points of interest related to the real estate
+             * */
+            Set<String> setOfPointsOfInterest = new HashSet<>();
+            for (int i = 0; i < listOfPointsOfInterestRelatedToTheRealEstate.size(); i++) {
+                for (int j = 0; j < listOfPointsOfInterestRelatedToTheRealEstate.get(i).getTypesList().size(); j++) {
+                    setOfPointsOfInterest.add(Utils.capitalize(Utils.replaceUnderscore(listOfPointsOfInterestRelatedToTheRealEstate.get(i).getTypesList().get(j))));
+                }
+            }
+
+            // TODO: 09/10/2018 Modify this!
+            /* Finally, we do the checks. The real estate will pass the filter if at least one type
+             * of point of interest can be found in the list of points of interest related to the
+             * real estate
+             * */
+            for (int i = 0; i < listOfPointsOfInterestRelatedToTheRealEstate.size(); i++) {
+                for (int j = 0; j < listOfCheckedPointsOfInterest.size(); j++) {
+                    if (setOfPointsOfInterest.contains(listOfCheckedPointsOfInterest.get(j))) {
+                        return true;
+                    }
+                }
+            }
+
         }
         return false;
     }
@@ -1284,6 +1358,9 @@ public class SearchEngineActivity extends BaseActivity {
         Log.d(TAG, "updateRealEstatesWithFoundInfo: called!");
         if (list != null) {
 
+            /* Variable that allows us to know when the updating process has finished so
+            * we can load the activity.
+            * */
             updateCounter = 0;
 
             for (int i = 0; i < list.size(); i++) {
@@ -1312,7 +1389,7 @@ public class SearchEngineActivity extends BaseActivity {
                             @Override
                             public void onError(Throwable e) {
                                 Log.d(TAG, "onError: called!");
-
+                                notifyUserErrorDuringProcess();
                             }
                         });
             }
@@ -1328,4 +1405,11 @@ public class SearchEngineActivity extends BaseActivity {
         intent.putExtra(Constants.INTENT_FROM_SEARCH_ENGINE, Constants.STRING_FROM_SEARCH_ENGINE);
         startActivity(intent);
     }
+
+    private void notifyUserErrorDuringProcess () {
+        Log.d(TAG, "notifyUserErrorDuringProcess: called!");
+        ToastHelper.toastShort(this, "There was an error during the process. Please, try again.");
+        Utils.showMainContent(progressBarContent, mainLayout);
+    }
+
 }
