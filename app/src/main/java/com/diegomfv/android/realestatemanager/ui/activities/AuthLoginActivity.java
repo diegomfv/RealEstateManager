@@ -300,7 +300,10 @@ public class AuthLoginActivity extends BaseActivity {
 
                 if (allNecessaryPermissionsGranted()) {
 
-                    if (listOfAgents.size() > 0) {
+                    if (Utils.getStringFromTextView(tvEmail).isEmpty()) {
+                        ToastHelper.toastShort(AuthLoginActivity.this, "Please, introduce an email");
+
+                    } else if (listOfAgents.size() > 0) {
 
                         for (int i = 0; i < listOfAgents.size(); i++) {
 

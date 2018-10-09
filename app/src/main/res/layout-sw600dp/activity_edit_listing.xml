@@ -68,8 +68,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginStart="100dp"
-                    android:layout_marginEnd="100dp">
+                    android:layout_marginStart="@dimen/side_margin_tablet_100dp"
+                    android:layout_marginEnd="@dimen/side_margin_tablet_100dp">
 
                     <include layout="@layout/card_view_autocomplete"
                         android:id="@+id/card_view_type_id"/>
