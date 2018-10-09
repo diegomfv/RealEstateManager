@@ -46,9 +46,9 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
-// TODO: 07/10/2018 See this! setMinMaxValuesRangeSeekBars(List<RealEstate> listOfRealEstates) {
+// TODO: 09/10/2018 Modify points of interest check
+// TODO: 09/10/2018 Types of points of interest not shown
 
-// TODO: 05/09/2018 Keep the searching information stored with SharedPreferences
 public class SearchEngineActivity extends BaseActivity {
 
     private static final String TAG = SearchEngineActivity.class.getSimpleName();
@@ -1238,6 +1238,7 @@ public class SearchEngineActivity extends BaseActivity {
             }
         }
 
+        // TODO: 09/10/2018 Modify this!
         /* Finally, we do the checks. The real estate will pass the filter if at least one type
          * of point of interest can be found in the list of points of interest related to the
          * real estate

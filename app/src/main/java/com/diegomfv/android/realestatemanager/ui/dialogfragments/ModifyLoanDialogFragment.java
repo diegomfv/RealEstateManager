@@ -229,7 +229,7 @@ public class ModifyLoanDialogFragment extends DialogFragment {
         setHint(cardViewLoanAmount, "Loan Amount (" + Utils.getCurrencySymbol(currency) + ")");
         setHint(cardViewLoanAnnualInterest, "Annual Interest Rate (%)");
         setHint(cardViewLoanPeriodInYears, "Loan Period(in Years)");
-        setHint(cardViewLoanPaymentFrequency, "Payment Frequency (every __ months)");
+        setHint(cardViewLoanPaymentFrequency, "Payment Frequency (payments in  a year)");
     }
 
     /**
@@ -257,17 +257,44 @@ public class ModifyLoanDialogFragment extends DialogFragment {
     private void checkTextViewsText(AlertDialog dialog) {
         Log.d(TAG, "checkTextViewsText: called!");
 
-        if (Utils.getStringFromTextView(tvLoanAmount).length() == 0) {
+        float loanAmount = Utils.getFloatFromTextView(tvLoanAmount);
+        float interestRate = Utils.getFloatFromTextView(tvLoanAnnualIntRate);
+        int loanPeriod = Utils.getIntegerFromTextView(tvLoanPeriodYears);
+        int paymentFrequency = Utils.getIntegerFromTextView(tvLoanPaymentFreq);
+
+
+        if (Utils.getStringFromTextView(tvLoanAmount).length() == 0 || loanAmount == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a Loan Amount");
 
-        } else if (Utils.getStringFromTextView(tvLoanAnnualIntRate).length() == 0) {
+        } else if (Utils.getStringFromTextView(tvLoanAnnualIntRate).length() == 0 || interestRate == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce an Annual Interest Rate");
 
-        } else if (Utils.getStringFromTextView(tvLoanPeriodYears).length() == 0) {
+        } else if (Utils.getStringFromTextView(tvLoanPeriodYears).length() == 0 || loanPeriod == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a Period in years");
 
-        } else if (Utils.getStringFromTextView(tvLoanPaymentFreq).length() == 0) {
+        } else if (Utils.getStringFromTextView(tvLoanPaymentFreq).length() == 0 || paymentFrequency == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce the Payment Frequency");
+
+        } else if (loanAmount > 1000000) {
+            ToastHelper.toastShort(getActivity(), "Sorry, the loan amount is too high");
+
+        } else if (interestRate > 15) {
+            ToastHelper.toastShort(getActivity(), "Sorry, the interest rate is too high");
+
+        } else if (loanPeriod > 20) {
+            ToastHelper.toastShort(getActivity(), "Sorry, the loan period is too high");
+
+        } else if (paymentFrequency > 12) {
+            ToastHelper.toastShort(getActivity(), "Sorry, the payment frequency is too high");
+
+        } else if (loanAmount < 50000) {
+            ToastHelper.toastShort(getActivity(), "Sorry, the loan amount is too low");
+
+        } else if (loanPeriod < 5) {
+            ToastHelper.toastShort(getActivity(), "Sorry, the loan period is too short");
+
+        } else if (paymentFrequency < 1) {
+            ToastHelper.toastShort(getActivity(), "Sorry, the payment frequency is too low");
 
         } else {
 
