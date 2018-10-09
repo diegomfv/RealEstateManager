@@ -29,7 +29,6 @@
         app:left_thumb_image_pressed="@drawable/ic_radio_button_checked_24dp"
         app:right_thumb_image="@drawable/ic_radio_button_checked_blue_24dp"
         app:right_thumb_image_pressed="@drawable/ic_radio_button_checked_24dp"
-
         app:data_type="_integer"/>
 
 </android.support.v7.widget.CardView>

@@ -378,9 +378,6 @@ public class SearchEngineActivity extends BaseActivity {
                          * */
                         getMaxValuesForSeekBars();
 
-                        fillSets();
-
-
                         /* We get the list of places real estate and init configuration process
                          * */
                         getPlacesRealEstate();
@@ -423,12 +420,6 @@ public class SearchEngineActivity extends BaseActivity {
                         /* We store the list of places real estate
                          * */
                         setListOfPlaceRealEstate(placeRealEstates);
-
-                        if (getListOfPlaceRealEstate() != null) {
-                            for (int i = 0; i < getListOfPlaceRealEstate().size(); i++) {
-                                getSetOfTypesOfPointsOfInterest().addAll(getListOfPlaceRealEstate().get(i).getTypesList());
-                            }
-                        }
 
                         /* We start the layout configuration*/
                         configureLayout();
@@ -544,41 +535,14 @@ public class SearchEngineActivity extends BaseActivity {
     }
 
     /**
-     * Method that uses RxJava to fill the setOfTypesOfPointsOfInterest
+     * Method to fill the setOfTypesOfPointsOfInterest
      */
-    @SuppressLint("CheckResult")
     private void fillSetOfTypesOfPointsOfInterest() {
         Log.d(TAG, "fillSetOfTypesOfPointsOfInterest: called!");
-        getRepository().getAllPlacesRealEstateObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new io.reactivex.Observer<List<PlaceRealEstate>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe: called!");
-                    }
+        for (int i = 0; i < getListOfPlaceRealEstate().size(); i++) {
+            getSetOfTypesOfPointsOfInterest().addAll(getListOfPlaceRealEstate().get(i).getTypesList());
+        }
 
-                    @Override
-                    public void onNext(List<PlaceRealEstate> list) {
-                        listOfPlaceRealEstate = list;
-                        Log.d(TAG, "onNext: called!");
-                        if (list != null) {
-                            for (int i = 0; i < list.size(); i++) {
-                                getSetOfTypesOfPointsOfInterest().addAll(list.get(i).getTypesList());
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: called!");
-                    }
-                });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -839,21 +803,20 @@ public class SearchEngineActivity extends BaseActivity {
     /**
      * Method that fills the layout with checkboxes according to certain information
      */
+    @SuppressLint("RestrictedApi")
     private void fillWithCheckboxes(LinearLayout linearLayout, String type, List<AppCompatCheckBox> listOfCheckboxes) {
         Log.d(TAG, "addPointsOfInterestCheckboxesToLayout: called!");
-
         AppCompatCheckBox checkBox = new AppCompatCheckBox(this);
         linearLayout.addView(checkBox);
 
-        // TODO: 26/08/2018 LayoutParams does not work!
-
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        layoutParams.setMarginStart(8);
-        layoutParams.setMargins(8, 8, 0, 0);
-
-        checkBox.setLayoutParams(layoutParams);
+//
+//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+//                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//
+//        layoutParams.setMarginStart(8);
+//        layoutParams.setMargins(8, 8, 0, 0);
+//
+//        checkBox.setLayoutParams(layoutParams);
         checkBox.setText(Utils.capitalize(Utils.replaceUnderscore(type)));
         checkBox.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         checkBox.setTag(type);

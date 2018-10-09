@@ -36,7 +36,9 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="30dp"
             android:layout_below="@+id/textView_title_id"
-            android:text="SOLD" />
+            android:text="SOLD"
+            android:textColor="@color/colorPrimaryDark"
+            android:buttonTint="@color/colorPrimaryDark"/>
 
     </RelativeLayout>
 
