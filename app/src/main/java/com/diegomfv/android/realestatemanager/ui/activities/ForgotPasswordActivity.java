@@ -76,11 +76,6 @@ public class ForgotPasswordActivity extends BaseActivity {
          * */
         this.getIntentInfo();
 
-        /* Toolbar and Layout configurations
-         * */
-        this.configureToolBar();
-        this.configureLayout();
-
     }
 
     @Override
@@ -159,6 +154,7 @@ public class ForgotPasswordActivity extends BaseActivity {
      */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
+        this.configureToolBar();
         this.getAutocompleteTextViews();
         this.setAllHints();
         this.setText();
@@ -178,7 +174,6 @@ public class ForgotPasswordActivity extends BaseActivity {
      */
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
-
         // TODO: 23/08/2018 Use Resources instead of hardcoded text
         setAutoCompleteTextViewHint(cardViewQuestion, "Question");
         setAutoCompleteTextViewHint(cardViewAnswer, "Answer");
@@ -209,6 +204,6 @@ public class ForgotPasswordActivity extends BaseActivity {
     private void getIntentInfo() {
         Log.d(TAG, "getIntentInfo: called!");
         agent = Objects.requireNonNull(getIntent().getExtras()).getParcelable(Constants.SEND_PARCELABLE);
-        setText();
+        configureLayout();
     }
 }
