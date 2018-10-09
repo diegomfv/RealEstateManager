@@ -57,7 +57,8 @@ public interface Constants {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+    String BUNDLE_EMAIL = "email";
+    String BUNDLE_PASSWORD = "password";
 
     String REAL_ESTATE = "real_estate";
 

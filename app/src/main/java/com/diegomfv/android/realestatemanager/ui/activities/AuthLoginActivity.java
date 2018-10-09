@@ -103,6 +103,9 @@ public class AuthLoginActivity extends BaseActivity {
          * */
         checkAllPermissions();
 
+        /* In case of configuration change, we load the saved info before rotation
+         * */
+        loadInfoBeforeRotation(savedInstanceState);
     }
 
     @OnClick({R.id.button_sign_up_password_id, R.id.button_sign_in_password_id})
@@ -140,6 +143,17 @@ public class AuthLoginActivity extends BaseActivity {
             }
             break;
         }
+    }
+
+    /**
+     * We store the views information in the bundle
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState: called!");
+        outState.putString(Constants.BUNDLE_EMAIL, Utils.getStringFromTextView(tvEmail));
+        outState.putString(Constants.BUNDLE_PASSWORD, Utils.getStringFromTextView(tvPassword));
     }
 
     @Override
@@ -196,8 +210,10 @@ public class AuthLoginActivity extends BaseActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** Getter for listOfAgents*/
-    private List<Agent> getListOfAgents () {
+    /**
+     * Getter for listOfAgents
+     */
+    private List<Agent> getListOfAgents() {
         Log.d(TAG, "getListOfAgents: called!");
         if (listOfAgents == null) {
             return listOfAgents = new ArrayList<>();
@@ -249,7 +265,7 @@ public class AuthLoginActivity extends BaseActivity {
         Log.d(TAG, "configureLayout: called!");
         setHints();
         setPasswordInputType();
-        setEmailAndPasswordIfInSharedPref();
+        setEmailIfInSharedPref();
         setListeners();
     }
 
@@ -282,7 +298,7 @@ public class AuthLoginActivity extends BaseActivity {
     /**
      * Method used to set the information from SharedPreferences in the views
      */
-    private void setEmailAndPasswordIfInSharedPref() {
+    private void setEmailIfInSharedPref() {
         Log.d(TAG, "setEmailIfInSharedPref: called!");
         String[] info = Utils.readCurrentAgentData(this);
         tvEmail.setText(info[2]);
@@ -408,7 +424,7 @@ public class AuthLoginActivity extends BaseActivity {
     /**
      * Method that checks if we have the necessary permissions
      */
-    public void checkAllPermissions() {
+    private void checkAllPermissions() {
         Log.d(TAG, "checkPermissions: called!");
 
         if (checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -432,7 +448,7 @@ public class AuthLoginActivity extends BaseActivity {
     /**
      * Method that checks if we have a specific permission granted
      */
-    public boolean checkPermission(String permission) {
+    private boolean checkPermission(String permission) {
         Log.d(TAG, "checkPermissions: called!");
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED) {
@@ -445,11 +461,23 @@ public class AuthLoginActivity extends BaseActivity {
     /**
      * Method used to request permissions
      */
-    public void requestPermission(String[] permissions, int requestCode) {
+    private void requestPermission(String[] permissions, int requestCode) {
         Log.d(TAG, "requestPermission: called!");
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(permissions, requestCode);
+        }
+    }
+
+    /**
+     * Method to load the information from the bundle (before screen rotation) in the textViews
+     */
+    private void loadInfoBeforeRotation(Bundle savedInstanceState) {
+        Log.d(TAG, "loadInfoBeforeRotation: called!");
+        if (savedInstanceState != null) {
+            Log.i(TAG, "loadInfoBeforeRotation: " + savedInstanceState.getString(Constants.BUNDLE_EMAIL));
+            Log.i(TAG, "loadInfoBeforeRotation: " + savedInstanceState.getString(Constants.BUNDLE_PASSWORD));
+            tvEmail.setText(savedInstanceState.getString(Constants.BUNDLE_EMAIL));
+            tvPassword.setText(savedInstanceState.getString(Constants.BUNDLE_PASSWORD));
         }
     }
 }
