@@ -19,12 +19,18 @@ import com.diegomfv.android.realestatemanager.ui.base.BaseActivity;
 import com.diegomfv.android.realestatemanager.util.TextInputAutoCompleteTextView;
 import com.diegomfv.android.realestatemanager.util.ToastHelper;
 import com.diegomfv.android.realestatemanager.util.Utils;
+import com.jakewharton.rxbinding2.widget.RxAutoCompleteTextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.CompletableObserver;
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -61,22 +67,26 @@ public class SignUpActivity extends BaseActivity {
     @BindView(R.id.card_view_memorable_data_answer_id)
     CardView cvMemDataAnswer;
 
-    TextInputAutoCompleteTextView tvFirstName;
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    TextInputAutoCompleteTextView tvLastName;
+    private TextInputAutoCompleteTextView tvFirstName;
 
-    TextInputAutoCompleteTextView tvEmail;
+    private TextInputAutoCompleteTextView tvLastName;
 
-    TextInputAutoCompleteTextView tvPassword;
+    private TextInputAutoCompleteTextView tvEmail;
 
-    TextInputAutoCompleteTextView tvMemDataQuestion;
+    private TextInputAutoCompleteTextView tvPassword;
 
-    TextInputAutoCompleteTextView tvMemDataAnswer;
+    private TextInputAutoCompleteTextView tvMemDataQuestion;
+
+    private TextInputAutoCompleteTextView tvMemDataAnswer;
 
     @BindView(R.id.sign_up_button_id)
     Button buttonSignUp;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private List<Agent> listOfAgents;
 
     private Unbinder unbinder;
 
@@ -93,10 +103,12 @@ public class SignUpActivity extends BaseActivity {
         setTitle("Sign Up");
         unbinder = ButterKnife.bind(this);
 
-        this.configureToolBar();
+        /* We get all the accounts so a new account cannot be created with the same email
+         * */
+        this.getAllAccounts();
 
-        this.getAllAutocompleteTextViews();
-
+        /* Layout configuration
+         * */
         this.configureLayout();
 
     }
@@ -118,11 +130,31 @@ public class SignUpActivity extends BaseActivity {
 
                 if (allChecksPassed()) {
                     saveInfoAndLaunchActivity();
-
                 }
             }
             break;
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Getter for listOfAgents
+     */
+    private List<Agent> getListOfAgents() {
+        Log.d(TAG, "getListOfAgents: called!");
+        if (listOfAgents == null) {
+            return listOfAgents = new ArrayList<>();
+        }
+        return listOfAgents;
+    }
+
+    /**
+     * Setter for listOfAgents
+     */
+    private void setListOfAgents(List<Agent> listOfAgents) {
+        Log.d(TAG, "setListOfAgents: called!");
+        this.listOfAgents = listOfAgents;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,8 +196,25 @@ public class SignUpActivity extends BaseActivity {
      */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
-        setHints();
-        setPasswordInputType();
+
+        this.configureToolBar();
+
+        this.getAllAutocompleteTextViews();
+        this.setHints();
+        this.setPasswordInputType();
+    }
+
+    /**
+     * Method to get references to all the AutocompleteTextViews
+     */
+    private void getAllAutocompleteTextViews() {
+        Log.d(TAG, "getAllTextviews: called!");
+        tvFirstName = Utils.getTextInputAutoCompleteTextViewFromCardView(cvFirstName);
+        tvLastName = Utils.getTextInputAutoCompleteTextViewFromCardView(cvLastName);
+        tvEmail = Utils.getTextInputAutoCompleteTextViewFromCardView(cvEmail);
+        tvPassword = Utils.getTextInputAutoCompleteTextViewFromCardView(cvPassword);
+        tvMemDataQuestion = Utils.getTextInputAutoCompleteTextViewFromCardView(cvMemDataQuestion);
+        tvMemDataAnswer = Utils.getTextInputAutoCompleteTextViewFromCardView(cvMemDataAnswer);
     }
 
     /**
@@ -189,20 +238,47 @@ public class SignUpActivity extends BaseActivity {
         Utils.getTextInputLayoutFromCardview(cvMemDataAnswer).setHint("Memorable Data Answer");
     }
 
-    /**
-     * Method to get references to all the AutocompleteTextViews
-     */
-    private void getAllAutocompleteTextViews() {
-        Log.d(TAG, "getAllTextviews: called!");
-        tvFirstName = Utils.getTextInputAutoCompleteTextViewFromCardView(cvFirstName);
-        tvLastName = Utils.getTextInputAutoCompleteTextViewFromCardView(cvLastName);
-        tvEmail = Utils.getTextInputAutoCompleteTextViewFromCardView(cvEmail);
-        tvPassword = Utils.getTextInputAutoCompleteTextViewFromCardView(cvPassword);
-        tvMemDataQuestion = Utils.getTextInputAutoCompleteTextViewFromCardView(cvMemDataQuestion);
-        tvMemDataAnswer = Utils.getTextInputAutoCompleteTextViewFromCardView(cvMemDataAnswer);
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    @SuppressLint("CheckResult")
+    private void getAllAccounts() {
+        Log.d(TAG, "getAllAccounts: called!");
+
+        getRepository().getAllAgents()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new Observer<List<Agent>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: called!");
+
+                    }
+
+                    @Override
+                    public void onNext(List<Agent> agents) {
+                        Log.d(TAG, "onNext: " + agents);
+
+                        /* We fill the listOfAgents with all the agents in the database.
+                         * Ww will use this information to avoid creating two accounts with the same
+                         * information
+                         * */
+                        setListOfAgents(agents);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: " + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: called!");
+
+                    }
+                });
+    }
 
     /**
      * Method to save the information inputted and launch MainActivity
@@ -211,7 +287,17 @@ public class SignUpActivity extends BaseActivity {
     private void saveInfoAndLaunchActivity() {
         Log.d(TAG, "saveInfoAndLaunchActivity: called!");
 
-        /* We store the information of the new agent in the database
+        /* Firstly, we check that the enail is not already in use
+         * */
+        for (int i = 0; i < getListOfAgents().size(); i++) {
+            if (getListOfAgents().get(i).getEmail().equalsIgnoreCase(Utils.getStringFromTextView(tvEmail))) {
+                ToastHelper.toastShort(this, "This email is already in use by other account.");
+                return;
+            }
+        }
+
+        /* If it is not, we store the information
+         * of the new agent in the database
          * */
         getRepository().insertAgent(
                 new Agent(
@@ -250,7 +336,6 @@ public class SignUpActivity extends BaseActivity {
                          * */
                         ToastHelper.toastShort(SignUpActivity.this, "Sign up successful");
                         launchActivityWithIntent();
-
                     }
 
                     @Override
@@ -259,13 +344,11 @@ public class SignUpActivity extends BaseActivity {
                         ToastHelper.toastShort(SignUpActivity.this, "Something went wrong");
                     }
                 });
-
     }
 
     /**
      * Method to check that the information inputted is correct
      */
-    // TODO: 29/08/2018 Check!
     private boolean allChecksPassed() {
         Log.d(TAG, "allChecksPassed: called!");
 
@@ -298,6 +381,8 @@ public class SignUpActivity extends BaseActivity {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * Method to launch the activity with an intent that clears the stack
      */
@@ -306,7 +391,5 @@ public class SignUpActivity extends BaseActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-
     }
-
 }
