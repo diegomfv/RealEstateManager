@@ -1,15 +1,15 @@
 # RealEstateManager
-An app to organise real estate listings.
+An app to organise real estate listings that uses Android Jetpack Components.
 
-It uses Android Architecture Components.
+The app allows user registration, creating and editing listings and displaying them in lists. It also allows to show the listings using Google Maps API.
 
-(Under development)
+The app incorporates a Loan Simulator as an extra feature.
 
 ## Screenshots
 
 <img src="./screenshots/signin.png" width="30%" height="30%">&ensp;<img src="./screenshots/signup.png" width="30%" height="30%">&ensp;<img src="./screenshots/forgot.png" width="30%" height="30%">
 
-<img src="./screenshots/main.png" width="30%" height="30%">&ensp;<img src="./screenshots/main_spinner.png" width="30%" height="30%">&ensp;<img src="./screenshots/joingroup.png" width="30%" height="30%">
+<img src="./screenshots/main.png" width="30%" height="30%">&ensp;<img src="./screenshots/main_spinner.png" width="30%" height="30%">
 
 <img src="./screenshots/detail.png" width="30%" height="30%">&ensp;<img src="./screenshots/detail_2.png" width="30%" height="30%">
 
