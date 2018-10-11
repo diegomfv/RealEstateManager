@@ -325,7 +325,7 @@ public class AuthLoginActivity extends BaseActivity {
 
                             if (Utils.getStringFromTextView(tvEmail).equalsIgnoreCase(listOfAgents.get(i).getEmail())) {
                                 launchForgotPasswordActivityWithIntent(listOfAgents.get(i));
-                                break;
+                                return;
                             }
                         }
                         ToastHelper.toastShort(AuthLoginActivity.this, "This email is not registered");
