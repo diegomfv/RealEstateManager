@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.diegomfv.android.realestatemanager.R;
 import com.diegomfv.android.realestatemanager.constants.Constants;
@@ -46,13 +47,11 @@ public class ForgotPasswordActivity extends BaseActivity {
     @BindView(R.id.toolbar_id)
     Toolbar toolbar;
 
-    @BindView(R.id.card_view_memorable_data_question_id)
-    CardView cardViewQuestion;
+    @BindView(R.id.textView_question_text_id)
+    TextView tvQuestionText;
 
     @BindView(R.id.card_view_memorable_data_answer_id)
     CardView cardViewAnswer;
-
-    private TextInputAutoCompleteTextView tvQuestion;
 
     private TextInputAutoCompleteTextView tvAnswer;
 
@@ -165,7 +164,6 @@ public class ForgotPasswordActivity extends BaseActivity {
      */
     private void getAutocompleteTextViews() {
         Log.d(TAG, "getAutocompleteTextViews: called!");
-        this.tvQuestion = cardViewQuestion.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
         this.tvAnswer = cardViewAnswer.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_autocomplete_text_view_id);
     }
 
@@ -175,7 +173,6 @@ public class ForgotPasswordActivity extends BaseActivity {
     private void setAllHints() {
         Log.d(TAG, "setAllHints: called!");
         // TODO: 23/08/2018 Use Resources instead of hardcoded text
-        setAutoCompleteTextViewHint(cardViewQuestion, "Question");
         setAutoCompleteTextViewHint(cardViewAnswer, "Answer");
     }
 
@@ -193,7 +190,7 @@ public class ForgotPasswordActivity extends BaseActivity {
      */
     private void setText() {
         Log.d(TAG, "setText: called!");
-        tvQuestion.setText(agent.getMemorableDataQuestion());
+        tvQuestionText.setText(agent.getMemorableDataQuestion());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
