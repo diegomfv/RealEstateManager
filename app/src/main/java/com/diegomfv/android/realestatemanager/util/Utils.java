@@ -89,7 +89,7 @@ public class Utils {
      * Price Conversion (Euros to Dollars):
      */
     public static float convertEuroToDollar(float euros) {
-        return (float)(euros * 1.16);
+        return (float) (euros * 1.16);
     }
 
     /**
@@ -116,6 +116,11 @@ public class Utils {
         }
     }
 
+    /**
+     * Method that checks the currency and returns the value in dollars or
+     * euros (depending on the currency value). It simply transforms the value
+     * using convertDollarToEuro() method if the currency is 1 (euros)
+     */
     public static float getValueAccordingToCurrency(int currency, float price) {
         Log.d(TAG, "getValueAccordingToCurrency: called!");
 
@@ -128,6 +133,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Method that checks the currency and returns the value in dollars or
+     * euros (depending on the currency value) with the proper decimal format.
+     * It simply transforms the value using convertDollarToEuro() method if the currency is 1 (euros)
+     * and then uses formatToDecimals() method to format that value
+     */
     public static String getValueFormattedAccordingToCurrency(float price, int currency) {
         Log.d(TAG, "getValueFormattedAccordingToCurrency: called!");
 
@@ -142,6 +153,9 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that checks the currency and loads the proper icon on the menu
+     */
     public static void updateCurrencyIconWhenMenuCreated(Context context, int currency, Menu menu, int itemRef) {
         Log.d(TAG, "updateCurrencyIconWhenMenuCreated: called!");
         MenuItem item = menu.findItem(itemRef);
@@ -153,6 +167,9 @@ public class Utils {
         }
     }
 
+    /**
+     * Method that loads an icon related to the currency (dollars or euros).
+     */
     public static void updateCurrencyIcon(Context context, int currency, MenuItem item) {
         Log.d(TAG, "updateCurrencyIconWhenMenuCreated: called!");
         if (currency == 0) {
@@ -166,7 +183,8 @@ public class Utils {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Internet Connectivity
+     * Method that checks if internet is available
+     * pinging Google servers
      */
     // Background thread!!
     // TCP/HTTP/DNS (depending on the port, 53=DNS, 80=HTTP, etc.)
@@ -189,7 +207,8 @@ public class Utils {
     }
 
     /**
-     * Internet Connectivity
+     * Method that checks in a background
+     * thread if internet is available.
      */
     public static void checkInternetInBackgroundThread(final DisposableObserver disposableObserver) {
         Log.d(TAG, "checkInternetInBackgroundThread: called! ");
@@ -210,6 +229,9 @@ public class Utils {
 
     }
 
+    /**
+     * Method that returns a boolean depending on if internet is available (true) or not (false)
+     */
     public static boolean setInternetAvailability(Object isInternetAvailable) {
         Log.d(TAG, "setInternetAvailability: called!");
         return (int) isInternetAvailable == 1;
@@ -224,10 +246,8 @@ public class Utils {
      */
     public static void connectReceiver(Context context, BroadcastReceiver receiver, IntentFilter intentFilter, Observer observer) {
         Log.d(TAG, "connectReceiver: called!");
-
         context.registerReceiver(receiver, intentFilter);
         ObservableObject.getInstance().addObserver(observer);
-
     }
 
     /**
@@ -236,10 +256,8 @@ public class Utils {
      */
     public static void disconnectReceiver(Context context, BroadcastReceiver receiver, Observer observer) {
         Log.d(TAG, "disconnectReceiver: called!");
-
         context.unregisterReceiver(receiver);
         ObservableObject.getInstance().deleteObserver(observer);
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -279,6 +297,9 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to check memory situation (log use)
+     */
     public static void getCurrentMemoryStatus() {
         Log.d(TAG, "getCurrentMemoryStatus: called!");
 
@@ -293,11 +314,21 @@ public class Utils {
 
     }
 
+    /**
+     * Method to get max memory available
+     */
     public static long getMaxMemory() {
         Log.d(TAG, "getMaxMemory: called!");
         return Runtime.getRuntime().maxMemory() / 1024;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Method that checks that the fundamental information for the app to work
+     * regarding a place obtained using Google servers
+     * does not return null
+     */
     public static boolean checksPlaceFromText(PlaceFromText placeFromText) {
         Log.d(TAG, "checkPlaceFromText: called!");
 
@@ -317,6 +348,11 @@ public class Utils {
         return false;
     }
 
+    /**
+     * Method that checks that the fundamental information for the app to work
+     * regarding place details obtained using Google servers
+     * does not return null
+     */
     public static boolean checksPlaceDetails(PlaceDetails placeDetails) {
         Log.d(TAG, "checksPlaceDetails: called!");
 
@@ -336,6 +372,11 @@ public class Utils {
         return false;
     }
 
+    /**
+     * Method that checks that the fundamental information for the app to work
+     * regarding nearby places obtained using Google servers
+     * does not return null
+     */
     public static boolean checkPlacesByNearbyResults(PlacesByNearby placesByNearby) {
         Log.d(TAG, "checkPlacesByNearby: called!");
 
@@ -349,6 +390,11 @@ public class Utils {
         return false;
     }
 
+    /**
+     * Method that checks that the fundamental information for the app to work
+     * regarding the result of places nearby service obtained using Google servers
+     * does not return null
+     */
     public static boolean checkResultPlacesByNearby(Result result) {
         Log.d(TAG, "checkResultPlacesByNearby: called!");
 
@@ -420,16 +466,25 @@ public class Utils {
         return true;
     }
 
+    /**
+     * Method that checks if a value is a Number
+     */
     public static boolean isNumeric(String str) {
         Log.d(TAG, "isNumeric: called!");
         return str.matches("\\d+(?:\\.\\d+)?");
     }
 
+    /**
+     * Method that returns the string from a TextView
+     */
     public static String getStringFromTextView(TextView textView) {
         Log.d(TAG, "getViewsText: called!");
         return textView.getText().toString().trim();
     }
 
+    /**
+     * Method that returns the Integer from a TextView
+     */
     public static int getIntegerFromTextView(TextView textView) {
         Log.d(TAG, "getIntegerFromTextView: called!");
 
@@ -439,6 +494,9 @@ public class Utils {
         return 0;
     }
 
+    /**
+     * Method that returns the Float from a TextView
+     */
     public static float getFloatFromTextView(TextView textView) {
         Log.d(TAG, "getFloatFromTextView: called!");
 
@@ -448,6 +506,10 @@ public class Utils {
         return 0f;
     }
 
+    /**
+     * Method that returns the address in a String
+     * from the address of the real estate
+     */
     public static String getAddressAsString(RealEstate realEstate) {
         Log.d(TAG, "setAddressFromRealEstateCache: called!");
         if (realEstate.getAddress() != null) {
@@ -462,6 +524,10 @@ public class Utils {
         return "";
     }
 
+    /**
+     * Method to append a String to another String if that other String is not null or empty
+     * (method used to avoid NullPointerExceptions)
+     */
     private static void appendIfNotNullOrEmpty(StringBuilder stringBuilder, String addressField) {
         Log.d(TAG, "appendIfNotNullOrEmpty: called!");
         if (checkStringIsNotEmptyOrNull(addressField)) {
@@ -469,20 +535,29 @@ public class Utils {
         }
     }
 
+    /**
+     * Method that checks if a String is null or Empty
+     */
     private static boolean checkStringIsNotEmptyOrNull(String string) {
         Log.d(TAG, "checkStringIsNotEmptyOrNull: called!");
-
         if (string == null || string.equals("")) {
             return false;
         }
         return true;
     }
 
+    /**
+     * Method that checks if a TextView's String is empty or not
+     */
     public static boolean textViewIsFilled(TextView textView) {
         Log.d(TAG, "textViewIsFilled: called!");
         return Utils.getStringFromTextView(textView).length() > 0;
     }
 
+    /**
+     * Method that allows to get rid of the last comma of an address element. It is only
+     * used in getAddressAsString() method
+     */
     private static void getRidOfLastComma(StringBuilder stringBuilder) {
         Log.d(TAG, "getRidOfLastComma: called!");
         if (stringBuilder.length() > 2) {
@@ -493,11 +568,17 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that returns a cardView's layout's TextInputLayout view
+     */
     public static TextInputLayout getTextInputLayoutFromCardview(CardView cardView) {
         Log.d(TAG, "getTextInputLayoutFromCardview: called!");
         return cardView.findViewById(R.id.text_input_layout_id);
     }
 
+    /**
+     * Method that returns a cardView's layout's TextInputAutocompleteTextView
+     */
     public static TextInputAutoCompleteTextView getTextInputAutoCompleteTextViewFromCardView(CardView cardView) {
         Log.d(TAG, "getTextInputAutoCompleteTextViewFromCardView: called!");
         return getTextInputLayoutFromCardview(cardView).findViewById(R.id.text_input_autocomplete_text_view_id);
@@ -514,6 +595,9 @@ public class Utils {
 
     }
 
+    /**
+     * Method that launches an activity clearing the activity stack
+     */
     public static void launchActivityClearStack(Context context, Class<? extends AppCompatActivity> activity) {
         Log.d(TAG, "launchActivityClearStack: called!");
         Intent intent = new Intent(context, activity);
@@ -549,10 +633,11 @@ public class Utils {
 
     }
 
-    /** Method that formats the price according to the currency.
+    /**
+     * Method that formats the price according to the currency.
      * Dollars -> eg. 123,456.78
      * Euros -> eg. 123.456,78
-     * */
+     */
     private static String formatToDecimals(Number number, int currency) throws NumberFormatException {
         Log.d(TAG, "formatToDecimalsWithComma: called!");
 
@@ -614,16 +699,12 @@ public class Utils {
 
     }
 
-    public static String floatToString(Number amount) {
-        Log.d(TAG, "floatTwoDecimals: called!");
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(2);
-        return df.format(amount);
-
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that writes an Integer (currency) to shared preferences. This value is often used
+     * by the app (used in several activities).
+     */
     public static void writeCurrentCurrencyShPref(Context context, int currency) {
         Log.d(TAG, "writeCurrentCurrencyShPref: called!");
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_CURRENCY_SETTINGS, Context.MODE_PRIVATE);
@@ -632,12 +713,18 @@ public class Utils {
         editor.apply();
     }
 
+    /**
+     * Method to read the currency value.
+     */
     public static int readCurrentCurrencyShPref(Context context) {
         Log.d(TAG, "saveCurrentCurrency: called!");
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_CURRENCY_SETTINGS, Context.MODE_PRIVATE);
         return sharedPreferences.getInt(Constants.CURRENCY, 0);
     }
 
+    /**
+     * Method that allows to write all the agent data to SharedPreferences
+     */
     public static void writeAgentDataShPref(Context context, Agent agent) {
         Log.d(TAG, "writeAgentDataShPref: called!");
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_AGENT_SETTINGS, Context.MODE_PRIVATE);
@@ -651,6 +738,9 @@ public class Utils {
         editor.apply();
     }
 
+    /**
+     * Method that allows to read the agent data from SharedPreferences
+     */
     public static String[] readCurrentAgentData(Context context) {
         Log.d(TAG, "saveCurrentCurrency: called!");
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SH_PREF_AGENT_SETTINGS, Context.MODE_PRIVATE);
@@ -666,10 +756,16 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method that returns a resized Bitmap according to a width and height
+     */
     public static Bitmap getResizedBitmap(Bitmap image, int bitmapWidth, int bitmapHeight) {
         return Bitmap.createScaledBitmap(image, bitmapWidth, bitmapHeight, true);
     }
 
+    /**
+     * Method that returns a resized Bitmap according to a maximum size
+     */
     public static Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
         int height = image.getHeight();
@@ -717,8 +813,6 @@ public class Utils {
 
     }
 
-    //Can be static
-
     /**
      * This method checks the current size of the image and, if the required size is still
      * higher, it continues reducing the image
@@ -755,11 +849,17 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method to convert a Date object to a String
+     */
     public static String dateToString(Date date) {
         Log.d(TAG, "dateToString: called!");
         return new SimpleDateFormat("dd/MM/yyyy").format(date);
     }
 
+    /**
+     * Method to convert a String to a Date Object
+     */
     public static Date stringToDate(String string) {
         Log.d(TAG, "stringToDate: called!");
         try {
@@ -770,7 +870,10 @@ public class Utils {
         }
     }
 
-    public static String replaceUnderscoreWithSpace (String string) {
+    /**
+     * Method to replaced an underscore character with a space
+     */
+    public static String replaceUnderscoreWithSpace(String string) {
         Log.d(TAG, "replaceUnderscoreWithSpace: called!");
         return string.replaceAll("_", " ");
 
@@ -778,6 +881,9 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Method used by the Splash Screen to calculate distances
+     */
     public static RectF calculationRectOnScreen(View view) {
         int[] location = new int[2];
         view.getLocationOnScreen(location);
@@ -798,24 +904,9 @@ public class Utils {
         }
     }
 
-    public static void launchSimpleDialog(Context context, String mainMessage, String title,
-                                          String okButtonText, String cancelButtonText,
-                                          DialogInterface.OnClickListener positiveListener,
-                                          DialogInterface.OnClickListener negativeListener) {
-        Log.d(TAG, "launchSimpleDialog: called!");
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(mainMessage)
-                .setTitle(title)
-                .setPositiveButton(okButtonText, positiveListener)
-                .setNegativeButton(cancelButtonText, negativeListener);
-
-        android.support.v7.app.AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
     /**
-     * Overloaded method
+     * Method to launch a simple dialog with positive and negative buttons and include
+     * a listener for the positive button
      */
     public static void launchSimpleDialog(Context context, String mainMessage, String title,
                                           String okButtonText, String cancelButtonText,
@@ -840,7 +931,10 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static int calculateGridsNumberOfColumns(Context context, int gridItemWidth){
+    /**
+     * Method to calculate the number of columns a grid should have
+     */
+    public static int calculateGridsNumberOfColumns(Context context, int gridItemWidth) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         return (int) (dpWidth / gridItemWidth);
