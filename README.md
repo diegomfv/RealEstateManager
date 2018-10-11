@@ -7,6 +7,14 @@ It uses Android Architecture Components.
 
 ## Screenshots
 
+<img src="./screenshots/signin.png" width="30%" height="30%">&ensp;<img src="./screenshots/signup.png" width="30%" height="30%">&ensp;<img src="./screenshots/forgot.png" width="30%" height="30%">
+
+<img src="./screenshots/main.png" width="30%" height="30%">&ensp;<img src="./screenshots/main_spinner.png" width="30%" height="30%">
+
+<img src="./screenshots/navdrawer.png" width="30%" height="30%">&ensp;<img src="./screenshots/modifyprofile.png" width="30%" height="30%">&ensp;<img src="./screenshots/joingroup.png" width="30%" height="30%">
+
+<img src="./screenshots/restaurant.png" width="30%" height="30%">&ensp;<img src="./screenshots/mapviewsearch.png" width="30%" height="30%">&ensp;<img src="./screenshots/listivewsearch.png" width="30%" height="30%">
+
 UI under development.
 
 <img src="./screenshots/sign_in.png" width="30%" height="30%">&ensp;<img src="./screenshots/main.png" width="30%" height="30%">
