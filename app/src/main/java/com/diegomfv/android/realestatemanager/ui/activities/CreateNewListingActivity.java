@@ -83,6 +83,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 // TODO: 30/09/2018 But not the lat long or the nearby places! (And it will be saved)!
 
 // TODO: 30/09/2018 Max value for rooms = 9
+
 /**
  * This activity allows the user to create new listings and add them to the database. Once a listing
  * has been created it cannot be deleted. Photos cannot be deleted once the have been chosen. When
@@ -738,8 +739,9 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
          * */
         getListOfPlacesRealEstateCache().clear();
 
-        // TODO: 22/08/2018 Constraint the search with types!
-        // TODO: 30/09/2018 We can show in the map the places in different colour
+        /* As an additional feature, we could constraint the search with types.
+         * We could also show the places in the map in different colour TODO
+         * */
         GoogleServiceStreams.streamFetchPlacesNearby(
                 new LatLngForRetrofit(latitude, longitude),
                 Constants.FETCH_NEARBY_RANKBY,
