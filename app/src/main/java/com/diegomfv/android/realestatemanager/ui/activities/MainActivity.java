@@ -367,6 +367,9 @@ public class MainActivity extends BaseActivity {
 
                         if (!realEstates.isEmpty()) {
 
+                            /* We hide the TextView that is displayed whent there are no listings
+                             * yet in the database
+                             * */
                             hideTextViewShowFragments();
 
                             getSupportFragmentManager()
@@ -376,6 +379,8 @@ public class MainActivity extends BaseActivity {
 
                             if (!deviceIsHandset) {
 
+                                /* If the device is a tablet, we load the second fragment
+                                 * */
                                 getSupportFragmentManager()
                                         .beginTransaction()
                                         .replace(R.id.fragment2_container_id, FragmentItemDescription.newInstance())
