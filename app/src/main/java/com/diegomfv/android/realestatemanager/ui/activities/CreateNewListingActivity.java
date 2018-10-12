@@ -773,7 +773,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                                      * */
                                     getListOfPlacesRealEstateCache().add(placeRealEstate);
                                     listPlaceRealEstateIds.add(placeRealEstate.getId());
-
                                 }
                             }
 
