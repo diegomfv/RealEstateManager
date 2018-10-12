@@ -61,9 +61,9 @@ public class AuthLoginActivity extends BaseActivity {
     @BindView(R.id.button_sign_in_password_id)
     Button buttonSignUp;
 
-    TextInputAutoCompleteTextView tvEmail;
+    private TextInputAutoCompleteTextView tvEmail;
 
-    TextInputAutoCompleteTextView tvPassword;
+    private TextInputAutoCompleteTextView tvPassword;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
