@@ -117,10 +117,14 @@ public class AuthLoginActivity extends BaseActivity {
             case R.id.button_sign_in_password_id: {
 
                 /* We check if we have the necessary permissions.
-                If we do not, we ask for them.
+                * If we do not, we ask for them.
                  * */
                 if (allNecessaryPermissionsGranted()) {
                     if (allChecksPassed()) {
+
+                        /* If all checks has been passed, it also means the information
+                        * of the agent is stored in SharedPreferences
+                        * */
                         launchMainActivityWithIntent();
                     }
 
