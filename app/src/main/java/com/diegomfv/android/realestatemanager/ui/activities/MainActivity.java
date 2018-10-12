@@ -72,9 +72,9 @@ public class MainActivity extends BaseActivity {
     private boolean editModeActive;
 
     /* Variable to differentiate when we are in the normal menu
-    * and when we come from SearchEngineActivity (true: main menu).
-    * This is done for code reuse
-    */
+     * and when we come from SearchEngineActivity (true: main menu).
+     * This is done for code reuse
+     */
     private boolean mainMenu;
 
     /* Variable to differentiate if the device is a handset or a tablet
@@ -106,7 +106,8 @@ public class MainActivity extends BaseActivity {
 
         this.currency = Utils.readCurrentCurrencyShPref(this);
 
-        // TODO: 09/10/2018 Delete!
+        /* If the device is a tablet, we make it take a landscape configuration
+         * */
         ifTabletObligateLandscape();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -348,8 +349,8 @@ public class MainActivity extends BaseActivity {
         Log.d(TAG, "loadFragmentOrFragments: called!");
 
         /* We check if the database is empty. If it is, we do not load the fragments.
-        * If it is not empty, we load them.
-        * */
+         * If it is not empty, we load them.
+         * */
         getRepository().getAllListingsRealEstateObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -449,8 +450,8 @@ public class MainActivity extends BaseActivity {
 
     private void ifTabletObligateLandscape() {
         Log.d(TAG, "ifTabletObligateLandscape: called!");
-        if ((getResources().getConfiguration().screenLayout &      Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
-            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
     }
 }
