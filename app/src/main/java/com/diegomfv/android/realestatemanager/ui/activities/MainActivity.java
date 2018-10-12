@@ -406,7 +406,8 @@ public class MainActivity extends BaseActivity {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Method that creates the necessary directories if they didn't exist yet.
+     * Method that creates the necessary
+     * directories if they didn't exist yet.
      */
     private void createDirectories() {
         Log.d(TAG, "createDirectories: called");
@@ -453,6 +454,10 @@ public class MainActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * Method that checks if the device is a tablet (using the screen size) and, if it is,
+     * it sets the orientation to landscape
+     */
     private void ifTabletObligateLandscape() {
         Log.d(TAG, "ifTabletObligateLandscape: called!");
         if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
