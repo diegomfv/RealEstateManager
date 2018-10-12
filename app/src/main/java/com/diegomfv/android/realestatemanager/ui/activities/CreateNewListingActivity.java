@@ -73,16 +73,6 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 /**
  * Created by Diego Fajardo on 18/08/2018.
  */
-// TODO: 05/09/2018 Change Address to a TextView
-// TODO: 12/09/2018 When address is clicked, show a Toast saying address has to be inputted via the button
-// TODO: 12/09/2018 Add RecyclerView Decorator! Necessary to do it differently depending on the device size
-// TODO: 22/09/2018 When creating the view, the app does not get the info from the seekbars
-// TODO: 25/09/2018 Feedback when user searchs for an address and there is no internet
-
-// TODO: 30/09/2018 When the address is introduced, we can have the problem of finding and address
-// TODO: 30/09/2018 But not the lat long or the nearby places! (And it will be saved)!
-
-// TODO: 30/09/2018 Max value for rooms = 9
 
 /**
  * This activity allows the user to create new listings and add them to the database. Once a listing
