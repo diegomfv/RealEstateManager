@@ -61,9 +61,7 @@ import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButto
 /**
  * Created by Diego Fajardo on 23/08/2018.
  */
-// TODO: 16/09/2018 The progress bar is not shown properly when an Item is added
 
-// TODO: 30/09/2018 Max values for rooms = 9
 /**
  * This activity allows to modify an already existing listing. It does not allow to modify the
  * address and does not allow to delete images that were added before to the listing.
