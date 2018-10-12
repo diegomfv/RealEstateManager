@@ -921,13 +921,19 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
      */
     private boolean allChecksCorrect() {
         Log.d(TAG, "allChecksCorrect: called!");
-
-        // TODO: 30/09/2018 Check also nearby places!
-
         if (Utils.textViewIsFilled(tvAddress)
                 && getRealEstateCache().getLatitude() != 0d
                 && getRealEstateCache().getLongitude() != 0d) {
-            return true;
+
+            if (getRealEstateCache().getListOfNearbyPointsOfInterestIds() != null
+                    && getRealEstateCache().getListOfNearbyPointsOfInterestIds().size() != 0) {
+                return true;
+
+            } else {
+                ToastHelper.toastLong(this,
+                        "There is a problem with the Nearby Places. Please, insert another address");
+                return false;
+            }
 
         } else {
             ToastHelper.toastLong(this, "Please, insert a valid address");
