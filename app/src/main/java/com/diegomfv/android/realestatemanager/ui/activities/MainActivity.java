@@ -37,12 +37,6 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.diegomfv.android.realestatemanager.util.Utils.setOverflowButtonColor;
 
-// TODO: 30/09/2018 Layouts for Tablets
-// TODO: 05/10/2018 Documentation
-// TODO: 05/10/2018 See Detail information in Tablet when a label is clicked in Position Activity!
-// TODO: 06/10/2018 Comments for Utils
-// TODO: 06/10/2018 Emulator crashes when I try to change prices in MainActivity
-
 /**
  * MainActivity displays a different layout depending on the size of the screen (handsets or
  * tablets). Additionally, it behaves different according to what activity launched it. If the activity
