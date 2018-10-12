@@ -454,7 +454,6 @@ public class AuthLoginActivity extends BaseActivity {
      */
     private boolean checkPermission(String permission) {
         Log.d(TAG, "checkPermissions: called!");
-
         if (ContextCompat.checkSelfPermission(getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
