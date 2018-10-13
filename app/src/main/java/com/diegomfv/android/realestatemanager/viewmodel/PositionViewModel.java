@@ -63,7 +63,7 @@ public class PositionViewModel extends AndroidViewModel {
         return observableListOfListings;
     }
 
-    ////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Factory to create the ViewModel with the repository available
      * */
