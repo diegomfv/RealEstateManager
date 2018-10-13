@@ -1,15 +1,27 @@
 # RealEstateManager
-An app to organise real estate listings.
+An app to organise real estate listings that uses Android Jetpack Components.
 
-It uses Android Architecture Components.
+The app allows user registration, creating and editing listings and displaying them in lists. It also allows to show the listings using Google Maps API.
 
-(Under development)
+The app incorporates a Loan Simulator as an extra feature.
 
 ## Screenshots
 
-UI under development.
+<img src="./screenshots/signin.png" width="30%" height="30%">&ensp;<img src="./screenshots/signup.png" width="30%" height="30%">&ensp;<img src="./screenshots/forgot.png" width="30%" height="30%">
 
-<img src="./screenshots/sign_in.png" width="30%" height="30%">&ensp;<img src="./screenshots/main.png" width="30%" height="30%">
+<img src="./screenshots/main.png" width="30%" height="30%">&ensp;<img src="./screenshots/main_spinner.png" width="30%" height="30%">
+
+<img src="./screenshots/detail.png" width="30%" height="30%">&ensp;<img src="./screenshots/detail_2.png" width="30%" height="30%">
+
+<img src="./screenshots/create.png" width="30%" height="30%">&ensp;<img src="./screenshots/create_2.png" width="30%" height="30%">&ensp;<img src="./screenshots/create_dialog.png" width="30%" height="30%">
+
+<img src="./screenshots/edit.png" width="30%" height="30%">&ensp;<img src="./screenshots/map.png" width="30%" height="30%">&ensp;<img src="./screenshots/map_label.png" width="30%" height="30%">
+
+<img src="./screenshots/photos.png" width="30%" height="30%">&ensp;<img src="./screenshots/photos_descr.png" width="30%" height="30%">
+
+<img src="./screenshots/search_1.png" width="30%" height="30%">&ensp;<img src="./screenshots/search_2.png" width="30%" height="30%">&ensp;<img src="./screenshots/search_3.png" width="30%" height="30%">
+
+<img src="./screenshots/loan.png" width="30%" height="30%">&ensp;<img src="./screenshots/loan_extended.png" width="30%" height="30%">&ensp;<img src="./screenshots/loan_modify_loan.png" width="30%" height="30%">
 
 ## Libraries
 
