@@ -41,7 +41,6 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
         this.listOfKeys = listOfKeys;
         this.bitmapCache = bitmapCache;
         this.glide = glide;
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,7 +135,6 @@ public class RVAdapterMediaGrid extends RecyclerView.Adapter<RVAdapterMediaGrid.
 
             glide.load(bitmapCache.get(listOfKeys.get(position)))
                     .into(imageView);
-
         }
     }
 }
