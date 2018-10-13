@@ -1058,18 +1058,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
                         Log.e(TAG, "onError: " + e.getMessage());
                     }
                 });
-
-        /* Inserting the information using AppExecutors
-         * */
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "run: called!");
-                getAppDatabase()
-                        .placeRealEstateDao()
-                        .insertListOfPlaceRealEstate(getListOfPlacesRealEstateCache());
-            }
-        });
     }
 
     /**
@@ -1078,12 +1066,15 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     public void insertAllBitmapsInImagesDirectory() {
         Log.d(TAG, "insertAllBitmapsInImagesDirectory: called!");
 
-        /* This is already done in a worker thread
+        /* This is already done in a worker thread.
+         * We fill the cache and the internal storage
          */
         for (Map.Entry<String, Bitmap> entry : getBitmapCache().entrySet()) {
             getRepository().addBitmapToBitmapCacheAndStorage(getInternalStorage(), getImagesDir(), entry.getKey(), entry.getValue());
         }
 
+        /* We create a notification and launch MainActivity
+         * */
         Utils.launchActivity(this, MainActivity.class);
         createNotification();
 

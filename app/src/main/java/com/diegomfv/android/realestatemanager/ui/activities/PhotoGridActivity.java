@@ -129,8 +129,8 @@ public class PhotoGridActivity extends BaseActivity implements InsertDescription
                         getListOfBitmapKeys().add(key);
                         getRepository().addBitmapToBitmapCache(key, Utils.getResizedBitmap(selectedImage, 840));
 
-                        // TODO: 02/09/2018 Resize the bitmap according to ImageView size!
-
+                        /* We could resize the image according to the view size
+                         * TODO */
                         Log.i(TAG, "onActivityResult: " + getRepository().getCurrentSizeOfBitmapCache());
                         Log.i(TAG, "onActivityResult: " + getBitmapCache().size());
 
