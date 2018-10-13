@@ -683,8 +683,6 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
 
                         if (Utils.checksPlaceDetails(placeDetails)) {
 
-                            // TODO: 30/09/2018 In tablet, it gets it but it does not display it. Problem is the address will be
-                            // TODO: 30/09/2018 but afterwards the latitude and longitude might be null!
                             /* We set the latitude and longitude of the address
                              * */
                             getRealEstateCache().setLatitude(placeDetails.getResult().getGeometry().getLocation().getLat());
