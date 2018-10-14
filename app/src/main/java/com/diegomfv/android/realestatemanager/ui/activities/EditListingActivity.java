@@ -178,10 +178,10 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
             Log.i(TAG, "onCreateView: bundle = " + bundle);
 
             /* We update the price of the real estate cache in order to use it in Edit Activity.
-            * From this moment on, this will be the price of the real estate cache. This is done
-            * to allow passing the price between this activity and PhotoGridActivity without
-            * manipulation.
-            * */
+             * From this moment on, this will be the price of the real estate cache. This is done
+             * to allow passing the price between this activity and PhotoGridActivity without
+             * manipulation.
+             * */
             if (realEstate != null) {
                 getRealEstateCache().setPrice(Utils.getValueAccordingToCurrency(currency, realEstate.getPrice()));
             }
@@ -719,6 +719,8 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
             Utils.hideMainContent(progressBarContent, mainLayout);
 
+            /* Editing process starts
+             * */
             updateRealEstate();
 
         } else {
