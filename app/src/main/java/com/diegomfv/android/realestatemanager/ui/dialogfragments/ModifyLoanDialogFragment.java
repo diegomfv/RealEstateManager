@@ -42,8 +42,8 @@ public class ModifyLoanDialogFragment extends DialogFragment {
     @BindView(R.id.card_view_loan_period_in_years_id)
     CardView cardViewLoanPeriodInYears;
 
-    @BindView(R.id.card_view_loan_payment_frequency_id)
-    CardView cardViewLoanPaymentFrequency;
+//    @BindView(R.id.card_view_loan_payment_frequency_id)
+//    CardView cardViewLoanPaymentFrequency;
 
     private Button buttonOk;
 
@@ -217,7 +217,7 @@ public class ModifyLoanDialogFragment extends DialogFragment {
         this.tvLoanAmount = cardViewLoanAmount.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
         this.tvLoanAnnualIntRate = cardViewLoanAnnualInterest.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
         this.tvLoanPeriodYears = cardViewLoanPeriodInYears.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
-        this.tvLoanPaymentFreq = cardViewLoanPaymentFrequency.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
+        //this.tvLoanPaymentFreq = cardViewLoanPaymentFrequency.findViewById(R.id.text_input_layout_id).findViewById(R.id.text_input_edit_text_id);
     }
 
     /**
@@ -229,7 +229,7 @@ public class ModifyLoanDialogFragment extends DialogFragment {
         setHint(cardViewLoanAmount, "Loan Amount (" + Utils.getCurrencySymbol(currency) + ")");
         setHint(cardViewLoanAnnualInterest, "Annual Interest Rate (%)");
         setHint(cardViewLoanPeriodInYears, "Loan Period(in Years)");
-        setHint(cardViewLoanPaymentFrequency, "Payment Frequency (payments in  a year)");
+        //setHint(cardViewLoanPaymentFrequency, "Payment Frequency (payments in  a year)");
     }
 
     /**
@@ -249,7 +249,7 @@ public class ModifyLoanDialogFragment extends DialogFragment {
         tvLoanAmount.setText(String.valueOf(Utils.getValueAccordingToCurrency(currency, loanAmountInDollars)));
         tvLoanAnnualIntRate.setText(String.valueOf(annualInterestRate));
         tvLoanPeriodYears.setText(String.valueOf(loanPeriodInYears));
-        tvLoanPaymentFreq.setText(String.valueOf(paymentFreq));
+        //tvLoanPaymentFreq.setText(String.valueOf(paymentFreq));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +260,7 @@ public class ModifyLoanDialogFragment extends DialogFragment {
         float loanAmount = Utils.getFloatFromTextView(tvLoanAmount);
         float interestRate = Utils.getFloatFromTextView(tvLoanAnnualIntRate);
         int loanPeriod = Utils.getIntegerFromTextView(tvLoanPeriodYears);
-        int paymentFrequency = Utils.getIntegerFromTextView(tvLoanPaymentFreq);
+        int paymentFrequency = 12;
 
 
         if (Utils.getStringFromTextView(tvLoanAmount).length() == 0 || loanAmount == 0) {
@@ -272,8 +272,8 @@ public class ModifyLoanDialogFragment extends DialogFragment {
         } else if (Utils.getStringFromTextView(tvLoanPeriodYears).length() == 0 || loanPeriod == 0) {
             ToastHelper.toastShort(getActivity(), "Please, introduce a Period in years");
 
-        } else if (Utils.getStringFromTextView(tvLoanPaymentFreq).length() == 0 || paymentFrequency == 0) {
-            ToastHelper.toastShort(getActivity(), "Please, introduce the Payment Frequency");
+//        } else if (Utils.getStringFromTextView(tvLoanPaymentFreq).length() == 0 || paymentFrequency == 0) {
+//            ToastHelper.toastShort(getActivity(), "Please, introduce the Payment Frequency");
 
         } else if (loanAmount > 1000000) {
             ToastHelper.toastShort(getActivity(), "Sorry, the loan amount is too high");
@@ -281,7 +281,7 @@ public class ModifyLoanDialogFragment extends DialogFragment {
         } else if (interestRate > 15) {
             ToastHelper.toastShort(getActivity(), "Sorry, the interest rate is too high");
 
-        } else if (loanPeriod > 20) {
+        } else if (loanPeriod > 60) {
             ToastHelper.toastShort(getActivity(), "Sorry, the loan period is too high");
 
         } else if (paymentFrequency > 12) {
@@ -301,7 +301,7 @@ public class ModifyLoanDialogFragment extends DialogFragment {
             loanAmountInDollars = Float.valueOf(Utils.getStringFromTextView(tvLoanAmount));
             annualInterestRate = Float.valueOf(Utils.getStringFromTextView(tvLoanAnnualIntRate));
             loanPeriodInYears = Integer.valueOf(Utils.getStringFromTextView(tvLoanPeriodYears));
-            paymentFreq = Integer.valueOf(Utils.getStringFromTextView(tvLoanPaymentFreq));
+            //paymentFreq = Integer.valueOf(Utils.getStringFromTextView(tvLoanPaymentFreq));
 
             if (currency == 1) {
                 //if the price is in euros, we convert it to dollars
