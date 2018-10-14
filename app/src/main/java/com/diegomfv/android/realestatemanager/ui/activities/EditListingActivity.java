@@ -177,6 +177,15 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
             setRealEstateCache(realEstate);
             Log.i(TAG, "onCreateView: bundle = " + bundle);
 
+            /* We update the price of the real estate cache in order to use it in Edit Activity.
+            * From this moment on, this will be the price of the real estate cache. This is done
+            * to allow passing the price between this activity and PhotoGridActivity without
+            * manipulation.
+            * */
+            if (realEstate != null) {
+                getRealEstateCache().setPrice(Utils.getValueAccordingToCurrency(currency, realEstate.getPrice()));
+            }
+
             /* We only delete the cache when we come from MainActivity (we do not do it when we come
              * from PhotoGridActivity
              * */
@@ -284,9 +293,6 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
         }
     }
-
-    // TODO: 16/09/2018 Should block the DatePickerDialog and dont let to choose a wrong date instead
-    // TODO: of leaving the dialog and set all to false and not chosen
 
     /**
      * This callback gets triggered when the user inputs information in the DatePicker fragment and
@@ -520,7 +526,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
     private void setAllInformation() {
         Log.d(TAG, "setAllInformation: called!");
         this.tvTypeOfBuilding.setText(getRealEstateCache().getType());
-        this.tvPrice.setText(String.valueOf((int) Utils.getValueAccordingToCurrency(currency, getRealEstateCache().getPrice())));
+        this.tvPrice.setText(String.valueOf(getRealEstateCache().getPrice()));
         this.tvSurfaceArea.setText(String.valueOf(getRealEstateCache().getSurfaceArea()));
         this.tvNumberOfBedrooms.setText(String.valueOf(getRealEstateCache().getRooms().getBedrooms()));
         this.tvNumberOfBathrooms.setText(String.valueOf(getRealEstateCache().getRooms().getBathrooms()));
@@ -620,7 +626,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
      */
     private void updateFloatValues() {
         Log.d(TAG, "updateFloatValues: called!");
-        this.getRealEstateCache().setPrice(Utils.convertCurrencyIfNecessary(currency, Utils.getFloatFromTextView(tvPrice)));
+        this.getRealEstateCache().setPrice(Utils.getFloatFromTextView(tvPrice));
         this.getRealEstateCache().setSurfaceArea(Utils.getFloatFromTextView(tvSurfaceArea));
     }
 
@@ -653,6 +659,20 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
 
         } else {
             return dateSold;
+        }
+    }
+
+    /**
+     * Method that updates the real estate cache price before inserting it in the database.
+     * It transforms euros to dollars if the currency is euros (because the prices in the database
+     * are in dollars)
+     */
+    private void updateRealEstateCachePrice(float price) {
+        Log.d(TAG, "updateRealEstateCachePrice: called!");
+        if (currency == 0) {
+            getRealEstateCache().setPrice(price);
+        } else {
+            getRealEstateCache().setPrice(Utils.convertEuroToDollar(price));
         }
     }
 
@@ -749,6 +769,10 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
         /* We update the real estate cache according to the information inputted in the views
          * */
         updateRealEstateCache();
+
+        /* We update the price of the real estate cache if it is necessary (to insert it in dollars)
+         * */
+        updateRealEstateCachePrice(Utils.getFloatFromTextView(tvPrice));
 
         /* We update the images the real estate is related to
          * */
