@@ -106,9 +106,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
     private int currency;
 
-    private boolean loanVisible;
-
-    ConstraintLayout.LayoutParams params;
+    private boolean completeLoanVisible;
 
     private Unbinder unbinder;
 
@@ -121,7 +119,9 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
 
         this.currency = Utils.readCurrentCurrencyShPref(this);
 
-        this.loanVisible = false;
+        /* We set the completeLoanVisible to false so the loan does not occupy all the screen
+         * */
+        this.completeLoanVisible = false;
 
         /* We set initial values for the loan
          * */
@@ -134,7 +134,8 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         setContentView(R.layout.activity_loan_simulator);
         unbinder = ButterKnife.bind(this);
 
-        this.configureToolBar();
+        /* Layout configuration
+         * */
         this.configureLayout();
 
     }
@@ -161,19 +162,12 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         switch (item.getItemId()) {
 
             case R.id.menu_show_loan_id: {
-                if (loanVisible) {
-                    hideLoan();
-
-                } else {
-                    showLoan();
-                }
-
+                showOrHideLoan();
             }
             break;
 
             case R.id.menu_modify_loan_button: {
                 launchModifyLoanDialog();
-
             }
             break;
 
@@ -262,6 +256,9 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
      */
     private void configureLayout() {
         Log.d(TAG, "configureLayout: called!");
+
+        this.configureToolBar();
+
         setTextInTextViews();
         setTableTitleTextViewsStyle();
         generateTable();
@@ -368,7 +365,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         Log.d(TAG, "showLoan: called!");
         constraintLayout.setVisibility(View.GONE);
         frameLayout.setVisibility(View.GONE);
-        loanVisible = true;
+        completeLoanVisible = true;
 
     }
 
@@ -380,7 +377,7 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
         Log.d(TAG, "hideLoan: called!");
         constraintLayout.setVisibility(View.VISIBLE);
         frameLayout.setVisibility(View.VISIBLE);
-        loanVisible = false;
+        completeLoanVisible = false;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -508,6 +505,21 @@ public class LoanSimulatorActivity extends BaseActivity implements ModifyLoanDia
                 .show(
                         getSupportFragmentManager(),
                         "ModifyLoanDialogFragment");
+    }
+
+    /**
+     * Method that shows the loan occupying all the screen
+     * or not depending on "completeLoanVisible"
+     * variable
+     */
+    private void showOrHideLoan() {
+        Log.d(TAG, "showOrHideLoan: called!");
+        if (completeLoanVisible) {
+            hideLoan();
+
+        } else {
+            showLoan();
+        }
     }
 
     /**
