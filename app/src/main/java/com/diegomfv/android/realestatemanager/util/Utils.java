@@ -119,15 +119,32 @@ public class Utils {
     /**
      * Method that checks the currency and returns the value in dollars or
      * euros (depending on the currency value). It simply transforms the value
-     * using convertDollarToEuro() method if the currency is 1 (euros)
+     * using convertDollarToEuro() method if the currency is 1 (euros). It is
+     * used for DISPLAYING purposes
      */
     public static float getValueAccordingToCurrency(int currency, float price) {
         Log.d(TAG, "getValueAccordingToCurrency: called!");
-
         if (currency == 0) {
             return price;
         } else if (currency == 1) {
             return Utils.convertDollarToEuro(price);
+        } else {
+            return price;
+        }
+    }
+
+    /**
+     * Method that checks the currency and returns the value in dollars or
+     * euros (depending on the currency value). It simply transforms the value
+     * using convertEuroToDollar() method if the currency is 1 (euros). It is
+     * used for TRANSFORMATION purposes
+     */
+    public static float convertCurrencyIfNecessary (int currency, float price) {
+        Log.d(TAG, "convertIfNecessary: called!");
+        if (currency == 0) {
+            return price;
+        } else if (currency == 1) {
+            return Utils.convertEuroToDollar(price);
         } else {
             return price;
         }

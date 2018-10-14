@@ -521,7 +521,7 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
      */
     private void updateFloatValues() {
         Log.d(TAG, "updateFloatValues: called!");
-        this.getRealEstateCache().setPrice(Utils.getValueAccordingToCurrency(currency, Utils.getFloatFromTextView(tvPrice)));
+        this.getRealEstateCache().setPrice(Utils.getFloatFromTextView(tvPrice));
         this.getRealEstateCache().setSurfaceArea(Utils.getFloatFromTextView(tvSurfaceArea));
     }
 
@@ -572,6 +572,21 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
     private void updateDatePutRealEstateCacheCache() {
         Log.d(TAG, "updateDatePutRealEstateCacheCache: called!");
         this.getRealEstateCache().setDatePut(Utils.getTodayDate());
+    }
+
+    /**
+     * Method that updates the real estate cache price before inserting it in the database.
+     * It transforms euros to dollars if the currency is euros (because the prices in the database
+     * are in dollars)
+     */
+    private void updateRealEstateCachePrice(float price) {
+        Log.d(TAG, "updateRealEstateCachePrice: called!");
+        if (currency == 0) {
+            getRealEstateCache().setPrice(price);
+
+        } else {
+            getRealEstateCache().setPrice(Utils.convertEuroToDollar(price));
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -957,6 +972,10 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
         /* We update the real estate cache according to the information inputted in the views
          * */
         updateRealEstateCache();
+
+        /* We update the price of the real estate cache if it is necessary (to insert it in dollars)
+         * */
+        updateRealEstateCachePrice(Utils.getFloatFromTextView(tvPrice));
 
         /* We update the images the real estate is related to
          * */

@@ -620,7 +620,7 @@ public class EditListingActivity extends BaseActivity implements DatePickerFragm
      */
     private void updateFloatValues() {
         Log.d(TAG, "updateFloatValues: called!");
-        this.getRealEstateCache().setPrice(Utils.getValueAccordingToCurrency(currency, Utils.getFloatFromTextView(tvPrice)));
+        this.getRealEstateCache().setPrice(Utils.convertCurrencyIfNecessary(currency, Utils.getFloatFromTextView(tvPrice)));
         this.getRealEstateCache().setSurfaceArea(Utils.getFloatFromTextView(tvSurfaceArea));
     }
 
