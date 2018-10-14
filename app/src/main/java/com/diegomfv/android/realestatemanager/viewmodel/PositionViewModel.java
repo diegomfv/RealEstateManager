@@ -36,7 +36,6 @@ public class PositionViewModel extends AndroidViewModel {
     public PositionViewModel(@NonNull Application application, DataRepository dataRepository) {
         super(application);
         Log.d(TAG, "ListingsSharedViewModel: called!");
-
         observableListOfListings = dataRepository.getLiveDataAllListings();
     }
 
