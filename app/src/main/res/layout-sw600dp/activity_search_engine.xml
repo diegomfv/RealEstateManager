@@ -62,14 +62,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_marginStart="@dimen/side_margin_tablet_100dp"
-                    android:layout_marginEnd="@dimen/side_margin_tablet_100dp">
+                    android:layout_marginEnd="@dimen/side_margin_tablet_100dp"
+                    android:orientation="vertical">
 
-                    <include android:id="@+id/card_view_type_id"
+                    <include
+                        android:id="@+id/card_view_type_id"
                         layout="@layout/card_view_add_checkboxes" />
 
                     <include
@@ -80,10 +82,12 @@
                         android:id="@+id/card_view_surface_area_id"
                         layout="@layout/card_view_crystal_range_seek_bar" />
 
-                    <include android:id="@+id/card_view_cities_id"
+                    <include
+                        android:id="@+id/card_view_cities_id"
                         layout="@layout/card_view_add_checkboxes" />
 
-                    <include android:id="@+id/card_view_localities_id"
+                    <include
+                        android:id="@+id/card_view_localities_id"
                         layout="@layout/card_view_add_checkboxes" />
 
                     <include
@@ -125,7 +129,8 @@
 
                     </android.support.v7.widget.CardView>
 
-                    <include android:id="@+id/card_view_points_of_interest_id"
+                    <include
+                        android:id="@+id/card_view_points_of_interest_id"
                         layout="@layout/card_view_add_checkboxes" />
 
                     <Button
@@ -134,8 +139,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="30dp"
                         android:layout_marginTop="30dp"
+                        android:layout_marginBottom="30dp"
                         android:text="SEARCH" />
 
                 </LinearLayout>
