@@ -1,5 +1,10 @@
 package com.diegomfv.android.realestatemanager;
 
+import android.util.Log;
+
+import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
+import com.diegomfv.android.realestatemanager.network.remote.GoogleService;
+import com.diegomfv.android.realestatemanager.network.remote.GoogleServiceStreams;
 import com.diegomfv.android.realestatemanager.util.Utils;
 
 import junit.framework.Assert;
@@ -7,6 +12,10 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,8 +31,19 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Stack;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -32,6 +52,73 @@ import static junit.framework.Assert.assertTrue;
  */
 
 public class UnitTest {
+
+    @Test
+    public void convertDollarToEuroTest() {
+        float priceInDollars = new Random().nextFloat();
+        float conversionRate = 0.86f;
+        assertEquals(priceInDollars * conversionRate, Utils.convertDollarToEuro(priceInDollars));
+    }
+
+    @Test
+    public void convertEurosToDollars() {
+        float priceInEuros = new Random().nextFloat();
+        float conversionRate = 1.16f;
+        assertEquals(priceInEuros * conversionRate, Utils.convertEuroToDollar(priceInEuros));
+    }
+
+    @Test
+    public void isInternetAvailableTest() {
+
+        if (Utils.isInternetAvailable()) {
+
+            assertTrue(true);
+            System.out.println("Internet available");
+
+            Observer<PlaceFromText> observer = new Observer<PlaceFromText>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+                }
+
+                @Override
+                public void onNext(PlaceFromText placeFromText) {
+                    assertNotNull(placeFromText);
+                    System.out.println("Response from API Not null");
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                }
+
+                @Override
+                public void onComplete() {
+                }
+            };
+
+            final String GOOGLE_API_FIND_PLACE_FROM_TEXT = "https://maps.googleapis.com/maps/api/place/findplacefromtext/";
+            Retrofit retrofitPlaceFromText = new Retrofit.Builder()
+                    .baseUrl(GOOGLE_API_FIND_PLACE_FROM_TEXT)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
+
+            GoogleService googleService = retrofitPlaceFromText.create(GoogleService.class);
+
+            googleService.fetchPlaceFromText("Corn Street" + ","
+                            + "Bristol" + ","
+                            + "Bristol" + ","
+                            + "BS8",
+                    "textquery",
+                    "AIzaSyDDaW_rQKqJtwEdqnib_-WQLCeSodUnb5g")
+                    .subscribeWith(observer);
+
+        } else {
+
+            fail();
+            System.out.println("No internet");
+        }
+    }
 
     @Test
     public void isInteger () {
@@ -152,13 +239,4 @@ public class UnitTest {
         System.out.println(interests);
 
     }
-
-    @Test
-    public void formatToTwoDecimals() {
-
-        System.out.println(Utils.formatToDecimals(5.23, 1));
-        System.out.println(Utils.formatToDecimals(5.23, 0));
-
-    }
-
 }

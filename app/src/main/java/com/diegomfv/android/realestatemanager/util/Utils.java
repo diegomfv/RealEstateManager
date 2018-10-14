@@ -81,7 +81,6 @@ public class Utils {
      * Price Conversion (Dollars to Euros):
      */
     public static float convertDollarToEuro(float dollars) {
-        Log.d(TAG, "convertDollarToEuro: called!");
         return (float) (dollars * 0.86);
     }
 
@@ -205,8 +204,7 @@ public class Utils {
      */
     // Background thread!!
     // TCP/HTTP/DNS (depending on the port, 53=DNS, 80=HTTP, etc.)
-    private static boolean isInternetAvailable() {
-        Log.d(TAG, "isInternetAvailable: called!");
+    public static boolean isInternetAvailable() {
         try {
             int timeoutMs = 1500;
             Socket sock = new Socket();
@@ -215,10 +213,8 @@ public class Utils {
             sock.connect(sockaddr, timeoutMs);
             sock.close();
 
-            Log.d(TAG, "isInternetAvailable: true");
             return true;
         } catch (IOException e) {
-            Log.d(TAG, "isInternetAvailable: false");
             return false;
         }
     }
