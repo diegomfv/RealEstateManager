@@ -924,23 +924,24 @@ public class CreateNewListingActivity extends BaseActivity implements Observer, 
      */
     private boolean allChecksCorrect() {
         Log.d(TAG, "allChecksCorrect: called!");
-        if (Utils.textViewIsFilled(tvAddress)
-                && getRealEstateCache().getLatitude() != 0d
-                && getRealEstateCache().getLongitude() != 0d) {
 
-            if (getRealEstateCache().getListOfNearbyPointsOfInterestIds() != null
-                    && getRealEstateCache().getListOfNearbyPointsOfInterestIds().size() != 0) {
-                return true;
-
-            } else {
-                ToastHelper.toastLong(this,
-                        "There is a problem with the Nearby Places. Please, insert another address");
-                return false;
-            }
-
-        } else {
+        if (!Utils.textViewIsFilled(tvAddress)) {
             ToastHelper.toastLong(this, "Please, insert a valid address");
             return false;
+
+        } else if (getRealEstateCache().getLatitude() == 0d
+                || getRealEstateCache().getLongitude() == 0d) {
+            ToastHelper.toastLong(this,
+                    "There is a problem with the Nearby Places. Please, insert another address");
+            return false;
+
+        } else if (getListOfImagesRealEstateCache().size() == 0) {
+            ToastHelper.toastLong(this,
+                    "Please, insert at least one image");
+            return false;
+
+        } else {
+            return true;
         }
     }
 
