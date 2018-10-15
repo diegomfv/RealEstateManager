@@ -500,6 +500,7 @@ public class PositionActivity extends BaseActivity {
      * If the String is null or empty, it will return that the type is not available.
      * If not, it will return the type.
      */
+    /* TODO could add " - " to Constants */
     private String displayType(String type) {
         Log.d(TAG, "displayType: called!");
 
