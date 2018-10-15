@@ -114,9 +114,8 @@ public class UnitTest {
                     .subscribeWith(observer);
 
         } else {
-
-            fail();
             System.out.println("No internet");
+            fail();
         }
     }
 
