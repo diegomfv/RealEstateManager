@@ -529,7 +529,6 @@ public class PositionActivity extends BaseActivity {
         }
     }
 
-
     /**
      * Launches detail activity
      * with a Parcelable (item clicked) carried by the intent
