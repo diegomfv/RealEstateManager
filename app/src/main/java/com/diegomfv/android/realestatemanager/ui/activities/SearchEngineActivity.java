@@ -518,7 +518,13 @@ public class SearchEngineActivity extends BaseActivity {
         Log.w(TAG, "fillSetOfBuildingTypes: " + list);
         if (list != null) {
             for (int i = 0; i < list.size(); i++) {
-                getSetOfBuildingTypes().add(list.get(i).getType());
+
+                /* We check that the type is not null or empty to avoid adding
+                 * a checkbox with no text
+                 * */
+                if (list.get(i).getType() != null
+                        && !list.get(i).getType().isEmpty())
+                    getSetOfBuildingTypes().add(list.get(i).getType());
             }
         }
     }
@@ -896,7 +902,7 @@ public class SearchEngineActivity extends BaseActivity {
         Utils.hideMainContent(progressBarContent, mainLayout);
 
         /* We use RxJava to load the process in a background thread.
-        * Try/catch is used to catch a possible ChoreoGrapher exception
+         * Try/catch is used to catch a possible ChoreoGrapher exception
          * */
         try {
             Single.just("Init process")
@@ -940,8 +946,8 @@ public class SearchEngineActivity extends BaseActivity {
                                 } else {
 
                                     /* If no real estates were found, we notify the user and
-                                    * show the main layout
-                                    * */
+                                     * show the main layout
+                                     * */
                                     new Handler(SearchEngineActivity.this.getMainLooper()).post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -1359,8 +1365,8 @@ public class SearchEngineActivity extends BaseActivity {
         if (list != null) {
 
             /* Variable that allows us to know when the updating process has finished so
-            * we can load the activity.
-            * */
+             * we can load the activity.
+             * */
             updateCounter = 0;
 
             for (int i = 0; i < list.size(); i++) {
@@ -1406,7 +1412,7 @@ public class SearchEngineActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    private void notifyUserErrorDuringProcess () {
+    private void notifyUserErrorDuringProcess() {
         Log.d(TAG, "notifyUserErrorDuringProcess: called!");
         ToastHelper.toastShort(this, "There was an error during the process. Please, try again.");
         Utils.showMainContent(progressBarContent, mainLayout);
