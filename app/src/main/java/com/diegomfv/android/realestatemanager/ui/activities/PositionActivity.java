@@ -1,6 +1,5 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.arch.lifecycle.Observer;
