@@ -427,11 +427,8 @@ public class PositionActivity extends BaseActivity {
 
         options = new MarkerOptions()
                 .position(latLng)
-                .title(realEstate.getType()
-                        + " - "
-                        + Utils.getCurrencySymbol(currency)
-                        + " "
-                        + Utils.getValueFormattedAccordingToCurrency(realEstate.getPrice(), currency))
+                .title(displayType(realEstate.getType())
+                        + displayPrice(realEstate.getPrice()))
                 .snippet(Utils.getAddressAsString(realEstate))
                 .icon(getIconAccordingToAlreadySold(alreadySold));
 
@@ -497,6 +494,41 @@ public class PositionActivity extends BaseActivity {
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Method that displays the type according to the information in the database.
+     * If the String is null or empty, it will return that the type is not available.
+     * If not, it will return the type.
+     */
+    private String displayType(String type) {
+        Log.d(TAG, "displayType: called!");
+
+        if (type == null || type.isEmpty()) {
+            return "Type not available - ";
+
+        } else {
+            return type + " - ";
+        }
+    }
+
+    /**
+     * Method that displays the price according to the information in the database.
+     * If the price is equal to 0, it will return that the price is not available.
+     * If not, it will return the price.
+     */
+    private String displayPrice(float price) {
+        Log.d(TAG, "displayPrice: called!");
+
+        if (price == 0.0f) {
+            return "Price not available";
+
+        } else {
+            return Utils.getCurrencySymbol(currency)
+                    + " "
+                    + Utils.getValueFormattedAccordingToCurrency(price, currency);
+        }
+    }
+
 
     /**
      * Launches detail activity
