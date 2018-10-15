@@ -1,6 +1,5 @@
 package com.diegomfv.android.realestatemanager.util;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,13 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.nfc.FormatException;
-import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
@@ -50,7 +46,6 @@ import java.net.SocketAddress;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,7 +65,6 @@ import io.reactivex.schedulers.Schedulers;
  * This class is kept to show the mentor Utils modifications
  * when the project was started
  */
-
 public class Utils {
 
     private static final String TAG = Utils.class.getSimpleName();
@@ -81,14 +75,14 @@ public class Utils {
      * Price Conversion (Dollars to Euros):
      */
     public static float convertDollarToEuro(float dollars) {
-        return (float) (dollars * 0.86);
+        return dollars * 0.86f;
     }
 
     /**
      * Price Conversion (Euros to Dollars):
      */
     public static float convertEuroToDollar(float euros) {
-        return (float) (euros * 1.16);
+        return euros * 1.16f;
     }
 
     /**
