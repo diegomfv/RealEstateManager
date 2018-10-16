@@ -1,8 +1,6 @@
 package com.diegomfv.android.realestatemanager.ui.activities;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -44,10 +42,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -793,28 +789,28 @@ public class SearchEngineActivity extends BaseActivity {
         Log.w(TAG, "addCheckboxesToLayout: " + getSetOfTypesOfPointsOfInterest());
 
         for (String buildingType : getSetOfBuildingTypes()) {
-            fillWithCheckboxes(
+            fillWithCheckbox(
                     linearLayoutTypes,
                     buildingType,
                     getListOfBuildingTypeCheckboxes());
         }
 
         for (String city : getSetOfCities()) {
-            fillWithCheckboxes(
+            fillWithCheckbox(
                     linearLayoutCities,
                     city,
                     getListOfCityCheckboxes());
         }
 
         for (String locality : getSetOfLocalities()) {
-            fillWithCheckboxes(
+            fillWithCheckbox(
                     linearLayoutLocalities,
                     locality,
                     getListOfLocalityCheckboxes());
         }
 
         for (String typeOfPointOfInterest : getSetOfTypesOfPointsOfInterest()) {
-            fillWithCheckboxes(
+            fillWithCheckbox(
                     linearLayoutTypesPointsOfInterestNearby,
                     typeOfPointOfInterest,
                     getListOfPointOfInterestCheckboxes());
@@ -823,9 +819,14 @@ public class SearchEngineActivity extends BaseActivity {
 
     /**
      * Method that fills the layout with checkboxes according to certain information
+     *
+     * @param linearLayout The layout that will contain the checkbox
+     * @param value The value that we are passing (type, city, locality or point of interest)
+     * @param listOfCheckboxes A list (global value) that will contain the references to the created checkboxes
+     *
      */
     @SuppressLint("RestrictedApi")
-    private void fillWithCheckboxes(LinearLayout linearLayout, String type, List<AppCompatCheckBox> listOfCheckboxes) {
+    private void fillWithCheckbox(LinearLayout linearLayout, String value, List<AppCompatCheckBox> listOfCheckboxes) {
         Log.d(TAG, "addPointsOfInterestCheckboxesToLayout: called!");
         AppCompatCheckBox checkBox = new AppCompatCheckBox(this);
         linearLayout.addView(checkBox);
@@ -838,11 +839,15 @@ public class SearchEngineActivity extends BaseActivity {
 //        layoutParams.setMargins(8, 8, 0, 0);
 //
 //        checkBox.setLayoutParams(layoutParams);
-        checkBox.setText(Utils.capitalize(Utils.replaceUnderscore(type)));
+
+        checkBox.setText(Utils.capitalize(Utils.replaceUnderscore(value)));
         checkBox.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        checkBox.setTag(type);
+        checkBox.setTag(value);
         checkBox.setSupportButtonTintList(ContextCompat.getColorStateList(this, R.color.colorPrimaryDark));
 
+        /* We fill the list that
+         * we have passed as an argument
+         * */
         listOfCheckboxes.add(checkBox);
     }
 
@@ -936,30 +941,31 @@ public class SearchEngineActivity extends BaseActivity {
                                     getListOfRealEstate().get(i).setFound(false);
                                 }
 
-                                if (atLeastOneFound) {
+                            }
 
-                                    /* We found at least one real estate matching the criteria.
-                                     *
-                                     * We update the found information of each real estate so the ViewModel can show these
-                                     * real estates in MainActivity. The method also launches the activity.
-                                     * */
-                                    updateRealEstatesWithFoundInfo(getListOfRealEstate());
+                            if (atLeastOneFound) {
 
-                                } else {
+                                /* We found at least one real estate matching the criteria.
+                                 *
+                                 * We update the found information of each real estate so the ViewModel can show these
+                                 * real estates in MainActivity. The method also launches the activity.
+                                 * */
+                                updateRealEstatesWithFoundInfo(getListOfRealEstate());
 
-                                    /* If no real estates were found, we notify the user and
-                                     * show the main layout
-                                     * */
-                                    new Handler(SearchEngineActivity.this.getMainLooper()).post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Log.d(TAG, "run: called!");
-                                            ToastHelper.toastShort(SearchEngineActivity.this,
-                                                    "Sorry, no real estates were found matching this criteria");
-                                            Utils.showMainContent(progressBarContent, mainLayout);
-                                        }
-                                    });
-                                }
+                            } else {
+
+                                /* If no real estates were found, we notify the user and
+                                 * show the main layout
+                                 * */
+                                new Handler(SearchEngineActivity.this.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d(TAG, "run: called!");
+                                        ToastHelper.toastShort(SearchEngineActivity.this,
+                                                "Sorry, no real estates were found matching this criteria");
+                                        Utils.showMainContent(progressBarContent, mainLayout);
+                                    }
+                                });
                             }
                         }
 
@@ -982,7 +988,7 @@ public class SearchEngineActivity extends BaseActivity {
      */
     private boolean typeFilterPassed(RealEstate realEstate) {
         Log.d(TAG, "typeFilterPassed: called!");
-
+        
         List<String> listOfCheckedTypes = new ArrayList<>();
 
         /* A list is filled with all the texts of the related checked checkboxes
@@ -1001,14 +1007,13 @@ public class SearchEngineActivity extends BaseActivity {
 
         /* The user checked at least one checkbox
          * */
-        for (int i = 0; i < getListOfBuildingTypeCheckboxes().size(); i++) {
+        for (int i = 0; i < listOfCheckedTypes.size(); i++) {
             if (realEstate.getType().equalsIgnoreCase(listOfCheckedTypes.get(i))) {
                 return true;
             }
         }
         return false;
     }
-
 
     /**
      * Method to check if a listing passes the price filter
@@ -1262,7 +1267,6 @@ public class SearchEngineActivity extends BaseActivity {
             return true;
         }
 
-        // TODO: 09/10/2018 Modify this!
         if (realEstate.getListOfNearbyPointsOfInterestIds() != null) {
 
             /* We get all the nearby point of interests' types of a real estate
@@ -1286,7 +1290,9 @@ public class SearchEngineActivity extends BaseActivity {
                 }
             }
 
-            // TODO: 09/10/2018 Modify this!
+            // TODO: 09/10/2018 This could be modified
+            // TODO: CURRENTLY: if at least one point if interest is found, the real estate will be shown
+            // TODO: POSSIBLE: only show the real estate if ALL the criteria are matched
             /* Finally, we do the checks. The real estate will pass the filter if at least one type
              * of point of interest can be found in the list of points of interest related to the
              * real estate
