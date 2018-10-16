@@ -1,40 +1,22 @@
 package com.diegomfv.android.realestatemanager;
 
-import android.util.Log;
-
 import com.diegomfv.android.realestatemanager.network.models.placefindplacefromtext.PlaceFromText;
 import com.diegomfv.android.realestatemanager.network.remote.GoogleService;
-import com.diegomfv.android.realestatemanager.network.remote.GoogleServiceStreams;
 import com.diegomfv.android.realestatemanager.util.Utils;
-
-import junit.framework.Assert;
 
 import org.junit.Test;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Random;
-import java.util.Stack;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -120,7 +102,7 @@ public class UnitTest {
     }
 
     @Test
-    public void isInteger () {
+    public void isInteger() {
 
         Random random = new Random();
 
@@ -136,7 +118,7 @@ public class UnitTest {
     }
 
     @Test
-    public void decimalFormat () {
+    public void decimalFormat() {
 
         Random random = new Random();
 
@@ -158,7 +140,7 @@ public class UnitTest {
     }
 
     @Test
-    public void getRidOfLastComma () {
+    public void getRidOfLastComma() {
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Some Text");
@@ -181,7 +163,7 @@ public class UnitTest {
     }
 
     @Test
-    public void stringToDateAndComparison () {
+    public void stringToDateAndComparison() {
 
         String string1 = "05/09/2018";
         String string2 = "06/09/2018";
@@ -193,10 +175,10 @@ public class UnitTest {
             Date date2 = format.parse(string2);
             Date date3 = format.parse(string3);
 
-            assertTrue (date3.after(date2));
-            assertTrue (date2.after(date1));
-            assertTrue (date1.before(date2));
-            assertFalse (date1.after(date3));
+            assertTrue(date3.after(date2));
+            assertTrue(date2.after(date1));
+            assertTrue(date1.before(date2));
+            assertFalse(date1.after(date3));
 
         } catch (ParseException e) {
             System.out.println("Parse exception");
@@ -204,7 +186,7 @@ public class UnitTest {
     }
 
     @Test
-    public void calculatePayment () {
+    public void calculatePayment() {
 
         double principal = 100000;
 
@@ -212,14 +194,14 @@ public class UnitTest {
 
         int n = 20;
 
-        double payment2 = principal * i / (1 - Math.pow(1+i, -n));
+        double payment2 = principal * i / (1 - Math.pow(1 + i, -n));
 
         System.out.println(payment2 / 12);
 
     }
 
     @Test
-    public void calculatePrincipalAndInterests () {
+    public void calculatePrincipalAndInterests() {
 
         double remainingCapital = 90000;
 

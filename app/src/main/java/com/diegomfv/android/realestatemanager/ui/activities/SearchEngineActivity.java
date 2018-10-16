@@ -233,9 +233,11 @@ public class SearchEngineActivity extends BaseActivity {
         switch (view.getId()) {
 
             case R.id.button_search_id: {
-                // TODO: 09/10/2018 See this!
                 initSearch();
 
+                /* This commented section WAS USED to catch an exception related to the
+                 * CHOREOGRAPHER. It is not used anymore but I left it here to remember this issue
+                 * */
 //                try {
 //                    initSearch();
 //                } catch(Exception e){
